@@ -91,6 +91,10 @@ CREATE TABLE qr_codes (
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     uploaded_by VARCHAR(50),
     
+    -- Kolom BARU untuk fitur pemotongan PDF multi-page
+    source_document VARCHAR,
+    page_number INTEGER,
+    
     -- Relasi FK: Keamanan history sama dengan tabel qc_system
     CONSTRAINT fk_qr_codes_uploaded_by FOREIGN KEY (uploaded_by) 
         REFERENCES users(username) ON DELETE SET NULL
