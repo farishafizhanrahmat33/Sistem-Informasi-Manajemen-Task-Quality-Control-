@@ -1,0 +1,28 @@
+<!-- templates/navbar.html -->
+<nav class="navbar navbar-custom px-4 py-3 d-flex justify-content-between align-items-center shadow-xs" style="background-color: var(--bg-surface); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 1030;">
+    <div class="d-flex align-items-center gap-3">
+        <!-- Tombol Menu -->
+        <button class="btn btn-outline-secondary btn-sm px-3 py-1 border shadow-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
+            Menu
+        </button>
+        <!-- Brand Info -->
+        <div>
+            <span class="fw-bold fs-6 d-block tracking-tight" style="color: var(--text-main);">Manage Task</span>
+            <span class="text-muted" style="font-size: 0.7rem; letter-spacing: 0.03em;"></span>
+        </div>
+    </div>
+</nav>
+
+<!-- KOTAK NOTIFIKASI GLOBAL (Melayang Bebas di Depan Layar) -->
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 9999; margin-top: 70px; pointer-events: none;">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show border rounded-3 py-3 mb-3 shadow-lg d-flex align-items-center" role="alert" style="background-color: var(--bg-surface); color: var(--text-main); min-width: 320px; max-width: 450px; pointer-events: auto;">
+                    <span class="fw-semibold">{{ message }}</span>
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>

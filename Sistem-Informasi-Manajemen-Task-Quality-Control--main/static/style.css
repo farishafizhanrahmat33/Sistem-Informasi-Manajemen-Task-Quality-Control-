@@ -1,0 +1,949 @@
+/* ==========================================================================
+   1. VARIABEL WARNA & TEMA (MINIMALIST EXECUTIVE: CHARCOAL & WARM BRONZE)
+   ========================================================================== */
+:root {
+    --accent: #D4AF37; /* Warm Bronze / Gold Kalem */
+}
+
+/* TEMA TERANG (LIGHT THEME) */
+[data-theme="light"] {
+    --bg-body: #f7f8fa;
+    --bg-surface: #FFFFFF;
+    --text-main: #18181B;
+    --text-muted: #71717A;
+    --border-color: #E4E4E7;
+    --accent-soft: rgba(212, 175, 55, 0.15);
+    --dark-soft: rgba(24, 24, 27, 0.04);
+    --modal-bg: #FAFAFA;
+    --input-bg: #FFFFFF;
+    --badge-sent-bg: #27272A;
+    --badge-sent-text: #FAFAFA;
+    --btn-close-filter: none;
+}
+
+/* TEMA GELAP (DARK THEME) - Charcoal Mewah & Eksklusif */
+[data-theme="dark"] {
+    --bg-body: #111113;         /* Charcoal Sangat Gelap */
+    --bg-surface: #18181B;      /* Charcoal Gelap */
+    --text-main: #FAFAFA;       /* Putih Tulang */
+    --text-muted: #A1A1AA;      /* Abu-abu Netral */
+    --border-color: #27272A;
+    --accent-soft: rgba(212, 175, 55, 0.25);
+    --dark-soft: rgba(255, 255, 255, 0.08);
+    --modal-bg: #1A1A1E;
+    --input-bg: #222226;
+    --badge-sent-bg: #D4AF37;
+    --badge-sent-text: #111113;
+    --btn-close-filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+
+/* ==========================================================================
+   2. TIPOGRAFI, GLOBAL STYLING & SCROLLBAR
+   ========================================================================== */
+body { 
+    font-family: 'Inter', sans-serif; 
+    background-color: var(--bg-body); 
+    color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.01em; 
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; } 
+::-webkit-scrollbar-track { background: var(--bg-body); }
+::-webkit-scrollbar-thumb { background: #27272A; border-radius: 4px; }
+
+
+/* ==========================================================================
+   3. KOMPONEN TOMBOL (BUTTONS)
+   ========================================================================== */
+.btn {
+    border-radius: 8px; 
+    font-weight: 500;
+    padding: 0.5rem 1.25rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+.btn-sm { padding: 0.4rem 1rem; font-size: 0.85rem; }
+
+.btn-primary { background-color: var(--accent) !important; border-color: var(--accent) !important; color: #111113 !important; font-weight: 600; box-shadow: 0 2px 4px rgba(212, 175, 55, 0.15); }
+.btn-primary:hover { background-color: #C5A028 !important; border-color: #C5A028 !important; box-shadow: 0 4px 6px rgba(212, 175, 55, 0.25); }
+
+.btn-outline-primary { color: var(--accent) !important; border-color: var(--accent) !important; }
+.btn-outline-primary:hover { background-color: var(--accent) !important; color: #111113 !important; }
+
+.btn-dark { background-color: #27272A !important; border-color: #27272A !important; color: #FAFAFA !important; }
+.btn-dark:hover { background-color: var(--accent) !important; border-color: var(--accent) !important; color: #111113 !important; }
+
+.btn-outline-secondary { color: var(--text-main) !important; border-color: var(--border-color) !important; background-color: var(--bg-surface); }
+.btn-outline-secondary:hover { background-color: var(--dark-soft) !important; color: var(--accent) !important; border-color: var(--accent) !important; }
+
+
+/* ==========================================================================
+   4. NAVBAR & HEADER
+   ========================================================================== */
+.navbar-custom {
+    background-color: var(--bg-surface);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03); 
+    backdrop-filter: blur(10px); 
+}
+
+
+/* ==========================================================================
+   5. TABS & SEGMENTED CONTROLS (Navigasi Kategori Tugas & Video)
+   ========================================================================== */
+.custom-tabs-container {
+    background-color: var(--border-color);
+    padding: 4px;
+    border-radius: 10px; 
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    margin-bottom: 2rem;
+}
+.custom-tabs-container .nav-link {
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px; 
+    border: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    user-select: none;
+}
+.custom-tabs-container .nav-link:hover { color: var(--text-main); }
+.custom-tabs-container .nav-link.active-tab {
+    background-color: var(--bg-surface) !important;
+    color: var(--accent) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+.tab-sent { margin-left: 8px; border-left: 2px solid var(--border-color); padding-left: 10px; }
+
+/* Tab Video Viewer (Di dalam Modal Detail) */
+.custom-video-tabs { border-bottom: 1px solid var(--border-color); margin-bottom: 1rem; }
+.custom-video-tabs .nav-link { color: var(--text-muted); font-weight: 600; font-size: 0.85rem; padding: 0.6rem 1rem; border-radius: 0; border-bottom: 2px solid transparent; background: transparent !important; }
+.custom-video-tabs .nav-link:hover { color: var(--text-main); border-bottom: 2px solid var(--text-muted); }
+.custom-video-tabs .nav-link.active { color: var(--accent) !important; border-bottom: 2px solid var(--accent); }
+
+/* Enterprise Tabs (SaaS Style) */
+.enterprise-tabs-wrapper {
+    border-bottom: 1px solid var(--border-color); 
+}
+.enterprise-tabs {
+    -ms-overflow-style: none;  
+    scrollbar-width: none;     
+}
+.enterprise-tabs::-webkit-scrollbar { display: none; }
+.enterprise-tabs .filter-tab {
+    background: transparent;
+    border: none;
+    color: var(--text-muted); 
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.25rem 0.1rem 0.75rem 0.1rem; 
+    border-bottom: 2px solid transparent;
+    white-space: nowrap; 
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+.enterprise-tabs .filter-tab:hover { color: var(--text-main); }
+.enterprise-tabs .filter-tab.active {
+    color: var(--text-main);
+    font-weight: 600; 
+    border-bottom: 2px solid var(--text-main); 
+}
+[data-theme="dark"] .enterprise-tabs .filter-tab.active {
+    border-bottom: 2px solid #ffffff; 
+    color: #ffffff;
+}
+
+
+/* ==========================================================================
+   6. CARDS & BADGES (Tampilan Kartu Tugas & Label Status)
+   ========================================================================== */
+.task-card, .card {
+    background-color: var(--bg-surface) !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.badge-soft {
+    background-color: var(--dark-soft);
+    color: var(--text-main);
+    padding: 0.4em 0.8em;
+    font-weight: 600;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+.badge-accent {
+    background-color: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    padding: 0.4em 0.8em;
+    font-weight: 600;
+    border-radius: 6px;
+}
+
+
+/* ==========================================================================
+   7. MODALS & DETAIL PANELS
+   ========================================================================== */
+.modal-content { 
+    background-color: var(--bg-surface); 
+    color: var(--text-main); 
+    border-radius: 16px; 
+    border: 1px solid var(--border-color); 
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3); 
+}
+.modal-header { border-bottom: 1px solid var(--border-color); background-color: var(--bg-surface); border-radius: 16px 16px 0 0; padding: 1.25rem 1.5rem; }
+.modal-body { background-color: var(--modal-bg); padding: 1.5rem; }
+
+.detail-panel {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02); 
+}
+.detail-label { 
+    font-size: 0.72rem; 
+    color: var(--text-muted); 
+    font-weight: 600; 
+    text-transform: uppercase; 
+    letter-spacing: 0.05em; 
+    margin-bottom: 6px; 
+}
+.detail-value { 
+    font-size: 0.95rem; 
+    color: var(--text-main); 
+    font-weight: 500; 
+    margin-bottom: 1.25rem; 
+}
+
+
+/* ==========================================================================
+   8. FORMS (Input, Select, Textarea & Search Bar)
+   ========================================================================== */
+.form-control, .form-select { 
+    border-radius: 8px; 
+    border: 1px solid var(--border-color); 
+    font-size: 0.95rem; 
+    padding: 0.55rem 0.85rem;
+    background-color: var(--input-bg) !important;
+    color: var(--text-main) !important;
+    transition: all 0.2s;
+}
+.form-control:focus, .form-select:focus { 
+    border-color: var(--accent); 
+    box-shadow: 0 0 0 3px var(--accent-soft); 
+}
+.form-control::placeholder {
+    color: var(--text-muted) !important;
+    opacity: 0.8;
+}
+.search-pill { border-radius: 50px !important; padding-left: 2.75rem !important; }
+.search-icon { position: absolute; left: 1.15rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+
+
+/* ==========================================================================
+   9. DROPDOWN MENUS (Dropdown Tema, dll)
+   ========================================================================== */
+.dropdown-menu { background-color: var(--bg-surface); border: 1px solid var(--border-color); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border-radius: 10px; padding: 0.5rem; }
+.dropdown-item { color: var(--text-main); font-size: 0.85rem; font-weight: 500; border-radius: 6px; padding: 0.4rem 0.8rem; }
+.dropdown-item:hover { background-color: var(--dark-soft); color: var(--accent); }
+
+
+/* ==========================================================================
+   10. SIDEBAR & OFFCANVAS
+   ========================================================================== */
+.offcanvas {
+    background-color: var(--bg-surface) !important;
+    color: var(--text-main) !important;
+}
+.offcanvas-start {
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 320px !important;
+    height: 100vh !important;
+    border-right: 1px solid var(--border-color) !important;
+    visibility: hidden; 
+}
+.offcanvas.show { visibility: visible; }
+
+.enterprise-sidebar {
+    background-color: var(--bg-surface);
+    color: var(--text-main);
+    width: 280px;
+    border-right: 1px solid var(--border-color);
+}
+.sidebar-brand-title {
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+}
+
+/* Kategori Menu Sidebar (Judul Seksi) */
+.sidebar-section-title {
+    color: #94a3b8 !important; 
+    font-size: 0.65rem !important; 
+    font-weight: 700 !important; 
+    letter-spacing: 0.12em !important; 
+    text-transform: uppercase !important; 
+    margin-bottom: 0.5rem !important;
+    user-select: none; 
+    pointer-events: none; 
+}
+[data-theme="dark"] .sidebar-section-title { color: #6b7280 !important; }
+
+/* Item Menu Sidebar */
+.sidebar-item {
+    color: var(--text-main);
+    font-size: 0.875rem; 
+    font-weight: 500;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    display: block; 
+    transition: all 0.2s ease;
+}
+.sidebar-item:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: var(--text-main);
+}
+[data-theme="dark"] .sidebar-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
+}
+
+/* Tombol Aksi di Sidebar (Sign In / Sign Out) */
+.sidebar-btn-action {
+    font-size: 0.85rem;
+    border-radius: 6px;
+    color: #ffffff !important;
+    background-color: #212529 !important;
+    border-color: #212529 !important;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.sidebar-btn-action:hover {
+    background-color: #343a40 !important;
+    border-color: #343a40 !important;
+    color: #ffffff !important;
+}
+
+/* Info Role & Pengaturan Lainnya di Sidebar */
+.role-text { font-size: 0.75rem; }
+.role-value { color: var(--text-main); }
+.theme-dropdown-btn {
+    background-color: var(--bg-body);
+    color: var(--text-main) !important; /* Menyesuaikan warna teks dengan tema aktif */
+    border: 1px solid var(--border-color);
+    font-size: 0.8rem;
+    font-weight: 500;
+    border-radius: 6px;
+}
+
+.theme-dropdown-btn:hover {
+    background-color: var(--dark-soft);
+    color: var(--accent);
+}
+
+
+/* ==========================================================================
+   11. OVERRIDES & UTILITIES TAMBAHAN
+   ========================================================================== */
+.text-muted { color: var(--text-muted) !important; }
+
+/* Penyesuaian tombol close (X) modal pada mode gelap */
+[data-theme="dark"] .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%) !important;
+}
+
+/* =========================================
+   FIX TABEL AGAR OTOMATIS MENGIKUTI TEMA
+   ========================================= */
+.table {
+    color: var(--text-main) !important;
+    background-color: transparent !important;
+}
+
+.table th, .table td {
+    background-color: transparent !important;
+    color: var(--text-main) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* Efek hover baris tabel yang lembut pada mode gelap/terang */
+.table-hover tbody tr:hover {
+    background-color: var(--dark-soft) !important;
+    color: var(--text-main) !important;
+}
+
+/* ==========================================================================
+   12. RESPONSIVE — MOBILE & TABLET OPTIMIZATION
+   Semua kode di bawah ini HANYA menambah, tidak menimpa kode yang sudah ada.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   12.1  LAYOUT UTAMA — konten tidak tertimpa sidebar offcanvas
+   -------------------------------------------------------------------------- */
+
+/* Padding konten di semua halaman agar tidak terlalu rapat di HP */
+@media (max-width: 767.98px) {
+    .container-fluid.px-4 {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   12.2  NAVBAR — lebih kompak di layar kecil
+   -------------------------------------------------------------------------- */
+@media (max-width: 575.98px) {
+    .navbar-custom {
+        padding: 0.6rem 1rem !important;
+    }
+    /* Sembunyikan subtitle panjang di HP kecil, judul utama tetap tampil */
+    .navbar-custom span[style*="letter-spacing"] {
+        display: none !important;
+    }
+    .navbar-custom .fw-bold.fs-6 {
+        font-size: 0.9rem !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   12.3  SIDEBAR — lebar offcanvas lebih proporsional di HP
+   -------------------------------------------------------------------------- */
+@media (max-width: 575.98px) {
+    .offcanvas-start {
+        width: 280px !important;
+    }
+    .enterprise-sidebar {
+        width: 280px !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   12.4  DASHBOARD — kartu metrik & chart
+   -------------------------------------------------------------------------- */
+
+/* Di HP kecil, 2 kartu metrik per baris */
+@media (max-width: 575.98px) {
+    .enterprise-card .fw-bold.fs-3 {
+        font-size: 1.5rem !important;
+    }
+    /* Chart tidak terlalu tinggi di HP */
+    #taskChart {
+        max-height: 200px !important;
+    }
+}
+
+/* Di tablet, pastikan tabel recent tasks bisa di-scroll horizontal */
+@media (max-width: 991.98px) {
+    .table-responsive {
+        -webkit-overflow-scrolling: touch;
+    }
+    /* Batasi lebar kolom task name agar tidak meluber */
+    .table-custom td:first-child {
+        max-width: 180px !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   12.5  TOOLBAR (Search + Tombol Aksi) — susun vertikal di HP
+   -------------------------------------------------------------------------- */
+@media (max-width: 575.98px) {
+    /* Toolbar pencarian & aksi jadi vertikal penuh */
+    .d-flex.align-items-center.flex-wrap.gap-3.mb-4 {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+    /* Tombol Impor/Hapus mengisi lebar penuh */
+    .d-flex.align-items-center.flex-wrap.gap-3.mb-4 > .d-flex.gap-2 {
+        flex-direction: column !important;
+    }
+    .d-flex.align-items-center.flex-wrap.gap-3.mb-4 > .d-flex.gap-2 .btn {
+        width: 100% !important;
+    }
+    /* Search bar full-width di HP */
+    .d-flex.align-items-center.flex-wrap.gap-3.mb-4 > div[style*="min-width"] {
+        min-width: 100% !important;
+        max-width: 100% !important;
+    }
+    /* Tombol sort/filter full-width di HP */
+    .d-flex.align-items-center.flex-wrap.gap-3.mb-4 > .btn.btn-dark.ms-auto {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   12.6  ENTERPRISE TABS — scroll horizontal yang smooth di HP
+   -------------------------------------------------------------------------- */
+@media (max-width: 767.98px) {
+    .enterprise-tabs-wrapper {
+        margin-left: -1rem;
+        margin-right: -1rem;
+        padding-left: 1rem;
+        overflow: hidden;
+    }
+    .enterprise-tabs {
+        display: flex !important;
+        gap: 1.5rem !important;
+        padding-right: 1rem;
+        padding-bottom: 2px;
+    }
+    .enterprise-tabs .filter-tab {
+        font-size: 0.82rem !important;
+        white-space: nowrap !important;
+        flex-shrink: 0;
+        padding-bottom: 0.65rem !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   12.7  KARTU TASK — 1 kolom penuh di HP, 2 di tablet
+   -------------------------------------------------------------------------- */
+@media (max-width: 575.98px) {
+    /* Kartu task: 1 per baris di HP kecil */
+    .col-md-6.col-lg-4.mb-4.task-item {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+    /* Padding dalam kartu lebih compact */
+    .task-card .card-body {
+        padding: 0.85rem !important;
+    }
+    /* Font task ID sedikit lebih kecil */
+    .task-card .card-title {
+        font-size: 0.95rem !important;
+    }
+    /* Badge lebih compact */
+    .task-card .badge {
+        font-size: 0.68rem !important;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+    /* Tablet kecil: tetap 2 kolom seperti col-md-6 */
+    .col-md-6.col-lg-4.mb-4.task-item {
+        width: 50% !important;
+        flex: 0 0 50% !important;
+        max-width: 50% !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   12.8  MODAL DETAIL TASK — kolom kiri/kanan susun vertikal di HP
+   -------------------------------------------------------------------------- */
+@media (max-width: 991.98px) {
+    /* Modal detail: gunakan hampir full width di tablet */
+    .modal-xl {
+        max-width: 95vw !important;
+    }
+    /* Col lg-5 dan lg-7 susun vertikal di bawah 992px */
+    .modal-body .col-lg-5,
+    .modal-body .col-lg-7 {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+    /* Panel kiri tidak perlu tinggi penuh saat vertikal */
+    .modal-body .col-lg-5 .detail-panel.h-100 {
+        height: auto !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    /* Modal lebih lebar di HP, hilangkan margin samping */
+    .modal-xl,
+    .modal-dialog {
+        margin: 0.5rem !important;
+        max-width: calc(100vw - 1rem) !important;
+    }
+    .modal-content {
+        border-radius: 12px !important;
+    }
+    /* Padding modal body lebih compact */
+    .modal-body {
+        padding: 1rem !important;
+    }
+    .modal-header {
+        padding: 1rem !important;
+    }
+    /* Kolom form dalam modal: 1 kolom penuh */
+    .modal-body .row.g-3 > [class*="col-sm-6"] {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+    /* Iframe media viewer tidak terlalu tinggi di HP */
+    .modal-body iframe {
+        height: 220px !important;
+        min-height: 220px !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   12.9  QR MANAGEMENT — grid dokumen lebih rapat di HP
+   -------------------------------------------------------------------------- */
+@media (max-width: 575.98px) {
+    /* Grid QR: 2 kolom di HP kecil (override col-6 sudah benar, ini untuk col-xl-2) */
+    .col-6.col-md-4.col-lg-3.col-xl-2 {
+        width: 50% !important;
+        flex: 0 0 50% !important;
+        max-width: 50% !important;
+    }
+    /* Thumbnail QR card lebih pendek di HP */
+    .card .d-flex.flex-column.justify-content-center[style*="height: 140px"] {
+        height: 110px !important;
+    }
+}
+
+/* Modal PDF viewer full-screen di HP */
+@media (max-width: 767.98px) {
+    #pdfViewerModal .modal-dialog {
+        margin: 0 !important;
+        max-width: 100vw !important;
+        height: 100vh !important;
+    }
+    #pdfViewerModal .modal-content {
+        height: 100vh !important;
+        border-radius: 0 !important;
+    }
+    #pdfViewerModal .modal-body {
+        height: calc(100vh - 60px) !important;
+    }
+    #pdfViewerModal iframe {
+        min-height: calc(100vh - 120px) !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   12.10  USER MANAGEMENT — tabel scroll horizontal di HP
+   -------------------------------------------------------------------------- */
+@media (max-width: 767.98px) {
+    /* Tabel user: sembunyikan kolom yang tidak terlalu penting di HP */
+    .table th:nth-child(3),
+    .table td:nth-child(3),
+    .table th:nth-child(4),
+    .table td:nth-child(4) {
+        display: none !important;
+    }
+    /* Tabel selalu bisa di-scroll horizontal */
+    .card .table-responsive {
+        overflow-x: auto !important;
+    }
+    /* Select role lebih kecil di HP */
+    .table select.form-select-sm {
+        width: 120px !important;
+        font-size: 0.78rem !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   12.11  PROFILE PAGE — kartu profil full-width di HP
+   -------------------------------------------------------------------------- */
+@media (max-width: 767.98px) {
+    /* Foto profil sedikit lebih kecil di HP */
+    .rounded-circle[style*="width: 120px"] {
+        width: 90px !important;
+        height: 90px !important;
+        font-size: 2.5rem !important;
+    }
+    /* Judul profil lebih compact */
+    .card-body.p-5 {
+        padding: 1.5rem !important;
+    }
+    /* Tombol edit profil stack vertikal */
+    .card-body .btn + .btn {
+        margin-top: 0.5rem;
+        margin-left: 0 !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   12.12  FAQ & SUPPORT — padding lebih kecil di HP
+   -------------------------------------------------------------------------- */
+@media (max-width: 767.98px) {
+    /* Kartu FAQ tidak perlu padding besar */
+    .card.shadow-sm.border.p-4 {
+        padding: 1rem !important;
+    }
+    /* Form support textarea full width */
+    .card textarea {
+        font-size: 0.9rem !important;
+    }
+    /* Header support card stack vertikal */
+    .d-flex.align-items-center.gap-3.mb-4.pb-3 {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.75rem !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   12.13  SUPPORT TICKETS TABLE — compact di HP
+   -------------------------------------------------------------------------- */
+@media (max-width: 767.98px) {
+    /* Kolom waktu sembunyikan di HP */
+    .table th:last-child,
+    .table td:last-child {
+        display: none !important;
+    }
+    /* Pesan ticket: batasi tinggi agar tabel tidak terlalu panjang */
+    .table td[style*="white-space: pre-wrap"] {
+        max-width: 200px !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   12.14  ACCORDION FAQ — teks lebih kecil di HP
+   -------------------------------------------------------------------------- */
+@media (max-width: 575.98px) {
+    .accordion-button {
+        font-size: 0.88rem !important;
+        padding: 0.85rem 0.75rem !important;
+    }
+    .accordion-body {
+        font-size: 0.83rem !important;
+        padding: 0.75rem !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   12.15  FILTER DRAWER (Offcanvas Filter) — full-width di HP kecil
+   -------------------------------------------------------------------------- */
+@media (max-width: 575.98px) {
+    #filterDrawer {
+        width: 100vw !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   12.16  TOMBOL SCROLL-TO-TOP — posisi lebih kecil di HP
+   -------------------------------------------------------------------------- */
+@media (max-width: 575.98px) {
+    #scrollToTopBtn {
+        width: 40px !important;
+        height: 40px !important;
+        margin: 0.75rem !important;
+        font-size: 0.9rem !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   12.17  LOGIN MODAL — full-width di HP
+   -------------------------------------------------------------------------- */
+@media (max-width: 575.98px) {
+    #loginModal .modal-dialog {
+        margin: 1rem !important;
+        max-width: calc(100vw - 2rem) !important;
+    }
+    #loginModal .modal-body {
+        padding: 1.25rem !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   12.18  DASHBOARD HEADER ENTERPRISE CARD — stack vertikal di tablet
+   -------------------------------------------------------------------------- */
+@media (max-width: 767.98px) {
+    /* Header overview card jadi 1 kolom */
+    .enterprise-card .row.align-items-center > [class*="col-lg"] {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        text-align: left !important;
+    }
+    /* Tombol Database Synchronized pindah ke bawah teks */
+    .enterprise-card .text-lg-end {
+        text-align: left !important;
+        margin-top: 0.75rem !important;
+    }
+    /* Chart dan tabel recent activity susun vertikal */
+    .enterprise-card ~ .row > [class*="col-lg"] {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    /* Padding header dashboard lebih kecil */
+    .enterprise-card.p-4 {
+        padding: 1rem !important;
+    }
+    /* Judul dashboard lebih compact */
+    .enterprise-card h1.fs-4 {
+        font-size: 1.1rem !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   12.19  METRIC CARDS — 2 kolom di HP (override Bootstrap col-xl)
+   -------------------------------------------------------------------------- */
+@media (max-width: 575.98px) {
+    /* Paksa 2 kolom dari 5 metrik di HP kecil */
+    .col-xl.col-md-4.col-sm-6 {
+        width: 50% !important;
+        flex: 0 0 50% !important;
+        max-width: 50% !important;
+    }
+    /* Metrik ke-5 (Skipped) full-width */
+    .col-xl.col-md-6.col-sm-12 {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   12.20  USER MANAGEMENT — modal tambah akun full-width di HP
+   -------------------------------------------------------------------------- */
+@media (max-width: 575.98px) {
+    #addUserModal .modal-dialog {
+        margin: 0.75rem !important;
+        max-width: calc(100vw - 1.5rem) !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   12.21  GLOBAL TOUCH IMPROVEMENTS — UX lebih baik di layar sentuh
+   -------------------------------------------------------------------------- */
+
+/* Semua tombol dan link minimal 44px tingginya untuk kemudahan tap */
+@media (max-width: 767.98px) {
+    .btn {
+        min-height: 40px;
+    }
+    .btn-sm {
+        min-height: 36px;
+    }
+    /* Form control lebih besar untuk sentuhan */
+    .form-control,
+    .form-select {
+        min-height: 42px !important;
+        font-size: 1rem !important; /* Cegah iOS auto-zoom */
+    }
+    /* Pilih/select tidak terlalu kecil */
+    .form-select-sm {
+        min-height: 36px !important;
+        font-size: 0.9rem !important;
+    }
+    /* Accordion lebih mudah di-tap */
+    .accordion-button {
+        min-height: 52px;
+    }
+    /* Item dropdown sidebar lebih mudah di-tap */
+    .sidebar-item {
+        padding: 0.65rem 1rem !important;
+        min-height: 42px;
+        display: flex !important;
+        align-items: center;
+    }
+    /* Flash alert lebih compact */
+    .alert {
+        font-size: 0.88rem !important;
+        padding: 0.65rem 1rem !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   12.22  HEADING & FONT SIZE SCALING di HP
+   -------------------------------------------------------------------------- */
+@media (max-width: 575.98px) {
+    h3.fw-bold { font-size: 1.2rem !important; }
+    h4.fw-bold { font-size: 1.05rem !important; }
+    h5.fw-bold { font-size: 1rem !important; }
+    .small { font-size: 0.82rem !important; }
+}
+
+/* --------------------------------------------------------------------------
+   12.23  SAFE AREA — support iPhone notch & home indicator
+   -------------------------------------------------------------------------- */
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+    }
+    #scrollToTopBtn {
+        bottom: max(1rem, env(safe-area-inset-bottom)) !important;
+    }
+}
+
+
+/* Styling Custom Autocomplete Dropdown */
+.project-suggestion-item:hover {
+    background-color: var(--bs-tertiary-bg, rgba(100, 100, 100, 0.15)) !important;
+}
+
+.task-count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 7px;
+    padding: 0 6px;
+    min-width: 20px;
+    height: 18px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    /* Style Default (Light Mode) */
+    background-color: rgba(0, 0, 0, 0.06);
+    color: #475569;
+}
+
+/* Style Otomatis saat Dark Mode Aktif */
+[data-theme="dark"] .task-count-badge {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+}
+
+/* --- TAMPILAN TAB SAAT TIDAK AKTIF (Default) --- */
+.filter-tab {
+    font-weight: 500;
+    color: var(--text-muted, #6c757d);
+    transition: all 0.2s ease;
+}
+
+/* --- TAMPILKAN LEBIH MENONJOL SAAT TAB TERPILIH (ACTIVE) --- */
+.filter-tab.active {
+    font-weight: 700 !important; /* Teks lebih tebal/bold */
+    color: var(--text-main, #111827) !important; /* Teks lebih pekat/kontras */
+}
+
+/* Penyesuaian Badge khusus di dalam Tab yang Sedang Aktif */
+.filter-tab.active .task-count-badge {
+    background-color: rgba(13, 110, 253, 0.12) !important; /* Sedikit sentuhan warna aksen/primer yang lembut */
+    color: #00132e !important; /* Angka ikut menonjol */
+    font-weight: 700;
+}
+
+/* Penyesuaian Khusus untuk Dark Mode pada Tab Aktif */
+[data-theme="dark"] .filter-tab.active {
+    color: #f8fafc !important; /* Putih terang agar sangat kontras */
+}
+
+[data-theme="dark"] .filter-tab.active .task-count-badge {
+    background-color: rgba(59, 130, 246, 0.2) !important;
+    color: #60a5fa !important; /* Biru terang yang elegan di dark mode */
+}

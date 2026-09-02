@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <script>
+    (function() {
+        const saved = localStorage.getItem('user_theme_preference') || 'system';
+        let theme = saved;
+        if (saved === 'system') {
+            theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+    })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Management - QA System</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- SIDEBAR & NAVBAR -->
+    {% include 'sidebar.html' %}
+    {% include 'navbar.html' %}
+
+    <div class="container-fluid px-4 pb-5 pt-4">
+        
+        <!-- PESAN FLASH -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show border py-3 px-4 mb-4 shadow-xs d-flex align-items-center" role="alert" style="background-color: var(--bg-surface); color: var(--text-main); border-radius: 10px; border-color: var(--border-color) !important; font-size: 0.9rem;">
+                        <span class="fw-medium">{{ message }}</span>
+                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- HEADER SECTION & CONTROLS -->
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <!-- Sisi Kiri: Tombol Upload -->
+            <div class="d-flex align-items-center gap-2">
+                {% if role in ['Developer', 'Quality Control'] %}
+                <button class="btn btn-primary btn-sm px-3 py-2 fw-semibold" data-bs-toggle="modal" data-bs-target="#uploadQrModal" style="border-radius: 8px;">
+                    + Upload PDF File
+                </button>
+                {% endif %}
+            </div>
+            
+            <!-- Sisi Kanan: Tombol Pemicu Offcanvas Filter -->
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-dark btn-sm d-flex align-items-center gap-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterDrawer" style="background-color: #1f2937; border-color: #374151; border-radius: 8px;">
+                    <!-- Ikon Filter SVG -->
+                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
+                    </svg>
+                    Filter & Sort 
+                    <span id="activeFilterBadge" class="badge bg-primary rounded-circle d-none ms-1" style="font-size: 0.6rem;">!</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- GRID DOKUMEN -->
+        <div class="row g-4" id="qrCardsContainer">
+            {% for qr in files %}
+            <div class="col-6 col-md-4 col-lg-3 col-xl-2 qr-card-item" data-subtitle="{{ qr.name }}" data-scene="{{ qr.page_number }}">
+                <div class="card border-0 shadow-xs h-100" style="background-color: var(--bg-surface); border-radius: 12px; border: 1px solid var(--border-color) !important; overflow: hidden;">
+                    
+                    <div class="d-flex flex-column justify-content-center align-items-center p-3" style="height: 140px; background-color: var(--bg-body); border-bottom: 1px solid var(--border-color);">
+                        <svg width="48" height="48" fill="none" stroke="#ef4444" stroke-width="1.5" viewBox="0 0 24 24" class="mb-2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                        <span class="badge bg-danger" style="font-size: 0.65rem; letter-spacing: 0.05em;">PDF DOC</span>
+                    </div>
+                    
+                    <div class="card-body p-3 d-flex flex-column gap-2">
+                        <!-- Judul utama Scene N -->
+                        {% if qr.page_number %}
+                        <h6 class="text-truncate mb-1 text-center" style="color: var(--text-main); font-size: 0.8rem; font-weight: 600;">
+                            Scene {{ qr.page_number }}
+                        </h6>
+                        {% endif %}
+                        
+                        <!-- Sub-judul nama station warna putih -->
+                        <p class="text-truncate text-center mb-1" style="font-size: 0.65rem; color: #ffffff;" title="{{ qr.name }}">
+                            {{ qr.name }}
+                        </p>
+
+                        {% if qr.uploaded_by %}
+                        <p class="text-muted text-center mb-1" style="font-size: 0.65rem;">by {{ qr.uploaded_by }}</p>
+                        {% endif %}
+                        
+                        <!-- TOMBOL PEMICU POPUP PDF -->
+                        <button type="button" 
+                                data-pdf-url="{{ url_for('static', filename='uploads/qr_codes/' ~ qr.pdf_filename) }}"
+                                data-pdf-name="Scene {{ qr.page_number }} - {{ qr.name }}"
+                                onclick="openPdfViewer(this.getAttribute('data-pdf-url'), this.getAttribute('data-pdf-name'))" 
+                                class="btn btn-outline-primary btn-sm w-100 py-1 fw-medium" 
+                                style="font-size: 0.75rem; border-radius: 6px;">
+                            Open Document
+                        </button>
+                        
+                        {% if role in ['Developer', 'Quality Control'] %}
+                        <form action="{{ url_for('qr.delete_qr', qr_id=qr.id) }}" method="POST" class="mt-auto" onsubmit="return confirm('Sure you want to delete this document for good?');">
+                            <button type="submit" class="btn btn-outline-danger btn-sm w-100 py-1" style="font-size: 0.75rem; border-radius: 6px;">Delete</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-12" id="emptyStateCol">
+                <div class="text-center py-5 rounded-3 shadow-xs" style="background-color: var(--bg-surface); border: 1px dashed var(--border-color);">
+                    <p class="text-muted fw-medium mb-0">No PDF documents uploaded to the system yet.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- MODAL PENAMPIL PDF -->
+    <div class="modal fade" id="pdfViewerModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered" style="height: 90vh;">
+            <div class="modal-content border-0 shadow-lg" style="background-color: var(--bg-surface); border-radius: 12px; height: 100%;">
+                
+                <div class="modal-header border-bottom py-3" style="border-color: var(--border-color) !important;">
+                    <div class="d-flex align-items-center gap-2 text-truncate">
+                        <svg width="20" height="20" fill="none" stroke="#ef4444" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                        <h6 class="modal-title fw-bold mb-0 text-truncate" id="pdfFileName" style="color: var(--text-main); max-width: 250px;">Loading Document...</h6>
+                    </div>
+                    
+                    <div class="d-flex align-items-center gap-2 ms-auto">
+                        <a href="#" id="btnPdfFullscreen" target="_blank" class="btn btn-sm btn-outline-secondary py-1 px-2 d-flex align-items-center gap-1" style="font-size: 0.75rem; border-radius: 6px;" title="Open in a new tab">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                            <span class="d-none d-sm-inline">Fullscreen</span>
+                        </a>
+                        <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close" style="filter: var(--btn-close-filter, none);"></button>
+                    </div>
+                </div>
+                
+                <div class="modal-body p-0 bg-light position-relative" style="height: calc(100% - 60px); overflow-y: auto; -webkit-overflow-scrolling: touch; border-radius: 0 0 12px 12px;">
+                    <iframe id="pdfIframe" src="" width="100%" height="100%" style="border: none;"></iframe>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL UNGGAH PDF -->
+    {% if role in ['Developer', 'Quality Control'] %}
+    <div class="modal fade" id="uploadQrModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+            <div class="modal-content border-0 shadow" style="background-color: var(--bg-surface); border-radius: 12px;">
+                <div class="modal-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0" style="color: var(--text-main);">Upload QR Document</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: var(--btn-close-filter, none);"></button>
+                    </div>
+                    <p class="text-muted small mb-4">Upload a <strong>.PDF</strong> file and the system will automatically split and name each page based on the station code and scene number.</p>
+                    <form action="{{ url_for('qr.upload_qr') }}" method="POST" enctype="multipart/form-data">
+                        <div class="mb-4">
+                            <input type="file" name="qr_file" class="form-control bg-light border-0 py-2" required style="border-radius: 6px; font-size: 0.9rem;" accept=".pdf">
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary py-2 fw-semibold" style="border-radius: 6px; font-size: 0.9rem;">Start Upload</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- DRAWER FILTER & SORT -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="filterDrawer" style="background-color: var(--bg-surface); color: var(--text-main);">
+        <div class="offcanvas-header border-bottom" style="border-color: var(--border-color) !important;">
+            <h6 class="offcanvas-title fw-bold" style="color: var(--text-main);">Filter & Sort</h6>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" style="filter: var(--btn-close-filter, none);"></button>
+        </div>
+        <div class="offcanvas-body p-4">
+            
+            <!-- BAGIAN SORT (PENGURUTAN) -->
+            <h6 class="fw-bold mb-3 small text-uppercase text-muted">Sort By</h6>
+            <div class="row g-2 mb-4">
+                <div class="col-12 mb-2">
+                    <select id="sortField" class="form-select" style="background-color: var(--bg-body); color: var(--text-main); border-color: var(--border-color);" onchange="filterAndSortCards();">
+                        <option value="scene">Scene Number</option>
+                        <option value="station">Station Name (Sub-title)</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <select id="sortOrder" class="form-select" style="background-color: var(--bg-body); color: var(--text-main); border-color: var(--border-color);" onchange="filterAndSortCards();">
+                        <option value="asc">Ascending (A-Z / Lowest to Highest)</option>
+                        <option value="desc">Descending (Z-A / Highest to Lowest)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- BAGIAN FILTER (PENYARINGAN) -->
+            <h6 class="fw-bold mb-3 small text-uppercase text-muted border-top pt-4" style="border-color: var(--border-color) !important;">Filter Data</h6>
+            <div class="mb-4">
+                <label class="form-label detail-label small fw-semibold" style="color: var(--text-main);">By Station</label>
+                <select id="stationFilter" class="form-select" style="background-color: var(--bg-body); color: var(--text-main); border-color: var(--border-color);" onchange="filterAndSortCards();">
+                    <option value="All">Show All Stations</option>
+                    {% set unique_names = files | map(attribute='name') | unique | list %}
+                    {% for name in unique_names %}
+                    <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <button type="button" class="btn btn-warning w-100 py-2 mt-3 fw-semibold" data-bs-dismiss="offcanvas" onclick="filterAndSortCards();" style="background-color: #eab308; border: none; color: #000;">Apply Settings</button>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS & App Script -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}?v=2"></script>
+    
+    
+</body>
+</html>

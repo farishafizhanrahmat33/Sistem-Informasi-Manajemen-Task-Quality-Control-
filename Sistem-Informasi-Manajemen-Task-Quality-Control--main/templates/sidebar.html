@@ -1,0 +1,78 @@
+<!-- templates/sidebar.html -->
+<div class="offcanvas offcanvas-start enterprise-sidebar" tabindex="-1" id="sidebarMenu">
+    <div class="offcanvas-header p-4 pb-2">
+        <h5 class="offcanvas-title fw-bold sidebar-brand-title">MENU CONTROLS</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    
+    <div class="offcanvas-body p-0 d-flex flex-column justify-content-between">
+        <div class="pt-3">
+            
+            <!-- SECTION: OPERATIONS -->
+            <div class="mb-3">
+                <div class="sidebar-section-title px-4">Operations</div>
+                <div class="d-flex flex-column gap-1 px-2 mt-2">
+                    <a href="{{ url_for('main.dashboard') }}" class="sidebar-item">Dashboard</a>
+                    <a href="{{ url_for('task.task_list') }}" class="sidebar-item">Task Management</a>
+                    <a href="{{ url_for('qr.qr_codes_page') }}" class="sidebar-item">QR Management</a>
+                </div>
+            </div>
+
+            <!-- SECTION: ADMINISTRATION (Khusus Developer) -->
+            {% if session.get('role') == 'Developer' or role == 'Developer' %}
+            <div class="mb-3">
+                <!-- PASTIKAN MENGGUNAKAN CLASS INI: sidebar-section-pill -->
+                <div class="sidebar-section-title px-4">Administration</div>
+                
+                <div class="d-flex flex-column gap-1 px-2 mt-2">
+                    <a href="{{ url_for('main.user_management') }}" class="sidebar-item">User Management</a>
+                    <a href="{{ url_for('main.view_tickets') }}" class="sidebar-item">Support Tickets</a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- SECTION: UTILITIES -->
+            <div class="mb-4">
+                <div class="sidebar-section-title px-4">System & Account</div>
+                <div class="d-flex flex-column gap-1 px-2">
+                    <a href="{{ url_for('main.support') }}" class="sidebar-item">Customer Service</a>
+                    <a href="{{ url_for('main.faq') }}" class="sidebar-item">FAQ & Guidance</a>
+                    <a href="{{ url_for('main.profile') }}" class="sidebar-item">Profile Settings</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER: AUTHENTICATION & THEME -->
+        <div class="px-3 pb-4 border-top pt-3 mt-auto">
+            
+            <div class="mb-3">
+                {% if role == 'Public' or role == 'Publik' %}
+                    <button type="button" class="btn btn-dark w-100 py-2 fw-semibold sidebar-btn-action" data-bs-dismiss="offcanvas" data-bs-toggle="modal" data-bs-target="#loginModal">
+                        Sign In
+                    </button>
+                {% else %}
+                    <div class="d-flex flex-column gap-2">
+                        <div class="text-muted small px-1 role-text">
+                            <strong class="role-value">{{ role }}</strong>
+                        </div>
+                        <a href="{{ url_for('main.logout') }}" class="btn btn-outline-danger w-100 py-2 fw-medium sidebar-btn-action">
+                            Sign Out
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="dropdown">
+                <!-- Hapus 'btn-light' dari class di bawah ini -->
+                <button class="btn w-100 text-start d-flex align-items-center justify-content-between py-2 px-3 dropdown-toggle shadow-none theme-dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Interface Theme
+                </button>
+                <ul class="dropdown-menu w-100 shadow-sm border-0 py-1 theme-dropdown-menu">
+                    <li><a class="dropdown-item py-2 px-3 small" href="javascript:void(0);" onclick="setTheme('light')">Light</a></li>
+                    <li><a class="dropdown-item py-2 px-3 small" href="javascript:void(0);" onclick="setTheme('dark')">Dark</a></li>
+                    <li><a class="dropdown-item py-2 px-3 small" href="javascript:void(0);" onclick="setTheme('system')">System</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

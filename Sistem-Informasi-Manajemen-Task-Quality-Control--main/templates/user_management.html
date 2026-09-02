@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <script>
+    (function() {
+        const saved = localStorage.getItem('user_theme_preference') || 'system';
+        let theme = saved;
+        if (saved === 'system') {
+            theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+    })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - QA System</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- SIDEBAR & NAVBAR -->
+    {% include 'sidebar.html' %}
+    {% include 'navbar.html' %}
+
+    <div class="container-fluid px-4 pb-5 pt-4">
+        
+        <!-- PESAN FLASH (Soft Minimalist SaaS Style) -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show border py-3 px-4 mb-4 shadow-xs d-flex align-items-center" role="alert" style="background-color: var(--bg-surface); color: var(--text-main); border-radius: 10px; border-color: var(--border-color) !important; font-size: 0.9rem;">
+                        <span class="fw-medium">{{ message }}</span>
+                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- HEADER SECTION -->
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <div>
+                <h4 class="fw-bold mb-1" style="color: var(--text-main); letter-spacing: -0.02em;">User Management</h4>
+                <p class="text-muted small mb-0">Manage accounts, system access, and user permissions all in one place.</p>
+            </div>
+            <button class="btn btn-primary btn-sm px-3 py-2 fw-semibold" data-bs-toggle="modal" data-bs-target="#addUserModal" style="border-radius: 8px;">
+                + Add New Account
+            </button>
+        </div>
+
+        <!-- TABEL USER (Enterprise Clean Card) -->
+        <div class="card border-0 shadow-xs" style="background-color: var(--bg-surface); border-radius: 12px; border: 1px solid var(--border-color) !important; overflow: hidden;">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0" style="color: var(--text-main); font-size: 0.9rem;">
+                    <thead style="background-color: var(--bg-body); border-bottom: 1px solid var(--border-color);">
+                        <tr>
+                            <th class="py-3 px-4 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">No</th>
+                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Username</th>
+                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Full Name</th>
+                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Email</th>
+                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Role / Access Level</th>
+                            <th class="py-3 text-end px-4 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in users %}
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td class="px-4 text-muted fw-medium">{{ loop.index }}</td>
+                            <td class="fw-semibold text-main">{{ u.username }}</td>
+                            <td class="text-muted">{{ u.nama_lengkap or '-' }}</td>
+                            <td class="text-muted">{{ u.email or '-' }}</td>
+                            <td>
+                                <!-- Form Role Inline yang Lebih Rapi & Profesional -->
+                                <form action="{{ url_for('main.update_user_role', user_id=u.id) }}" method="POST" class="d-flex align-items-center gap-2">
+                                    <select name="new_role" class="form-select form-select-sm bg-light border-0 py-1 px-2" style="width: 150px; font-size: 0.85rem; border-radius: 6px;">
+                                        <option value="Developer" {% if u.role == 'Developer' %}selected{% endif %}>Developer</option>
+                                        <option value="Supervisor" {% if u.role == 'Supervisor' %}selected{% endif %}>Supervisor</option>
+                                        <option value="Quality Control" {% if u.role == 'Quality Control' %}selected{% endif %}>Quality Control</option>
+                                        <option value="Public" {% if u.role == 'Public' %}selected{% endif %}>Public</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-dark btn-sm py-1 px-3 fw-medium" style="font-size: 0.75rem; border-radius: 6px;">Update</button>
+                                </form>
+                            </td>
+                            <td class="text-end px-4">
+                                {% if u.id != session.get('user_id') %}
+                                <form action="{{ url_for('main.delete_user', user_id=u.id) }}" method="POST" class="d-inline" onsubmit="return confirm('Sure you want to delete the account {{ u.username }}?');">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm px-3 py-1" style="font-size: 0.8rem; border-radius: 6px;">Delete</button>
+                                </form>
+                                {% else %}
+                                <span class="small text-muted fst-italic px-2">Your account</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">No user data in the system yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL TAMBAH AKUN (Enterprise Minimalist Style) -->
+    <div class="modal fade" id="addUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 450px;">
+            <div class="modal-content border-0 shadow" style="background-color: var(--bg-surface); border-radius: 12px;">
+                <div class="modal-body p-4">
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0" style="color: var(--text-main);">Add New Account</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: var(--btn-close-filter, none);"></button>
+                    </div>
+                    <p class="text-muted small mb-4">Create a new login and set their access level.</p>
+
+                    <form action="{{ url_for('main.add_user') }}" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-muted mb-1">Username</label>
+                            <input type="text" class="form-control bg-light border-0 py-2" name="username" placeholder="name@company" required style="border-radius: 6px; font-size: 0.9rem;">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-muted mb-1">Starting Password</label>
+                            <input type="password" class="form-control bg-light border-0 py-2" name="password" placeholder="••••••••" required style="border-radius: 6px; font-size: 0.9rem;">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-muted mb-1">Full Name</label>
+                            <input type="text" class="form-control bg-light border-0 py-2" name="nama_lengkap" placeholder="Staff's full name..." style="border-radius: 6px; font-size: 0.9rem;">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-muted mb-1">Email Address</label>
+                            <input type="email" class="form-control bg-light border-0 py-2" name="email" placeholder="name@company.com" style="border-radius: 6px; font-size: 0.9rem;">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label small fw-semibold text-muted mb-1">Access Level (Role)</label>
+                            <select class="form-select bg-light border-0 py-2" name="role" required style="border-radius: 6px; font-size: 0.9rem;">
+                                <option value="Quality Control">Quality Control</option>
+                                <option value="Supervisor">Supervisor</option>
+                                <option value="Public">Public</option>
+                                <option value="Developer">Developer</option>
+                            </select>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary py-2 fw-semibold" style="border-radius: 6px; font-size: 0.9rem;">Save Account</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS & App Script -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}?v=2"></script>
+</body>
+</html>

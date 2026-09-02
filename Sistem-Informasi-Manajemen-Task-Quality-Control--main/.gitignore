@@ -1,0 +1,12 @@
+# Lingkungan
+.env
+__pycache__/
+*.pyc
+venv/
+instance/
+
+# Database (opsional, jika ingin database lokal tidak terupload)
+database.db
+
+# Log
+*.log

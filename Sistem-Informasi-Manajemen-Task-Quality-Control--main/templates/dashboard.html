@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <script>
+    (function() {
+        const saved = localStorage.getItem('user_theme_preference') || 'system';
+        let theme = saved;
+        if (saved === 'system') {
+            theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+    })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Quality Control System</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body, #f4f6f9);
+        }
+        .enterprise-card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            transition: box-shadow 0.2s ease;
+        }
+        .enterprise-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .metric-indicator {
+            width: 4px;
+            height: 32px;
+            border-radius: 4px;
+        }
+        .table-custom th {
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6c757d;
+            background-color: transparent !important;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .table-custom td {
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <!-- Ambil pesan flash cukup SATU kali di sini -->
+    {% set danger_messages = get_flashed_messages(category_filter=['danger']) %}
+
+    {% include 'sidebar.html' %}
+
+    <!-- Top Navbar -->
+    {% include 'navbar.html' %}
+
+    <!-- Hidden Data Attribute for Chart -->
+    <div id="chart-data" 
+         data-need="{{ metrics.need }}" 
+         data-done="{{ metrics.done }}" 
+         data-rev="{{ metrics.rev }}" 
+         data-ready="{{ metrics.ready }}" 
+         data-skip="{{ metrics.skip }}" 
+         style="display: none;">
+    </div>
+
+    <div class="container-fluid px-4 py-4" style="max-width: 1400px;">
+        
+        <!-- Header Section -->
+        <div class="enterprise-card p-4 mb-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-lg-8">
+                    <span class="text-uppercase fw-bold text-primary mb-1 d-block" style="font-size: 0.7rem; letter-spacing: 0.08em;">Operational Overview</span>
+                    <h1 class="fw-bold fs-4 mb-1" style="color: var(--text-main);">Quality Control Dashboard</h1>
+                    <p class="text-muted mb-0 small">Monitoring real-time sample verification metrics, diagnostic revisions, and process readiness status.</p>
+                </div>
+                <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                    <div class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded border" style="background-color: var(--bg-body); border-color: var(--border-color);">
+                        <span class="rounded-circle bg-success" style="width: 8px; height: 8px; display: inline-block;"></span>
+                        <span class="small fw-medium text-muted" style="font-size: 0.8rem;">Database Synchronized</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="row g-3 mb-4">
+            
+            <!-- Need Sample -->
+            <div class="col-xl col-md-4 col-sm-6">
+                <div class="enterprise-card p-3 h-100">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="text-muted fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">Need Sample</span>
+                        <div class="metric-indicator bg-warning"></div>
+                    </div>
+                    <h3 class="fw-bold fs-3 mb-1" style="color: var(--text-main);">{{ metrics.need }}</h3>
+                    <span class="text-muted" style="font-size: 0.75rem;">Awaiting sample intake</span>
+                </div>
+            </div>
+
+            <!-- Sample Done -->
+            <div class="col-xl col-md-4 col-sm-6">
+                <div class="enterprise-card p-3 h-100">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="text-muted fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">Sample Done</span>
+                        <div class="metric-indicator bg-info"></div>
+                    </div>
+                    <h3 class="fw-bold fs-3 mb-1" style="color: var(--text-main);">{{ metrics.done }}</h3>
+                    <span class="text-muted" style="font-size: 0.75rem;">Inspection completed</span>
+                </div>
+            </div>
+
+            <!-- Revision -->
+            <div class="col-xl col-md-4 col-sm-6">
+                <div class="enterprise-card p-3 h-100">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="text-muted fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">Revision</span>
+                        <div class="metric-indicator bg-danger"></div>
+                    </div>
+                    <h3 class="fw-bold fs-3 mb-1" style="color: var(--text-main);">{{ metrics.rev }}</h3>
+                    <span class="text-muted" style="font-size: 0.75rem;">Requires correction</span>
+                </div>
+            </div>
+
+            <!-- Ready -->
+            <div class="col-xl col-md-6 col-sm-6">
+                <div class="enterprise-card p-3 h-100">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="text-muted fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">Ready</span>
+                        <div class="metric-indicator bg-success"></div>
+                    </div>
+                    <h3 class="fw-bold fs-3 mb-1" style="color: var(--text-main);">{{ metrics.ready }}</h3>
+                    <span class="text-muted" style="font-size: 0.75rem;">Passed verification</span>
+                </div>
+            </div>
+
+            <!-- Skipped -->
+            <div class="col-xl col-md-6 col-sm-12">
+                <div class="enterprise-card p-3 h-100">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="text-muted fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">Skipped</span>
+                        <div class="metric-indicator bg-secondary"></div>
+                    </div>
+                    <h3 class="fw-bold fs-3 mb-1" style="color: var(--text-main);">{{ metrics.skip }}</h3>
+                    <span class="text-muted" style="font-size: 0.75rem;">Bypassed cycle</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Analytics & Recent Activity Section -->
+        <div class="row g-4">
+            
+            <!-- Chart Container -->
+            <div class="col-lg-5">
+                <div class="enterprise-card p-4 h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="fw-semibold fs-6 mb-0" style="color: var(--text-main);">Status Distribution</h2>
+                        <span class="text-muted" style="font-size: 0.75rem;">Live Analytics</span>
+                    </div>
+                    <div class="d-flex justify-content-center align-items-center" style="height: 250px;">
+                        <canvas id="taskChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Tasks Table Container -->
+            <div class="col-lg-7">
+                <div class="enterprise-card p-4 h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="fw-semibold fs-6 mb-0" style="color: var(--text-main);">Recent Task Activity</h2>
+                        <span class="text-muted" style="font-size: 0.75rem;">Showing latest 5 entries</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-custom align-middle mb-0" style="color: var(--text-main);">
+                            <thead>
+                                <tr>
+                                    <th class="py-2 px-3">Task Designation</th>
+                                    <th class="py-2 text-end px-3">QC Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if recent_tasks %}
+                                    {% for t in recent_tasks %}
+                                    <tr>
+                                        <td class="px-3 py-3 fw-medium text-truncate" style="max-width: 280px;">
+                                            {{ t.task_name }}
+                                        </td>
+                                        <td class="text-end px-3 py-3">
+                                            <span class="badge 
+                                                {% if t.qc_category == 'Ready' %} bg-success bg-opacity-10 text-success 
+                                                {% elif t.qc_category == 'Revision' %} bg-danger bg-opacity-10 text-danger 
+                                                {% elif t.qc_category == 'Need Sample' %} bg-warning bg-opacity-10 text-warning 
+                                                {% elif t.qc_category == 'Sample Done' %} bg-info bg-opacity-10 text-info 
+                                                {% else %} bg-secondary bg-opacity-10 text-secondary {% endif %} px-2 py-1 fw-semibold" style="font-size: 0.7rem; letter-spacing: 0.03em;">
+                                                {{ t.qc_category }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="2" class="text-center py-5 text-muted small">No task records found in the database.</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    {% include 'login_modal.html' %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}?v=2"></script>
+
+    <!-- Chart Configuration -->
+    <script>
+        const el = document.getElementById('chart-data');
+        const dataMetrics = [
+            parseInt(el.dataset.need),
+            parseInt(el.dataset.done),
+            parseInt(el.dataset.rev),
+            parseInt(el.dataset.ready),
+            parseInt(el.dataset.skip)
+        ];
+
+        const ctx = document.getElementById('taskChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Need Sample', 'Sample Done', 'Revision', 'Ready', 'Skipped'],
+                datasets: [{
+                    data: dataMetrics,
+                    backgroundColor: ['#ffc107', '#0dcaf0', '#dc3545', '#198754', '#6c757d'],
+                    borderWidth: 2,
+                    borderColor: getComputedStyle(document.documentElement).getPropertyValue('--bg-surface').trim() || '#ffffff',
+                    hoverOffset: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 8,
+                            padding: 16,
+                            font: { family: 'Inter', size: 11, weight: '500' },
+                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-main').trim() || '#333'
+                        }
+                    }
+                },
+                cutout: '75%'
+            }
+        });
+    </script>
+
+    <!-- Auto-open Modal saat ada pesan error login -->
+    {% if danger_messages %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var modalElem = document.getElementById('loginModal');
+            if (modalElem) {
+                var loginModal = new bootstrap.Modal(modalElem);
+                loginModal.show();
+            }
+        });
+    </script>
+    {% endif %}
+    <script>
+    const loginForm = document.getElementById('loginForm');
+    const errorAlert = document.getElementById('loginErrorAlert');
+
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault(); // Mencegah reload halaman
+        
+        const formData = new FormData(loginForm);
+        
+        try {
+            const response = await fetch("{{ url_for('main.login') }}", {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                // Jika sukses, reload halaman untuk memuat sesi login
+                window.location.reload();
+            } else {
+                // Jika gagal, tampilkan pesan di div error
+                errorAlert.textContent = result.message;
+                errorAlert.classList.remove('d-none');
+            }
+        } catch (error) {
+            errorAlert.textContent = "Terjadi kesalahan sistem.";
+            errorAlert.classList.remove('d-none');
+        }
+    });
+</script>
+</body>
+</html>

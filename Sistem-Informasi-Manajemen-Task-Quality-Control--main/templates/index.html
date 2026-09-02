@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <script>
+    // Eksekusi instan sebelum body dirender untuk mencegah kedipan putih
+    (function() {
+        const saved = localStorage.getItem('user_theme_preference') || 'system';
+        let theme = saved;
+        if (saved === 'system') {
+            theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+    })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quality Control (QC) Dashboard</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Hubungkan ke file CSS Eksternal -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- Panggil Sidebar -->
+    {% include 'sidebar.html' %}
+
+    <!-- Navbar Atas (Tombol Login/Logout di Kanan Atas) -->
+    {% include 'navbar.html' %}
+
+    <!-- AREA KONTEN UTAMA -->
+    <div class="container-fluid px-4 pb-5 pt-4">
+
+        <!-- TOOLBAR PENCARIAN & AKSI -->
+        <div class="d-flex align-items-center flex-wrap gap-3 mb-4">
+            
+            {% if role in ['Developer', 'Quality Control'] %}
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                    Import Project Data
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteProjectModal">
+                    Delete Project
+                </button>
+            </div>
+            {% endif %}
+
+            <div class="flex-grow-1 position-relative" style="min-width: 280px; max-width: 400px;">
+                <svg width="16" height="16" fill="currentColor" class="search-icon" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
+                <input type="text" id="searchInput" class="form-control form-control-sm search-pill border-0 shadow-sm" placeholder="Search Task ID, Spec, or Description..." oninput="resetAndFilter()">
+            </div>
+
+            <button class="btn btn-dark btn-sm ms-auto d-flex align-items-center gap-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterDrawer">
+                <!-- Ikon Filter SVG -->
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
+                </svg>
+                Filter & Sort 
+                <span id="activeFilterBadge" class="badge bg-primary rounded-circle d-none ms-1" style="font-size: 0.6rem;">!</span>
+            </button>
+        </div>
+
+        <!-- MODAL UPLOAD & HAPUS PROYEK -->
+        {% if role in ['Developer', 'Quality Control'] %}
+        <!-- 1. MODAL UPLOAD -->
+        <div class="modal fade" id="uploadModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+                    <div class="modal-header border-bottom" style="border-color: var(--border-color) !important;">
+                        <h6 class="modal-title fw-bold" style="color: var(--text-main);">Import New Project Data</h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" style="filter: var(--btn-close-filter, none);"></button>
+                    </div>
+                    <form action="/upload" method="POST" enctype="multipart/form-data">
+                        <div class="modal-body p-4">
+                            <div class="mb-4">
+                                <label class="form-label detail-label">Pick a File (.xlsx, .csv)</label>
+                                <input type="file" name="file" class="form-control" accept=".xlsx, .xls, .csv" required>
+                            </div>
+                            
+                            <div class="mb-2 position-relative">
+                                <label class="form-label detail-label">Project Name</label>
+                                
+                                <!-- Input Teks Standar (Bebas Ketik) -->
+                                <input type="text" id="projectNameInput" name="project_name" class="form-control" autocomplete="off" required placeholder="Type a new project name or pick one...">
+                                
+                                <!-- Custom Dropdown Suggestions (Tampilan Profesional ala SaaS) -->
+                                <div id="projectSuggestionsList" class="dropdown-menu w-100 shadow-sm border mt-1" style="display: none; max-height: 200px; overflow-y: auto; background-color: var(--bg-surface); border-color: var(--border-color) !important; z-index: 1060;">
+                                    {% for p in projects %}
+                                        <a href="#" class="dropdown-item project-suggestion-item py-2 px-3" style="color: var(--text-main);" data-value="{{ p }}">{{ p }}</a>
+                                    {% endfor %}
+                                </div>
+                                
+                                <div class="form-text small text-muted mt-1">Type a new name or pick one from existing projects.</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-top pt-0 bg-transparent" style="border-color: var(--border-color) !important;">
+                            <button type="button" class="btn btn-outline-secondary btn-sm px-3" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary btn-sm px-4">Start Sync</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. MODAL HAPUS -->
+        <div class="modal fade" id="deleteProjectModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+                    <div class="modal-header border-bottom" style="border-color: var(--border-color) !important;">
+                        <h6 class="modal-title fw-bold text-danger">Delete Project Permanently</h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" style="filter: var(--btn-close-filter, none);"></button>
+                    </div>
+                    <form action="/delete_project" method="POST" onsubmit="return confirm('Heads up: all data and tasks in this project will be deleted for good. You sure you want to go ahead?');">
+                        <div class="modal-body p-4">
+                            <p class="small mb-4 text-muted">Pick the old project you want to permanently wipe from the system.</p>
+                            <label class="form-label detail-label">Pick a Target Project</label>
+                            <select name="project_name" class="form-select border-danger" required>
+                                <option value="" disabled selected>Pick a project...</option>
+                                {% for p in projects %} 
+                                    <option value="{{ p }}">{{ p }}</option> 
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="modal-footer border-top pt-0 bg-transparent" style="border-color: var(--border-color) !important;">
+                            <button type="button" class="btn btn-outline-secondary btn-sm px-3" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger btn-sm px-4" style="background-color: #EF4444; border:none; color: white;">Delete Project</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- NAVIGASI TAB ENTERPRISE (SaaS Style) -->
+        {% if role.lower() not in ['publik', 'public'] %}
+        <div class="enterprise-tabs-wrapper mb-4">
+            <div class="d-flex overflow-auto gap-4 enterprise-tabs" id="taskTabMenu">
+                <button class="filter-tab active" data-status="All">All Data</button>
+                <button class="filter-tab" data-status="Need Sample">To Sample</button>
+                <!-- Diubah dari Review Done menjadi Sample Done -->
+                <button class="filter-tab" data-status="Sample Done">Sample Done</button>
+                <button class="filter-tab" data-status="Revision">Revision</button>
+                <button class="filter-tab" data-status="Ready">Ready for Production</button>
+                <button class="filter-tab" data-status="Skipped">Skipped</button>
+                <button class="filter-tab" data-status="Sent to Team">Submitted / Sent</button>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- GRID KARTU TASK -->
+        <div class="row" id="taskContainer">
+            {% if not tasks %}
+                <div class="col-12">
+                    <div class="detail-panel text-center py-5 d-flex flex-column align-items-center justify-content-center">
+                        <span class="small fw-medium" style="color: var(--text-muted);">No tasks in the system yet.</span>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% for t in tasks %}
+            <div class="col-md-6 col-lg-4 mb-4 task-item" 
+                data-category="{% if t.sent_by_leader %}Sent to Team{% else %}{{ t.qc_category }}{% endif %}" 
+                data-sent="{{ 'true' if t.sent_by_leader else 'false' }}"
+                data-project="{{ t.project_name }}" 
+                data-package="{{ t.package_name }}" 
+                data-search="{{ t.task_id|lower }} {{ t.task_name|lower }} {{ t.description|lower }} {{ t.task_goal|lower }}"
+                data-task-id="{{ t.task_id|lower }}"
+                data-task-name="{{ t.task_name|lower }}"
+                data-pullable="{{ t.pullable_num }}"
+                data-updated="{{ t.updated_at.strftime('%Y%m%d%H%M%S') if t.updated_at else '0' }}">
+                
+                <div class="card h-100 task-card p-2 {% if t.sent_by_leader %}is-sent{% endif %}">
+                <div class="card-body d-flex flex-column p-3">
+                    
+                    <!-- Header: Task ID & Status Badge -->
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h6 class="card-title fw-bold mb-0 text-truncate pe-2" style="font-size: 1rem; color: var(--text-main);">
+                            Task ID : {{ t.task_id }}
+                        </h6>
+                        {% if t.sent_by_leader %}
+                            <span class="badge shadow-sm flex-shrink-0" style="background-color: var(--badge-sent-bg); color: var(--badge-sent-text);">Sent</span>
+                        {% else %}
+                            {% if t.qc_category == 'Need Sample' %}
+                                <span class="badge badge-accent flex-shrink-0">To Sample</span>
+                            {% elif t.qc_category == 'Sample Done' %}
+                                <span class="badge bg-info text-dark flex-shrink-0">Sample Done</span>
+                            {% elif t.qc_category == 'Revision' %}
+                                <span class="badge bg-danger flex-shrink-0">Revision</span>
+                            {% elif t.qc_category == 'Ready' %}
+                                <span class="badge bg-success flex-shrink-0">Ready</span>
+                            {% elif t.qc_category == 'Skipped' %}
+                                <span class="badge bg-secondary flex-shrink-0">Skipped</span>
+                            {% else %}
+                                <span class="badge bg-secondary flex-shrink-0">{{ t.qc_category }}</span>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Sub-Header: Project & Package Name (Pindah ke atas) -->
+                    <div class="mb-3 d-flex flex-wrap gap-2">
+                        <span class="badge badge-soft" style="font-size: 0.75rem;">Project: {{ t.project_name or '-' }}</span>
+                        <span class="badge badge-soft" style="font-size: 0.75rem;">Package: {{ t.package_name or '-' }}</span>
+                    </div>
+
+                    <!-- Content List (Task Name, Description, Target Pullable) -->
+                    <div class="card-text small mb-3" style="color: var(--text-muted);">
+                        <div class="mb-1"><strong>Task Name:</strong> {{ t.task_name or '-' }}</div>
+                        <div class="mb-1 text-truncate" title="{{ t.description }}"><strong>Desc:</strong> {{ t.description or '-' }}</div>
+                        <div>
+                            <strong>Target Pullable:</strong> {{ t.pullable_num }}
+                            <!-- Indikator warna -->
+                            {% if t.pullable_num < 250 %}
+                                <span class="badge ms-1" style="background-color: #EF4444; color: white;">Critical</span>
+                            {% elif t.pullable_num < 500 %}
+                                <span class="badge ms-1" style="background-color: #F59E0B; color: white;">Low</span>
+                            {% else %}
+                                <span class="badge ms-1" style="background-color: #10B981; color: white;">Safe</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Footer: View Details -->
+                    <div class="mt-auto pt-2 border-top">
+                        <button class="btn btn-outline-secondary btn-sm w-100 fw-semibold" data-bs-toggle="modal" data-bs-target="#modal-{{ t.id }}">View Details</button>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <!-- MODAL DETAIL TASK -->
+            <div class="modal fade" id="modal-{{ t.id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content shadow-lg">
+                        <div class="modal-header d-flex align-items-center">
+                            <div>
+                                <span class="badge badge-soft mb-2 d-inline-block">{{ t.project_name }}</span>
+                                <h5 class="modal-title fw-bold" style="letter-spacing: -0.5px; color: var(--text-main);">Task: {{ t.task_id }}</h5>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row g-4">
+                                
+                                <!-- KIRI: SEMUA KOLOM DARI DATA ASLI -->
+                                <div class="col-lg-5">
+                                    <div class="detail-panel h-100">
+                                        <h6 class="fw-bold mb-4" style="color: var(--text-main);">Raw Data Attributes</h6>
+
+                                        <div class="detail-label">Project Name</div>
+                                        <div class="detail-value fw-semibold text-primary">{{ t.project_name }}</div>
+
+                                        <div class="detail-label">Task ID</div>
+                                        <div class="detail-value fw-bold">{{ t.task_id }}</div>
+
+                                        <div class="detail-label">Task Name</div>
+                                        <div class="detail-value">{{ t.task_name or '-' }}</div>
+
+                                        <div class="detail-label">Package Name</div>
+                                        <div class="detail-value"><span class="badge badge-soft border">{{ t.package_name or '-' }}</span></div>
+
+                                        <div class="detail-label">Description</div>
+                                        <div class="detail-value lh-base" style="color: var(--text-muted);">{{ t.description or '-' }}</div>
+
+                                        <div class="detail-label">SOP</div>
+                                        <div class="detail-value">{{ t.sop or '-' }}</div>
+
+                                        <div class="detail-label">Task Goal</div>
+                                        <div class="detail-value">{{ t.task_goal or '-' }}</div>
+
+                                        <div class="detail-label">Initialize / Initial Status</div>
+                                        <div class="detail-value">{{ t.initialize_status or '-' }}</div>
+
+                                        <div class="detail-label">Generalization Direction</div>
+                                        <div class="detail-value">{{ t.generalization_direction or '-' }}</div>
+
+                                        <div class="detail-label">Task Type</div>
+                                        <div class="detail-value">{{ t.task_type or '-' }}</div>
+
+                                        <div class="detail-label">Num</div>
+                                        <div class="detail-value">{{ t.num_val or '-' }}</div>
+
+                                        <div class="detail-label">Label</div>
+                                        <div class="detail-value">{{ t.label or '-' }}</div>
+
+                                        <div class="detail-label">Extraction Target (Pullable Num)</div>
+                                        <div class="detail-value fs-5 fw-bold" style="color: var(--accent);">
+                                            {{ t.pullable_num }}
+                                            {% if t.pullable_num < 250 %}
+                                                <span class="badge ms-1 bg-danger" style="font-size: 0.65rem;">Critical</span>
+                                            {% elif t.pullable_num < 500 %}
+                                                <span class="badge ms-1 bg-warning text-dark" style="font-size: 0.65rem;">Low</span>
+                                            {% else %}
+                                                <span class="badge ms-1 bg-success" style="font-size: 0.65rem;">Safe</span>
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="detail-label">Environment Type</div>
+                                        <div class="detail-value">{{ t.environment_type or '-' }}</div>
+
+                                        <div class="detail-label">Source Template ID</div>
+                                        <div class="detail-value">{{ t.source_template_id or '-' }}</div>
+
+                                        <div class="detail-label">Target Num / Task</div>
+                                        <div class="detail-value">{{ t.target_num_task or '-' }}</div>
+
+                                        <div class="detail-label">Env Summary</div>
+                                        <div class="detail-value">{{ t.env_summary or '-' }}</div>
+
+                                        <div class="detail-label">Original Excel Status</div>
+                                        <div class="detail-value">{{ t.excel_status or '-' }}</div>
+
+                                        <div class="detail-label">Uploaded By</div>
+                                        <div class="detail-value mb-0">{{ t.uploaded_by or 'System' }}</div>
+                                    </div>
+                                </div>
+
+                                <!-- KANAN: STATUS & AKSI -->
+                                <div class="col-lg-7">
+                                    {% if role in ['Developer', 'Quality Control', 'Supervisor'] %}
+                                    <form action="/toggle_send/{{ t.id }}" method="POST" class="mb-4">
+                                        {% if t.sent_by_leader %}
+                                            <button type="submit" class="btn btn-outline-secondary w-100 py-2">Pull Back from Production Team</button>
+                                        {% else %}
+                                            <button type="submit" class="btn btn-primary w-100 py-2">Send Task to Production Team</button>
+                                        {% endif %}
+                                    </form>
+                                    {% endif %}
+
+                                    <!-- TINJAUAN MEDIA (2 VIDEO) -->
+                                    <div class="detail-panel mb-4 p-0 overflow-hidden">
+                                        <div class="p-3 border-bottom" style="background-color: var(--input-bg);">
+                                            <div class="detail-label mb-0">Extraction Media Review</div>
+                                        </div>
+                                        <div class="p-3">
+                                            <ul class="nav custom-video-tabs" id="video-tabs-{{ t.id }}" role="tablist">
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link active" id="link1-tab-{{ t.id }}" data-bs-toggle="tab" data-bs-target="#link1-{{ t.id }}" type="button" role="tab">Sample 1</button>
+                                                </li>
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link" id="link2-tab-{{ t.id }}" data-bs-toggle="tab" data-bs-target="#link2-{{ t.id }}" type="button" role="tab">Sample 2</button>
+                                                </li>
+                                            </ul>
+                                            
+                                            <div class="tab-content" id="video-tabs-content-{{ t.id }}">
+                                                <!-- KONTEN MEDIA UTAMA -->
+                                                <div class="tab-pane fade show active" id="link1-{{ t.id }}" role="tabpanel">
+                                                    {% if t.link_sample %}
+                                                        {% if 'drive.google.com' in t.link_sample %}
+                                                            <div class="rounded-3 overflow-hidden border mb-3" style="height: 350px; background-color: #000;">
+                                                                <iframe src="{{ t.link_sample.split('/view')[0].replace('/file/d/', '/file/d/').replace('/view', '') + '/preview' }}" width="100%" height="100%" allow="autoplay" allowfullscreen style="border:none;"></iframe>
+                                                            </div>
+                                                            <a href="{{ t.link_sample }}" target="_blank" class="btn btn-outline-secondary w-100">Open Main Media in New Tab ↗</a>
+                                                        {% else %}
+                                                            <a href="{{ t.link_sample }}" target="_blank" class="btn btn-outline-primary w-100 py-2">Visit Main External Link ↗</a>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <div class="text-center py-5 small fw-medium" style="color: var(--text-muted);">No main media attached by the inspector yet.</div>
+                                                    {% endif %}
+                                                </div>
+                                                <!-- KONTEN MEDIA ALTERNATIF -->
+                                                <div class="tab-pane fade" id="link2-{{ t.id }}" role="tabpanel">
+                                                    {% if t.link_sample_2 %}
+                                                        {% if 'drive.google.com' in t.link_sample_2 %}
+                                                            <div class="rounded-3 overflow-hidden border mb-3" style="height: 350px; background-color: #000;">
+                                                                <iframe src="{{ t.link_sample_2.split('/view')[0].replace('/file/d/', '/file/d/').replace('/view', '') + '/preview' }}" width="100%" height="100%" allow="autoplay" allowfullscreen style="border:none;"></iframe>
+                                                            </div>
+                                                            <a href="{{ t.link_sample_2 }}" target="_blank" class="btn btn-outline-secondary w-100">Open Alternate Media in New Tab ↗</a>
+                                                        {% else %}
+                                                            <a href="{{ t.link_sample_2 }}" target="_blank" class="btn btn-outline-primary w-100 py-2">Visit Alternate External Link ↗</a>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <div class="text-center py-5 small fw-medium" style="color: var(--text-muted);">No alternate media available/attached.</div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- FORMULIR EVALUASI QC -->
+                                    <div class="detail-panel">
+                                        <h6 class="fw-bold mb-4" style="color: var(--text-main);">Evaluation & Operations Form</h6>
+                                        {% if role in ['Developer', 'Quality Control'] %}
+                                            <form action="/toggle_skip/{{ t.id }}" method="POST" class="mb-4">
+                                                <button type="submit" class="btn {% if t.can_buy_item %}btn-outline-danger{% else %}btn-outline-secondary{% endif %} btn-sm w-100">{% if t.can_buy_item %}Mark as Skipped{% else %}Restore Task Status (Unskip){% endif %}</button>
+                                            </form>
+
+                                            <form action="/update/{{ t.id }}" method="POST">
+                                                <div class="mb-3">
+                                                    <label class="form-label detail-label">Case Name</label>
+                                                    <input type="text" name="case_name" class="form-control" value="{{ t.case_name or '' }}">
+                                                </div>
+                                                <div class="row g-3 mb-3">
+                                                    <div class="col-sm-6">
+                                                        <label class="form-label detail-label">Main Media Link</label>
+                                                        <input type="text" name="link_sample" class="form-control" value="{{ t.link_sample or '' }}" placeholder="Enter the main reference URL...">
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <label class="form-label detail-label">Alternate Media Link</label>
+                                                        <input type="text" name="link_sample_2" class="form-control" value="{{ t.link_sample_2 or '' }}" placeholder="Enter the backup reference URL...">
+                                                    </div>
+                                                </div>
+                                                <div class="row g-3 mb-4">
+                                                    <div class="col-sm-6">
+                                                        <label class="form-label detail-label">Inspector Evaluation Result</label>
+                                                        <select name="inspector_result" class="form-select fw-medium">
+                                                            
+                                                            <!-- Jika t.inspector_result kosong ATAU bernilai 'Need Sample', jadikan ini yang terpilih -->
+                                                            <option value="Need Sample" {% if not t.inspector_result or t.inspector_result == 'Need Sample' %}selected{% endif %}>Need Sample</option>
+                                                            <option value="Sample Done" {% if t.inspector_result == 'Passed' %}selected{% endif %}>Waiting Inspect</option>
+                                                            <option value="Passed" {% if t.inspector_result == 'Passed' %}selected{% endif %}>Approved (Passed)</option>
+                                                            <option value="Failed" {% if t.inspector_result == 'Failed' %}selected{% endif %}>Rejected (Failed)</option>
+                                                            
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <label class="form-label detail-label">Operational Status</label>
+                                                        <select name="operational_status" class="form-select fw-medium">
+                                                            <option value="Active" {% if t.operational_status == 'Active' %}selected{% endif %}>Running (Active)</option>
+                                                            <option value="Offline" {% if t.operational_status == 'Offline' %}selected{% endif %}>Offline</option>
+                                                            <option value="Hold" {% if t.operational_status == 'Hold' %}selected{% endif %}>On Hold</option>
+                                                            <option value="Complete" {% if t.operational_status == 'Complete' %}selected{% endif %}>Complete</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-4">
+                                                    <label class="form-label detail-label">Inspection Notes</label>
+                                                    <textarea name="notes" class="form-control lh-base" rows="3" placeholder="Write down findings or special instructions...">{{ t.notes or '' }}</textarea>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary w-100 py-2">Save Update</button>
+                                            </form>
+
+                                        {% else %}
+                                            <!-- READ ONLY UNTUK LEADER/PUBLIC -->
+                                            <div class="row mb-4">
+                                                <div class="col-6">
+                                                    <div class="detail-label">Case Name</div>
+                                                    <div class="detail-value mb-0">{{ t.case_name or '-' }}</div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="detail-label">Operational Status</div>
+                                                    <div class="detail-value mb-0">{{ t.operational_status }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="detail-label">Internal Inspector Decision</div>
+                                            <div class="detail-value mb-4">
+                                                {% if t.inspector_result == 'Passed' %}<span class="badge" style="background-color: #10B981; color: white; padding: 0.5em 1em;">Approved (Passed)</span>
+                                                {% elif t.inspector_result == 'Failed' %}<span class="badge" style="background-color: #EF4444; color: white; padding: 0.5em 1em;">Failed Testing (Failed)</span>
+                                                {% else %}<span class="badge badge-soft border py-2 px-3">Still Under Review</span>{% endif %}
+                                            </div>
+                                            
+                                            <div class="detail-label pt-4 border-top">Inspection Notes (Quality Team)</div>
+                                            <div class="p-3 rounded lh-base" style="background-color: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-muted); white-space: pre-wrap;">{{ t.notes or 'The evaluation team has not left any notes for this task yet.' }}</div>
+                                        {% endif %}
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="col-12" id="emptyFilterMessage" style="display: none;">
+                <div class="detail-panel text-center py-5 small fw-medium mt-2 d-flex flex-column align-items-center" style="color: var(--text-muted);">
+                    Your sort criteria didn't turn up any results.
+                </div>
+            </div>
+        </div>
+        <div id="loadMoreContainer" class="text-center mt-4 mb-4"></div>
+    </div>
+
+    <!-- 4. MODAL LOGIN POP-UP -->
+{% include 'login_modal.html' %}
+
+    <!-- DRAWER FILTER & SORT -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="filterDrawer">
+        <div class="offcanvas-header border-bottom">
+            <h6 class="offcanvas-title fw-bold" style="color: var(--text-main);">Filter & Sort</h6>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-4">
+            
+            <!-- BAGIAN SORT (PENGURUTAN) -->
+            <h6 class="fw-bold mb-3 small text-uppercase text-muted">Sort By</h6>
+            <div class="row g-2 mb-4">
+                <div class="col-12 mb-2">
+                    <select id="sortField" class="form-select" onchange="resetAndFilter();">
+                        <option value="updated">Latest Update</option>
+                        <option value="task-id">Task ID</option>
+                        <option value="pullable">Pullable Num (Target)</option>
+                        <option value="task-name">Task Name</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <select id="sortOrder" class="form-select" onchange="resetAndFilter();">
+                        <option value="desc">Descending (Highest / Newest First)</option>
+                        <option value="asc">Ascending (Lowest / Oldest First)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- BAGIAN FILTER (PENYARINGAN) -->
+            <h6 class="fw-bold mb-3 small text-uppercase text-muted border-top pt-4">Filter Data</h6>
+            <div class="mb-3">
+                <label class="form-label detail-label">By Project</label>
+                <select id="projectFilter" class="form-select" onchange="resetAndFilter();">
+                    <option value="All">Show All Projects</option>
+                    {% for p in projects %} <option value="{{ p }}">{{ p }}</option> {% endfor %}
+                </select>
+            </div>
+            <div class="mb-4">
+                <label class="form-label detail-label">By Package</label>
+                <select id="packageFilter" class="form-select" onchange="resetAndFilter();">
+                    <option value="All">Show All Packages</option>
+                    {% for pkg in packages %} <option value="{{ pkg }}">{{ pkg }}</option> {% endfor %}
+                </select>
+            </div>
+            
+            <button type="button" class="btn btn-primary w-100 py-2 mt-3" data-bs-dismiss="offcanvas" onclick="resetAndFilter();">Apply Settings</button>
+        </div>
+    </div>
+    <!-- Scroll to Top -->
+    <button id="scrollToTopBtn" class="btn btn-dark rounded-circle shadow position-fixed bottom-0 end-0 m-4 d-none align-items-center justify-content-center" style="z-index: 1050; width: 48px; height: 48px; transition: all 0.3s;" title="Back to top">
+        ↑
+    </button>
+
+    <!-- Bootstrap 5.3.3 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script Eksternal dengan Cache Buster (?v=2) -->
+    <script src="{{ url_for('static', filename='script.js') }}?v=2"></script>
+
+</body>
+</html>
