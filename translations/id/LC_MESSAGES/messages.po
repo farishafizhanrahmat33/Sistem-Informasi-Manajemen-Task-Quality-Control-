@@ -1,0 +1,1817 @@
+# Indonesian translations for PROJECT.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-09-04 22:19+0700\n"
+"PO-Revision-Date: 2026-09-03 10:48+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: id\n"
+"Language-Team: id <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: routes/main_routes.py:52
+#, python-format
+msgid "You're in! Logged in as %(role)s."
+msgstr "Berhasil masuk sebagai %(role)s."
+
+#: routes/main_routes.py:57
+msgid "Wrong username/email or password!"
+msgstr "Username/email atau password salah!"
+
+#: routes/main_routes.py:64
+msgid "You have been logged out."
+msgstr "Kamu sudah logout."
+
+#: routes/main_routes.py:74
+msgid "Log in first to check out your profile."
+msgstr "Login dulu buat lihat profil kamu."
+
+#: routes/main_routes.py:93
+msgid "Nope, that username is already taken by someone else!"
+msgstr "Yah, username itu udah dipakai orang lain!"
+
+#: routes/main_routes.py:107
+msgid "Profile updated!"
+msgstr "Profil berhasil diperbarui!"
+
+#: routes/main_routes.py:126
+msgid "Password changed, nice!"
+msgstr "Password berhasil diganti, mantap!"
+
+#: routes/main_routes.py:128
+msgid "Old password doesn't match!"
+msgstr "Password lama gak cocok!"
+
+#: routes/main_routes.py:150
+msgid "Your message got sent over to the Developer!"
+msgstr "Pesan kamu udah dikirim ke Developer!"
+
+#: routes/main_routes.py:160
+msgid "Access denied! This support inbox is Developer-only."
+msgstr "Akses ditolak! Kotak pesan support ini khusus Developer."
+
+#: routes/main_routes.py:170 routes/main_routes.py:200
+#: routes/main_routes.py:231 routes/qr_routes.py:104 routes/qr_routes.py:126
+#: routes/task_routes.py:138 routes/task_routes.py:205
+msgid "Access denied!"
+msgstr "Akses ditolak!"
+
+#: routes/main_routes.py:180 templates/admin_support.html:57
+msgid "Resolved"
+msgstr "Selesai"
+
+#: routes/main_routes.py:180 templates/admin_support.html:59
+msgid "Open"
+msgstr "Terbuka"
+
+#: routes/main_routes.py:181
+#, python-format
+msgid "Ticket marked as %(status)s."
+msgstr "Tiket ditandai sebagai %(status)s."
+
+#: routes/main_routes.py:183
+msgid "Ticket not found."
+msgstr "Tiket tidak ditemukan."
+
+#: routes/main_routes.py:191
+msgid "Access denied! This page is Developer-only."
+msgstr "Akses ditolak! Halaman ini khusus Developer."
+
+#: routes/main_routes.py:212
+msgid "Nope, that username is already taken!"
+msgstr "Yah, username itu udah kepake!"
+
+#: routes/main_routes.py:224
+#, python-format
+msgid "Account %(username)s created with the %(role)s role!"
+msgstr "Akun %(username)s berhasil dibuat dengan role %(role)s!"
+
+#: routes/main_routes.py:238
+msgid "Can't delete the account you're currently logged in with!"
+msgstr "Gak bisa hapus akun yang lagi kamu pakai login!"
+
+#: routes/main_routes.py:242
+msgid "Account deleted."
+msgstr "Akun berhasil dihapus."
+
+#: routes/main_routes.py:249
+msgid "Access denied! Only Developers can change permissions."
+msgstr "Akses ditolak! Hanya Developer yang bisa mengubah izin akses."
+
+#: routes/main_routes.py:258
+#, python-format
+msgid "Role for \"%(username)s\" changed to %(role)s!"
+msgstr "Role untuk \"%(username)s\" berhasil diubah jadi %(role)s!"
+
+#: routes/main_routes.py:260
+msgid "User not found."
+msgstr "User tidak ditemukan."
+
+#: routes/main_routes.py:263
+msgid "Something went wrong updating the role."
+msgstr "Ada yang salah saat mengubah role."
+
+#: routes/qr_routes.py:45
+msgid "Access denied! Only Developer and Quality Control can add QR files."
+msgstr ""
+"Akses ditolak! Hanya Developer dan Quality Control yang bisa menambah "
+"file QR."
+
+#: routes/qr_routes.py:50
+msgid "That file format's not valid, or nothing was picked."
+msgstr "Format file itu gak valid, atau belum ada file yang dipilih."
+
+#: routes/qr_routes.py:62
+#, python-format
+msgid "Couldn't read that PDF: %(error)s"
+msgstr "Gagal membaca PDF itu: %(error)s"
+
+#: routes/qr_routes.py:66
+msgid "That PDF doesn't have any pages."
+msgstr "PDF itu gak punya halaman sama sekali."
+
+#: routes/qr_routes.py:95
+#, python-format
+msgid "%(count)s page(s) successfully uploaded."
+msgstr "%(count)s halaman berhasil diupload."
+
+#: routes/qr_routes.py:114
+msgid "Document deleted."
+msgstr "Dokumen berhasil dihapus."
+
+#: routes/qr_routes.py:116 routes/qr_routes.py:139
+msgid "Document not found."
+msgstr "Dokumen tidak ditemukan."
+
+#: routes/qr_routes.py:135
+#, python-format
+msgid "Document renamed to \"%(name)s\"."
+msgstr "Dokumen berhasil diganti nama jadi \"%(name)s\"."
+
+#: routes/qr_routes.py:137
+msgid "Name cannot be empty."
+msgstr "Nama gak boleh kosong."
+
+#: routes/task_routes.py:31
+#, python-format
+msgid "Access denied! Your role showed up as \"%(role)s\"."
+msgstr "Akses ditolak! Role kamu terdeteksi sebagai \"%(role)s\"."
+
+#: routes/task_routes.py:39
+msgid "File and Project Name are both required!"
+msgstr "File dan Nama Proyek wajib diisi dua-duanya!"
+
+#: routes/task_routes.py:127
+msgid "Project data synced up! New stuff got added and old stuff got updated."
+msgstr ""
+"Data proyek berhasil disinkronkan! Data baru ditambahkan dan data lama "
+"diperbarui."
+
+#: routes/task_routes.py:130
+#, python-format
+msgid "Could not process the file: %(error)s"
+msgstr "Gagal memproses file: %(error)s"
+
+#: routes/task_routes.py:145
+#, python-format
+msgid "Project \"%(project)s\" and all its tasks got deleted."
+msgstr "Proyek \"%(project)s\" beserta semua task-nya berhasil dihapus."
+
+#: routes/task_routes.py:152
+msgid "Access denied! You can't edit tasks."
+msgstr "Akses ditolak! Kamu gak bisa mengedit task."
+
+#: routes/task_routes.py:181
+msgid "Task details updated."
+msgstr "Detail task berhasil diperbarui."
+
+#: routes/task_routes.py:189
+msgid "Access denied, you can't forward tasks!"
+msgstr "Akses ditolak, kamu gak bisa meneruskan task!"
+
+#: routes/task_routes.py:196
+msgid "sent over to the Production Team"
+msgstr "diteruskan ke Tim Produksi"
+
+#: routes/task_routes.py:196
+msgid "pulled back"
+msgstr "ditarik kembali"
+
+#: routes/task_routes.py:197
+#, python-format
+msgid "Task got %(status)s."
+msgstr "Task %(status)s."
+
+#: routes/task_routes.py:212
+msgid "Task restored from Skipped."
+msgstr "Task dikembalikan dari status Skipped."
+
+#: routes/task_routes.py:215
+msgid "Task marked as Skipped."
+msgstr "Task ditandai sebagai Skipped."
+
+#: templates/admin_support.html:16
+msgid "Support Tickets - QA System"
+msgstr "Tiket Support - Sistem QA"
+
+#: templates/admin_support.html:32
+msgid "Support Tickets Inbox"
+msgstr "Kotak Masuk Tiket Support"
+
+#: templates/admin_support.html:33
+msgid "List of complaints or issues sent in by users through the help center."
+msgstr ""
+"Daftar keluhan atau masalah yang dikirim oleh pengguna melalui pusat "
+"bantuan."
+
+#: templates/admin_support.html:41 templates/user_management.html:61
+msgid "No"
+msgstr "No"
+
+#: templates/admin_support.html:42
+msgid "ID / Sender"
+msgstr "ID / Pengirim"
+
+#: templates/admin_support.html:43
+msgid "Issue Message"
+msgstr "Pesan Masalah"
+
+#: templates/admin_support.html:44
+msgid "Status"
+msgstr "Status"
+
+#: templates/admin_support.html:45
+msgid "Time Sent"
+msgstr "Waktu Kirim"
+
+#: templates/admin_support.html:46
+msgid "Action"
+msgstr "Aksi"
+
+#: templates/admin_support.html:53
+#, python-format
+msgid "User #%(username)s"
+msgstr "User #%(username)s"
+
+#: templates/admin_support.html:66
+msgid "Reopen"
+msgstr "Buka Kembali"
+
+#: templates/admin_support.html:66
+msgid "Mark Resolved"
+msgstr "Tandai Selesai"
+
+#: templates/admin_support.html:73
+msgid "No issue messages yet."
+msgstr "Belum ada pesan masalah."
+
+#: templates/dashboard.html:16
+msgid "Dashboard - Quality Control System"
+msgstr "Dashboard - Sistem Quality Control"
+
+#: templates/dashboard.html:84
+msgid "Operational Overview"
+msgstr "Tinjauan Operasional"
+
+#: templates/dashboard.html:85
+msgid "Quality Control Dashboard"
+msgstr "Dashboard Quality Control"
+
+#: templates/dashboard.html:86
+msgid ""
+"Monitoring real-time sample verification metrics, diagnostic revisions, "
+"and process readiness status."
+msgstr ""
+"Memantau metrik verifikasi sampel secara real-time, revisi diagnostik, "
+"dan status kesiapan proses."
+
+#: templates/dashboard.html:91
+msgid "Database Synchronized"
+msgstr "Database Tersinkronisasi"
+
+#: templates/dashboard.html:104 templates/dashboard.html:247
+#: templates/index.html:413
+msgid "Need Sample"
+msgstr "Butuh Sampel"
+
+#: templates/dashboard.html:108
+msgid "Awaiting sample intake"
+msgstr "Menunggu pengambilan sampel"
+
+#: templates/dashboard.html:116 templates/dashboard.html:247
+#: templates/index.html:146 templates/index.html:191
+msgid "Sample Done"
+msgstr "Sampel Selesai"
+
+#: templates/dashboard.html:120
+msgid "Inspection completed"
+msgstr "Inspeksi selesai"
+
+#: templates/dashboard.html:128 templates/dashboard.html:247
+#: templates/index.html:147 templates/index.html:193
+msgid "Revision"
+msgstr "Revisi"
+
+#: templates/dashboard.html:132
+msgid "Requires correction"
+msgstr "Membutuhkan koreksi"
+
+#: templates/dashboard.html:140 templates/dashboard.html:247
+#: templates/index.html:195
+msgid "Ready"
+msgstr "Siap"
+
+#: templates/dashboard.html:144
+msgid "Passed verification"
+msgstr "Lulus verifikasi"
+
+#: templates/dashboard.html:152 templates/dashboard.html:247
+#: templates/index.html:149 templates/index.html:197
+msgid "Skipped"
+msgstr "Dilewati"
+
+#: templates/dashboard.html:156
+msgid "Bypassed cycle"
+msgstr "Siklus dilewati"
+
+#: templates/dashboard.html:169
+msgid "Status Distribution"
+msgstr "Distribusi Status"
+
+#: templates/dashboard.html:170
+msgid "Live Analytics"
+msgstr "Analitik Langsung"
+
+#: templates/dashboard.html:182
+msgid "Recent Task Activity"
+msgstr "Aktivitas Task Terbaru"
+
+#: templates/dashboard.html:183
+msgid "Showing latest 5 entries"
+msgstr "Menampilkan 5 entri terbaru"
+
+#: templates/dashboard.html:189
+msgid "Task Designation"
+msgstr "Alokasi Tugas"
+
+#: templates/dashboard.html:190
+msgid "QC Status"
+msgstr "Status QC"
+
+#: templates/dashboard.html:214
+msgid "No task records found in the database."
+msgstr "Tidak ada data task di database."
+
+#: templates/dashboard.html:313
+msgid "Terjadi kesalahan sistem."
+msgstr ""
+
+#: templates/faq.html:16
+msgid "FAQ & Full Guide - QA System"
+msgstr "FAQ & Panduan Lengkap - Sistem QA"
+
+#: templates/faq.html:32
+msgid "FAQ & Full System Guide"
+msgstr "FAQ & Panduan Lengkap Sistem"
+
+#: templates/faq.html:33
+msgid "Docs and Q&A covering all the features available in the QA Control Center."
+msgstr ""
+"Dokumentasi dan Tanya Jawab mencakup semua fitur yang tersedia di Pusat "
+"Kontrol QA."
+
+#: templates/faq.html:46
+msgid "1. How do I sign in and manage my account profile?"
+msgstr "1. Bagaimana cara masuk dan mengelola profil akun saya?"
+
+#: templates/faq.html:51
+msgid ""
+"You can sign in with your registered <b>Username</b> or <b>Email</b> plus"
+" your password through the Sign In button in the navbar/sidebar. Once "
+"you're in, head to <b>Profile Settings</b> to update your full name, "
+"email, change your profile picture, and change your password whenever you"
+" want."
+msgstr ""
+"Kamu bisa masuk dengan <b>Username</b> atau <b>Email</b> terdaftar "
+"beserta password kamu melalui tombol Masuk di navbar/sidebar. Setelah "
+"masuk, buka <b>Pengaturan Profil</b> untuk memperbarui nama lengkap, "
+"email, mengganti foto profil, dan mengubah password kapan saja."
+
+#: templates/faq.html:60
+msgid "2. What metrics or task categories show up on the Dashboard?"
+msgstr "2. Metrik atau kategori task apa saja yang muncul di Dashboard?"
+
+#: templates/faq.html:65
+msgid ""
+"The Dashboard shows a real-time summary straight from the database, "
+"broken down by these quality categories:"
+msgstr ""
+"Dashboard menampilkan ringkasan real-time langsung dari database, dibagi "
+"berdasarkan kategori kualitas berikut:"
+
+#: templates/faq.html:67
+msgid "Need Sample:"
+msgstr "Butuh Sampel:"
+
+#: templates/faq.html:67
+msgid "New tasks that still need a test sample."
+msgstr "Task baru yang masih butuh sampel uji."
+
+#: templates/faq.html:68
+msgid "Sample Done:"
+msgstr "Sampel Selesai:"
+
+#: templates/faq.html:68
+msgid "Tasks whose sample work is already finished."
+msgstr "Task yang pekerjaan sampelnya sudah selesai."
+
+#: templates/faq.html:69
+msgid "Revision:"
+msgstr "Revisi:"
+
+#: templates/faq.html:69
+msgid "Tasks that need fixes or another pass."
+msgstr "Task yang butuh perbaikan atau pengecekan ulang."
+
+#: templates/faq.html:70
+msgid "Ready:"
+msgstr "Siap:"
+
+#: templates/faq.html:70
+msgid "Tasks that got approved (Passed) and are good to go for production."
+msgstr "Task yang sudah disetujui (Lulus) dan siap dikirim ke produksi."
+
+#: templates/faq.html:71
+msgid "Skipped:"
+msgstr "Dilewati:"
+
+#: templates/faq.html:71
+msgid "Tasks marked to be skipped this round."
+msgstr "Task yang ditandai untuk dilewati pada ronde ini."
+
+#: templates/faq.html:81
+msgid "3. How do I manage projects and sync up task data?"
+msgstr "3. Bagaimana cara mengelola proyek dan menyinkronkan data task?"
+
+#: templates/faq.html:86
+msgid ""
+"From the <b>Task Management</b> menu, users with <b>Developer</b> or "
+"<b>Quality Control</b> access can upload project data files in <b>Excel "
+"(.xlsx, .xls)</b> or <b>CSV</b> format. The system will auto-sync the "
+"task data into the database. You can also filter data, search by keyword,"
+" update task status/notes, forward tasks to the production team, or "
+"permanently delete a whole project."
+msgstr ""
+"Dari menu <b>Manajemen Task</b>, pengguna dengan akses <b>Developer</b> "
+"atau <b>Quality Control</b> bisa mengupload file data proyek berformat "
+"<b>Excel (.xlsx, .xls)</b> atau <b>CSV</b>. Sistem akan otomatis "
+"menyinkronkan data task ke database. Kamu juga bisa memfilter data, "
+"mencari berdasarkan kata kunci, memperbarui status/catatan task, "
+"meneruskan task ke tim produksi, atau menghapus seluruh proyek secara "
+"permanen."
+
+#: templates/faq.html:95
+msgid "4. What's the QR Management menu for?"
+msgstr "4. Untuk apa menu Manajemen QR?"
+
+#: templates/faq.html:100
+msgid ""
+"The <b>QR Management</b> menu is where Developers and Quality Control "
+"folks upload reference documents in <b>PDF</b> format. Users can open "
+"those docs right in a clean pop-up (Modal) viewer with no extra toolbar "
+"clutter, which makes it way easier to review stuff out in the field."
+msgstr ""
+"Menu <b>Manajemen QR</b> adalah tempat Developer dan Quality Control "
+"mengupload dokumen referensi berformat <b>PDF</b>. Pengguna bisa membuka "
+"dokumen tersebut langsung di tampilan pop-up (Modal) yang bersih tanpa "
+"gangguan toolbar ekstra, sehingga lebih mudah mereview pekerjaan di "
+"lapangan."
+
+#: templates/faq.html:109
+msgid "5. What are the different access levels (Roles) in this system?"
+msgstr "5. Apa saja tingkat akses (Role) yang ada di sistem ini?"
+
+#: templates/faq.html:114
+msgid "The system runs on Role-Based Access Control:"
+msgstr ""
+"Sistem ini berjalan menggunakan Kontrol Akses Berbasis Role (Role-Based "
+"Access Control):"
+
+#: templates/faq.html:116
+msgid "Developer:"
+msgstr "Developer:"
+
+#: templates/faq.html:116
+msgid ""
+"Top-level access — covers user management, system settings, support "
+"tickets, plus full control over tasks and documents."
+msgstr ""
+"Akses tingkat atas — mencakup manajemen user, pengaturan sistem, tiket "
+"support, serta kontrol penuh atas task dan dokumen."
+
+#: templates/faq.html:117
+msgid "Quality Control:"
+msgstr "Quality Control:"
+
+#: templates/faq.html:117
+msgid ""
+"Full access to import project data, evaluate tasks, change QC status, and"
+" manage PDF documents."
+msgstr ""
+"Akses penuh untuk mengimpor data proyek, mengevaluasi task, mengubah "
+"status QC, dan mengelola dokumen PDF."
+
+#: templates/faq.html:118
+msgid "Supervisor:"
+msgstr "Supervisor:"
+
+#: templates/faq.html:118
+msgid ""
+"Can view the dashboard, filter tasks, and forward tasks to the production"
+" team."
+msgstr ""
+"Dapat melihat dashboard, memfilter task, dan meneruskan task ke tim "
+"produksi."
+
+#: templates/faq.html:119
+msgid "Public (Guest):"
+msgstr "Public (Tamu):"
+
+#: templates/faq.html:119
+msgid ""
+"Regular visitors who can only see the dashboard summary and the list of "
+"tasks already sent to production."
+msgstr ""
+"Pengunjung biasa yang hanya bisa melihat ringkasan dashboard dan daftar "
+"task yang sudah dikirim ke produksi."
+
+#: templates/faq.html:130
+msgid "6. What if I run into an issue or need tech support?"
+msgstr "6. Bagaimana jika saya mengalami kendala atau butuh dukungan teknis?"
+
+#: templates/faq.html:135
+msgid ""
+"Head over to the <b>Customer Service</b> menu to send in a message about "
+"any issue or bug straight to the engineering team. If you're a "
+"<b>Developer</b>, you can check every incoming message through the "
+"dedicated <b>Support Tickets</b> menu."
+msgstr ""
+"Kunjungi menu <b>Layanan Pelanggan</b> untuk mengirimkan pesan mengenai "
+"masalah atau laporan bug langsung ke tim engineering. Jika kamu seorang "
+"<b>Developer</b>, kamu bisa mengecek setiap pesan masuk melalui menu "
+"khusus <b>Tiket Support</b>."
+
+#: templates/faq.html:144
+msgid "7. How do I search for and sort specific tasks?"
+msgstr "7. Bagaimana cara mencari dan mengurutkan task tertentu?"
+
+#: templates/faq.html:149
+msgid ""
+"Use the <b>Search</b> box to find tasks by ID, name, or description "
+"instantly. For more sorting options, hit the <b>Sort Data</b> button (top"
+" right corner) to filter by a specific Project or Package. If nothing "
+"shows up, double-check that a filter isn't already active."
+msgstr ""
+"Gunakan kolom <b>Pencarian</b> untuk menemukan task berdasarkan ID, nama,"
+" atau deskripsi secara instan. Untuk opsi pengurutan lebih lanjut, tekan "
+"tombol <b>Urutkan Data</b> (sudut kanan atas) untuk memfilter berdasarkan"
+" Proyek atau Paket tertentu. Jika tidak ada yang muncul, pastikan filter "
+"tidak sedang aktif."
+
+#: templates/faq.html:159
+msgid "8. Why does the data keep refreshing on its own?"
+msgstr "8. Mengapa data terus melakukan refresh sendiri?"
+
+#: templates/faq.html:164
+msgid ""
+"We've got a <b>Real-time Auto-Update</b> feature built in. The app checks"
+" the database for changes every 5 seconds. That way, any status change "
+"made by the QC team shows up instantly for Leaders and other users "
+"without anyone needing to manually refresh the page."
+msgstr ""
+"Kami memiliki fitur <b>Auto-Update Real-time</b> yang tertanam di sistem."
+" Aplikasi mengecek perubahan database setiap 5 detik. Dengan begitu, "
+"setiap perubahan status oleh tim QC akan langsung tampil untuk Leader dan"
+" pengguna lain tanpa perlu merefresh halaman secara manual."
+
+#: templates/index.html:17
+msgid "Quality Control (QC) Dashboard"
+msgstr "Dashboard Quality Control (QC)"
+
+#: templates/index.html:46
+msgid "Import Project Data"
+msgstr "Impor Data Proyek"
+
+#: templates/index.html:49 templates/index.html:131
+msgid "Delete Project"
+msgstr "Hapus Proyek"
+
+#: templates/index.html:56
+msgid "Search Task ID, Spec, or Description..."
+msgstr "Cari ID Task, Spesifikasi, atau Deskripsi..."
+
+#: templates/index.html:64 templates/index.html:483
+msgid "Filter & Sort"
+msgstr "Filter & Urutkan"
+
+#: templates/index.html:76
+msgid "Import New Project Data"
+msgstr "Impor Data Proyek Baru"
+
+#: templates/index.html:82
+msgid "Pick a File (.xlsx, .csv)"
+msgstr "Pilih File (.xlsx, .csv)"
+
+#: templates/index.html:87 templates/index.html:254
+msgid "Project Name"
+msgstr "Nama Proyek"
+
+#: templates/index.html:90
+msgid "Type a new project name or pick one..."
+msgstr "Ketik nama proyek baru atau pilih..."
+
+#: templates/index.html:99
+msgid "Type a new name or pick one from existing projects."
+msgstr "Ketik nama baru atau pilih dari proyek yang sudah ada."
+
+#: templates/index.html:103 templates/index.html:130 templates/profile.html:129
+#: templates/profile.html:156
+msgid "Cancel"
+msgstr "Batal"
+
+#: templates/index.html:104
+msgid "Start Sync"
+msgstr "Mulai Sinkronisasi"
+
+#: templates/index.html:116
+msgid "Delete Project Permanently"
+msgstr "Hapus Proyek Secara Permanen"
+
+#: templates/index.html:119
+msgid ""
+"Heads up: all data and tasks in this project will be deleted for good. "
+"You sure you want to go ahead?"
+msgstr ""
+"Perhatian: semua data dan task dalam proyek ini akan dihapus secara permanen. "
+"Yakin ingin melanjutkan?"
+
+#: templates/index.html:120
+msgid "Pick the old project you want to permanently wipe from the system."
+msgstr "Pilih proyek lama yang ingin dihapus permanen dari sistem."
+
+#: templates/index.html:121
+msgid "Pick a Target Project"
+msgstr "Pilih Target Proyek"
+
+#: templates/index.html:123
+msgid "Pick a project..."
+msgstr "Pilih proyek..."
+
+#: templates/index.html:143
+msgid "All Data"
+msgstr "Semua Data"
+
+#: templates/index.html:144 templates/index.html:189
+msgid "To Sample"
+msgstr "Ke Sampel"
+
+#: templates/index.html:148
+msgid "Ready for Production"
+msgstr "Siap untuk Produksi"
+
+#: templates/index.html:150
+msgid "Submitted / Sent"
+msgstr "Dikirim / Terkirim"
+
+#: templates/index.html:160
+msgid "No tasks in the system yet."
+msgstr "Belum ada task di dalam sistem."
+
+#: templates/index.html:183
+msgid "Task ID :"
+msgstr "ID Task :"
+
+#: templates/index.html:186
+msgid "Sent"
+msgstr "Terkirim"
+
+#: templates/index.html:206
+msgid "Project:"
+msgstr "Proyek:"
+
+#: templates/index.html:207
+msgid "Package:"
+msgstr "Paket:"
+
+#: templates/index.html:212
+msgid "Task Name:"
+msgstr "Nama Task:"
+
+#: templates/index.html:213
+msgid "Desc:"
+msgstr "Desk:"
+
+#: templates/index.html:215
+msgid "Target Pullable:"
+msgstr "Target Pullable:"
+
+#: templates/index.html:218 templates/index.html:294
+msgid "Critical"
+msgstr "Kritis"
+
+#: templates/index.html:220 templates/index.html:296
+msgid "Low"
+msgstr "Rendah"
+
+#: templates/index.html:222 templates/index.html:298
+msgid "Safe"
+msgstr "Aman"
+
+#: templates/index.html:229
+msgid "View Details"
+msgstr "Lihat Detail"
+
+#: templates/index.html:242
+msgid "Task:"
+msgstr "Task:"
+
+#: templates/index.html:252
+msgid "Raw Data Attributes"
+msgstr "Atribut Data Mentah"
+
+#: templates/index.html:257 templates/index.html:494
+msgid "Task ID"
+msgstr "ID Task"
+
+#: templates/index.html:260 templates/index.html:496
+msgid "Task Name"
+msgstr "Nama Task"
+
+#: templates/index.html:263
+msgid "Package Name"
+msgstr "Nama Paket"
+
+#: templates/index.html:266
+msgid "Description"
+msgstr "Deskripsi"
+
+#: templates/index.html:269
+msgid "SOP"
+msgstr "SOP"
+
+#: templates/index.html:272
+msgid "Task Goal"
+msgstr "Tujuan Task"
+
+#: templates/index.html:275
+msgid "Initialize / Initial Status"
+msgstr "Inisialisasi / Status Awal"
+
+#: templates/index.html:278
+msgid "Generalization Direction"
+msgstr "Arah Generalisasi"
+
+#: templates/index.html:281
+msgid "Task Type"
+msgstr "Tipe Task"
+
+#: templates/index.html:284
+msgid "Num"
+msgstr "No."
+
+#: templates/index.html:287
+msgid "Label"
+msgstr "Label"
+
+#: templates/index.html:290
+msgid "Extraction Target (Pullable Num)"
+msgstr "Target Ekstraksi (Pullable Num)"
+
+#: templates/index.html:302
+msgid "Environment Type"
+msgstr "Tipe Lingkungan"
+
+#: templates/index.html:305
+msgid "Source Template ID"
+msgstr "ID Template Sumber"
+
+#: templates/index.html:308
+msgid "Target Num / Task"
+msgstr "Target Num / Task"
+
+#: templates/index.html:311
+msgid "Env Summary"
+msgstr "Ringkasan Env"
+
+#: templates/index.html:314
+msgid "Original Excel Status"
+msgstr "Status Excel Asli"
+
+#: templates/index.html:317
+msgid "Uploaded By"
+msgstr "Diupload Oleh"
+
+#: templates/index.html:318 templates/sidebar.html:93
+msgid "System"
+msgstr "Sistem"
+
+#: templates/index.html:327
+msgid "Pull Back from Production Team"
+msgstr "Tarik Kembali dari Tim Produksi"
+
+#: templates/index.html:329
+msgid "Send Task to Production Team"
+msgstr "Kirim Task ke Tim Produksi"
+
+#: templates/index.html:337
+msgid "Extraction Media Review"
+msgstr "Tinjauan Media Ekstraksi"
+
+#: templates/index.html:342
+msgid "Sample 1"
+msgstr "Sampel 1"
+
+#: templates/index.html:345
+msgid "Sample 2"
+msgstr "Sampel 2"
+
+#: templates/index.html:357
+msgid "Open Main Media in New Tab ↗"
+msgstr "Buka Media Utama di Tab Baru ↗"
+
+#: templates/index.html:359
+msgid "Visit Main External Link ↗"
+msgstr "Kunjungi Tautan Eksternal Utama ↗"
+
+#: templates/index.html:362
+msgid "No main media attached by the inspector yet."
+msgstr "Belum ada media utama yang dilampirkan oleh inspektor."
+
+#: templates/index.html:372
+msgid "Open Alternate Media in New Tab ↗"
+msgstr "Buka Media Alternatif di Tab Baru ↗"
+
+#: templates/index.html:374
+msgid "Visit Alternate External Link ↗"
+msgstr "Kunjungi Tautan Eksternal Alternatif ↗"
+
+#: templates/index.html:377
+msgid "No alternate media available/attached."
+msgstr "Tidak ada media alternatif yang tersedia/dilampirkan."
+
+#: templates/index.html:386
+msgid "Evaluation & Operations Form"
+msgstr "Formulir Evaluasi & Operasional"
+
+#: templates/index.html:389
+msgid "Mark as Skipped"
+msgstr "Tandai sebagai Dilewati"
+
+#: templates/index.html:389
+msgid "Restore Task Status (Unskip)"
+msgstr "Pulihkan Status Task (Batalkan Lewati)"
+
+#: templates/index.html:394 templates/index.html:441
+msgid "Case Name"
+msgstr "Nama Kasus"
+
+#: templates/index.html:399
+msgid "Main Media Link"
+msgstr "Link Media Utama"
+
+#: templates/index.html:400
+msgid "Enter the main reference URL..."
+msgstr "Masukkan URL referensi utama..."
+
+#: templates/index.html:403
+msgid "Alternate Media Link"
+msgstr "Link Media Alternatif"
+
+#: templates/index.html:404
+msgid "Enter the backup reference URL..."
+msgstr "Masukkan URL referensi cadangan..."
+
+#: templates/index.html:409
+msgid "Inspector Evaluation Result"
+msgstr "Hasil Evaluasi Inspektor"
+
+#: templates/index.html:414
+msgid "Waiting Inspect"
+msgstr "Menunggu Inspeksi"
+
+#: templates/index.html:415 templates/index.html:451
+msgid "Approved (Passed)"
+msgstr "Disetujui (Lulus)"
+
+#: templates/index.html:416
+msgid "Rejected (Failed)"
+msgstr "Ditolak (Gagal)"
+
+#: templates/index.html:421 templates/index.html:445
+msgid "Operational Status"
+msgstr "Status Operasional"
+
+#: templates/index.html:423
+msgid "Running (Active)"
+msgstr "Berjalan (Aktif)"
+
+#: templates/index.html:424
+msgid "Offline"
+msgstr "Offline"
+
+#: templates/index.html:425
+msgid "On Hold"
+msgstr "Ditahan (On Hold)"
+
+#: templates/index.html:426
+msgid "Complete"
+msgstr "Selesai"
+
+#: templates/index.html:431
+msgid "Inspection Notes"
+msgstr "Catatan Inspeksi"
+
+#: templates/index.html:432
+msgid "Write down findings or special instructions..."
+msgstr "Tuliskan temuan atau instruksi khusus..."
+
+#: templates/index.html:434
+msgid "Save Update"
+msgstr "Simpan Pembaruan"
+
+#: templates/index.html:449
+msgid "Internal Inspector Decision"
+msgstr "Keputusan Inspektor Internal"
+
+#: templates/index.html:452
+msgid "Failed Testing (Failed)"
+msgstr "Pengujian Gagal (Gagal)"
+
+#: templates/index.html:453
+msgid "Still Under Review"
+msgstr "Masih Dalam Tinjauan"
+
+#: templates/index.html:456
+msgid "Inspection Notes (Quality Team)"
+msgstr "Catatan Inspeksi (Tim Quality)"
+
+#: templates/index.html:457
+msgid "The evaluation team has not left any notes for this task yet."
+msgstr "Tim evaluasi belum meninggalkan catatan apa pun untuk task ini."
+
+#: templates/index.html:470
+msgid "Your sort criteria didn't turn up any results."
+msgstr "Kriteria pengurutan kamu tidak menghasilkan apa pun."
+
+#: templates/index.html:489
+msgid "Sort By"
+msgstr "Urutkan Berdasarkan"
+
+#: templates/index.html:493
+msgid "Latest Update"
+msgstr "Pembaruan Terbaru"
+
+#: templates/index.html:495
+msgid "Pullable Num (Target)"
+msgstr "Pullable Num (Target)"
+
+#: templates/index.html:501
+msgid "Descending (Highest / Newest First)"
+msgstr "Menurun (Tertinggi / Terbaru Dulu)"
+
+#: templates/index.html:502
+msgid "Ascending (Lowest / Oldest First)"
+msgstr "Menaik (Terendah / Terlama Dulu)"
+
+#: templates/index.html:508
+msgid "Filter Data"
+msgstr "Filter Data"
+
+#: templates/index.html:510
+msgid "By Project"
+msgstr "Berdasarkan Proyek"
+
+#: templates/index.html:512
+msgid "Show All Projects"
+msgstr "Tampilkan Semua Proyek"
+
+#: templates/index.html:517
+msgid "By Package"
+msgstr "Berdasarkan Paket"
+
+#: templates/index.html:519
+msgid "Show All Packages"
+msgstr "Tampilkan Semua Paket"
+
+#: templates/index.html:524
+msgid "Apply Settings"
+msgstr "Terapkan Pengaturan"
+
+#: templates/login_modal.html:9 templates/sidebar.html:51
+msgid "Sign In"
+msgstr "Masuk"
+
+#: templates/login_modal.html:10
+msgid "Enter your credentials to access the system"
+msgstr "Masukkan kredensial kamu untuk mengakses sistem"
+
+#: templates/login_modal.html:19
+msgid "Username or Email"
+msgstr "Username atau Email"
+
+#: templates/login_modal.html:20 templates/user_management.html:135
+msgid "name@company.com"
+msgstr "nama@perusahaan.com"
+
+#: templates/login_modal.html:25
+msgid "Password"
+msgstr "Password"
+
+#: templates/login_modal.html:26 templates/user_management.html:127
+msgid "••••••••"
+msgstr "••••••••"
+
+#: templates/login_modal.html:32 templates/login_modal.html:79
+#: templates/login_modal.html:85
+msgid "Continue"
+msgstr "Lanjutkan"
+
+#: templates/login_modal.html:39
+msgid "Protected by enterprise authentication"
+msgstr "Dilindungi oleh autentikasi tingkat enterprise"
+
+#: templates/login_modal.html:58
+msgid "Authenticating..."
+msgstr "Mengautentikasi..."
+
+#: templates/login_modal.html:82
+msgid "System unavailable. Please try again later."
+msgstr "Sistem tidak tersedia. Silakan coba lagi nanti."
+
+#: templates/navbar.html:6
+msgid "Menu"
+msgstr "Menu"
+
+#: templates/navbar.html:10
+msgid "Manage Task"
+msgstr "Kelola Task"
+
+#: templates/profile.html:16
+msgid "Profile Details - QA System"
+msgstr "Detail Profil - Sistem QA"
+
+#: templates/profile.html:53
+msgid "Profile Picture"
+msgstr "Foto Profil"
+
+#: templates/profile.html:65 templates/profile.html:104
+msgid "Edit Profile"
+msgstr "Edit Profil"
+
+#: templates/profile.html:68 templates/profile.html:157
+msgid "Change Password"
+msgstr "Ganti Password"
+
+#: templates/profile.html:75
+msgid "Account Info"
+msgstr "Info Akun"
+
+#: templates/profile.html:78 templates/user_management.html:62
+#: templates/user_management.html:122
+msgid "Username"
+msgstr "Username"
+
+#: templates/profile.html:83 templates/user_management.html:64
+msgid "Email"
+msgstr "Email"
+
+#: templates/profile.html:84
+msgid "Not set yet"
+msgstr "Belum disetel"
+
+#: templates/profile.html:88
+msgid "Account Status"
+msgstr "Status Akun"
+
+#: templates/profile.html:89
+msgid "Active"
+msgstr "Aktif"
+
+#: templates/profile.html:110
+msgid "Login Username"
+msgstr "Username Login"
+
+#: templates/profile.html:115 templates/user_management.html:63
+#: templates/user_management.html:130
+msgid "Full Name"
+msgstr "Nama Lengkap"
+
+#: templates/profile.html:119 templates/user_management.html:134
+msgid "Email Address"
+msgstr "Alamat Email"
+
+#: templates/profile.html:123
+msgid "Upload Profile Picture (Optional)"
+msgstr "Upload Foto Profil (Opsional)"
+
+#: templates/profile.html:125
+msgid "Format: JPG, PNG. Leave it blank if you don't wanna change your photo."
+msgstr "Format: JPG, PNG. Kosongkan jika tidak ingin mengganti foto kamu."
+
+#: templates/profile.html:130
+msgid "Save Changes"
+msgstr "Simpan Perubahan"
+
+#: templates/profile.html:141
+msgid "Change Account Password"
+msgstr "Ganti Password Akun"
+
+#: templates/profile.html:147
+msgid "Old Password"
+msgstr "Password Lama"
+
+#: templates/profile.html:148
+msgid "Enter your old password..."
+msgstr "Masukkan password lama kamu..."
+
+#: templates/profile.html:151
+msgid "New Password"
+msgstr "Password Baru"
+
+#: templates/profile.html:152
+msgid "Enter your new password..."
+msgstr "Masukkan password baru kamu..."
+
+#: templates/qr_management.html:16 templates/sidebar.html:17
+msgid "QR Management"
+msgstr "Manajemen QR"
+
+#: templates/qr_management.html:47
+msgid "QR Document Management"
+msgstr "Manajemen Dokumen QR"
+
+#: templates/qr_management.html:48
+msgid ""
+"Manage and keep track of all the QR documents (PDF) needed for day-to-day"
+" operations."
+msgstr ""
+"Kelola dan pantau semua dokumen QR (PDF) yang dibutuhkan buat operasional"
+" sehari-hari."
+
+#: templates/qr_management.html:53
+msgid "Upload PDF File"
+msgstr "Upload File PDF"
+
+#: templates/qr_management.html:75
+msgid "page"
+msgstr "halaman"
+
+#: templates/qr_management.html:79
+msgid "by"
+msgstr "oleh"
+
+#: templates/qr_management.html:89
+msgid "Open Document"
+msgstr "Buka Dokumen"
+
+#: templates/qr_management.html:93
+msgid "Sure you want to delete this document for good?"
+msgstr "Yakin mau hapus dokumen ini secara permanen?"
+
+#: templates/qr_management.html:94 templates/user_management.html:90
+msgid "Delete"
+msgstr "Hapus"
+
+#: templates/qr_management.html:103
+msgid "No PDF documents uploaded to the system yet."
+msgstr "Belum ada dokumen PDF yang diupload ke sistem."
+
+#: templates/qr_management.html:118
+msgid "Loading Document..."
+msgstr "Memuat Dokumen..."
+
+#: templates/qr_management.html:123
+msgid "Open in a new tab (if the PDF gets stuck on mobile)"
+msgstr "Buka di tab baru (kalau PDF-nya nge-stuck di HP)"
+
+#: templates/qr_management.html:125
+msgid "Fullscreen"
+msgstr "Layar Penuh"
+
+#: templates/qr_management.html:147
+msgid "Upload QR Document"
+msgstr "Upload Dokumen QR"
+
+#: templates/qr_management.html:154
+msgid ""
+"Upload one PDF file and it will be split into separate pages "
+"automatically, each page named from its Scene or Environment Code."
+msgstr ""
+"Upload satu file PDF dan otomatis akan dipecah jadi halaman-halaman "
+"terpisah, tiap halaman dinamai dari Scene atau Environment Code-nya."
+
+#: templates/qr_management.html:158
+msgid "Fallback Label"
+msgstr "Label Cadangan"
+
+#: templates/qr_management.html:159
+msgid "Optional"
+msgstr "Opsional"
+
+#: templates/qr_management.html:161
+msgid "e.g. SOP Packing v2"
+msgstr "misalnya SOP Packing v2"
+
+#: templates/qr_management.html:162
+msgid ""
+"Only used for pages where no Scene or Environment Code is found, those "
+"get named as the label plus a page number instead."
+msgstr ""
+"Cuma dipakai buat halaman yang gak ketemu Scene atau Environment Code-"
+"nya, halaman itu dinamai pakai label plus nomor halaman."
+
+#: templates/qr_management.html:168
+msgid "Start Upload"
+msgstr "Mulai Upload"
+
+#: templates/sidebar.html:4
+msgid "MENU CONTROLS"
+msgstr "MENU KONTROL"
+
+#: templates/sidebar.html:13
+msgid "Operations"
+msgstr "Operasional"
+
+#: templates/sidebar.html:15
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: templates/sidebar.html:16
+msgid "Task Management"
+msgstr "Manajemen Task"
+
+#: templates/sidebar.html:25
+msgid "Administration"
+msgstr "Administrasi"
+
+#: templates/sidebar.html:28 templates/user_management.html:47
+msgid "User Management"
+msgstr "Manajemen User"
+
+#: templates/sidebar.html:29
+msgid "Support Tickets"
+msgstr "Tiket Support"
+
+#: templates/sidebar.html:36
+msgid "System & Account"
+msgstr "Sistem & Akun"
+
+#: templates/sidebar.html:38
+msgid "Customer Service"
+msgstr "Layanan Pelanggan"
+
+#: templates/sidebar.html:39
+msgid "FAQ & Guidance"
+msgstr "FAQ & Panduan"
+
+#: templates/sidebar.html:40
+msgid "Profile Settings"
+msgstr "Pengaturan Profil"
+
+#: templates/sidebar.html:59
+msgid "Sign Out"
+msgstr "Keluar"
+
+#: templates/sidebar.html:70 templates/sidebar.html:74
+msgid "Bahasa Indonesia"
+msgstr "Bahasa Indonesia"
+
+#: templates/sidebar.html:70 templates/sidebar.html:79
+msgid "English"
+msgstr "Inggris"
+
+#: templates/sidebar.html:88
+msgid "Interface Theme"
+msgstr "Tema Tampilan"
+
+#: templates/sidebar.html:91
+msgid "Light"
+msgstr "Terang"
+
+#: templates/sidebar.html:92
+msgid "Dark"
+msgstr "Gelap"
+
+#: templates/support.html:16
+msgid "Customer Support - QA Control Center"
+msgstr "Customer Support - Pusat Kontrol QA"
+
+#: templates/support.html:46
+msgid "Help & Support Center"
+msgstr "Pusat Bantuan & Support"
+
+#: templates/support.html:47
+msgid ""
+"Send in any technical issue or bug report straight to the engineering "
+"team."
+msgstr "Kirimkan kendala teknis atau laporan bug langsung ke tim engineering."
+
+#: templates/support.html:63
+msgid "Developer Support Ticket"
+msgstr "Tiket Support Developer"
+
+#: templates/support.html:64
+msgid "Our team usually gets back to you within 1 business day."
+msgstr "Tim kami biasanya merespons dalam waktu 1 hari kerja."
+
+#: templates/support.html:71
+msgid "Issue Message / Bug Report"
+msgstr "Pesan Masalah / Laporan Bug"
+
+#: templates/support.html:72
+msgid ""
+"Describe the issue in detail (include task ID, error message, or steps to"
+" reproduce if you've got them)..."
+msgstr ""
+"Jelaskan masalah secara detail (sertakan ID task, pesan error, atau "
+"langkah-langkah reproduksi jika ada)..."
+
+#: templates/support.html:74
+msgid ""
+"Make sure the info you give is accurate so the tech team can investigate "
+"faster."
+msgstr ""
+"Pastikan informasi yang kamu berikan akurat agar tim teknis bisa "
+"menyelidiki lebih cepat."
+
+#: templates/support.html:82
+msgid "System Running Normally"
+msgstr "Sistem Berjalan Normal"
+
+#: templates/support.html:85
+msgid "Send Support Ticket"
+msgstr "Kirim Tiket Support"
+
+#: templates/user_management.html:16
+msgid "User Management - QA System"
+msgstr "Manajemen User - Sistem QA"
+
+#: templates/user_management.html:48
+msgid "Manage accounts, system access, and user permissions all in one place."
+msgstr "Kelola akun, akses sistem, dan izin pengguna dalam satu tempat."
+
+#: templates/user_management.html:51 templates/user_management.html:115
+msgid "Add New Account"
+msgstr "Tambah Akun Baru"
+
+#: templates/user_management.html:65
+msgid "Role / Access Level"
+msgstr "Role / Tingkat Akses"
+
+#: templates/user_management.html:66
+msgid "Actions"
+msgstr "Aksi"
+
+#: templates/user_management.html:79 templates/user_management.html:143
+msgid "Developer"
+msgstr "Developer"
+
+#: templates/user_management.html:80 templates/user_management.html:141
+msgid "Supervisor"
+msgstr "Supervisor"
+
+#: templates/user_management.html:81 templates/user_management.html:140
+msgid "Quality Control"
+msgstr "Quality Control"
+
+#: templates/user_management.html:82 templates/user_management.html:142
+msgid "Public"
+msgstr "Public"
+
+#: templates/user_management.html:84
+msgid "Update"
+msgstr "Update"
+
+#: templates/user_management.html:89
+msgid "Are you sure you want to delete this account?"
+msgstr "Yakin ingin menghapus akun ini?"
+
+#: templates/user_management.html:93
+msgid "Your account"
+msgstr "Akun kamu"
+
+#: templates/user_management.html:99
+msgid "No user data in the system yet."
+msgstr "Belum ada data user di sistem."
+
+#: templates/user_management.html:118
+msgid "Create a new login and set their access level."
+msgstr "Buat login baru dan tetapkan tingkat akses mereka."
+
+#: templates/user_management.html:123
+msgid "name@company"
+msgstr "nama@perusahaan"
+
+#: templates/user_management.html:126
+msgid "Starting Password"
+msgstr "Password Awal"
+
+#: templates/user_management.html:131
+msgid "Staff full name..."
+msgstr "Nama lengkap staf..."
+
+#: templates/user_management.html:138
+msgid "Access Level (Role)"
+msgstr "Tingkat Akses (Role)"
+
+#: templates/user_management.html:148
+msgid "Save Account"
+msgstr "Simpan Akun"
+
+#: venv/Lib/site-packages/click/_termui_impl.py:186
+msgid "d"
+msgstr "d"
+
+#: venv/Lib/site-packages/click/_termui_impl.py:736
+#, python-brace-format
+msgid "{editor}: Editing failed"
+msgstr "{editor}: Gagal mengedit"
+
+#: venv/Lib/site-packages/click/_termui_impl.py:740
+#, python-brace-format
+msgid "{editor}: Editing failed: {e}"
+msgstr "{editor}: Gagal mengedit: {e}"
+
+#: venv/Lib/site-packages/click/_winconsole.py:156
+#: venv/Lib/site-packages/click/_winconsole.py:173
+#, python-brace-format
+msgid "Windows error: {error}"
+msgstr "Error Windows: {error}"
+
+#: venv/Lib/site-packages/click/core.py:104
+msgid "deprecated"
+msgstr "usang"
+
+#: venv/Lib/site-packages/click/core.py:1304
+msgid "Options"
+msgstr "Opsi"
+
+#: venv/Lib/site-packages/click/core.py:1316
+msgid "Positional arguments"
+msgstr "Argumen posisional"
+
+#: venv/Lib/site-packages/click/core.py:1391
+#, python-brace-format
+msgid "Got unexpected extra argument ({args})"
+msgid_plural "Got unexpected extra arguments ({args})"
+msgstr[0] "Mendapatkan argumen ekstra yang tidak terduga ({args})"
+msgstr[1] "Mendapatkan argumen-argumen ekstra yang tidak terduga ({args})"
+
+#: venv/Lib/site-packages/click/core.py:1407
+#, python-brace-format
+msgid "DeprecationWarning: The command {name!r} is deprecated.{extra_message}"
+msgstr "Peringatan Usang: Perintah {name!r} sudah usang.{extra_message}"
+
+#: venv/Lib/site-packages/click/core.py:1594
+msgid "Aborted!"
+msgstr "Dibatalkan!"
+
+#: venv/Lib/site-packages/click/core.py:1981
+msgid "Commands"
+msgstr "Perintah"
+
+#: venv/Lib/site-packages/click/core.py:2012
+msgid "Missing command."
+msgstr "Perintah tidak ditemukan."
+
+#: venv/Lib/site-packages/click/core.py:2547
+msgid "Value must be an iterable."
+msgstr "Nilai harus berupa iterable."
+
+#: venv/Lib/site-packages/click/core.py:2570
+#, python-brace-format
+msgid "Takes {nargs} values but 1 was given."
+msgid_plural "Takes {nargs} values but {len} were given."
+msgstr[0] "Membutuhkan {nargs} nilai tetapi diberikan 1."
+msgstr[1] "Membutuhkan {nargs} nilai tetapi diberikan {len}."
+
+#: venv/Lib/site-packages/click/core.py:2767
+#, python-brace-format
+msgid ""
+"DeprecationWarning: The {param_type} {name!r} is "
+"deprecated.{extra_message}"
+msgstr "Peringatan Usang: {param_type} {name!r} sudah usang.{extra_message}"
+
+#: venv/Lib/site-packages/click/core.py:3246
+#, python-brace-format
+msgid "Name '{name}' defined twice"
+msgstr "Nama '{name}' didefinisikan dua kali"
+
+#: venv/Lib/site-packages/click/core.py:3262
+#, python-brace-format
+msgid "Boolean option {decl!r} cannot use the same flag for true/false."
+msgstr ""
+"Opsi boolean {decl!r} tidak dapat menggunakan flag yang sama untuk "
+"true/false."
+
+#: venv/Lib/site-packages/click/core.py:3281
+#, python-brace-format
+msgid "Could not determine name for option with declarations {decls!r}"
+msgstr "Tidak dapat menentukan nama untuk opsi dengan deklarasi {decls!r}"
+
+#: venv/Lib/site-packages/click/core.py:3288
+#, python-brace-format
+msgid ""
+"No options defined but a name was passed ({name}). Did you mean to "
+"declare an argument instead? Did you mean to pass '--{name}'?"
+msgstr ""
+"Tidak ada opsi yang didefinisikan tetapi sebuah nama diteruskan ({name})."
+" Maksud Anda mendeklarasikan argumen? Maksud Anda meneruskan '--{name}'?"
+
+#: venv/Lib/site-packages/click/core.py:3368
+#, python-brace-format
+msgid "env var: {var}"
+msgstr "env var: {var}"
+
+#: venv/Lib/site-packages/click/core.py:3371
+#, python-brace-format
+msgid "default: {default}"
+msgstr "default: {default}"
+
+#: venv/Lib/site-packages/click/core.py:3375
+msgid "required"
+msgstr "wajib"
+
+#: venv/Lib/site-packages/click/core.py:3435
+msgid "(dynamic)"
+msgstr "(dinamis)"
+
+#: venv/Lib/site-packages/click/core.py:3754
+#, python-brace-format
+msgid "Arguments take exactly one parameter declaration, got {length}: {decls}."
+msgstr ""
+"Argumen hanya mengambil satu deklarasi parameter, mendapatkan {length}: "
+"{decls}."
+
+#: venv/Lib/site-packages/click/decorators.py:399
+msgid "Do you want to continue?"
+msgstr "Apakah kamu ingin melanjutkan?"
+
+#: venv/Lib/site-packages/click/decorators.py:400
+msgid "Confirm the action without prompting."
+msgstr "Konfirmasi tindakan tanpa prompt."
+
+#: venv/Lib/site-packages/click/decorators.py:482
+#, python-format
+msgid "%(prog)s, version %(version)s"
+msgstr "%(prog)s, versi %(version)s"
+
+#: venv/Lib/site-packages/click/decorators.py:556
+#: venv/Lib/site-packages/click/decorators.py:598
+msgid "Show the version and exit."
+msgstr "Tampilkan versi dan keluar."
+
+#: venv/Lib/site-packages/click/decorators.py:624
+msgid "Show this message and exit."
+msgstr "Tampilkan pesan ini dan keluar."
+
+#: venv/Lib/site-packages/click/exceptions.py:29
+#, python-brace-format
+msgid "Did you mean {possibility}?"
+msgid_plural "(Did you mean one of: {possibilities}?)"
+msgstr[0] "Apakah maksud Anda {possibility}?"
+msgstr[1] "(Apakah maksud Anda salah satu dari: {possibilities}?)"
+
+#: venv/Lib/site-packages/click/exceptions.py:62
+#: venv/Lib/site-packages/click/exceptions.py:108
+#: venv/Lib/site-packages/click/termui.py:275
+#, python-brace-format
+msgid "Error: {message}"
+msgstr "Error: {message}"
+
+#: venv/Lib/site-packages/click/exceptions.py:99
+#, python-brace-format
+msgid "Try '{command} {option}' for help."
+msgstr "Coba '{command} {option}' untuk bantuan."
+
+#: venv/Lib/site-packages/click/exceptions.py:152
+#, python-brace-format
+msgid "Invalid value: {message}"
+msgstr "Nilai tidak valid: {message}"
+
+#: venv/Lib/site-packages/click/exceptions.py:154
+#, python-brace-format
+msgid "Invalid value for {param_hint}: {message}"
+msgstr "Nilai tidak valid untuk {param_hint}: {message}"
+
+#: venv/Lib/site-packages/click/exceptions.py:214
+msgid "Missing argument"
+msgstr "Argumen tidak ada"
+
+#: venv/Lib/site-packages/click/exceptions.py:216
+msgid "Missing option"
+msgstr "Opsi tidak ada"
+
+#: venv/Lib/site-packages/click/exceptions.py:218
+msgid "Missing parameter"
+msgstr "Parameter tidak ada"
+
+#: venv/Lib/site-packages/click/exceptions.py:220
+#, python-brace-format
+msgid "Missing {param_type}"
+msgstr "{param_type} tidak ada"
+
+#: venv/Lib/site-packages/click/exceptions.py:227
+#, python-brace-format
+msgid "Missing parameter: {param_name}"
+msgstr "Parameter tidak ada: {param_name}"
+
+#: venv/Lib/site-packages/click/exceptions.py:249
+#, python-brace-format
+msgid "No such option {name!r}."
+msgstr "Opsi {name!r} tidak ditemukan."
+
+#: venv/Lib/site-packages/click/exceptions.py:285
+#, python-brace-format
+msgid "No such command {name!r}."
+msgstr "Perintah {name!r} tidak ditemukan."
+
+#: venv/Lib/site-packages/click/exceptions.py:350
+msgid "unknown error"
+msgstr "error tidak dikenal"
+
+#: venv/Lib/site-packages/click/exceptions.py:357
+#, python-brace-format
+msgid "Could not open file {filename!r}: {message}"
+msgstr "Tidak dapat membuka file {filename!r}: {message}"
+
+#: venv/Lib/site-packages/click/formatting.py:167
+msgid "Usage:"
+msgstr "Penggunaan:"
+
+#: venv/Lib/site-packages/click/parser.py:145
+#, python-brace-format
+msgid "Invalid start character for option ({option})"
+msgstr "Karakter awal tidak valid untuk opsi ({option})"
+
+#: venv/Lib/site-packages/click/parser.py:203
+#, python-brace-format
+msgid "Argument {name!r} takes {nargs} values."
+msgstr "Argumen {name!r} memerlukan {nargs} nilai."
+
+#: venv/Lib/site-packages/click/parser.py:382
+#, python-brace-format
+msgid "Option {name!r} does not take a value."
+msgstr "Opsi {name!r} tidak memerlukan nilai."
+
+#: venv/Lib/site-packages/click/parser.py:445
+#, python-brace-format
+msgid "Option {name!r} requires an argument."
+msgid_plural "Option {name!r} requires {nargs} arguments."
+msgstr[0] "Opsi {name!r} memerlukan satu argumen."
+msgstr[1] "Opsi {name!r} memerlukan {nargs} argumen."
+
+#: venv/Lib/site-packages/click/shell_completion.py:417
+msgid "Shell completion is not supported for Bash versions older than 4.4."
+msgstr "Penyelesaian shell tidak didukung untuk versi Bash di bawah 4.4."
+
+#: venv/Lib/site-packages/click/shell_completion.py:424
+msgid "Couldn't detect Bash version, shell completion is not supported."
+msgstr "Tidak dapat mendeteksi versi Bash, penyelesaian shell tidak didukung."
+
+#: venv/Lib/site-packages/click/termui.py:256
+msgid "Repeat for confirmation"
+msgstr "Ulangi untuk konfirmasi"
+
+#: venv/Lib/site-packages/click/termui.py:286
+msgid "Error: The two entered values do not match."
+msgstr "Error: Kedua nilai yang dimasukkan tidak cocok."
+
+#: venv/Lib/site-packages/click/termui.py:340
+msgid "Error: invalid input"
+msgstr "Error: input tidak valid"
+
+#: venv/Lib/site-packages/click/termui.py:638
+#, python-brace-format
+msgid "Unknown color {colour!r}"
+msgstr "Warna tidak dikenal {colour!r}"
+
+#: venv/Lib/site-packages/click/termui.py:1003
+msgid "Press any key to continue..."
+msgstr "Tekan tombol apa saja untuk melanjutkan..."
+
+#: venv/Lib/site-packages/click/types.py:439
+#, python-brace-format
+msgid ""
+"Choose from:\n"
+"\t{choices}"
+msgstr ""
+"Pilih dari:\n"
+"\t{choices}"
+
+#: venv/Lib/site-packages/click/types.py:476
+#, python-brace-format
+msgid "{value!r} is not {choice}."
+msgid_plural "{value!r} is not one of {choices}."
+msgstr[0] "{value!r} bukan {choice}."
+msgstr[1] "{value!r} bukan salah satu dari {choices}."
+
+#: venv/Lib/site-packages/click/types.py:482
+#, python-brace-format
+msgid "Choice({choices})"
+msgstr "Pilihan({choices})"
+
+#: venv/Lib/site-packages/click/types.py:570
+#, python-brace-format
+msgid "{value!r} does not match the format {format}."
+msgid_plural "{value!r} does not match the formats {formats}."
+msgstr[0] "{value!r} tidak cocok dengan format {format}."
+msgstr[1] "{value!r} tidak cocok dengan format-format {formats}."
+
+#: venv/Lib/site-packages/click/types.py:594
+#, python-brace-format
+msgid "{value!r} is not a valid {number_type}."
+msgstr "{value!r} bukan {number_type} yang valid."
+
+#: venv/Lib/site-packages/click/types.py:679
+#, python-brace-format
+msgid "{value} is not in the range {range}."
+msgstr "{value} tidak berada dalam rentang {range}."
+
+#: venv/Lib/site-packages/click/types.py:866
+#, python-brace-format
+msgid "{value!r} is not a valid boolean. Recognized values: {states}"
+msgstr "{value!r} bukan boolean yang valid. Nilai yang dikenali: {states}"
+
+#: venv/Lib/site-packages/click/types.py:892
+#, python-brace-format
+msgid "{value!r} is not a valid UUID."
+msgstr "{value!r} bukan UUID yang valid."
+
+#: venv/Lib/site-packages/click/types.py:1116
+msgid "file"
+msgstr "file"
+
+#: venv/Lib/site-packages/click/types.py:1118
+msgid "directory"
+msgstr "direktori"
+
+#: venv/Lib/site-packages/click/types.py:1120
+msgid "path"
+msgstr "path"
+
+#: venv/Lib/site-packages/click/types.py:1167
+#, python-brace-format
+msgid "{name} {filename!r} does not exist."
+msgstr "{name} {filename!r} tidak ada."
+
+#: venv/Lib/site-packages/click/types.py:1176
+#, python-brace-format
+msgid "{name} {filename!r} is a file."
+msgstr "{name} {filename!r} adalah sebuah file."
+
+#: venv/Lib/site-packages/click/types.py:1184
+#, python-brace-format
+msgid "{name} {filename!r} is a directory."
+msgstr "{name} {filename!r} adalah sebuah direktori."
+
+#: venv/Lib/site-packages/click/types.py:1193
+#, python-brace-format
+msgid "{name} {filename!r} is not readable."
+msgstr "{name} {filename!r} tidak dapat dibaca."
+
+#: venv/Lib/site-packages/click/types.py:1202
+#, python-brace-format
+msgid "{name} {filename!r} is not writable."
+msgstr "{name} {filename!r} tidak dapat ditulis."
+
+#: venv/Lib/site-packages/click/types.py:1211
+#, python-brace-format
+msgid "{name} {filename!r} is not executable."
+msgstr "{name} {filename!r} tidak dapat dieksekusi."
+
+#: venv/Lib/site-packages/click/types.py:1283
+#, python-brace-format
+msgid "{len_type} values are required, but {len_value} was given."
+msgid_plural "{len_type} values are required, but {len_value} were given."
+msgstr[0] "{len_type} nilai diperlukan, tetapi {len_value} diberikan."
+msgstr[1] "{len_type} nilai diperlukan, tetapi {len_value} diberikan."
+
+#: venv/Lib/site-packages/click/utils.py:362
+#: venv/Lib/site-packages/click/utils.py:389
+#, python-brace-format
+msgid "Unknown standard stream '{name}'"
+msgstr "Standard stream '{name}' tidak dikenal"
+
+#~ msgid "A system error has occurred."
+#~ msgstr "Terjadi kesalahan sistem."
+

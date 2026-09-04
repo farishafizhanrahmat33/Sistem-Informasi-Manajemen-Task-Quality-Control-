@@ -2,6 +2,7 @@ import os
 import re
 from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from flask_babel import gettext as _
 from werkzeug.utils import secure_filename
 from database import db, QRCodeModel
 from pypdf import PdfReader, PdfWriter
@@ -41,16 +42,16 @@ def qr_codes_page():
 def upload_qr():
     role = get_current_role()
     if role not in ['Developer', 'Quality Control']:
-        flash('Access denied! Only Developer and Quality Control can add QR files.', 'danger')
+        flash(_('Access denied! Only Developer and Quality Control can add QR files.'), 'danger')
         return redirect(url_for('qr.qr_codes_page'))
 
     file = request.files.get('qr_file')
     if not (file and file.filename and _is_allowed(file.filename)):
-        flash("That file format's not valid, or nothing was picked.", 'danger')
+        flash(_("That file format's not valid, or nothing was picked."), 'danger')
         return redirect(url_for('qr.qr_codes_page'))
 
     original_filename = file.filename
-    
+
     # Ekstrak kode dasar stasiun (misal: logistics_x_courier_station_0080)
     env_match = re.search(r'([a-zA-Z0-9_]+_x_[a-zA-Z0-9_]+_\d+)', original_filename, re.IGNORECASE)
     base_code = env_match.group(1) if env_match else os.path.splitext(secure_filename(original_filename))[0]
@@ -58,18 +59,18 @@ def upload_qr():
     try:
         reader = PdfReader(file.stream)
     except Exception as e:
-        flash(f"Couldn't read that PDF: {e}", 'danger')
+        flash(_("Couldn't read that PDF: %(error)s", error=e), 'danger')
         return redirect(url_for('qr.qr_codes_page'))
 
     if not reader.pages:
-        flash("That PDF doesn't have any pages.", 'danger')
+        flash(_("That PDF doesn't have any pages."), 'danger')
         return redirect(url_for('qr.qr_codes_page'))
 
     created = 0
 
     for i, page in enumerate(reader.pages, start=1):
-        # Nama utama dokumen diset hanya base_code-nya saja
-        doc_name = base_code
+        # Diubah agar nama dokumen menjadi Scene 1, Scene 2, dst. sesuai nomor halamannya
+        doc_name = f"Scene {i}"
         safe_base = secure_filename(f"{base_code}_scene_{i}") or f"page_{i}"
         page_filename = _unique_filename(f"{safe_base}.pdf")
 
@@ -83,15 +84,15 @@ def upload_qr():
             pdf_filename=page_filename,
             uploaded_at=datetime.utcnow(),
             uploaded_by=session.get('username'),
-            source_document=original_filename,
+            source_document=base_code,  # Diubah dari original_filename
             page_number=i,
-        )
+        )   
         db.session.add(new_qr)
         created += 1
 
     db.session.commit()
 
-    flash(f'{created} page(s) successfully uploaded.', 'success')
+    flash(_('%(count)s page(s) successfully uploaded.', count=created), 'success')
     return redirect(url_for('qr.qr_codes_page'))
 
 
@@ -100,7 +101,7 @@ def upload_qr():
 def delete_qr(qr_id):
     role = get_current_role()
     if role not in ['Developer', 'Quality Control']:
-        flash('Access denied!', 'danger')
+        flash(_('Access denied!'), 'danger')
         return redirect(url_for('qr.qr_codes_page'))
 
     qr = db.session.get(QRCodeModel, qr_id)
@@ -110,9 +111,9 @@ def delete_qr(qr_id):
             os.remove(filepath)  # Diperbaiki dari os.path.remove menjadi os.remove
         db.session.delete(qr)
         db.session.commit()
-        flash('Document deleted.', 'success')
+        flash(_('Document deleted.'), 'success')
     else:
-        flash("Document not found.", 'danger')
+        flash(_("Document not found."), 'danger')
 
     return redirect(url_for('qr.qr_codes_page'))
 
@@ -122,7 +123,7 @@ def delete_qr(qr_id):
 def edit_qr(qr_id):
     role = get_current_role()
     if role not in ['Developer', 'Quality Control']:
-        flash('Access denied!', 'danger')
+        flash(_('Access denied!'), 'danger')
         return redirect(url_for('qr.qr_codes_page'))
 
     qr = db.session.get(QRCodeModel, qr_id)
@@ -131,10 +132,10 @@ def edit_qr(qr_id):
         if new_name:
             qr.name = new_name
             db.session.commit()
-            flash(f'Document renamed to "{new_name}".', 'success')
+            flash(_('Document renamed to "%(name)s".', name=new_name), 'success')
         else:
-            flash('Name cannot be empty.', 'danger')
+            flash(_('Name cannot be empty.'), 'danger')
     else:
-        flash("Document not found.", 'danger')
+        flash(_("Document not found."), 'danger')
 
     return redirect(url_for('qr.qr_codes_page'))

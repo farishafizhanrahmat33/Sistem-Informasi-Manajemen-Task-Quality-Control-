@@ -1,0 +1,1368 @@
+# English translations for PROJECT.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-09-04 21:39+0700\n"
+"PO-Revision-Date: 2026-09-03 10:48+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: routes/main_routes.py:52
+#, python-format
+msgid "You're in! Logged in as %(role)s."
+msgstr "You're in! Logged in as %(role)s."
+
+#: routes/main_routes.py:57
+msgid "Wrong username/email or password!"
+msgstr "Wrong username/email or password!"
+
+#: routes/main_routes.py:64
+msgid "You have been logged out."
+msgstr "You have been logged out."
+
+#: routes/main_routes.py:74
+msgid "Log in first to check out your profile."
+msgstr "Log in first to check out your profile."
+
+#: routes/main_routes.py:93
+msgid "Nope, that username is already taken by someone else!"
+msgstr "Nope, that username is already taken by someone else!"
+
+#: routes/main_routes.py:107
+msgid "Profile updated!"
+msgstr "Profile updated!"
+
+#: routes/main_routes.py:126
+msgid "Password changed, nice!"
+msgstr "Password changed, nice!"
+
+#: routes/main_routes.py:128
+msgid "Old password doesn't match!"
+msgstr "Old password doesn't match!"
+
+#: routes/main_routes.py:150
+msgid "Your message got sent over to the Developer!"
+msgstr "Your message got sent over to the Developer!"
+
+#: routes/main_routes.py:160
+msgid "Access denied! This support inbox is Developer-only."
+msgstr "Access denied! This support inbox is Developer-only."
+
+#: routes/main_routes.py:170 routes/main_routes.py:200
+#: routes/main_routes.py:231 routes/qr_routes.py:104 routes/qr_routes.py:126
+#: routes/task_routes.py:138 routes/task_routes.py:205
+msgid "Access denied!"
+msgstr "Access denied!"
+
+#: routes/main_routes.py:180 templates/admin_support.html:57
+msgid "Resolved"
+msgstr "Resolved"
+
+#: routes/main_routes.py:180 templates/admin_support.html:59
+msgid "Open"
+msgstr "Open"
+
+#: routes/main_routes.py:181
+#, python-format
+msgid "Ticket marked as %(status)s."
+msgstr "Ticket marked as %(status)s."
+
+#: routes/main_routes.py:183
+msgid "Ticket not found."
+msgstr "Ticket not found."
+
+#: routes/main_routes.py:191
+msgid "Access denied! This page is Developer-only."
+msgstr "Access denied! This page is Developer-only."
+
+#: routes/main_routes.py:212
+msgid "Nope, that username is already taken!"
+msgstr "Nope, that username is already taken!"
+
+#: routes/main_routes.py:224
+#, python-format
+msgid "Account %(username)s created with the %(role)s role!"
+msgstr "Account %(username)s created with the %(role)s role!"
+
+#: routes/main_routes.py:238
+msgid "Can't delete the account you're currently logged in with!"
+msgstr "Can't delete the account you're currently logged in with!"
+
+#: routes/main_routes.py:242
+msgid "Account deleted."
+msgstr "Account deleted."
+
+#: routes/main_routes.py:249
+msgid "Access denied! Only Developers can change permissions."
+msgstr "Access denied! Only Developers can change permissions."
+
+#: routes/main_routes.py:258
+#, python-format
+msgid "Role for \"%(username)s\" changed to %(role)s!"
+msgstr "Role for \"%(username)s\" changed to %(role)s!"
+
+#: routes/main_routes.py:260
+msgid "User not found."
+msgstr "User not found."
+
+#: routes/main_routes.py:263
+msgid "Something went wrong updating the role."
+msgstr "Something went wrong updating the role."
+
+#: routes/qr_routes.py:45
+msgid "Access denied! Only Developer and Quality Control can add QR files."
+msgstr "Access denied! Only Developer and Quality Control can add QR files."
+
+#: routes/qr_routes.py:50
+msgid "That file format's not valid, or nothing was picked."
+msgstr "That file format's not valid, or nothing was picked."
+
+#: routes/qr_routes.py:62
+#, python-format
+msgid "Couldn't read that PDF: %(error)s"
+msgstr "Couldn't read that PDF: %(error)s"
+
+#: routes/qr_routes.py:66
+msgid "That PDF doesn't have any pages."
+msgstr "That PDF doesn't have any pages."
+
+#: routes/qr_routes.py:95
+#, python-format
+msgid "%(count)s page(s) successfully uploaded."
+msgstr "%(count)s page(s) successfully uploaded."
+
+#: routes/qr_routes.py:114
+msgid "Document deleted."
+msgstr "Document deleted."
+
+#: routes/qr_routes.py:116 routes/qr_routes.py:139
+msgid "Document not found."
+msgstr "Document not found."
+
+#: routes/qr_routes.py:135
+#, python-format
+msgid "Document renamed to \"%(name)s\"."
+msgstr "Document renamed to \"%(name)s\"."
+
+#: routes/qr_routes.py:137
+msgid "Name cannot be empty."
+msgstr "Name cannot be empty."
+
+#: routes/task_routes.py:31
+#, python-format
+msgid "Access denied! Your role showed up as \"%(role)s\"."
+msgstr "Access denied! Your role showed up as \"%(role)s\"."
+
+#: routes/task_routes.py:39
+msgid "File and Project Name are both required!"
+msgstr "File and Project Name are both required!"
+
+#: routes/task_routes.py:127
+msgid "Project data synced up! New stuff got added and old stuff got updated."
+msgstr "Project data synced up! New stuff got added and old stuff got updated."
+
+#: routes/task_routes.py:130
+#, python-format
+msgid "Could not process the file: %(error)s"
+msgstr "Could not process the file: %(error)s"
+
+#: routes/task_routes.py:145
+#, python-format
+msgid "Project \"%(project)s\" and all its tasks got deleted."
+msgstr "Project \"%(project)s\" and all its tasks got deleted."
+
+#: routes/task_routes.py:152
+msgid "Access denied! You can't edit tasks."
+msgstr "Access denied! You can't edit tasks."
+
+#: routes/task_routes.py:181
+msgid "Task details updated."
+msgstr "Task details updated."
+
+#: routes/task_routes.py:189
+msgid "Access denied, you can't forward tasks!"
+msgstr "Access denied, you can't forward tasks!"
+
+#: routes/task_routes.py:196
+msgid "sent over to the Production Team"
+msgstr "sent over to the Production Team"
+
+#: routes/task_routes.py:196
+msgid "pulled back"
+msgstr "pulled back"
+
+#: routes/task_routes.py:197
+#, python-format
+msgid "Task got %(status)s."
+msgstr "Task got %(status)s."
+
+#: routes/task_routes.py:212
+msgid "Task restored from Skipped."
+msgstr "Task restored from Skipped."
+
+#: routes/task_routes.py:215
+msgid "Task marked as Skipped."
+msgstr "Task marked as Skipped."
+
+#: templates/admin_support.html:16
+#, fuzzy
+msgid "Support Tickets - QA System"
+msgstr "Support Tickets"
+
+#: templates/admin_support.html:32
+#, fuzzy
+msgid "Support Tickets Inbox"
+msgstr "Support Tickets"
+
+#: templates/admin_support.html:33
+msgid "List of complaints or issues sent in by users through the help center."
+msgstr ""
+
+#: templates/admin_support.html:41 templates/user_management.html:61
+msgid "No"
+msgstr ""
+
+#: templates/admin_support.html:42
+msgid "ID / Sender"
+msgstr ""
+
+#: templates/admin_support.html:43
+msgid "Issue Message"
+msgstr ""
+
+#: templates/admin_support.html:44
+msgid "Status"
+msgstr ""
+
+#: templates/admin_support.html:45
+msgid "Time Sent"
+msgstr ""
+
+#: templates/admin_support.html:46
+#, fuzzy
+msgid "Action"
+msgstr "Operations"
+
+#: templates/admin_support.html:53
+#, python-format
+msgid "User #%(username)s"
+msgstr ""
+
+#: templates/admin_support.html:66
+#, fuzzy
+msgid "Reopen"
+msgstr "Open"
+
+#: templates/admin_support.html:66
+#, fuzzy
+msgid "Mark Resolved"
+msgstr "Resolved"
+
+#: templates/admin_support.html:73
+msgid "No issue messages yet."
+msgstr ""
+
+#: templates/dashboard.html:16
+msgid "Dashboard - Quality Control System"
+msgstr ""
+
+#: templates/dashboard.html:84
+#, fuzzy
+msgid "Operational Overview"
+msgstr "Operations"
+
+#: templates/dashboard.html:85
+msgid "Quality Control Dashboard"
+msgstr ""
+
+#: templates/dashboard.html:86
+msgid ""
+"Monitoring real-time sample verification metrics, diagnostic revisions, "
+"and process readiness status."
+msgstr ""
+
+#: templates/dashboard.html:91
+msgid "Database Synchronized"
+msgstr ""
+
+#: templates/dashboard.html:104 templates/dashboard.html:247
+msgid "Need Sample"
+msgstr ""
+
+#: templates/dashboard.html:108
+msgid "Awaiting sample intake"
+msgstr ""
+
+#: templates/dashboard.html:116 templates/dashboard.html:247
+msgid "Sample Done"
+msgstr ""
+
+#: templates/dashboard.html:120
+msgid "Inspection completed"
+msgstr ""
+
+#: templates/dashboard.html:128 templates/dashboard.html:247
+msgid "Revision"
+msgstr ""
+
+#: templates/dashboard.html:132
+msgid "Requires correction"
+msgstr ""
+
+#: templates/dashboard.html:140 templates/dashboard.html:247
+msgid "Ready"
+msgstr ""
+
+#: templates/dashboard.html:144
+msgid "Passed verification"
+msgstr ""
+
+#: templates/dashboard.html:152 templates/dashboard.html:247
+msgid "Skipped"
+msgstr ""
+
+#: templates/dashboard.html:156
+msgid "Bypassed cycle"
+msgstr ""
+
+#: templates/dashboard.html:169
+#, fuzzy
+msgid "Status Distribution"
+msgstr "Administration"
+
+#: templates/dashboard.html:170
+msgid "Live Analytics"
+msgstr ""
+
+#: templates/dashboard.html:182
+msgid "Recent Task Activity"
+msgstr ""
+
+#: templates/dashboard.html:183
+msgid "Showing latest 5 entries"
+msgstr ""
+
+#: templates/dashboard.html:189
+#, fuzzy
+msgid "Task Designation"
+msgstr "Administration"
+
+#: templates/dashboard.html:190
+msgid "QC Status"
+msgstr ""
+
+#: templates/dashboard.html:214
+msgid "No task records found in the database."
+msgstr ""
+
+#: templates/dashboard.html:313
+msgid "Terjadi kesalahan sistem."
+msgstr ""
+
+#: templates/faq.html:16
+msgid "FAQ & Full Guide - QA System"
+msgstr ""
+
+#: templates/faq.html:32
+msgid "FAQ & Full System Guide"
+msgstr ""
+
+#: templates/faq.html:33
+msgid "Docs and Q&A covering all the features available in the QA Control Center."
+msgstr ""
+
+#: templates/faq.html:46
+msgid "1. How do I sign in and manage my account profile?"
+msgstr ""
+
+#: templates/faq.html:51
+msgid ""
+"You can sign in with your registered <b>Username</b> or <b>Email</b> plus"
+" your password through the Sign In button in the navbar/sidebar. Once "
+"you're in, head to <b>Profile Settings</b> to update your full name, "
+"email, change your profile picture, and change your password whenever you"
+" want."
+msgstr ""
+
+#: templates/faq.html:60
+msgid "2. What metrics or task categories show up on the Dashboard?"
+msgstr ""
+
+#: templates/faq.html:65
+msgid ""
+"The Dashboard shows a real-time summary straight from the database, "
+"broken down by these quality categories:"
+msgstr ""
+
+#: templates/faq.html:67
+msgid "Need Sample:"
+msgstr ""
+
+#: templates/faq.html:67
+msgid "New tasks that still need a test sample."
+msgstr ""
+
+#: templates/faq.html:68
+msgid "Sample Done:"
+msgstr ""
+
+#: templates/faq.html:68
+msgid "Tasks whose sample work is already finished."
+msgstr ""
+
+#: templates/faq.html:69
+msgid "Revision:"
+msgstr ""
+
+#: templates/faq.html:69
+msgid "Tasks that need fixes or another pass."
+msgstr ""
+
+#: templates/faq.html:70
+msgid "Ready:"
+msgstr ""
+
+#: templates/faq.html:70
+msgid "Tasks that got approved (Passed) and are good to go for production."
+msgstr ""
+
+#: templates/faq.html:71
+msgid "Skipped:"
+msgstr ""
+
+#: templates/faq.html:71
+#, fuzzy
+msgid "Tasks marked to be skipped this round."
+msgstr "Task marked as Skipped."
+
+#: templates/faq.html:81
+msgid "3. How do I manage projects and sync up task data?"
+msgstr ""
+
+#: templates/faq.html:86
+msgid ""
+"From the <b>Task Management</b> menu, users with <b>Developer</b> or "
+"<b>Quality Control</b> access can upload project data files in <b>Excel "
+"(.xlsx, .xls)</b> or <b>CSV</b> format. The system will auto-sync the "
+"task data into the database. You can also filter data, search by keyword,"
+" update task status/notes, forward tasks to the production team, or "
+"permanently delete a whole project."
+msgstr ""
+
+#: templates/faq.html:95
+msgid "4. What's the QR Management menu for?"
+msgstr ""
+
+#: templates/faq.html:100
+msgid ""
+"The <b>QR Management</b> menu is where Developers and Quality Control "
+"folks upload reference documents in <b>PDF</b> format. Users can open "
+"those docs right in a clean pop-up (Modal) viewer with no extra toolbar "
+"clutter, which makes it way easier to review stuff out in the field."
+msgstr ""
+
+#: templates/faq.html:109
+msgid "5. What are the different access levels (Roles) in this system?"
+msgstr ""
+
+#: templates/faq.html:114
+msgid "The system runs on Role-Based Access Control:"
+msgstr ""
+
+#: templates/faq.html:116
+msgid "Developer:"
+msgstr ""
+
+#: templates/faq.html:116
+msgid ""
+"Top-level access — covers user management, system settings, support "
+"tickets, plus full control over tasks and documents."
+msgstr ""
+
+#: templates/faq.html:117
+#, fuzzy
+msgid "Quality Control:"
+msgstr "MENU CONTROLS"
+
+#: templates/faq.html:117
+msgid ""
+"Full access to import project data, evaluate tasks, change QC status, and"
+" manage PDF documents."
+msgstr ""
+
+#: templates/faq.html:118
+msgid "Supervisor:"
+msgstr ""
+
+#: templates/faq.html:118
+msgid ""
+"Can view the dashboard, filter tasks, and forward tasks to the production"
+" team."
+msgstr ""
+
+#: templates/faq.html:119
+msgid "Public (Guest):"
+msgstr ""
+
+#: templates/faq.html:119
+msgid ""
+"Regular visitors who can only see the dashboard summary and the list of "
+"tasks already sent to production."
+msgstr ""
+
+#: templates/faq.html:130
+msgid "6. What if I run into an issue or need tech support?"
+msgstr ""
+
+#: templates/faq.html:135
+msgid ""
+"Head over to the <b>Customer Service</b> menu to send in a message about "
+"any issue or bug straight to the engineering team. If you're a "
+"<b>Developer</b>, you can check every incoming message through the "
+"dedicated <b>Support Tickets</b> menu."
+msgstr ""
+
+#: templates/faq.html:144
+msgid "7. How do I search for and sort specific tasks?"
+msgstr ""
+
+#: templates/faq.html:149
+msgid ""
+"Use the <b>Search</b> box to find tasks by ID, name, or description "
+"instantly. For more sorting options, hit the <b>Sort Data</b> button (top"
+" right corner) to filter by a specific Project or Package. If nothing "
+"shows up, double-check that a filter isn't already active."
+msgstr ""
+
+#: templates/faq.html:159
+msgid "8. Why does the data keep refreshing on its own?"
+msgstr ""
+
+#: templates/faq.html:164
+msgid ""
+"We've got a <b>Real-time Auto-Update</b> feature built in. The app checks"
+" the database for changes every 5 seconds. That way, any status change "
+"made by the QC team shows up instantly for Leaders and other users "
+"without anyone needing to manually refresh the page."
+msgstr ""
+
+#: templates/login_modal.html:9 templates/sidebar.html:51
+msgid "Sign In"
+msgstr "Sign In"
+
+#: templates/login_modal.html:10
+msgid "Enter your credentials to access the system"
+msgstr ""
+
+#: templates/login_modal.html:19
+msgid "Username or Email"
+msgstr ""
+
+#: templates/login_modal.html:20 templates/user_management.html:135
+msgid "name@company.com"
+msgstr ""
+
+#: templates/login_modal.html:25
+msgid "Password"
+msgstr ""
+
+#: templates/login_modal.html:26 templates/user_management.html:127
+msgid "••••••••"
+msgstr ""
+
+#: templates/login_modal.html:32 templates/login_modal.html:79
+#: templates/login_modal.html:85
+msgid "Continue"
+msgstr ""
+
+#: templates/login_modal.html:39
+msgid "Protected by enterprise authentication"
+msgstr ""
+
+#: templates/login_modal.html:58
+msgid "Authenticating..."
+msgstr ""
+
+#: templates/login_modal.html:82
+msgid "System unavailable. Please try again later."
+msgstr ""
+
+#: templates/navbar.html:6
+msgid "Menu"
+msgstr ""
+
+#: templates/navbar.html:10
+msgid "Manage Task"
+msgstr ""
+
+#: templates/profile.html:16
+msgid "Profile Details - QA System"
+msgstr ""
+
+#: templates/profile.html:53
+#, fuzzy
+msgid "Profile Picture"
+msgstr "Profile updated!"
+
+#: templates/profile.html:65 templates/profile.html:104
+msgid "Edit Profile"
+msgstr ""
+
+#: templates/profile.html:68 templates/profile.html:157
+msgid "Change Password"
+msgstr ""
+
+#: templates/profile.html:75
+msgid "Account Info"
+msgstr ""
+
+#: templates/profile.html:78 templates/user_management.html:62
+#: templates/user_management.html:122
+#, fuzzy
+msgid "Username"
+msgstr "User Management"
+
+#: templates/profile.html:83 templates/user_management.html:64
+msgid "Email"
+msgstr ""
+
+#: templates/profile.html:84
+msgid "Not set yet"
+msgstr ""
+
+#: templates/profile.html:88
+#, fuzzy
+msgid "Account Status"
+msgstr "Account deleted."
+
+#: templates/profile.html:89
+msgid "Active"
+msgstr ""
+
+#: templates/profile.html:110
+msgid "Login Username"
+msgstr ""
+
+#: templates/profile.html:115 templates/user_management.html:63
+#: templates/user_management.html:130
+msgid "Full Name"
+msgstr ""
+
+#: templates/profile.html:119 templates/user_management.html:134
+msgid "Email Address"
+msgstr ""
+
+#: templates/profile.html:123
+msgid "Upload Profile Picture (Optional)"
+msgstr ""
+
+#: templates/profile.html:125
+msgid "Format: JPG, PNG. Leave it blank if you don't wanna change your photo."
+msgstr ""
+
+#: templates/profile.html:129 templates/profile.html:156
+msgid "Cancel"
+msgstr ""
+
+#: templates/profile.html:130
+msgid "Save Changes"
+msgstr ""
+
+#: templates/profile.html:141
+msgid "Change Account Password"
+msgstr ""
+
+#: templates/profile.html:147
+#, fuzzy
+msgid "Old Password"
+msgstr "Old password doesn't match!"
+
+#: templates/profile.html:148
+msgid "Enter your old password..."
+msgstr ""
+
+#: templates/profile.html:151
+msgid "New Password"
+msgstr ""
+
+#: templates/profile.html:152
+msgid "Enter your new password..."
+msgstr ""
+
+#: templates/qr_management.html:16 templates/sidebar.html:17
+msgid "QR Management"
+msgstr "QR Management"
+
+#: templates/qr_management.html:47
+msgid "QR Document Management"
+msgstr "QR Document Management"
+
+#: templates/qr_management.html:48
+msgid ""
+"Manage and keep track of all the QR documents (PDF) needed for day-to-day"
+" operations."
+msgstr ""
+"Manage and keep track of all the QR documents (PDF) needed for day-to-day"
+" operations."
+
+#: templates/qr_management.html:53
+msgid "Upload PDF File"
+msgstr "Upload PDF File"
+
+#: templates/qr_management.html:75
+msgid "page"
+msgstr "page"
+
+#: templates/qr_management.html:79
+msgid "by"
+msgstr "by"
+
+#: templates/qr_management.html:89
+msgid "Open Document"
+msgstr "Open Document"
+
+#: templates/qr_management.html:93
+msgid "Sure you want to delete this document for good?"
+msgstr "Sure you want to delete this document for good?"
+
+#: templates/qr_management.html:94 templates/user_management.html:90
+msgid "Delete"
+msgstr "Delete"
+
+#: templates/qr_management.html:103
+msgid "No PDF documents uploaded to the system yet."
+msgstr "No PDF documents uploaded to the system yet."
+
+#: templates/qr_management.html:118
+msgid "Loading Document..."
+msgstr "Loading Document..."
+
+#: templates/qr_management.html:123
+msgid "Open in a new tab (if the PDF gets stuck on mobile)"
+msgstr "Open in a new tab (if the PDF gets stuck on mobile)"
+
+#: templates/qr_management.html:125
+msgid "Fullscreen"
+msgstr "Fullscreen"
+
+#: templates/qr_management.html:147
+msgid "Upload QR Document"
+msgstr "Upload QR Document"
+
+#: templates/qr_management.html:154
+msgid ""
+"Upload one PDF file and it will be split into separate pages "
+"automatically, each page named from its Scene or Environment Code."
+msgstr ""
+"Upload one PDF file and it will be split into separate pages "
+"automatically, each page named from its Scene or Environment Code."
+
+#: templates/qr_management.html:158
+msgid "Fallback Label"
+msgstr "Fallback Label"
+
+#: templates/qr_management.html:159
+msgid "Optional"
+msgstr "Optional"
+
+#: templates/qr_management.html:161
+msgid "e.g. SOP Packing v2"
+msgstr "e.g. SOP Packing v2"
+
+#: templates/qr_management.html:162
+msgid ""
+"Only used for pages where no Scene or Environment Code is found, those "
+"get named as the label plus a page number instead."
+msgstr ""
+"Only used for pages where no Scene or Environment Code is found, those "
+"get named as the label plus a page number instead."
+
+#: templates/qr_management.html:168
+msgid "Start Upload"
+msgstr "Start Upload"
+
+#: templates/sidebar.html:4
+msgid "MENU CONTROLS"
+msgstr "MENU CONTROLS"
+
+#: templates/sidebar.html:13
+msgid "Operations"
+msgstr "Operations"
+
+#: templates/sidebar.html:15
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: templates/sidebar.html:16
+msgid "Task Management"
+msgstr "Task Management"
+
+#: templates/sidebar.html:25
+msgid "Administration"
+msgstr "Administration"
+
+#: templates/sidebar.html:28 templates/user_management.html:47
+msgid "User Management"
+msgstr "User Management"
+
+#: templates/sidebar.html:29
+msgid "Support Tickets"
+msgstr "Support Tickets"
+
+#: templates/sidebar.html:36
+msgid "System & Account"
+msgstr "System & Account"
+
+#: templates/sidebar.html:38
+msgid "Customer Service"
+msgstr "Customer Service"
+
+#: templates/sidebar.html:39
+msgid "FAQ & Guidance"
+msgstr "FAQ & Guidance"
+
+#: templates/sidebar.html:40
+msgid "Profile Settings"
+msgstr "Profile Settings"
+
+#: templates/sidebar.html:59
+msgid "Sign Out"
+msgstr "Sign Out"
+
+#: templates/sidebar.html:70 templates/sidebar.html:75
+msgid "Bahasa Indonesia"
+msgstr "Bahasa Indonesia"
+
+#: templates/sidebar.html:70 templates/sidebar.html:80
+msgid "English"
+msgstr "English"
+
+#: templates/sidebar.html:89
+msgid "Interface Theme"
+msgstr "Interface Theme"
+
+#: templates/sidebar.html:92
+msgid "Light"
+msgstr "Light"
+
+#: templates/sidebar.html:93
+msgid "Dark"
+msgstr "Dark"
+
+#: templates/sidebar.html:94
+msgid "System"
+msgstr "System"
+
+#: templates/support.html:16
+msgid "Customer Support - QA Control Center"
+msgstr ""
+
+#: templates/support.html:46
+msgid "Help & Support Center"
+msgstr ""
+
+#: templates/support.html:47
+msgid ""
+"Send in any technical issue or bug report straight to the engineering "
+"team."
+msgstr ""
+
+#: templates/support.html:63
+#, fuzzy
+msgid "Developer Support Ticket"
+msgstr "Support Tickets"
+
+#: templates/support.html:64
+msgid "Our team usually gets back to you within 1 business day."
+msgstr ""
+
+#: templates/support.html:71
+msgid "Issue Message / Bug Report"
+msgstr ""
+
+#: templates/support.html:72
+msgid ""
+"Describe the issue in detail (include task ID, error message, or steps to"
+" reproduce if you've got them)..."
+msgstr ""
+
+#: templates/support.html:74
+msgid ""
+"Make sure the info you give is accurate so the tech team can investigate "
+"faster."
+msgstr ""
+
+#: templates/support.html:82
+msgid "System Running Normally"
+msgstr ""
+
+#: templates/support.html:85
+#, fuzzy
+msgid "Send Support Ticket"
+msgstr "Support Tickets"
+
+#: templates/user_management.html:16
+#, fuzzy
+msgid "User Management - QA System"
+msgstr "User Management"
+
+#: templates/user_management.html:48
+msgid "Manage accounts, system access, and user permissions all in one place."
+msgstr ""
+
+#: templates/user_management.html:51 templates/user_management.html:115
+msgid "Add New Account"
+msgstr ""
+
+#: templates/user_management.html:65
+msgid "Role / Access Level"
+msgstr ""
+
+#: templates/user_management.html:66
+#, fuzzy
+msgid "Actions"
+msgstr "Operations"
+
+#: templates/user_management.html:79 templates/user_management.html:143
+msgid "Developer"
+msgstr ""
+
+#: templates/user_management.html:80 templates/user_management.html:141
+msgid "Supervisor"
+msgstr ""
+
+#: templates/user_management.html:81 templates/user_management.html:140
+#, fuzzy
+msgid "Quality Control"
+msgstr "MENU CONTROLS"
+
+#: templates/user_management.html:82 templates/user_management.html:142
+msgid "Public"
+msgstr ""
+
+#: templates/user_management.html:84
+#, fuzzy
+msgid "Update"
+msgstr "page"
+
+#: templates/user_management.html:89
+#, fuzzy
+msgid "Are you sure you want to delete this account?"
+msgstr "Sure you want to delete this document for good?"
+
+#: templates/user_management.html:93
+#, fuzzy
+msgid "Your account"
+msgstr "System & Account"
+
+#: templates/user_management.html:99
+msgid "No user data in the system yet."
+msgstr ""
+
+#: templates/user_management.html:118
+msgid "Create a new login and set their access level."
+msgstr ""
+
+#: templates/user_management.html:123
+msgid "name@company"
+msgstr ""
+
+#: templates/user_management.html:126
+#, fuzzy
+msgid "Starting Password"
+msgstr "Start Upload"
+
+#: templates/user_management.html:131
+msgid "Staff full name..."
+msgstr ""
+
+#: templates/user_management.html:138
+msgid "Access Level (Role)"
+msgstr ""
+
+#: templates/user_management.html:148
+#, fuzzy
+msgid "Save Account"
+msgstr "System & Account"
+
+#: venv/Lib/site-packages/click/_termui_impl.py:186
+msgid "d"
+msgstr ""
+
+#: venv/Lib/site-packages/click/_termui_impl.py:736
+#, python-brace-format
+msgid "{editor}: Editing failed"
+msgstr ""
+
+#: venv/Lib/site-packages/click/_termui_impl.py:740
+#, python-brace-format
+msgid "{editor}: Editing failed: {e}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/_winconsole.py:156
+#: venv/Lib/site-packages/click/_winconsole.py:173
+#, python-brace-format
+msgid "Windows error: {error}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:104
+#, fuzzy
+msgid "deprecated"
+msgstr "Delete"
+
+#: venv/Lib/site-packages/click/core.py:1304
+#, fuzzy
+msgid "Options"
+msgstr "Operations"
+
+#: venv/Lib/site-packages/click/core.py:1316
+msgid "Positional arguments"
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:1391
+#, python-brace-format
+msgid "Got unexpected extra argument ({args})"
+msgid_plural "Got unexpected extra arguments ({args})"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/Lib/site-packages/click/core.py:1407
+#, python-brace-format
+msgid "DeprecationWarning: The command {name!r} is deprecated.{extra_message}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:1594
+msgid "Aborted!"
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:1981
+msgid "Commands"
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:2012
+msgid "Missing command."
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:2547
+msgid "Value must be an iterable."
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:2570
+#, python-brace-format
+msgid "Takes {nargs} values but 1 was given."
+msgid_plural "Takes {nargs} values but {len} were given."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/Lib/site-packages/click/core.py:2767
+#, python-brace-format
+msgid ""
+"DeprecationWarning: The {param_type} {name!r} is "
+"deprecated.{extra_message}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:3246
+#, python-brace-format
+msgid "Name '{name}' defined twice"
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:3262
+#, python-brace-format
+msgid "Boolean option {decl!r} cannot use the same flag for true/false."
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:3281
+#, python-brace-format
+msgid "Could not determine name for option with declarations {decls!r}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:3288
+#, python-brace-format
+msgid ""
+"No options defined but a name was passed ({name}). Did you mean to "
+"declare an argument instead? Did you mean to pass '--{name}'?"
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:3368
+#, python-brace-format
+msgid "env var: {var}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:3371
+#, python-brace-format
+msgid "default: {default}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:3375
+msgid "required"
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:3435
+msgid "(dynamic)"
+msgstr ""
+
+#: venv/Lib/site-packages/click/core.py:3754
+#, python-brace-format
+msgid "Arguments take exactly one parameter declaration, got {length}: {decls}."
+msgstr ""
+
+#: venv/Lib/site-packages/click/decorators.py:399
+msgid "Do you want to continue?"
+msgstr ""
+
+#: venv/Lib/site-packages/click/decorators.py:400
+msgid "Confirm the action without prompting."
+msgstr ""
+
+#: venv/Lib/site-packages/click/decorators.py:482
+#, python-format
+msgid "%(prog)s, version %(version)s"
+msgstr ""
+
+#: venv/Lib/site-packages/click/decorators.py:556
+#: venv/Lib/site-packages/click/decorators.py:598
+msgid "Show the version and exit."
+msgstr ""
+
+#: venv/Lib/site-packages/click/decorators.py:624
+msgid "Show this message and exit."
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:29
+#, python-brace-format
+msgid "Did you mean {possibility}?"
+msgid_plural "(Did you mean one of: {possibilities}?)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/Lib/site-packages/click/exceptions.py:62
+#: venv/Lib/site-packages/click/exceptions.py:108
+#: venv/Lib/site-packages/click/termui.py:275
+#, python-brace-format
+msgid "Error: {message}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:99
+#, python-brace-format
+msgid "Try '{command} {option}' for help."
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:152
+#, python-brace-format
+msgid "Invalid value: {message}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:154
+#, python-brace-format
+msgid "Invalid value for {param_hint}: {message}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:214
+msgid "Missing argument"
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:216
+msgid "Missing option"
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:218
+msgid "Missing parameter"
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:220
+#, python-brace-format
+msgid "Missing {param_type}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:227
+#, python-brace-format
+msgid "Missing parameter: {param_name}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:249
+#, python-brace-format
+msgid "No such option {name!r}."
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:285
+#, python-brace-format
+msgid "No such command {name!r}."
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:350
+msgid "unknown error"
+msgstr ""
+
+#: venv/Lib/site-packages/click/exceptions.py:357
+#, python-brace-format
+msgid "Could not open file {filename!r}: {message}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/formatting.py:167
+#, fuzzy
+msgid "Usage:"
+msgstr "page"
+
+#: venv/Lib/site-packages/click/parser.py:145
+#, python-brace-format
+msgid "Invalid start character for option ({option})"
+msgstr ""
+
+#: venv/Lib/site-packages/click/parser.py:203
+#, python-brace-format
+msgid "Argument {name!r} takes {nargs} values."
+msgstr ""
+
+#: venv/Lib/site-packages/click/parser.py:382
+#, python-brace-format
+msgid "Option {name!r} does not take a value."
+msgstr ""
+
+#: venv/Lib/site-packages/click/parser.py:445
+#, python-brace-format
+msgid "Option {name!r} requires an argument."
+msgid_plural "Option {name!r} requires {nargs} arguments."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/Lib/site-packages/click/shell_completion.py:417
+msgid "Shell completion is not supported for Bash versions older than 4.4."
+msgstr ""
+
+#: venv/Lib/site-packages/click/shell_completion.py:424
+msgid "Couldn't detect Bash version, shell completion is not supported."
+msgstr ""
+
+#: venv/Lib/site-packages/click/termui.py:256
+msgid "Repeat for confirmation"
+msgstr ""
+
+#: venv/Lib/site-packages/click/termui.py:286
+msgid "Error: The two entered values do not match."
+msgstr ""
+
+#: venv/Lib/site-packages/click/termui.py:340
+msgid "Error: invalid input"
+msgstr ""
+
+#: venv/Lib/site-packages/click/termui.py:638
+#, python-brace-format
+msgid "Unknown color {colour!r}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/termui.py:1003
+msgid "Press any key to continue..."
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:439
+#, python-brace-format
+msgid ""
+"Choose from:\n"
+"\t{choices}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:476
+#, python-brace-format
+msgid "{value!r} is not {choice}."
+msgid_plural "{value!r} is not one of {choices}."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/Lib/site-packages/click/types.py:482
+#, python-brace-format
+msgid "Choice({choices})"
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:570
+#, python-brace-format
+msgid "{value!r} does not match the format {format}."
+msgid_plural "{value!r} does not match the formats {formats}."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/Lib/site-packages/click/types.py:594
+#, python-brace-format
+msgid "{value!r} is not a valid {number_type}."
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:679
+#, python-brace-format
+msgid "{value} is not in the range {range}."
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:866
+#, python-brace-format
+msgid "{value!r} is not a valid boolean. Recognized values: {states}"
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:892
+#, python-brace-format
+msgid "{value!r} is not a valid UUID."
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:1116
+msgid "file"
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:1118
+msgid "directory"
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:1120
+msgid "path"
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:1167
+#, python-brace-format
+msgid "{name} {filename!r} does not exist."
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:1176
+#, python-brace-format
+msgid "{name} {filename!r} is a file."
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:1184
+#, python-brace-format
+msgid "{name} {filename!r} is a directory."
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:1193
+#, python-brace-format
+msgid "{name} {filename!r} is not readable."
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:1202
+#, python-brace-format
+msgid "{name} {filename!r} is not writable."
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:1211
+#, python-brace-format
+msgid "{name} {filename!r} is not executable."
+msgstr ""
+
+#: venv/Lib/site-packages/click/types.py:1283
+#, python-brace-format
+msgid "{len_type} values are required, but {len_value} was given."
+msgid_plural "{len_type} values are required, but {len_value} were given."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/Lib/site-packages/click/utils.py:362
+#: venv/Lib/site-packages/click/utils.py:389
+#, python-brace-format
+msgid "Unknown standard stream '{name}'"
+msgstr ""
+

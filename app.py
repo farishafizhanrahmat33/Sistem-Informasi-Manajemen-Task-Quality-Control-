@@ -1,22 +1,31 @@
 import os
-from flask import Flask
+from flask import Flask, request, session  # Tambahkan request dan session
 from config import Config
 from database import db
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash
+from flask_babel import Babel  # Import Babel
 
 app = Flask(__name__)
 
-# Dinaikin dari 100MB. PDF scene (banyak halaman + foto) gampang tembus itu,
-# dan itu langsung kena 413 "Request Entity Too Large" SEBELUM request-nya
-# nyampe ke kode kita (jadi mau di-split per halaman pun percuma kalau upload-nya
-# udah ditolak duluan). Sesuaikan lagi angkanya sesuai PDF terbesar yang realistis.
-# CATATAN: kalau app ini jalan di belakang reverse proxy (Nginx dll) atau di
-# platform hosting (Render/Railway/dll), layer itu bisa punya limit sendiri yang
-# terpisah dari punya Flask -- limit di sana juga perlu dinaikin manual.
-
 app.config.from_object(Config)
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 1024  # 1 GB
+
+# ==========================================
+# KONFIGURASI BAHASA (FLASK-BABEL)
+# ==========================================
+app.config['BABEL_DEFAULT_LOCALE'] = 'id'  # Default bahasa Indonesia
+app.config['LANGUAGES'] = {'id': 'Bahasa Indonesia', 'en': 'English'}
+
+def get_locale():
+    # Cek apakah user sudah memilih bahasa di session
+    if 'language' in session:
+        return session['language']
+    # Jika tidak, deteksi otomatis dari browser
+    return request.accept_languages.best_match(app.config['LANGUAGES'].keys())
+
+babel = Babel(app, locale_selector=get_locale)
+app.jinja_env.globals['get_locale'] = get_locale
 
 
 # Make sure upload folders exist

@@ -13,7 +13,7 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Details - QA System</title>
+    <title>{{ _('Profile Details - QA System') }}</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -50,7 +50,7 @@
                         <!-- AVATAR FOTO PROFIL DINAMIS -->
                         <div class="mb-4">
                             {% if user.foto_profil != 'default.png' %}
-                                <img src="{{ url_for('static', filename='uploads/profiles/' + user.foto_profil) }}" alt="Profile Picture" class="rounded-circle shadow-sm" style="width: 120px; height: 120px; object-fit: cover; border: 3px solid var(--bs-primary);">
+                                <img src="{{ url_for('static', filename='uploads/profiles/' + user.foto_profil) }}" alt="{{ _('Profile Picture') }}" class="rounded-circle shadow-sm" style="width: 120px; height: 120px; object-fit: cover; border: 3px solid var(--bs-primary);">
                             {% else %}
                                 <div class="d-inline-flex align-items-center justify-content-center rounded-circle shadow-sm" style="width: 120px; height: 120px; background-color: var(--bs-primary); color: white; font-size: 3.5rem; font-weight: 600;">
                                     {{ user.nama_lengkap[0]|upper if user.nama_lengkap else user.username[0]|upper }}
@@ -59,34 +59,34 @@
                         </div>
                         
                         <h4 class="fw-bold mb-1" style="color: var(--text-main);">{{ user.nama_lengkap or user.username }}</h4>
-                        <p class="mb-4"><span class="badge bg-secondary px-3 py-2">{{ user.role }}</span></p>
+                        <p class="mb-4"><span class="badge bg-secondary px-3 py-2">{{ _(user.role) }}</span></p>
 
                         <button class="btn btn-primary btn-sm px-4 py-2 mb-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#editProfileModal">
-                            ✏️ Edit Profile
+                            ✏️ {{ _('Edit Profile') }}
                         </button>
                         <button class="btn btn-outline-secondary btn-sm px-4 py-2 mb-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
-                            🔒 Change Password
+                            🔒 {{ _('Change Password') }}
                         </button>
 
                         <hr style="border-color: var(--border-color) !important; opacity: 1;">
 
                         <!-- DETAIL INFO -->
                         <div class="text-start mt-4 px-3">
-                            <h6 class="fw-bold mb-4" style="color: var(--text-main);">Account Info</h6>
+                            <h6 class="fw-bold mb-4" style="color: var(--text-main);">{{ _('Account Info') }}</h6>
                             
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="small text-muted fw-semibold">Username</span>
+                                <span class="small text-muted fw-semibold">{{ _('Username') }}</span>
                                 <span class="fw-medium" style="color: var(--text-main);">{{ user.username }}</span>
                             </div>
 
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="small text-muted fw-semibold">Email</span>
-                                <span class="fw-medium" style="color: var(--text-main);">{{ user.email or 'Not set yet' }}</span>
+                                <span class="small text-muted fw-semibold">{{ _('Email') }}</span>
+                                <span class="fw-medium" style="color: var(--text-main);">{{ user.email or _('Not set yet') }}</span>
                             </div>
                             
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="small text-muted fw-semibold">Account Status</span>
-                                <span class="badge bg-success">Active</span>
+                                <span class="small text-muted fw-semibold">{{ _('Account Status') }}</span>
+                                <span class="badge bg-success">{{ _('Active') }}</span>
                             </div>
                         </div>
 
@@ -101,33 +101,33 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content" style="background-color: var(--bg-surface); color: var(--text-main);">
                 <div class="modal-header border-bottom" style="border-color: var(--border-color) !important;">
-                    <h5 class="modal-title fw-bold">Edit Profile</h5>
+                    <h5 class="modal-title fw-bold">{{ _('Edit Profile') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" style="filter: var(--btn-close-filter, none);"></button>
                 </div>
                 <form action="{{ url_for('main.edit_profile') }}" method="POST" enctype="multipart/form-data">
                     <div class="modal-body">
                         <div class="mb-3">
-                                <label class="form-label detail-label text-muted small fw-bold">Login Username</label>
+                                <label class="form-label detail-label text-muted small fw-bold">{{ _('Login Username') }}</label>
                                 <input type="text" class="form-control" name="username" value="{{ user.username }}" required>
                             </div>
                             
                             <div class="mb-3">
-                                <label class="form-label detail-label text-muted small fw-bold">Full Name</label>
+                                <label class="form-label detail-label text-muted small fw-bold">{{ _('Full Name') }}</label>
                                 <input type="text" class="form-control" name="nama_lengkap" value="{{ user.nama_lengkap or '' }}" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label detail-label text-muted small fw-bold">Email Address</label>
+                            <label class="form-label detail-label text-muted small fw-bold">{{ _('Email Address') }}</label>
                             <input type="email" class="form-control" name="email" value="{{ user.email or '' }}" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label detail-label text-muted small fw-bold">Upload Profile Picture (Optional)</label>
+                            <label class="form-label detail-label text-muted small fw-bold">{{ _('Upload Profile Picture (Optional)') }}</label>
                             <input type="file" class="form-control" name="foto_profil" accept=".jpg,.jpeg,.png">
-                            <div class="form-text small text-muted mt-1">Format: JPG, PNG. Leave it blank if you don't wanna change your photo.</div>
+                            <div class="form-text small text-muted mt-1">{{ _("Format: JPG, PNG. Leave it blank if you don't wanna change your photo.") }}</div>
                         </div>
                     </div>
                     <div class="modal-footer border-top-0 pt-0">
-                        <button type="button" class="btn btn-outline-secondary btn-sm px-4" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary btn-sm px-4">Save Changes</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm px-4" data-bs-dismiss="modal">{{ _('Cancel') }}</button>
+                        <button type="submit" class="btn btn-primary btn-sm px-4">{{ _('Save Changes') }}</button>
                     </div>
                 </form>
             </div>
@@ -138,23 +138,23 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="background-color: var(--bg-surface); color: var(--text-main);">
             <div class="modal-header border-bottom" style="border-color: var(--border-color) !important;">
-                <h5 class="modal-title fw-bold">Change Account Password</h5>
+                <h5 class="modal-title fw-bold">{{ _('Change Account Password') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" style="filter: var(--btn-close-filter, none);"></button>
             </div>
             <form action="{{ url_for('main.change_password') }}" method="POST">
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label detail-label text-muted small fw-bold">Old Password</label>
-                        <input type="password" class="form-control" name="old_password" placeholder="Enter your old password..." required>
+                        <label class="form-label detail-label text-muted small fw-bold">{{ _('Old Password') }}</label>
+                        <input type="password" class="form-control" name="old_password" placeholder="{{ _('Enter your old password...') }}" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label detail-label text-muted small fw-bold">New Password</label>
-                        <input type="password" class="form-control" name="new_password" placeholder="Enter your new password..." required>
+                        <label class="form-label detail-label text-muted small fw-bold">{{ _('New Password') }}</label>
+                        <input type="password" class="form-control" name="new_password" placeholder="{{ _('Enter your new password...') }}" required>
                     </div>
                 </div>
                 <div class="modal-footer border-top-0 pt-0">
-                    <button type="button" class="btn btn-outline-secondary btn-sm px-4" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary btn-sm px-4">Change Password</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm px-4" data-bs-dismiss="modal">{{ _('Cancel') }}</button>
+                    <button type="submit" class="btn btn-primary btn-sm px-4">{{ _('Change Password') }}</button>
                 </div>
             </form>
         </div>

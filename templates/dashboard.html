@@ -13,7 +13,7 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Quality Control System</title>
+    <title>{{ _('Dashboard - Quality Control System') }}</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -81,14 +81,14 @@
         <div class="enterprise-card p-4 mb-4">
             <div class="row align-items-center justify-content-between">
                 <div class="col-lg-8">
-                    <span class="text-uppercase fw-bold text-primary mb-1 d-block" style="font-size: 0.7rem; letter-spacing: 0.08em;">Operational Overview</span>
-                    <h1 class="fw-bold fs-4 mb-1" style="color: var(--text-main);">Quality Control Dashboard</h1>
-                    <p class="text-muted mb-0 small">Monitoring real-time sample verification metrics, diagnostic revisions, and process readiness status.</p>
+                    <span class="text-uppercase fw-bold text-primary mb-1 d-block" style="font-size: 0.7rem; letter-spacing: 0.08em;">{{ _('Operational Overview') }}</span>
+                    <h1 class="fw-bold fs-4 mb-1" style="color: var(--text-main);">{{ _('Quality Control Dashboard') }}</h1>
+                    <p class="text-muted mb-0 small">{{ _('Monitoring real-time sample verification metrics, diagnostic revisions, and process readiness status.') }}</p>
                 </div>
                 <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
                     <div class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded border" style="background-color: var(--bg-body); border-color: var(--border-color);">
                         <span class="rounded-circle bg-success" style="width: 8px; height: 8px; display: inline-block;"></span>
-                        <span class="small fw-medium text-muted" style="font-size: 0.8rem;">Database Synchronized</span>
+                        <span class="small fw-medium text-muted" style="font-size: 0.8rem;">{{ _('Database Synchronized') }}</span>
                     </div>
                 </div>
             </div>
@@ -101,11 +101,11 @@
             <div class="col-xl col-md-4 col-sm-6">
                 <div class="enterprise-card p-3 h-100">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="text-muted fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">Need Sample</span>
+                        <span class="text-muted fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">{{ _('Need Sample') }}</span>
                         <div class="metric-indicator bg-warning"></div>
                     </div>
                     <h3 class="fw-bold fs-3 mb-1" style="color: var(--text-main);">{{ metrics.need }}</h3>
-                    <span class="text-muted" style="font-size: 0.75rem;">Awaiting sample intake</span>
+                    <span class="text-muted" style="font-size: 0.75rem;">{{ _('Awaiting sample intake') }}</span>
                 </div>
             </div>
 
@@ -113,11 +113,11 @@
             <div class="col-xl col-md-4 col-sm-6">
                 <div class="enterprise-card p-3 h-100">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="text-muted fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">Sample Done</span>
+                        <span class="text-muted fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">{{ _('Sample Done') }}</span>
                         <div class="metric-indicator bg-info"></div>
                     </div>
                     <h3 class="fw-bold fs-3 mb-1" style="color: var(--text-main);">{{ metrics.done }}</h3>
-                    <span class="text-muted" style="font-size: 0.75rem;">Inspection completed</span>
+                    <span class="text-muted" style="font-size: 0.75rem;">{{ _('Inspection completed') }}</span>
                 </div>
             </div>
 
@@ -125,11 +125,11 @@
             <div class="col-xl col-md-4 col-sm-6">
                 <div class="enterprise-card p-3 h-100">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="text-muted fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">Revision</span>
+                        <span class="text-muted fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">{{ _('Revision') }}</span>
                         <div class="metric-indicator bg-danger"></div>
                     </div>
                     <h3 class="fw-bold fs-3 mb-1" style="color: var(--text-main);">{{ metrics.rev }}</h3>
-                    <span class="text-muted" style="font-size: 0.75rem;">Requires correction</span>
+                    <span class="text-muted" style="font-size: 0.75rem;">{{ _('Requires correction') }}</span>
                 </div>
             </div>
 
@@ -137,11 +137,11 @@
             <div class="col-xl col-md-6 col-sm-6">
                 <div class="enterprise-card p-3 h-100">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="text-muted fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">Ready</span>
+                        <span class="text-muted fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">{{ _('Ready') }}</span>
                         <div class="metric-indicator bg-success"></div>
                     </div>
                     <h3 class="fw-bold fs-3 mb-1" style="color: var(--text-main);">{{ metrics.ready }}</h3>
-                    <span class="text-muted" style="font-size: 0.75rem;">Passed verification</span>
+                    <span class="text-muted" style="font-size: 0.75rem;">{{ _('Passed verification') }}</span>
                 </div>
             </div>
 
@@ -149,11 +149,11 @@
             <div class="col-xl col-md-6 col-sm-12">
                 <div class="enterprise-card p-3 h-100">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="text-muted fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">Skipped</span>
+                        <span class="text-muted fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">{{ _('Skipped') }}</span>
                         <div class="metric-indicator bg-secondary"></div>
                     </div>
                     <h3 class="fw-bold fs-3 mb-1" style="color: var(--text-main);">{{ metrics.skip }}</h3>
-                    <span class="text-muted" style="font-size: 0.75rem;">Bypassed cycle</span>
+                    <span class="text-muted" style="font-size: 0.75rem;">{{ _('Bypassed cycle') }}</span>
                 </div>
             </div>
 
@@ -166,8 +166,8 @@
             <div class="col-lg-5">
                 <div class="enterprise-card p-4 h-100">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2 class="fw-semibold fs-6 mb-0" style="color: var(--text-main);">Status Distribution</h2>
-                        <span class="text-muted" style="font-size: 0.75rem;">Live Analytics</span>
+                        <h2 class="fw-semibold fs-6 mb-0" style="color: var(--text-main);">{{ _('Status Distribution') }}</h2>
+                        <span class="text-muted" style="font-size: 0.75rem;">{{ _('Live Analytics') }}</span>
                     </div>
                     <div class="d-flex justify-content-center align-items-center" style="height: 250px;">
                         <canvas id="taskChart"></canvas>
@@ -179,15 +179,15 @@
             <div class="col-lg-7">
                 <div class="enterprise-card p-4 h-100">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h2 class="fw-semibold fs-6 mb-0" style="color: var(--text-main);">Recent Task Activity</h2>
-                        <span class="text-muted" style="font-size: 0.75rem;">Showing latest 5 entries</span>
+                        <h2 class="fw-semibold fs-6 mb-0" style="color: var(--text-main);">{{ _('Recent Task Activity') }}</h2>
+                        <span class="text-muted" style="font-size: 0.75rem;">{{ _('Showing latest 5 entries') }}</span>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-custom align-middle mb-0" style="color: var(--text-main);">
                             <thead>
                                 <tr>
-                                    <th class="py-2 px-3">Task Designation</th>
-                                    <th class="py-2 text-end px-3">QC Status</th>
+                                    <th class="py-2 px-3">{{ _('Task Designation') }}</th>
+                                    <th class="py-2 text-end px-3">{{ _('QC Status') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -204,14 +204,14 @@
                                                 {% elif t.qc_category == 'Need Sample' %} bg-warning bg-opacity-10 text-warning 
                                                 {% elif t.qc_category == 'Sample Done' %} bg-info bg-opacity-10 text-info 
                                                 {% else %} bg-secondary bg-opacity-10 text-secondary {% endif %} px-2 py-1 fw-semibold" style="font-size: 0.7rem; letter-spacing: 0.03em;">
-                                                {{ t.qc_category }}
+                                                {{ _(t.qc_category) }}
                                             </span>
                                         </td>
                                     </tr>
                                     {% endfor %}
                                 {% else %}
                                     <tr>
-                                        <td colspan="2" class="text-center py-5 text-muted small">No task records found in the database.</td>
+                                        <td colspan="2" class="text-center py-5 text-muted small">{{ _('No task records found in the database.') }}</td>
                                     </tr>
                                 {% endif %}
                             </tbody>
@@ -244,7 +244,7 @@
         new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['Need Sample', 'Sample Done', 'Revision', 'Ready', 'Skipped'],
+                labels: ['{{ _("Need Sample") }}', '{{ _("Sample Done") }}', '{{ _("Revision") }}', '{{ _("Ready") }}', '{{ _("Skipped") }}'],
                 datasets: [{
                     data: dataMetrics,
                     backgroundColor: ['#ffc107', '#0dcaf0', '#dc3545', '#198754', '#6c757d'],
@@ -310,7 +310,7 @@
                 errorAlert.classList.remove('d-none');
             }
         } catch (error) {
-            errorAlert.textContent = "Terjadi kesalahan sistem.";
+            errorAlert.textContent = "{{ _('A system error has occurred.') }}";
             errorAlert.classList.remove('d-none');
         }
     });

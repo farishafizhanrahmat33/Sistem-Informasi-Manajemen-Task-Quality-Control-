@@ -13,7 +13,7 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FAQ & Full Guide - QA System</title>
+    <title>{{ _('FAQ & Full Guide - QA System') }}</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,8 +29,8 @@
 
     <div class="container-fluid px-4 pb-5 mt-4">
         <div class="mb-4">
-            <h3 class="fw-bold mb-1" style="color: var(--text-main);">FAQ & Full System Guide</h3>
-            <p class="small text-muted mb-0">Docs and Q&A covering all the features available in the QA Control Center.</p>
+            <h3 class="fw-bold mb-1" style="color: var(--text-main);">{{ _('FAQ & Full System Guide') }}</h3>
+            <p class="small text-muted mb-0">{{ _('Docs and Q&A covering all the features available in the QA Control Center.') }}</p>
         </div>
 
         <div class="row justify-content-center">
@@ -43,12 +43,12 @@
                         <div class="accordion-item bg-transparent border-bottom" style="border-color: var(--border-color) !important;">
                             <h2 class="accordion-header" id="faqOne">
                                 <button class="accordion-button collapsed bg-transparent fw-bold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" style="color: var(--text-main);">
-                                    1. How do I sign in and manage my account profile?
+                                    {{ _('1. How do I sign in and manage my account profile?') }}
                                 </button>
                             </h2>
                             <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body text-muted small">
-                                    You can sign in with your registered <b>Username</b> or <b>Email</b> plus your password through the Sign In button in the navbar/sidebar. Once you're in, head to <b>Profile Settings</b> to update your full name, email, change your profile picture, and change your password whenever you want.
+                                    {{ _("You can sign in with your registered <b>Username</b> or <b>Email</b> plus your password through the Sign In button in the navbar/sidebar. Once you're in, head to <b>Profile Settings</b> to update your full name, email, change your profile picture, and change your password whenever you want.")|safe }}
                                 </div>
                             </div>
                         </div>
@@ -57,18 +57,18 @@
                         <div class="accordion-item bg-transparent border-bottom" style="border-color: var(--border-color) !important;">
                             <h2 class="accordion-header" id="faqTwo">
                                 <button class="accordion-button collapsed bg-transparent fw-bold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" style="color: var(--text-main);">
-                                    2. What metrics or task categories show up on the Dashboard?
+                                    {{ _('2. What metrics or task categories show up on the Dashboard?') }}
                                 </button>
                             </h2>
                             <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body text-muted small">
-                                    The Dashboard shows a real-time summary straight from the database, broken down by these quality categories:
+                                    {{ _('The Dashboard shows a real-time summary straight from the database, broken down by these quality categories:') }}
                                     <ul class="mb-0 mt-1 ps-3">
-                                        <li><b>Need Sample:</b> New tasks that still need a test sample.</li>
-                                        <li><b>Sample Done:</b> Tasks whose sample work is already finished.</li>
-                                        <li><b>Revision:</b> Tasks that need fixes or another pass.</li>
-                                        <li><b>Ready:</b> Tasks that got approved (Passed) and are good to go for production.</li>
-                                        <li><b>Skipped:</b> Tasks marked to be skipped this round.</li>
+                                        <li><b>{{ _('Need Sample:') }}</b> {{ _('New tasks that still need a test sample.') }}</li>
+                                        <li><b>{{ _('Sample Done:') }}</b> {{ _('Tasks whose sample work is already finished.') }}</li>
+                                        <li><b>{{ _('Revision:') }}</b> {{ _('Tasks that need fixes or another pass.') }}</li>
+                                        <li><b>{{ _('Ready:') }}</b> {{ _('Tasks that got approved (Passed) and are good to go for production.') }}</li>
+                                        <li><b>{{ _('Skipped:') }}</b> {{ _('Tasks marked to be skipped this round.') }}</li>
                                     </ul>
                                 </div>
                             </div>
@@ -78,12 +78,12 @@
                         <div class="accordion-item bg-transparent border-bottom" style="border-color: var(--border-color) !important;">
                             <h2 class="accordion-header" id="faqThree">
                                 <button class="accordion-button collapsed bg-transparent fw-bold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" style="color: var(--text-main);">
-                                    3. How do I manage projects and sync up task data?
+                                    {{ _('3. How do I manage projects and sync up task data?') }}
                                 </button>
                             </h2>
                             <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body text-muted small">
-                                    From the <b>Task Management</b> menu, users with <b>Developer</b> or <b>Quality Control</b> access can upload project data files in <b>Excel (.xlsx, .xls)</b> or <b>CSV</b> format. The system will auto-sync the task data into the database. You can also filter data, search by keyword, update task status/notes, forward tasks to the production team, or permanently delete a whole project.
+                                    {{ _("From the <b>Task Management</b> menu, users with <b>Developer</b> or <b>Quality Control</b> access can upload project data files in <b>Excel (.xlsx, .xls)</b> or <b>CSV</b> format. The system will auto-sync the task data into the database. You can also filter data, search by keyword, update task status/notes, forward tasks to the production team, or permanently delete a whole project.")|safe }}
                                 </div>
                             </div>
                         </div>
@@ -92,12 +92,12 @@
                         <div class="accordion-item bg-transparent border-bottom" style="border-color: var(--border-color) !important;">
                             <h2 class="accordion-header" id="faqFour">
                                 <button class="accordion-button collapsed bg-transparent fw-bold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" style="color: var(--text-main);">
-                                    4. What's the QR Management menu for?
+                                    {{ _("4. What's the QR Management menu for?") }}
                                 </button>
                             </h2>
                             <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body text-muted small">
-                                    The <b>QR Management</b> menu is where Developers and Quality Control folks upload reference documents in <b>PDF</b> format. Users can open those docs right in a clean pop-up (Modal) viewer with no extra toolbar clutter, which makes it way easier to review stuff out in the field.
+                                    {{ _("The <b>QR Management</b> menu is where Developers and Quality Control folks upload reference documents in <b>PDF</b> format. Users can open those docs right in a clean pop-up (Modal) viewer with no extra toolbar clutter, which makes it way easier to review stuff out in the field.")|safe }}
                                 </div>
                             </div>
                         </div>
@@ -106,17 +106,17 @@
                         <div class="accordion-item bg-transparent border-bottom" style="border-color: var(--border-color) !important;">
                             <h2 class="accordion-header" id="faqFive">
                                 <button class="accordion-button collapsed bg-transparent fw-bold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" style="color: var(--text-main);">
-                                    5. What are the different access levels (Roles) in this system?
+                                    {{ _('5. What are the different access levels (Roles) in this system?') }}
                                 </button>
                             </h2>
                             <div id="collapseFive" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body text-muted small">
-                                    The system runs on Role-Based Access Control:
+                                    {{ _('The system runs on Role-Based Access Control:') }}
                                     <ul class="mb-0 mt-1 ps-3">
-                                        <li><b>Developer:</b> Top-level access — covers user management, system settings, support tickets, plus full control over tasks and documents.</li>
-                                        <li><b>Quality Control:</b> Full access to import project data, evaluate tasks, change QC status, and manage PDF documents.</li>
-                                        <li><b>Supervisor:</b> Can view the dashboard, filter tasks, and forward tasks to the production team.</li>
-                                        <li><b>Public (Guest):</b> Regular visitors who can only see the dashboard summary and the list of tasks already sent to production.</li>
+                                        <li><b>{{ _('Developer:') }}</b> {{ _('Top-level access — covers user management, system settings, support tickets, plus full control over tasks and documents.') }}</li>
+                                        <li><b>{{ _('Quality Control:') }}</b> {{ _('Full access to import project data, evaluate tasks, change QC status, and manage PDF documents.') }}</li>
+                                        <li><b>{{ _('Supervisor:') }}</b> {{ _('Can view the dashboard, filter tasks, and forward tasks to the production team.') }}</li>
+                                        <li><b>{{ _('Public (Guest):') }}</b> {{ _('Regular visitors who can only see the dashboard summary and the list of tasks already sent to production.') }}</li>
                                     </ul>
                                 </div>
                             </div>
@@ -127,12 +127,12 @@
                         <div class="accordion-item bg-transparent border-bottom" style="border-color: var(--border-color) !important;">
                             <h2 class="accordion-header" id="faqSix">
                                 <button class="accordion-button collapsed bg-transparent fw-bold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" style="color: var(--text-main);">
-                                    6. What if I run into an issue or need tech support?
+                                    {{ _('6. What if I run into an issue or need tech support?') }}
                                 </button>
                             </h2>
                             <div id="collapseSix" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body text-muted small">
-                                    Head over to the <b>Customer Service</b> menu to send in a message about any issue or bug straight to the engineering team. If you're a <b>Developer</b>, you can check every incoming message through the dedicated <b>Support Tickets</b> menu.
+                                    {{ _("Head over to the <b>Customer Service</b> menu to send in a message about any issue or bug straight to the engineering team. If you're a <b>Developer</b>, you can check every incoming message through the dedicated <b>Support Tickets</b> menu.")|safe }}
                                 </div>
                             </div>
                         </div>
@@ -141,12 +141,12 @@
                         <div class="accordion-item bg-transparent border-bottom" style="border-color: var(--border-color) !important;">
                             <h2 class="accordion-header" id="faqSearch">
                                 <button class="accordion-button collapsed bg-transparent fw-bold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSearch" style="color: var(--text-main);">
-                                    7. How do I search for and sort specific tasks?
+                                    {{ _('7. How do I search for and sort specific tasks?') }}
                                 </button>
                             </h2>
                             <div id="collapseSearch" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body text-muted small">
-                                    Use the <b>Search</b> box to find tasks by ID, name, or description instantly. For more sorting options, hit the <b>Sort Data</b> button (top right corner) to filter by a specific Project or Package. If nothing shows up, double-check that a filter isn't already active.
+                                    {{ _("Use the <b>Search</b> box to find tasks by ID, name, or description instantly. For more sorting options, hit the <b>Sort Data</b> button (top right corner) to filter by a specific Project or Package. If nothing shows up, double-check that a filter isn't already active.")|safe }}
                                 </div>
                             </div>
                         </div>
@@ -156,12 +156,12 @@
                         <div class="accordion-item bg-transparent">
                             <h2 class="accordion-header" id="faqUpdate">
                                 <button class="accordion-button collapsed bg-transparent fw-bold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUpdate" style="color: var(--text-main);">
-                                    8. Why does the data keep refreshing on its own?
+                                    {{ _('8. Why does the data keep refreshing on its own?') }}
                                 </button>
                             </h2>
                             <div id="collapseUpdate" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body text-muted small">
-                                    We've got a <b>Real-time Auto-Update</b> feature built in. The app checks the database for changes every 5 seconds. That way, any status change made by the QC team shows up instantly for Leaders and other users without anyone needing to manually refresh the page.
+                                    {{ _("We've got a <b>Real-time Auto-Update</b> feature built in. The app checks the database for changes every 5 seconds. That way, any status change made by the QC team shows up instantly for Leaders and other users without anyone needing to manually refresh the page.")|safe }}
                                 </div>
                             </div>
                         </div>

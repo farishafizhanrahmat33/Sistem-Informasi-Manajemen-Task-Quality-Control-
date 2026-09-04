@@ -6,8 +6,8 @@
                 
                 <!-- Header Modal -->
                 <div class="text-center mb-4">
-                    <h5 class="fw-bold mb-1" style="color: var(--text-main);">Sign In</h5>
-                    <p class="text-muted small mb-0">Enter your credentials to access the system</p>
+                    <h5 class="fw-bold mb-1" style="color: var(--text-main);">{{ _('Sign In') }}</h5>
+                    <p class="text-muted small mb-0">{{ _('Enter your credentials to access the system') }}</p>
                 </div>
 
                 <!-- Notifikasi Error Profesional (Soft Minimalist Banner) -->
@@ -16,27 +16,27 @@
                 <form id="loginForm">
                     <!-- Username -->
                     <div class="mb-3">
-                        <label for="loginUsername" class="form-label small fw-semibold text-muted mb-1">Username or Email</label>
-                        <input type="text" class="form-control bg-light border-0 py-2" id="loginUsername" name="username" placeholder="name@company.com" required style="border-radius: 6px; font-size: 0.9rem;">
+                        <label for="loginUsername" class="form-label small fw-semibold text-muted mb-1">{{ _('Username or Email') }}</label>
+                        <input type="text" class="form-control bg-light border-0 py-2" id="loginUsername" name="username" placeholder="{{ _('name@company.com') }}" required style="border-radius: 6px; font-size: 0.9rem;">
                     </div>
                     
                     <!-- Password -->
                     <div class="mb-4">
-                        <label for="loginPassword" class="form-label small fw-semibold text-muted mb-1">Password</label>
-                        <input type="password" class="form-control bg-light border-0 py-2" id="loginPassword" name="password" placeholder="••••••••" required style="border-radius: 6px; font-size: 0.9rem;">
+                        <label for="loginPassword" class="form-label small fw-semibold text-muted mb-1">{{ _('Password') }}</label>
+                        <input type="password" class="form-control bg-light border-0 py-2" id="loginPassword" name="password" placeholder="{{ _('••••••••') }}" required style="border-radius: 6px; font-size: 0.9rem;">
                     </div>
 
                     <!-- Action Button -->
                     <div class="d-grid">
                         <button type="submit" class="btn btn-primary py-2 fw-semibold" id="loginBtn" style="border-radius: 6px; font-size: 0.9rem;">
-                            Continue
+                            {{ _('Continue') }}
                         </button>
                     </div>
                 </form>
 
                 <!-- Footer text -->
                 <div class="text-center mt-3">
-                    <p class="text-muted" style="font-size: 0.7rem;">Protected by enterprise authentication</p>
+                    <p class="text-muted" style="font-size: 0.7rem;">{{ _('Protected by enterprise authentication') }}</p>
                 </div>
             </div>
         </div>
@@ -55,7 +55,7 @@
                 e.preventDefault();
                 
                 loginBtn.disabled = true;
-                loginBtn.textContent = 'Authenticating...';
+                loginBtn.textContent = '{{ _("Authenticating...") }}';
                 errorContainer.classList.add('d-none');
                 errorContainer.textContent = '';
 
@@ -76,13 +76,13 @@
                         errorContainer.textContent = result.message;
                         errorContainer.classList.remove('d-none');
                         loginBtn.disabled = false;
-                        loginBtn.textContent = 'Continue';
+                        loginBtn.textContent = '{{ _("Continue") }}';
                     }
                 } catch (error) {
-                    errorContainer.textContent = "System unavailable. Please try again later.";
+                    errorContainer.textContent = "{{ _('System unavailable. Please try again later.') }}";
                     errorContainer.classList.remove('d-none');
                     loginBtn.disabled = false;
-                    loginBtn.textContent = 'Continue';
+                    loginBtn.textContent = '{{ _("Continue") }}';
                 }
             });
         }

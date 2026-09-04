@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from flask_babel import gettext as _
 from database import db, TaskModel
 import pandas as pd
 
@@ -27,7 +28,7 @@ def task_list():
 def upload_file():
     role = get_current_role()
     if role.lower() not in ['developer', 'quality control']:
-        flash(f'Access denied! Your role showed up as "{role}".', 'danger')
+        flash(_('Access denied! Your role showed up as "%(role)s".', role=role), 'danger')
         return redirect(url_for('task.task_list'))
 
     file = request.files.get('file')
@@ -35,7 +36,7 @@ def upload_file():
     current_username = session.get('username')
 
     if not file or not project_name:
-        flash('File and Project Name are both required!', 'warning')
+        flash(_('File and Project Name are both required!'), 'warning')
         return redirect(url_for('task.task_list'))
 
     try:
@@ -49,7 +50,7 @@ def upload_file():
                     return str(val).strip()
             return ''
 
-        for _, row in df.iterrows():
+        for _idx, row in df.iterrows():
             raw_task_id = get_val(row, ['Task ID', 'task_id'])
             if not raw_task_id:
                 continue  
@@ -123,10 +124,10 @@ def upload_file():
                 db.session.add(new_task)
 
         db.session.commit()
-        flash('Project data synced up! New stuff got added and old stuff got updated.', 'success')
+        flash(_('Project data synced up! New stuff got added and old stuff got updated.'), 'success')
     except Exception as e:
         db.session.rollback()
-        flash(f'Could not process the file: {str(e)}', 'danger')
+        flash(_('Could not process the file: %(error)s', error=str(e)), 'danger')
 
     return redirect(url_for('task.task_list'))
 
@@ -134,21 +135,21 @@ def upload_file():
 def delete_project():
     role = get_current_role()
     if role.lower() not in ['developer', 'quality control']:
-        flash('Access denied!', 'danger')
+        flash(_('Access denied!'), 'danger')
         return redirect(url_for('task.task_list'))
 
     project_name = request.form.get('project_name')
     if project_name:
         db.session.query(TaskModel).filter_by(project_name=project_name).delete()
         db.session.commit()
-        flash(f'Project "{project_name}" and all its tasks got deleted.', 'success')
+        flash(_('Project "%(project)s" and all its tasks got deleted.', project=project_name), 'success')
     return redirect(url_for('task.task_list'))
 
 @task_bp.route('/update/<int:task_id>', methods=['POST'])
 def update_task(task_id):
     role = get_current_role()
     if role.lower() not in ['developer', 'quality control']:
-        flash("Access denied! You can't edit tasks.", 'danger')
+        flash(_("Access denied! You can't edit tasks."), 'danger')
         return redirect(url_for('task.task_list'))
 
     task = db.session.get(TaskModel, task_id)
@@ -177,7 +178,7 @@ def update_task(task_id):
             task.qc_category = 'Sample Done'
 
         db.session.commit()
-        flash('Task details updated.', 'success')
+        flash(_('Task details updated.'), 'success')
 
     return redirect(url_for('task.task_list'))
 
@@ -185,15 +186,15 @@ def update_task(task_id):
 def toggle_send(task_id):
     role = get_current_role()
     if role.lower() not in ['developer', 'quality control', 'supervisor']:
-        flash("Access denied, you can't forward tasks!", 'danger')
+        flash(_("Access denied, you can't forward tasks!"), 'danger')
         return redirect(url_for('task.task_list'))
 
     task = db.session.get(TaskModel, task_id)
     if task:
         task.sent_by_leader = not task.sent_by_leader
         db.session.commit()
-        status_msg = "sent over to the Production Team" if task.sent_by_leader else "pulled back"
-        flash(f'Task got {status_msg}.', 'info')
+        status_msg = _("sent over to the Production Team") if task.sent_by_leader else _("pulled back")
+        flash(_('Task got %(status)s.', status=status_msg), 'info')
 
     return redirect(url_for('task.task_list'))
 
@@ -201,17 +202,17 @@ def toggle_send(task_id):
 def toggle_skip(task_id):
     role = get_current_role()
     if role.lower() not in ['developer', 'quality control']:
-        flash('Access denied!', 'danger')
+        flash(_('Access denied!'), 'danger')
         return redirect(url_for('task.task_list'))
 
     task = db.session.get(TaskModel, task_id)
     if task:
         if task.qc_category == 'Skipped':
             task.qc_category = 'Need Sample'
-            flash('Task restored from Skipped.', 'info')
+            flash(_('Task restored from Skipped.'), 'info')
         else:
             task.qc_category = 'Skipped'
-            flash('Task marked as Skipped.', 'warning')
+            flash(_('Task marked as Skipped.'), 'warning')
         db.session.commit()
 
     return redirect(url_for('task.task_list'))

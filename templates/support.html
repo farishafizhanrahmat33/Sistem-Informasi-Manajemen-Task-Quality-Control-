@@ -13,7 +13,7 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Support - QA Control Center</title>
+    <title>{{ _('Customer Support - QA Control Center') }}</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,8 +43,8 @@
 
         <!-- HEADER SECTION -->
         <div class="mb-4">
-            <h4 class="fw-bold mb-1" style="color: var(--text-main); letter-spacing: -0.02em;">Help & Support Center</h4>
-            <p class="text-muted small mb-0">Send in any technical issue or bug report straight to the engineering team.</p>
+            <h4 class="fw-bold mb-1" style="color: var(--text-main); letter-spacing: -0.02em;">{{ _('Help & Support Center') }}</h4>
+            <p class="text-muted small mb-0">{{ _('Send in any technical issue or bug report straight to the engineering team.') }}</p>
         </div>
 
         <!-- CONTENT GRID (Centered Professional Card Layout) -->
@@ -60,18 +60,18 @@
                             </svg>
                         </div>
                         <div>
-                            <h5 class="fw-bold mb-1" style="color: var(--text-main);">Developer Support Ticket</h5>
-                            <p class="text-muted small mb-0">Our team usually gets back to you within 1 business day.</p>
+                            <h5 class="fw-bold mb-1" style="color: var(--text-main);">{{ _('Developer Support Ticket') }}</h5>
+                            <p class="text-muted small mb-0">{{ _('Our team usually gets back to you within 1 business day.') }}</p>
                         </div>
                     </div>
 
                     <!-- Form Input Pesan -->
                     <form action="{{ url_for('main.support') }}" method="POST">
                         <div class="mb-4">
-                            <label class="form-label small fw-semibold text-muted mb-2">Issue Message / Bug Report</label>
-                            <textarea name="message" class="form-control py-3 px-3 shadow-none" rows="6" placeholder="Describe the issue in detail (include task ID, error message, or steps to reproduce if you've got them)..." required style="border-radius: 10px; font-size: 0.95rem; resize: vertical; background-color: var(--input-bg); border-color: var(--border-color); color: var(--text-main);"></textarea>
+                            <label class="form-label small fw-semibold text-muted mb-2">{{ _('Issue Message / Bug Report') }}</label>
+                            <textarea name="message" class="form-control py-3 px-3 shadow-none" rows="6" placeholder="{{ _('Describe the issue in detail (include task ID, error message, or steps to reproduce if you\'ve got them)...') }}" required style="border-radius: 10px; font-size: 0.95rem; resize: vertical; background-color: var(--input-bg); border-color: var(--border-color); color: var(--text-main);"></textarea>
                             <div class="form-text text-muted mt-2" style="font-size: 0.75rem;">
-                                Make sure the info you give is accurate so the tech team can investigate faster.
+                                {{ _('Make sure the info you give is accurate so the tech team can investigate faster.') }}
                             </div>
                         </div>
 
@@ -79,10 +79,10 @@
                         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 pt-2">
                             <div class="d-flex align-items-center gap-2 text-muted small">
                                 <span class="d-inline-block rounded-circle bg-success" style="width: 8px; height: 8px;"></span>
-                                <span>System Running Normally</span>
+                                <span>{{ _('System Running Normally') }}</span>
                             </div>
                             <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold" style="border-radius: 8px; font-size: 0.9rem;">
-                                Send Support Ticket
+                                {{ _('Send Support Ticket') }}
                             </button>
                         </div>
                     </form>
