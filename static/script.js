@@ -438,3 +438,60 @@ function filterAndSortCards() {
     // Susun ulang urutan elemen di dalam container HTML
     cards.forEach(card => container.appendChild(card));
 }
+
+// Fungsi untuk masuk ke mode fullscreen dan menampilkan tombol keluar
+function toggleVideoFullscreen(wrapperId) {
+    const elem = document.getElementById(wrapperId);
+    const exitBtn = elem.querySelector('.exit-fs-btn');
+
+    if (!document.fullscreenElement) {
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) { /* Safari / Mobile */
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) { /* IE/Edge */
+            elem.msRequestFullscreen();
+        }
+        // Munculkan tombol keluar saat masuk fullscreen
+        if (exitBtn) {
+            exitBtn.classList.remove('d-none');
+            exitBtn.classList.add('d-flex');
+        }
+    } else {
+        exitVideoFullscreen(wrapperId);
+    }
+}
+
+// Fungsi khusus untuk keluar dari fullscreen
+function exitVideoFullscreen(wrapperId) {
+    const elem = document.getElementById(wrapperId);
+    const exitBtn = elem.querySelector('.exit-fs-btn');
+
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+    }
+    // Sembunyikan kembali tombol keluar saat kembali normal
+    if (exitBtn) {
+        exitBtn.classList.remove('d-flex');
+        exitBtn.classList.add('d-none');
+    }
+}
+
+// Listener tambahan jika pengguna keluar fullscreen lewat tombol ESC keyboard bawaan browser
+document.addEventListener('fullscreenchange', handleFullscreenExit);
+document.addEventListener('webkitfullscreenchange', handleFullscreenExit);
+
+function handleFullscreenExit() {
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        document.querySelectorAll('.exit-fs-btn').forEach(btn => {
+            btn.classList.remove('d-flex');
+            btn.classList.add('d-none');
+        });
+    }
+}

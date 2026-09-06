@@ -337,7 +337,7 @@
                                             <div class="detail-label mb-0">{{ _('Extraction Media Review') }}</div>
                                         </div>
                                         <div class="p-3">
-                                            <ul class="nav custom-video-tabs" id="video-tabs-{{ t.id }}" role="tablist">
+                                            <ul class="nav custom-video-tabs mb-3" id="video-tabs-{{ t.id }}" role="tablist">
                                                 <li class="nav-item" role="presentation">
                                                     <button class="nav-link active" id="link1-tab-{{ t.id }}" data-bs-toggle="tab" data-bs-target="#link1-{{ t.id }}" type="button" role="tab">{{ _('Sample 1') }}</button>
                                                 </li>
@@ -347,34 +347,75 @@
                                             </ul>
                                             
                                             <div class="tab-content" id="video-tabs-content-{{ t.id }}">
-                                                <!-- KONTEN MEDIA UTAMA -->
+                                                <!-- KONTEN MEDIA UTAMA (SAMPEL 1) -->
                                                 <div class="tab-pane fade show active" id="link1-{{ t.id }}" role="tabpanel">
                                                     {% if t.link_sample %}
                                                         {% if 'drive.google.com' in t.link_sample %}
-                                                            <div class="rounded-3 overflow-hidden border mb-3" style="height: 350px; background-color: #000;">
-                                                                <iframe src="{{ t.link_sample.split('/view')[0].replace('/file/d/', '/file/d/').replace('/view', '') + '/preview' }}" width="100%" height="100%" allow="autoplay" allowfullscreen style="border:none;"></iframe>
+                                                            <!-- Sampel 1 -->
+                                                            <div id="video-wrapper-{{ t.id }}-1" class="rounded-3 overflow-hidden border shadow-sm mb-2 position-relative bg-black video-container-wrapper" style="aspect-ratio: 16/9; width: 100%; border-color: var(--border-color) !important;">
+    
+                                                                <!-- Tombol Keluar Fullscreen dengan Teks & Ikon -->
+                                                                <button type="button" onclick="exitVideoFullscreen('video-wrapper-{{ t.id }}-1')" class="btn btn-sm position-absolute top-0 end-0 m-3 shadow exit-fs-btn d-none align-items-center gap-2 px-3 py-2 rounded-pill" style="z-index: 9999; background: rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.3); color: white; font-size: 0.8rem; font-weight: 600; backdrop-filter: blur(4px);">
+                                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                                                    {{ _('Exit Fullscreen') }}
+                                                                </button>
+
+                                                                <iframe src="{{ t.link_sample.split('/view')[0].replace('/file/d/', '/file/d/').replace('/view', '') + '/preview' }}" class="position-absolute top-0 start-0 border-0" style="width: 150%; height: 150%; transform: scale(0.6667); transform-origin: top left;" allow="autoplay" allowfullscreen></iframe>
                                                             </div>
-                                                            <a href="{{ t.link_sample }}" target="_blank" class="btn btn-outline-secondary w-100">{{ _('Open Main Media in New Tab ↗') }}</a>
+                                                            
+                                                            <!-- Tombol Fullscreen & New Tab -->
+                                                            <div class="d-flex justify-content-between align-items-center mt-1 px-1">
+                                                                <button type="button" onclick="toggleVideoFullscreen('video-wrapper-{{ t.id }}-1')" class="btn btn-sm btn-link text-decoration-none d-inline-flex align-items-center gap-1 p-0 shadow-none" style="color: var(--text-main); font-size: 0.75rem; font-weight: 600;">
+                                                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                                                                    {{ _('Fullscreen') }}
+                                                                </button>
+
+                                                                <a href="{{ t.link_sample }}" target="_blank" class="text-decoration-none d-inline-flex align-items-center gap-1 px-2 py-1 rounded" style="color: #3b82f6; font-size: 0.75rem; font-weight: 600; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(59, 130, 246, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                                                                    {{ _('Open Video in New Tab') }}
+                                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                                                </a>
+                                                            </div>
                                                         {% else %}
-                                                            <a href="{{ t.link_sample }}" target="_blank" class="btn btn-outline-primary w-100 py-2">{{ _('Visit Main External Link ↗') }}</a>
+                                                            <a href="{{ t.link_sample }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 py-2 shadow-none" style="border-radius: 8px;">{{ _('Visit Main External Link ↗') }}</a>
                                                         {% endif %}
                                                     {% else %}
-                                                        <div class="text-center py-5 small fw-medium" style="color: var(--text-muted);">{{ _('No main media attached by the inspector yet.') }}</div>
+                                                        <div class="text-center py-5 small rounded-3" style="background-color: var(--input-bg); border: 1px dashed var(--border-color); color: var(--text-muted);">{{ _('No main media attached yet.') }}</div>
                                                     {% endif %}
                                                 </div>
-                                                <!-- KONTEN MEDIA ALTERNATIF -->
+                                                
+                                                <!-- KONTEN MEDIA ALTERNATIF (SAMPEL 2) -->
                                                 <div class="tab-pane fade" id="link2-{{ t.id }}" role="tabpanel">
                                                     {% if t.link_sample_2 %}
                                                         {% if 'drive.google.com' in t.link_sample_2 %}
-                                                            <div class="rounded-3 overflow-hidden border mb-3" style="height: 350px; background-color: #000;">
-                                                                <iframe src="{{ t.link_sample_2.split('/view')[0].replace('/file/d/', '/file/d/').replace('/view', '') + '/preview' }}" width="100%" height="100%" allow="autoplay" allowfullscreen style="border:none;"></iframe>
+                                                            <!-- Sampel 2 -->
+                                                            <div id="video-wrapper-{{ t.id }}-2" class="rounded-3 overflow-hidden border shadow-sm mb-2 position-relative bg-black video-container-wrapper" style="aspect-ratio: 16/9; width: 100%; border-color: var(--border-color) !important;">
+    
+                                                                <!-- Tombol Keluar Fullscreen dengan Teks & Ikon -->
+                                                                <button type="button" onclick="exitVideoFullscreen('video-wrapper-{{ t.id }}-2')" class="btn btn-sm position-absolute top-0 end-0 m-3 shadow exit-fs-btn d-none align-items-center gap-2 px-3 py-2 rounded-pill" style="z-index: 9999; background: rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.3); color: white; font-size: 0.8rem; font-weight: 600; backdrop-filter: blur(4px);">
+                                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                                                    {{ _('Exit Fullscreen') }}
+                                                                </button>
+
+                                                                <iframe src="{{ t.link_sample_2.split('/view')[0].replace('/file/d/', '/file/d/').replace('/view', '') + '/preview' }}" class="position-absolute top-0 start-0 border-0" style="width: 150%; height: 150%; transform: scale(0.6667); transform-origin: top left;" allow="autoplay" allowfullscreen></iframe>
                                                             </div>
-                                                            <a href="{{ t.link_sample_2 }}" target="_blank" class="btn btn-outline-secondary w-100">{{ _('Open Alternate Media in New Tab ↗') }}</a>
+                                                            
+                                                            <!-- Tombol Fullscreen & New Tab -->
+                                                            <div class="d-flex justify-content-between align-items-center mt-1 px-1">
+                                                                <button type="button" onclick="toggleVideoFullscreen('video-wrapper-{{ t.id }}-2')" class="btn btn-sm btn-link text-decoration-none d-inline-flex align-items-center gap-1 p-0 shadow-none" style="color: var(--text-main); font-size: 0.75rem; font-weight: 600;">
+                                                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                                                                    {{ _('Fullscreen') }}
+                                                                </button>
+
+                                                                <a href="{{ t.link_sample_2 }}" target="_blank" class="text-decoration-none d-inline-flex align-items-center gap-1 px-2 py-1 rounded" style="color: #3b82f6; font-size: 0.75rem; font-weight: 600; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(59, 130, 246, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                                                                    {{ _('Open Video in New Tab') }}
+                                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                                                </a>
+                                                            </div>
                                                         {% else %}
-                                                            <a href="{{ t.link_sample_2 }}" target="_blank" class="btn btn-outline-primary w-100 py-2">{{ _('Visit Alternate External Link ↗') }}</a>
+                                                            <a href="{{ t.link_sample_2 }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 py-2 shadow-none" style="border-radius: 8px;">{{ _('Visit Alternate External Link ↗') }}</a>
                                                         {% endif %}
                                                     {% else %}
-                                                        <div class="text-center py-5 small fw-medium" style="color: var(--text-muted);">{{ _('No alternate media available/attached.') }}</div>
+                                                        <div class="text-center py-5 small rounded-3" style="background-color: var(--input-bg); border: 1px dashed var(--border-color); color: var(--text-muted);">{{ _('No alternate media attached yet.') }}</div>
                                                     {% endif %}
                                                 </div>
                                             </div>
@@ -471,8 +512,96 @@
                 </div>
             </div>
         </div>
-        <div id="loadMoreContainer" class="text-center mt-4 mb-4"></div>
-    </div>
+        
+       <!-- Navigasi Pagination Ultra-Premium SaaS Style -->
+        {% if pagination and pagination.pages > 1 %}
+        <style>
+            /* Menyembunyikan panah naik-turun bawaan browser pada input number */
+            .jump-input::-webkit-outer-spin-button,
+            .jump-input::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+            .jump-input[type=number] {
+                -moz-appearance: textfield;
+            }
+            /* Efek hover halus pada tombol */
+            .page-btn-custom {
+                transition: all 0.2s ease;
+            }
+            .page-btn-custom:hover {
+                background-color: var(--border-color) !important;
+            }
+        </style>
+
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-5 pt-4 border-top" style="border-color: var(--border-color) !important;">
+            
+            <!-- Info Halaman di Kiri -->
+            <div class="small mb-3 mb-md-0" style="color: var(--text-muted); font-size: 0.85rem;">
+                {{ _('Showing page') }} <span class="fw-semibold" style="color: var(--text-main);">{{ pagination.page }}</span> {{ _('of') }} <span class="fw-semibold" style="color: var(--text-main);">{{ pagination.pages }}</span>
+            </div>
+
+            <!-- Kontrol Navigasi di Kanan -->
+            <div class="d-flex align-items-center gap-3 flex-wrap justify-content-center">
+                
+                <!-- Deretan Tombol Halaman -->
+                <ul class="pagination pagination-sm m-0 gap-1">
+                    
+                    <!-- Tombol Prev (Icon) -->
+                    <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+                        <a class="page-link page-btn-custom d-flex align-items-center justify-content-center shadow-none" 
+                           href="{% if pagination.has_prev %}{{ url_for(request.endpoint, page=pagination.prev_num) }}{% else %}#{% endif %}"
+                           style="background-color: transparent; color: var(--text-main); border: 1px solid var(--border-color); border-radius: 6px; height: 32px; min-width: 32px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        </a>
+                    </li>
+
+                    <!-- Nomor Halaman & Ellipsis -->
+                    {% for page_num in pagination.iter_pages(left_edge=1, left_current=1, right_current=1, right_edge=1) %}
+                        {% if page_num %}
+                            <li class="page-item">
+                                <a class="page-link page-btn-custom d-flex align-items-center justify-content-center shadow-none" 
+                                   href="{{ url_for(request.endpoint, page=page_num) }}"
+                                   style="{% if page_num == pagination.page %}background-color: var(--text-main); border-color: var(--text-main); color: var(--bg-body); font-weight: 600; pointer-events: none;{% else %}background-color: transparent; color: var(--text-main); border: 1px solid transparent;{% endif %} border-radius: 6px; font-size: 0.85rem; height: 32px; min-width: 32px;">
+                                    {{ page_num }}
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link d-flex align-items-center justify-content-center border-0 bg-transparent shadow-none" style="color: var(--text-muted); font-size: 0.85rem; height: 32px; min-width: 24px;">&hellip;</span>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    <!-- Tombol Next (Icon) -->
+                    <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+                        <a class="page-link page-btn-custom d-flex align-items-center justify-content-center shadow-none" 
+                           href="{% if pagination.has_next %}{{ url_for(request.endpoint, page=pagination.next_num) }}{% else %}#{% endif %}"
+                           style="background-color: transparent; color: var(--text-main); border: 1px solid var(--border-color); border-radius: 6px; height: 32px; min-width: 32px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Garis Pemisah Vertikal (Sembunyi di HP) -->
+                <div class="d-none d-sm-block" style="width: 1px; height: 20px; background-color: var(--border-color);"></div>
+
+                <!-- Input Group "Jump to Page" yang Menyatu -->
+                <form method="GET" action="{{ url_for(request.endpoint) }}" class="m-0">
+                    <div class="input-group input-group-sm" style="height: 32px;">
+                        <span class="input-group-text bg-transparent shadow-none" style="border-color: var(--border-color); color: var(--text-muted); font-size: 0.8rem; border-radius: 6px 0 0 6px;">{{ _('Jump') }}</span>
+                        
+                        <input type="number" name="page" min="1" max="{{ pagination.pages }}" value="{{ pagination.page }}" class="form-control jump-input text-center shadow-none border-start-0 border-end-0" style="width: 48px; background-color: transparent; color: var(--text-main); border-color: var(--border-color); font-size: 0.85rem; padding: 0 4px;" required>
+                        
+                        <button type="submit" class="btn page-btn-custom shadow-none d-flex align-items-center justify-content-center" style="background-color: transparent; color: var(--text-main); border: 1px solid var(--border-color); border-radius: 0 6px 6px 0; min-width: 32px;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+        {% endif %}
 
     <!-- 4. MODAL LOGIN POP-UP -->
 {% include 'login_modal.html' %}
@@ -524,10 +653,7 @@
             <button type="button" class="btn btn-primary w-100 py-2 mt-3" data-bs-dismiss="offcanvas" onclick="resetAndFilter();">{{ _('Apply Settings') }}</button>
         </div>
     </div>
-    <!-- Scroll to Top -->
-    <button id="scrollToTopBtn" class="btn btn-dark rounded-circle shadow position-fixed bottom-0 end-0 m-4 d-none align-items-center justify-content-center" style="z-index: 1050; width: 48px; height: 48px; transition: all 0.3s;" title="Back to top">
-        ↑
-    </button>
+ 
 
     <!-- Bootstrap 5.3.3 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

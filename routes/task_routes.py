@@ -14,15 +14,27 @@ def get_current_role():
 @task_bp.route('/tasks')
 def task_list():
     role = get_current_role()
+    # Tangkap parameter halaman dari URL (default halaman 1)
+    page = request.args.get('page', 1, type=int)
+    per_page = 50 # Tampilkan 50 data per halaman
+
+    # 1. OPTIMASI DROPDOWN: Ambil daftar nama unik LANGSUNG dari database (super cepat)
+    projects_query = db.session.query(TaskModel.project_name).filter(TaskModel.project_name.isnot(None)).distinct().all()
+    projects = sorted([p[0] for p in projects_query])
+
+    packages_query = db.session.query(TaskModel.package_name).filter(TaskModel.package_name.isnot(None)).distinct().all()
+    packages = sorted([p[0] for p in packages_query])
+
+    # 2. OPTIMASI TABEL: Gunakan Paginasi
+    base_query = db.session.query(TaskModel)
     if role.lower() in ['publik', 'public']:
-        tasks = db.session.query(TaskModel).filter_by(sent_by_leader=True).all()
-    else:
-        tasks = db.session.query(TaskModel).all()
+        base_query = base_query.filter_by(sent_by_leader=True)
 
-    projects = sorted(set(t.project_name for t in tasks if t.project_name))
-    packages = sorted(set(t.package_name for t in tasks if t.package_name))
+    # Tarik data hanya untuk halaman saat ini
+    pagination = base_query.order_by(TaskModel.id.desc()).paginate(page=page, per_page=per_page, error_out=False)
+    tasks = pagination.items
 
-    return render_template('index.html', tasks=tasks, projects=projects, packages=packages, role=role)
+    return render_template('index.html', tasks=tasks, projects=projects, packages=packages, role=role, pagination=pagination)
 
 @task_bp.route('/upload', methods=['POST'])
 def upload_file():
@@ -220,7 +232,18 @@ def toggle_skip(task_id):
 @task_bp.route('/tasks/submitted')
 def submitted_tasks():
     role = get_current_role()
-    tasks = db.session.query(TaskModel).filter_by(sent_by_leader=True).all()
-    projects = sorted(set(t.project_name for t in tasks if t.project_name))
-    packages = sorted(set(t.package_name for t in tasks if t.package_name))
-    return render_template('submitted_tasks.html', tasks=tasks, projects=projects, packages=packages, role=role)
+    page = request.args.get('page', 1, type=int)
+    per_page = 50
+
+    # Ambil dropdown unik khusus untuk data yang sudah dikirim
+    projects_query = db.session.query(TaskModel.project_name).filter(TaskModel.project_name.isnot(None), TaskModel.sent_by_leader==True).distinct().all()
+    projects = sorted([p[0] for p in projects_query])
+
+    packages_query = db.session.query(TaskModel.package_name).filter(TaskModel.package_name.isnot(None), TaskModel.sent_by_leader==True).distinct().all()
+    packages = sorted([p[0] for p in packages_query])
+
+    # Paginasi khusus data submitted
+    pagination = db.session.query(TaskModel).filter_by(sent_by_leader=True).order_by(TaskModel.id.desc()).paginate(page=page, per_page=per_page, error_out=False)
+    tasks = pagination.items
+
+    return render_template('submitted_tasks.html', tasks=tasks, projects=projects, packages=packages, role=role, pagination=pagination)

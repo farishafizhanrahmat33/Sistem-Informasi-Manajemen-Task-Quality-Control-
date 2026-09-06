@@ -5,7 +5,8 @@ from flask import Blueprint, render_template, request, redirect, url_for, sessio
 from flask_babel import gettext as _
 from werkzeug.utils import secure_filename
 from database import db, QRCodeModel
-from pypdf import PdfReader, PdfWriter
+from pypdf import PdfReader  # Tetap dibutuhkan untuk membaca jumlah halaman PDF
+import fitz                  # Library baru untuk convert PDF page ke PNG
 
 qr_bp = Blueprint('qr', __name__)
 QR_UPLOAD_FOLDER = 'static/uploads/qr_codes'
@@ -51,40 +52,45 @@ def upload_qr():
         return redirect(url_for('qr.qr_codes_page'))
 
     original_filename = file.filename
-
-    # Ekstrak kode dasar stasiun (misal: logistics_x_courier_station_0080)
     env_match = re.search(r'([a-zA-Z0-9_]+_x_[a-zA-Z0-9_]+_\d+)', original_filename, re.IGNORECASE)
     base_code = env_match.group(1) if env_match else os.path.splitext(secure_filename(original_filename))[0]
 
+    # Simpan file sementara atau baca stream-nya menggunakan PyMuPDF (fitz)
+    file_bytes = file.read()
+
     try:
-        reader = PdfReader(file.stream)
+        # Buka dokumen PDF langsung dari bytes memori menggunakan PyMuPDF
+        doc = fitz.open(stream=file_bytes, filetype="pdf")
     except Exception as e:
         flash(_("Couldn't read that PDF: %(error)s", error=e), 'danger')
         return redirect(url_for('qr.qr_codes_page'))
 
-    if not reader.pages:
+    if len(doc) == 0:
         flash(_("That PDF doesn't have any pages."), 'danger')
         return redirect(url_for('qr.qr_codes_page'))
 
     created = 0
 
-    for i, page in enumerate(reader.pages, start=1):
-        # Diubah agar nama dokumen menjadi Scene 1, Scene 2, dst. sesuai nomor halamannya
+    for i, page in enumerate(doc, start=1):
         doc_name = f"Scene {i}"
         safe_base = secure_filename(f"{base_code}_scene_{i}") or f"page_{i}"
-        page_filename = _unique_filename(f"{safe_base}.pdf")
+        
+        # Ubah ekstensi file target menjadi .png
+        page_filename = _unique_filename(f"{safe_base}.png")
+        output_path = os.path.join(QR_UPLOAD_FOLDER, page_filename)
 
-        writer = PdfWriter()
-        writer.add_page(page)
-        with open(os.path.join(QR_UPLOAD_FOLDER, page_filename), 'wb') as f:
-            writer.write(f)
+        # Render halaman PDF menjadi gambar PNG dengan zoom/skala ketajaman (misal: 1.5x)
+        zoom = 1.5
+        mat = fitz.Matrix(zoom, zoom)
+        pix = page.get_pixmap(matrix=mat)
+        pix.save(output_path)
 
         new_qr = QRCodeModel(
             name=doc_name,
-            pdf_filename=page_filename,
+            pdf_filename=page_filename,  # Nama kolom database tetap sama, tapi isinya sekarang file .png
             uploaded_at=datetime.utcnow(),
             uploaded_by=session.get('username'),
-            source_document=base_code,  # Diubah dari original_filename
+            source_document=base_code,
             page_number=i,
         )   
         db.session.add(new_qr)
@@ -96,7 +102,6 @@ def upload_qr():
     return redirect(url_for('qr.qr_codes_page'))
 
 
-# F-19: Hapus File QR (Dev, Quality Control)
 @qr_bp.route('/delete_qr/<int:qr_id>', methods=['POST'])
 def delete_qr(qr_id):
     role = get_current_role()
@@ -108,7 +113,7 @@ def delete_qr(qr_id):
     if qr:
         filepath = os.path.join(QR_UPLOAD_FOLDER, qr.pdf_filename)
         if os.path.exists(filepath):
-            os.remove(filepath)  # Diperbaiki dari os.path.remove menjadi os.remove
+            os.remove(filepath)
         db.session.delete(qr)
         db.session.commit()
         flash(_('Document deleted.'), 'success')
