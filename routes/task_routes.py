@@ -15,7 +15,7 @@ def get_current_role():
 def task_list():
     role = get_current_role()
     page = request.args.get('page', 1, type=int)
-    per_page = 50
+    per_page = 15
 
     selected_status = request.args.get('status', 'All')
     search_query = request.args.get('q', '').strip()
