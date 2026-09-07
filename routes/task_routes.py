@@ -14,27 +14,108 @@ def get_current_role():
 @task_bp.route('/tasks')
 def task_list():
     role = get_current_role()
-    # Tangkap parameter halaman dari URL (default halaman 1)
     page = request.args.get('page', 1, type=int)
-    per_page = 50 # Tampilkan 50 data per halaman
+    per_page = 50
 
-    # 1. OPTIMASI DROPDOWN: Ambil daftar nama unik LANGSUNG dari database (super cepat)
+    selected_status = request.args.get('status', 'All')
+    search_query = request.args.get('q', '').strip()
+    selected_project = request.args.get('project', 'All')
+    selected_package = request.args.get('package', 'All')
+    sort_by = request.args.get('sort_by', 'updated')
+    sort_order = request.args.get('sort_order', 'desc')
+
+    # Query args yang perlu dipertahankan di link pagination (semua kecuali 'page')
+    current_args = {k: v for k, v in request.args.items() if k != 'page'}
+
+    # Base query dengan batasan role
+    base_query = db.session.query(TaskModel)
+    if role.lower() in ['publik', 'public']:
+        base_query = base_query.filter_by(sent_by_leader=True)
+
+    # Ambil daftar proyek & paket unik untuk dropdown filter
     projects_query = db.session.query(TaskModel.project_name).filter(TaskModel.project_name.isnot(None)).distinct().all()
     projects = sorted([p[0] for p in projects_query])
 
     packages_query = db.session.query(TaskModel.package_name).filter(TaskModel.package_name.isnot(None)).distinct().all()
     packages = sorted([p[0] for p in packages_query])
 
-    # 2. OPTIMASI TABEL: Gunakan Paginasi
-    base_query = db.session.query(TaskModel)
-    if role.lower() in ['publik', 'public']:
-        base_query = base_query.filter_by(sent_by_leader=True)
+    # Helper untuk menerapkan filter pencarian, proyek, dan paket
+    def apply_filters(q):
+        if selected_project != 'All':
+            q = q.filter_by(project_name=selected_project)
+        if selected_package != 'All':
+            q = q.filter_by(package_name=selected_package)
+        if search_query:
+            term = f"%{search_query}%"
+            q = q.filter(db.or_(
+                TaskModel.task_id.ilike(term),
+                TaskModel.task_name.ilike(term),
+                TaskModel.description.ilike(term),
+                TaskModel.task_goal.ilike(term)
+            ))
+        return q
 
-    # Tarik data hanya untuk halaman saat ini
-    pagination = base_query.order_by(TaskModel.id.desc()).paginate(page=page, per_page=per_page, error_out=False)
+    # Hitung jumlah total data (count) secara global untuk setiap tab status
+    def get_count_for_status(status_val):
+        q = apply_filters(base_query)
+        if status_val != 'All':
+            if status_val == 'Sent to Team':
+                q = q.filter_by(sent_by_leader=True)
+            else:
+                q = q.filter_by(sent_by_leader=False, qc_category=status_val)
+        return q.count()
+
+    count_all = get_count_for_status('All')
+    count_need_sample = get_count_for_status('Need Sample')
+    count_sample_done = get_count_for_status('Sample Done')
+    count_revision = get_count_for_status('Revision')
+    count_ready = get_count_for_status('Ready')
+    count_skipped = get_count_for_status('Skipped')
+    count_sent = get_count_for_status('Sent to Team')
+
+    # Terapkan filter status yang sedang aktif untuk data utama
+    main_query = apply_filters(base_query)
+    if selected_status != 'All':
+        if selected_status == 'Sent to Team':
+            main_query = main_query.filter_by(sent_by_leader=True)
+        else:
+            main_query = main_query.filter_by(sent_by_leader=False, qc_category=selected_status)
+
+    # Pemetaan opsi sort di UI ke kolom aslinya di database
+    sort_columns = {
+        'updated': TaskModel.updated_at,
+        'task-id': TaskModel.task_id,
+        'pullable': TaskModel.pullable_num,
+        'task-name': TaskModel.task_name,
+    }
+    order_column = sort_columns.get(sort_by, TaskModel.updated_at)
+    order_expr = order_column.asc() if sort_order == 'asc' else order_column.desc()
+
+    pagination = main_query.order_by(order_expr, TaskModel.id.desc()).paginate(page=page, per_page=per_page, error_out=False)
     tasks = pagination.items
 
-    return render_template('index.html', tasks=tasks, projects=projects, packages=packages, role=role, pagination=pagination)
+    return render_template(
+        'index.html',
+        tasks=tasks,
+        projects=projects,
+        packages=packages,
+        role=role,
+        pagination=pagination,
+        current_args=current_args,
+        selected_status=selected_status,
+        search_query=search_query,
+        selected_project=selected_project,
+        selected_package=selected_package,
+        sort_by=sort_by,
+        sort_order=sort_order,
+        count_all=count_all,
+        count_need_sample=count_need_sample,
+        count_sample_done=count_sample_done,
+        count_revision=count_revision,
+        count_ready=count_ready,
+        count_skipped=count_skipped,
+        count_sent=count_sent
+    )
 
 @task_bp.route('/upload', methods=['POST'])
 def upload_file():

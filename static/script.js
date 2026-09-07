@@ -41,159 +41,117 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e =
 });
 
 
-// --- 2. LOGIKA TASK MANAGEMENT (Penyortiran & Pengurutan Data) ---
+// --- 2. LOGIKA TASK MANAGEMENT ---
+// PENTING: pencarian, filter (project/package), tab status, dan sort SEKARANG
+// dikerjakan oleh SERVER (Flask), bukan JavaScript. Alasannya: browser hanya
+// pernah menerima 50 task per halaman (hasil pagination), jadi menghitung atau
+// menyaring data lewat JS hanya akan melihat 50 data itu saja -- bukan seluruh
+// data yang ada di database. Sekarang JS hanya bertugas:
+//   1. Menyusun ulang URL (query string) sesuai pilihan user, lalu reload halaman
+//      supaya Flask yang menghitung & memfilter dari SELURUH data.
+//   2. Menampilkan progresif ("Load More") task yang sudah dikirim server
+//      untuk halaman saat ini (tanpa menyaring ulang).
 let itemsToShow = 9;
+let searchDebounceTimer = null;
+
+// Ambil filter/search/sort yang sedang aktif dari URL saat ini
+function getCurrentFilterState() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+        status: params.get('status') || 'All',
+        q: params.get('q') || '',
+        project: params.get('project') || 'All',
+        package: params.get('package') || 'All',
+        sort_by: params.get('sort_by') || 'updated',
+        sort_order: params.get('sort_order') || 'desc',
+    };
+}
+
+// Bangun URL baru dengan filter yang di-override, lalu reset ke page 1
+// (karena hasil filter/search/sort baru bisa jadi jumlah halamannya berbeda)
+function buildFilterURL(overrides = {}) {
+    const state = Object.assign(getCurrentFilterState(), overrides);
+    const newParams = new URLSearchParams();
+    Object.entries(state).forEach(([key, value]) => {
+        if (value !== '' && value !== null && value !== undefined && value !== 'All') {
+            newParams.set(key, value);
+        }
+    });
+    newParams.set('page', '1');
+    return window.location.pathname + '?' + newParams.toString();
+}
+
+function navigateWithFilters(overrides) {
+    window.location.href = buildFilterURL(overrides);
+}
 
 function initTabs() {
     const tabs = document.querySelectorAll('.filter-tab');
     if (tabs.length === 0) return;
 
-    const savedTab = localStorage.getItem('activeTab') || 'All';
-
     tabs.forEach(tab => {
-        if (tab.getAttribute('data-status') === savedTab) {
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-        }
-
         tab.addEventListener('click', function() {
-            tabs.forEach(t => t.classList.remove('active'));
-            this.classList.add('active');
-            
             const status = this.getAttribute('data-status');
-            localStorage.setItem('activeTab', status);
-            resetAndFilter();
+            navigateWithFilters({ status });
         });
     });
 }
 
-function filterTasks() {
-    const container = document.getElementById('taskContainer');
-    if (!container) return; 
-
-    const currentCategory = localStorage.getItem('activeTab') || 'All';
+// Dipanggil saat dropdown Project/Package/Sort berubah, atau saat user
+// menekan Enter di kolom pencarian -> langsung ke server dengan filter baru
+function resetAndFilter() {
     const projectEl = document.getElementById('projectFilter');
     const packageEl = document.getElementById('packageFilter');
     const searchEl = document.getElementById('searchInput');
     const sortFieldEl = document.getElementById('sortField');
     const sortOrderEl = document.getElementById('sortOrder');
 
-    const selectedProject = projectEl ? projectEl.value : 'All';
-    const selectedPackage = packageEl ? packageEl.value : 'All';
-    const searchQuery = searchEl ? searchEl.value.toLowerCase().trim() : '';
-    
-    const sortBy = sortFieldEl ? sortFieldEl.value : 'updated';
-    const sortOrder = sortOrderEl ? sortOrderEl.value : 'desc';
-    
-    let taskItems = Array.from(document.querySelectorAll('.task-item'));
-    
-    // SORTING (PENGURUTAN)
-    taskItems.sort((a, b) => {
-        let valA = a.getAttribute('data-' + sortBy);
-        let valB = b.getAttribute('data-' + sortBy);
-
-        if (sortBy === 'pullable' || sortBy === 'updated') {
-            valA = parseFloat(valA) || 0;
-            valB = parseFloat(valB) || 0;
-        } else {
-            valA = valA ? valA.toString().toLowerCase() : '';
-            valB = valB ? valB.toString().toLowerCase() : '';
-        }
-
-        if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
-        if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
-        return 0;
+    navigateWithFilters({
+        project: projectEl ? projectEl.value : 'All',
+        package: packageEl ? packageEl.value : 'All',
+        q: searchEl ? searchEl.value.trim() : '',
+        sort_by: sortFieldEl ? sortFieldEl.value : 'updated',
+        sort_order: sortOrderEl ? sortOrderEl.value : 'desc',
     });
-
-    taskItems.forEach(item => container.appendChild(item));
-
-    // FILTERING & MENGHITUNG JUMLAH (COUNTING)
-    let matchingItems = [];
-    let tabCounts = { 'All': 0 }; // Objek untuk menyimpan jumlah task tiap tab
-
-    taskItems.forEach(item => {
-        const cat = item.getAttribute('data-category'); 
-        
-        // Tentukan di tab mana item ini seharusnya berada
-        let effectiveTab = cat;
-        if (cat === 'Sample Done' || cat === 'Waiting Inspect' || cat === 'waiting inspect' || cat === 'Waiting for Inspect') {
-            effectiveTab = 'Sample Done';
-        }
-
-        // Cek kategori mana yang sedang diklik user
-        let matchesCategory = false;
-        if (currentCategory === 'All') {
-            matchesCategory = true;
-        } else {
-            matchesCategory = (effectiveTab === currentCategory);
-        }
-
-        const proj = item.getAttribute('data-project');
-        const pkg = item.getAttribute('data-package');
-        const text = item.getAttribute('data-search');
-        
-        // Cek apakah data lolos filter dropdown Project, Package, atau Kolom Pencarian
-        let matchesOtherFilters = (selectedProject === 'All' || proj === selectedProject) && 
-                                  (selectedPackage === 'All' || pkg === selectedPackage) && 
-                                  (searchQuery === '' || text.includes(searchQuery));
-
-        // JIKA LOLOS FILTER PENCARIAN -> TAMBAHKAN KE HITUNGAN ANGKA TAB
-        if (matchesOtherFilters) {
-            tabCounts['All']++; // Tambah 1 ke tab 'All'
-            tabCounts[effectiveTab] = (tabCounts[effectiveTab] || 0) + 1; // Tambah 1 ke tab spesifik
-        }
-
-        // JIKA LOLOS SEMUA FILTER (termasuk tab aktif) -> TAMPILKAN DI LAYAR
-        if (matchesCategory && matchesOtherFilters) {
-            matchingItems.push(item);
-        }
-    });
-
-    // UPDATE ANGKA VISUAL DI MASING-MASING TAB
-    const tabsList = document.querySelectorAll('.filter-tab');
-    tabsList.forEach(tab => {
-        const status = tab.getAttribute('data-status');
-        const count = tabCounts[status] || 0; 
-        
-        let badge = tab.querySelector('.task-count-badge');
-        if (!badge) {
-            badge = document.createElement('span');
-            badge.className = 'task-count-badge'; // Style murni diatur oleh CSS di atas
-            tab.appendChild(badge);
-        }
-        badge.innerText = count; 
-    });
-
-    // TAMPILKAN DATA (Sembunyikan sisanya dan atur limit Load More)
-    taskItems.forEach(item => item.style.display = 'none');
-    matchingItems.slice(0, itemsToShow).forEach(item => item.style.display = 'block');
-    
-    renderLoadMoreButton(matchingItems.length);
-    
-    const emptyMsg = document.getElementById('emptyFilterMessage');
-    if (emptyMsg) {
-        container.appendChild(emptyMsg);
-        emptyMsg.style.display = (matchingItems.length === 0) ? 'block' : 'none';
-    }
 }
 
-function resetAndFilter() { 
-    itemsToShow = 9; 
-    filterTasks(); 
+// Ketikan di kolom pencarian di-debounce (tunggu user berhenti mengetik ~600ms)
+// supaya tidak reload halaman di setiap huruf yang diketik
+function debouncedSearch() {
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(() => {
+        resetAndFilter();
+    }, 600);
 }
 
-function loadMore() { 
-    itemsToShow += 9; 
-    filterTasks(); 
+// Task yang tampil di HTML adalah task hasil query server untuk page ini saja
+// (sudah difilter & diurutkan oleh server). Load More di sini hanya menampilkan
+// lebih banyak dari batch yang sudah dikirim, tidak menyaring ulang apa pun.
+function initTaskDisplay() {
+    const container = document.getElementById('taskContainer');
+    if (!container) return;
+
+    const taskItems = Array.from(container.querySelectorAll('.task-item'));
+
+    taskItems.forEach((item, idx) => {
+        item.style.display = idx < itemsToShow ? 'block' : 'none';
+    });
+
+    renderLoadMoreButton(taskItems.length);
 }
 
-function renderLoadMoreButton(totalMatches) {
+function loadMore() {
+    itemsToShow += 9;
+    initTaskDisplay();
+}
+
+function renderLoadMoreButton(totalItems) {
     let container = document.getElementById('loadMoreContainer');
     if (!container) return;
-    if (itemsToShow < totalMatches) {
+    if (itemsToShow < totalItems) {
         container.innerHTML = `<button class="btn btn-outline-secondary px-4 py-2 fw-semibold" onclick="loadMore()">Load More</button>`;
-    } else { 
-        container.innerHTML = ''; 
+    } else {
+        container.innerHTML = '';
     }
 }
 
@@ -209,7 +167,8 @@ async function syncDataNow() {
         
         if (newContainer && currentContainer && newContainer.innerHTML !== currentContainer.innerHTML) {
             currentContainer.innerHTML = newContainer.innerHTML;
-            filterTasks(); 
+            itemsToShow = 9;
+            initTaskDisplay();
         }
     } catch (e) { console.log('Background update waiting...'); }
 }
@@ -224,7 +183,7 @@ async function autoUpdateTasks() {
 // --- 3. EVENT LISTENERS UTAMA ---
 document.addEventListener("DOMContentLoaded", () => {
     initTabs();
-    filterTasks();
+    initTaskDisplay();
     setInterval(autoUpdateTasks, 5000);
 });
 

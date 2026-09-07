@@ -53,7 +53,7 @@
 
             <div class="flex-grow-1 position-relative" style="min-width: 280px; max-width: 400px;">
                 <svg width="16" height="16" fill="currentColor" class="search-icon" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
-                <input type="text" id="searchInput" class="form-control form-control-sm search-pill border-0 shadow-sm" placeholder="{{ _('Search Task ID, Spec, or Description...') }}" oninput="resetAndFilter()">
+                <input type="text" id="searchInput" class="form-control form-control-sm search-pill border-0 shadow-sm" placeholder="{{ _('Search Task ID, Spec, or Description...') }}" value="{{ search_query }}" oninput="debouncedSearch()" onkeydown="if(event.key==='Enter'){ event.preventDefault(); resetAndFilter(); }">
             </div>
 
             <button class="btn btn-dark btn-sm ms-auto d-flex align-items-center gap-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterDrawer">
@@ -140,14 +140,14 @@
         {% if role.lower() not in ['publik', 'public'] %}
         <div class="enterprise-tabs-wrapper mb-4">
             <div class="d-flex overflow-auto gap-4 enterprise-tabs" id="taskTabMenu">
-                <button class="filter-tab active" data-status="All">{{ _('All Data') }}</button>
-                <button class="filter-tab" data-status="Need Sample">{{ _('To Sample') }}</button>
+                <button class="filter-tab {% if selected_status == 'All' %}active{% endif %}" data-status="All">{{ _('All Data') }} <span class="task-count-badge">{{ count_all }}</span></button>
+                <button class="filter-tab {% if selected_status == 'Need Sample' %}active{% endif %}" data-status="Need Sample">{{ _('To Sample') }} <span class="task-count-badge">{{ count_need_sample }}</span></button>
                 <!-- Diubah dari Review Done menjadi Sample Done -->
-                <button class="filter-tab" data-status="Sample Done">{{ _('Sample Done') }}</button>
-                <button class="filter-tab" data-status="Revision">{{ _('Revision') }}</button>
-                <button class="filter-tab" data-status="Ready">{{ _('Ready for Production') }}</button>
-                <button class="filter-tab" data-status="Skipped">{{ _('Skipped') }}</button>
-                <button class="filter-tab" data-status="Sent to Team">{{ _('Submitted / Sent') }}</button>
+                <button class="filter-tab {% if selected_status == 'Sample Done' %}active{% endif %}" data-status="Sample Done">{{ _('Sample Done') }} <span class="task-count-badge">{{ count_sample_done }}</span></button>
+                <button class="filter-tab {% if selected_status == 'Revision' %}active{% endif %}" data-status="Revision">{{ _('Revision') }} <span class="task-count-badge">{{ count_revision }}</span></button>
+                <button class="filter-tab {% if selected_status == 'Ready' %}active{% endif %}" data-status="Ready">{{ _('Ready for Production') }} <span class="task-count-badge">{{ count_ready }}</span></button>
+                <button class="filter-tab {% if selected_status == 'Skipped' %}active{% endif %}" data-status="Skipped">{{ _('Skipped') }} <span class="task-count-badge">{{ count_skipped }}</span></button>
+                <button class="filter-tab {% if selected_status == 'Sent to Team' %}active{% endif %}" data-status="Sent to Team">{{ _('Submitted / Sent') }} <span class="task-count-badge">{{ count_sent }}</span></button>
             </div>
         </div>
         {% endif %}
@@ -550,7 +550,7 @@
                     <!-- Tombol Prev (Icon) -->
                     <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
                         <a class="page-link page-btn-custom d-flex align-items-center justify-content-center shadow-none" 
-                           href="{% if pagination.has_prev %}{{ url_for(request.endpoint, page=pagination.prev_num) }}{% else %}#{% endif %}"
+                           href="{% if pagination.has_prev %}{{ url_for(request.endpoint, page=pagination.prev_num, **current_args) }}{% else %}#{% endif %}"
                            style="background-color: transparent; color: var(--text-main); border: 1px solid var(--border-color); border-radius: 6px; height: 32px; min-width: 32px;">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                         </a>
@@ -561,7 +561,7 @@
                         {% if page_num %}
                             <li class="page-item">
                                 <a class="page-link page-btn-custom d-flex align-items-center justify-content-center shadow-none" 
-                                   href="{{ url_for(request.endpoint, page=page_num) }}"
+                                   href="{{ url_for(request.endpoint, page=page_num, **current_args) }}"
                                    style="{% if page_num == pagination.page %}background-color: var(--text-main); border-color: var(--text-main); color: var(--bg-body); font-weight: 600; pointer-events: none;{% else %}background-color: transparent; color: var(--text-main); border: 1px solid transparent;{% endif %} border-radius: 6px; font-size: 0.85rem; height: 32px; min-width: 32px;">
                                     {{ page_num }}
                                 </a>
@@ -576,7 +576,7 @@
                     <!-- Tombol Next (Icon) -->
                     <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
                         <a class="page-link page-btn-custom d-flex align-items-center justify-content-center shadow-none" 
-                           href="{% if pagination.has_next %}{{ url_for(request.endpoint, page=pagination.next_num) }}{% else %}#{% endif %}"
+                           href="{% if pagination.has_next %}{{ url_for(request.endpoint, page=pagination.next_num, **current_args) }}{% else %}#{% endif %}"
                            style="background-color: transparent; color: var(--text-main); border: 1px solid var(--border-color); border-radius: 6px; height: 32px; min-width: 32px;">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                         </a>
@@ -588,6 +588,9 @@
 
                 <!-- Input Group "Jump to Page" yang Menyatu -->
                 <form method="GET" action="{{ url_for(request.endpoint) }}" class="m-0">
+                    {% for k, v in current_args.items() %}
+                        <input type="hidden" name="{{ k }}" value="{{ v }}">
+                    {% endfor %}
                     <div class="input-group input-group-sm" style="height: 32px;">
                         <span class="input-group-text bg-transparent shadow-none" style="border-color: var(--border-color); color: var(--text-muted); font-size: 0.8rem; border-radius: 6px 0 0 6px;">{{ _('Jump') }}</span>
                         
@@ -619,16 +622,16 @@
             <div class="row g-2 mb-4">
                 <div class="col-12 mb-2">
                     <select id="sortField" class="form-select" onchange="resetAndFilter();">
-                        <option value="updated">{{ _('Latest Update') }}</option>
-                        <option value="task-id">{{ _('Task ID') }}</option>
-                        <option value="pullable">{{ _('Pullable Num (Target)') }}</option>
-                        <option value="task-name">{{ _('Task Name') }}</option>
+                        <option value="updated" {% if sort_by == 'updated' %}selected{% endif %}>{{ _('Latest Update') }}</option>
+                        <option value="task-id" {% if sort_by == 'task-id' %}selected{% endif %}>{{ _('Task ID') }}</option>
+                        <option value="pullable" {% if sort_by == 'pullable' %}selected{% endif %}>{{ _('Pullable Num (Target)') }}</option>
+                        <option value="task-name" {% if sort_by == 'task-name' %}selected{% endif %}>{{ _('Task Name') }}</option>
                     </select>
                 </div>
                 <div class="col-12">
                     <select id="sortOrder" class="form-select" onchange="resetAndFilter();">
-                        <option value="desc">{{ _('Descending (Highest / Newest First)') }}</option>
-                        <option value="asc">{{ _('Ascending (Lowest / Oldest First)') }}</option>
+                        <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>{{ _('Descending (Highest / Newest First)') }}</option>
+                        <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>{{ _('Ascending (Lowest / Oldest First)') }}</option>
                     </select>
                 </div>
             </div>
@@ -638,15 +641,15 @@
             <div class="mb-3">
                 <label class="form-label detail-label">{{ _('By Project') }}</label>
                 <select id="projectFilter" class="form-select" onchange="resetAndFilter();">
-                    <option value="All">{{ _('Show All Projects') }}</option>
-                    {% for p in projects %} <option value="{{ p }}">{{ p }}</option> {% endfor %}
+                    <option value="All" {% if selected_project == 'All' %}selected{% endif %}>{{ _('Show All Projects') }}</option>
+                    {% for p in projects %} <option value="{{ p }}" {% if selected_project == p %}selected{% endif %}>{{ p }}</option> {% endfor %}
                 </select>
             </div>
             <div class="mb-4">
                 <label class="form-label detail-label">{{ _('By Package') }}</label>
                 <select id="packageFilter" class="form-select" onchange="resetAndFilter();">
-                    <option value="All">{{ _('Show All Packages') }}</option>
-                    {% for pkg in packages %} <option value="{{ pkg }}">{{ pkg }}</option> {% endfor %}
+                    <option value="All" {% if selected_package == 'All' %}selected{% endif %}>{{ _('Show All Packages') }}</option>
+                    {% for pkg in packages %} <option value="{{ pkg }}" {% if selected_package == pkg %}selected{% endif %}>{{ pkg }}</option> {% endfor %}
                 </select>
             </div>
             
