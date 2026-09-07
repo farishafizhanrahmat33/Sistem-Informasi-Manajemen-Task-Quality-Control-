@@ -175,337 +175,346 @@
                 data-updated="{{ t.updated_at.strftime('%Y%m%d%H%M%S') if t.updated_at else '0' }}">
                 
                 <div class="card h-100 task-card p-2 {% if t.sent_by_leader %}is-sent{% endif %}">
-                <div class="card-body d-flex flex-column p-3">
-                    
-                    <!-- Header: Task ID & Status Badge -->
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h6 class="card-title fw-bold mb-0 text-truncate pe-2" style="font-size: 1rem; color: var(--text-main);">
-                            {{ _('Task ID :') }} {{ t.task_id }}
-                        </h6>
-                        {% if t.sent_by_leader %}
-                            <span class="badge shadow-sm flex-shrink-0" style="background-color: var(--badge-sent-bg); color: var(--badge-sent-text);">{{ _('Sent') }}</span>
-                        {% else %}
-                            {% if t.qc_category == 'Need Sample' %}
-                                <span class="badge badge-accent flex-shrink-0">{{ _('To Sample') }}</span>
-                            {% elif t.qc_category == 'Sample Done' %}
-                                <span class="badge bg-info text-dark flex-shrink-0">{{ _('Sample Done') }}</span>
-                            {% elif t.qc_category == 'Revision' %}
-                                <span class="badge bg-danger flex-shrink-0">{{ _('Revision') }}</span>
-                            {% elif t.qc_category == 'Ready' %}
-                                <span class="badge bg-success flex-shrink-0">{{ _('Ready') }}</span>
-                            {% elif t.qc_category == 'Skipped' %}
-                                <span class="badge bg-secondary flex-shrink-0">{{ _('Skipped') }}</span>
+                    <div class="card-body d-flex flex-column p-3">
+                        
+                        <!-- Header: Task ID & Status Badge -->
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="card-title fw-bold mb-0 text-truncate pe-2" style="font-size: 1rem; color: var(--text-main);">
+                                {{ _('Task ID :') }} {{ t.task_id }}
+                            </h6>
+                            {% if t.sent_by_leader %}
+                                <span class="badge shadow-sm flex-shrink-0" style="background-color: var(--badge-sent-bg); color: var(--badge-sent-text);">{{ _('Sent') }}</span>
                             {% else %}
-                                <span class="badge bg-secondary flex-shrink-0">{{ _(t.qc_category) }}</span>
-                            {% endif %}
-                        {% endif %}
-                    </div>
-                    
-                    <!-- Sub-Header: Project & Package Name (Pindah ke atas) -->
-                    <div class="mb-3 d-flex flex-wrap gap-2">
-                        <span class="badge badge-soft" style="font-size: 0.75rem;">{{ _('Project:') }} {{ t.project_name or '-' }}</span>
-                        <span class="badge badge-soft" style="font-size: 0.75rem;">{{ _('Package:') }} {{ t.package_name or '-' }}</span>
-                    </div>
-
-                    <!-- Content List (Task Name, Description, Target Pullable) -->
-                    <div class="card-text small mb-3" style="color: var(--text-muted);">
-                        <div class="mb-1"><strong>{{ _('Task Name:') }}</strong> {{ t.task_name or '-' }}</div>
-                        <div class="mb-1 text-truncate" title="{{ t.description }}"><strong>{{ _('Desc:') }}</strong> {{ t.description or '-' }}</div>
-                        <div>
-                            <strong>{{ _('Target Pullable:') }}</strong> {{ t.pullable_num }}
-                            <!-- Indikator warna -->
-                            {% if t.pullable_num < 250 %}
-                                <span class="badge ms-1" style="background-color: #EF4444; color: white;">{{ _('Critical') }}</span>
-                            {% elif t.pullable_num < 500 %}
-                                <span class="badge ms-1" style="background-color: #F59E0B; color: white;">{{ _('Low') }}</span>
-                            {% else %}
-                                <span class="badge ms-1" style="background-color: #10B981; color: white;">{{ _('Safe') }}</span>
+                                {% if t.qc_category == 'Need Sample' %}
+                                    <span class="badge badge-accent flex-shrink-0">{{ _('To Sample') }}</span>
+                                {% elif t.qc_category == 'Sample Done' %}
+                                    <span class="badge bg-info text-dark flex-shrink-0">{{ _('Sample Done') }}</span>
+                                {% elif t.qc_category == 'Revision' %}
+                                    <span class="badge bg-danger flex-shrink-0">{{ _('Revision') }}</span>
+                                {% elif t.qc_category == 'Ready' %}
+                                    <span class="badge bg-success flex-shrink-0">{{ _('Ready') }}</span>
+                                {% elif t.qc_category == 'Skipped' %}
+                                    <span class="badge bg-secondary flex-shrink-0">{{ _('Skipped') }}</span>
+                                {% else %}
+                                    <span class="badge bg-secondary flex-shrink-0">{{ _(t.qc_category) }}</span>
+                                {% endif %}
                             {% endif %}
                         </div>
-                    </div>
+                        
+                        <!-- Sub-Header: Project & Package Name -->
+                        <div class="mb-3 d-flex flex-wrap gap-2">
+                            <span class="badge badge-soft" style="font-size: 0.75rem;">{{ _('Project:') }} {{ t.project_name or '-' }}</span>
+                            <span class="badge badge-soft" style="font-size: 0.75rem;">{{ _('Package:') }} {{ t.package_name or '-' }}</span>
+                        </div>
 
-                    <!-- Footer: View Details -->
-                    <div class="mt-auto pt-2 border-top">
-                        <button class="btn btn-outline-secondary btn-sm w-100 fw-semibold" data-bs-toggle="modal" data-bs-target="#modal-{{ t.id }}">{{ _('View Details') }}</button>
-                    </div>
-                </div>
-            </div>
-            </div>
-
-            <!-- MODAL DETAIL TASK -->
-            <div class="modal fade" id="modal-{{ t.id }}" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-                    <div class="modal-content shadow-lg">
-                        <div class="modal-header d-flex align-items-center">
+                        <!-- Content List (Task Name, Description, Target Pullable) -->
+                        <div class="card-text small mb-3" style="color: var(--text-muted);">
+                            <div class="mb-1"><strong>{{ _('Task Name:') }}</strong> {{ t.task_name or '-' }}</div>
+                            <div class="mb-1 text-truncate" title="{{ t.description }}"><strong>{{ _('Desc:') }}</strong> {{ t.description or '-' }}</div>
                             <div>
-                                <span class="badge badge-soft mb-2 d-inline-block">{{ t.project_name }}</span>
-                                <h5 class="modal-title fw-bold" style="letter-spacing: -0.5px; color: var(--text-main);">{{ _('Task:') }} {{ t.task_id }}</h5>
+                                <strong>{{ _('Target Pullable:') }}</strong> {{ t.pullable_num }}
+                                <!-- Indikator warna -->
+                                {% if t.pullable_num < 250 %}
+                                    <span class="badge ms-1" style="background-color: #EF4444; color: white;">{{ _('Critical') }}</span>
+                                {% elif t.pullable_num < 500 %}
+                                    <span class="badge ms-1" style="background-color: #F59E0B; color: white;">{{ _('Low') }}</span>
+                                {% else %}
+                                    <span class="badge ms-1" style="background-color: #10B981; color: white;">{{ _('Safe') }}</span>
+                                {% endif %}
                             </div>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body">
-                            <div class="row g-4">
-                                
-                                <!-- KIRI: SEMUA KOLOM DARI DATA ASLI -->
-                                <div class="col-lg-5">
-                                    <div class="detail-panel h-100">
-                                        <h6 class="fw-bold mb-4" style="color: var(--text-main);">{{ _('Raw Data Attributes') }}</h6>
 
-                                        <div class="detail-label">{{ _('Project Name') }}</div>
-                                        <div class="detail-value fw-semibold text-primary">{{ t.project_name }}</div>
+                        <!-- Footer: View Details -->
+                        <div class="mt-auto pt-2 border-top">
+                            <!-- PASTIKAN ADA type="button" DI SINI -->
+                            <button type="button" class="btn btn-outline-secondary btn-sm w-100 fw-semibold" data-bs-toggle="modal" data-bs-target="#modal-{{ t.id }}">{{ _('View Details') }}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %} <!-- LOOP PERTAMA DITUTUP DI SINI -->
 
-                                        <div class="detail-label">{{ _('Task ID') }}</div>
-                                        <div class="detail-value fw-bold">{{ t.task_id }}</div>
+            <div class="col-12" id="emptyFilterMessage" style="display: none;">
+                <div class="detail-panel text-center py-5 small fw-medium mt-2 d-flex flex-column align-items-center" style="color: var(--text-muted);">
+                    {{ _("Your sort criteria didn't turn up any results.") }}
+                </div>
+            </div>
+        </div> <!-- PENUTUP DIV ROW TASKCONTAINER -->
 
-                                        <div class="detail-label">{{ _('Task Name') }}</div>
-                                        <div class="detail-value">{{ t.task_name or '-' }}</div>
+        <!-- ========================================================================= -->
+        <!-- MODAL DETAIL TASK (DIPINDAHKAN KE SINI AGAR TIDAK TERTUMPUK OLEH ROW/GRID) -->
+        <!-- ========================================================================= -->
+        {% for t in tasks %}
+        <div class="modal fade" id="modal-{{ t.id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content shadow-lg">
+                    <div class="modal-header d-flex align-items-center">
+                        <div>
+                            <span class="badge badge-soft mb-2 d-inline-block">{{ t.project_name }}</span>
+                            <h5 class="modal-title fw-bold" style="letter-spacing: -0.5px; color: var(--text-main);">{{ _('Task:') }} {{ t.task_id }}</h5>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-4">
+                            
+                            <!-- KIRI: SEMUA KOLOM DARI DATA ASLI -->
+                            <div class="col-lg-5">
+                                <div class="detail-panel h-100">
+                                    <h6 class="fw-bold mb-4" style="color: var(--text-main);">{{ _('Raw Data Attributes') }}</h6>
 
-                                        <div class="detail-label">{{ _('Package Name') }}</div>
-                                        <div class="detail-value"><span class="badge badge-soft border">{{ t.package_name or '-' }}</span></div>
+                                    <div class="detail-label">{{ _('Project Name') }}</div>
+                                    <div class="detail-value fw-semibold text-primary">{{ t.project_name }}</div>
 
-                                        <div class="detail-label">{{ _('Description') }}</div>
-                                        <div class="detail-value lh-base" style="color: var(--text-muted);">{{ t.description or '-' }}</div>
+                                    <div class="detail-label">{{ _('Task ID') }}</div>
+                                    <div class="detail-value fw-bold">{{ t.task_id }}</div>
 
-                                        <div class="detail-label">{{ _('SOP') }}</div>
-                                        <div class="detail-value">{{ t.sop or '-' }}</div>
+                                    <div class="detail-label">{{ _('Task Name') }}</div>
+                                    <div class="detail-value">{{ t.task_name or '-' }}</div>
 
-                                        <div class="detail-label">{{ _('Task Goal') }}</div>
-                                        <div class="detail-value">{{ t.task_goal or '-' }}</div>
+                                    <div class="detail-label">{{ _('Package Name') }}</div>
+                                    <div class="detail-value"><span class="badge badge-soft border">{{ t.package_name or '-' }}</span></div>
 
-                                        <div class="detail-label">{{ _('Initialize / Initial Status') }}</div>
-                                        <div class="detail-value">{{ t.initialize_status or '-' }}</div>
+                                    <div class="detail-label">{{ _('Description') }}</div>
+                                    <div class="detail-value lh-base" style="color: var(--text-muted);">{{ t.description or '-' }}</div>
 
-                                        <div class="detail-label">{{ _('Generalization Direction') }}</div>
-                                        <div class="detail-value">{{ t.generalization_direction or '-' }}</div>
+                                    <div class="detail-label">{{ _('SOP') }}</div>
+                                    <div class="detail-value">{{ t.sop or '-' }}</div>
 
-                                        <div class="detail-label">{{ _('Task Type') }}</div>
-                                        <div class="detail-value">{{ t.task_type or '-' }}</div>
+                                    <div class="detail-label">{{ _('Task Goal') }}</div>
+                                    <div class="detail-value">{{ t.task_goal or '-' }}</div>
 
-                                        <div class="detail-label">{{ _('Num') }}</div>
-                                        <div class="detail-value">{{ t.num_val or '-' }}</div>
+                                    <div class="detail-label">{{ _('Initialize / Initial Status') }}</div>
+                                    <div class="detail-value">{{ t.initialize_status or '-' }}</div>
 
-                                        <div class="detail-label">{{ _('Label') }}</div>
-                                        <div class="detail-value">{{ t.label or '-' }}</div>
+                                    <div class="detail-label">{{ _('Generalization Direction') }}</div>
+                                    <div class="detail-value">{{ t.generalization_direction or '-' }}</div>
 
-                                        <div class="detail-label">{{ _('Extraction Target (Pullable Num)') }}</div>
-                                        <div class="detail-value fs-5 fw-bold" style="color: var(--accent);">
-                                            {{ t.pullable_num }}
-                                            {% if t.pullable_num < 250 %}
-                                                <span class="badge ms-1 bg-danger" style="font-size: 0.65rem;">{{ _('Critical') }}</span>
-                                            {% elif t.pullable_num < 500 %}
-                                                <span class="badge ms-1 bg-warning text-dark" style="font-size: 0.65rem;">{{ _('Low') }}</span>
-                                            {% else %}
-                                                <span class="badge ms-1 bg-success" style="font-size: 0.65rem;">{{ _('Safe') }}</span>
-                                            {% endif %}
+                                    <div class="detail-label">{{ _('Task Type') }}</div>
+                                    <div class="detail-value">{{ t.task_type or '-' }}</div>
+
+                                    <div class="detail-label">{{ _('Num') }}</div>
+                                    <div class="detail-value">{{ t.num_val or '-' }}</div>
+
+                                    <div class="detail-label">{{ _('Label') }}</div>
+                                    <div class="detail-value">{{ t.label or '-' }}</div>
+
+                                    <div class="detail-label">{{ _('Extraction Target (Pullable Num)') }}</div>
+                                    <div class="detail-value fs-5 fw-bold" style="color: var(--accent);">
+                                        {{ t.pullable_num }}
+                                        {% if t.pullable_num < 250 %}
+                                            <span class="badge ms-1 bg-danger" style="font-size: 0.65rem;">{{ _('Critical') }}</span>
+                                        {% elif t.pullable_num < 500 %}
+                                            <span class="badge ms-1 bg-warning text-dark" style="font-size: 0.65rem;">{{ _('Low') }}</span>
+                                        {% else %}
+                                            <span class="badge ms-1 bg-success" style="font-size: 0.65rem;">{{ _('Safe') }}</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="detail-label">{{ _('Environment Type') }}</div>
+                                    <div class="detail-value">{{ t.environment_type or '-' }}</div>
+
+                                    <div class="detail-label">{{ _('Source Template ID') }}</div>
+                                    <div class="detail-value">{{ t.source_template_id or '-' }}</div>
+
+                                    <div class="detail-label">{{ _('Target Num / Task') }}</div>
+                                    <div class="detail-value">{{ t.target_num_task or '-' }}</div>
+
+                                    <div class="detail-label">{{ _('Env Summary') }}</div>
+                                    <div class="detail-value">{{ t.env_summary or '-' }}</div>
+
+                                    <div class="detail-label">{{ _('Original Excel Status') }}</div>
+                                    <div class="detail-value">{{ t.excel_status or '-' }}</div>
+
+                                    <div class="detail-label">{{ _('Uploaded By') }}</div>
+                                    <div class="detail-value mb-0">{{ t.uploaded_by or _('System') }}</div>
+                                </div>
+                            </div>
+
+                            <!-- KANAN: STATUS & AKSI -->
+                            <div class="col-lg-7">
+                                {% if role in ['Developer', 'Quality Control', 'Supervisor'] %}
+                                <form action="/toggle_send/{{ t.id }}" method="POST" class="mb-4">
+                                    {% if t.sent_by_leader %}
+                                        <button type="submit" class="btn btn-outline-secondary w-100 py-2">{{ _('Pull Back from Production Team') }}</button>
+                                    {% else %}
+                                        <button type="submit" class="btn btn-primary w-100 py-2">{{ _('Send Task to Production Team') }}</button>
+                                    {% endif %}
+                                </form>
+                                {% endif %}
+
+                                <!-- TINJAUAN MEDIA (2 VIDEO) -->
+                                <div class="detail-panel mb-4 p-0 overflow-hidden">
+                                    <div class="p-3 border-bottom" style="background-color: var(--input-bg);">
+                                        <div class="detail-label mb-0">{{ _('Extraction Media Review') }}</div>
+                                    </div>
+                                    <div class="p-3">
+                                        <ul class="nav custom-video-tabs mb-3" id="video-tabs-{{ t.id }}" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link active" id="link1-tab-{{ t.id }}" data-bs-toggle="tab" data-bs-target="#link1-{{ t.id }}" type="button" role="tab">{{ _('Sample 1') }}</button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="link2-tab-{{ t.id }}" data-bs-toggle="tab" data-bs-target="#link2-{{ t.id }}" type="button" role="tab">{{ _('Sample 2') }}</button>
+                                            </li>
+                                        </ul>
+                                        
+                                        <div class="tab-content" id="video-tabs-content-{{ t.id }}">
+                                            <!-- KONTEN MEDIA UTAMA (SAMPEL 1) -->
+                                            <div class="tab-pane fade show active" id="link1-{{ t.id }}" role="tabpanel">
+                                                {% if t.link_sample %}
+                                                    {% if 'drive.google.com' in t.link_sample %}
+                                                        <!-- Sampel 1 -->
+                                                        <div id="video-wrapper-{{ t.id }}-1" class="rounded-3 overflow-hidden border shadow-sm mb-2 position-relative bg-black video-container-wrapper" style="aspect-ratio: 16/9; width: 100%; border-color: var(--border-color) !important;">
+
+                                                            <!-- Tombol Keluar Fullscreen dengan Teks & Ikon -->
+                                                            <button type="button" onclick="exitVideoFullscreen('video-wrapper-{{ t.id }}-1')" class="btn btn-sm position-absolute top-0 end-0 m-3 shadow exit-fs-btn d-none align-items-center gap-2 px-3 py-2 rounded-pill" style="z-index: 9999; background: rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.3); color: white; font-size: 0.8rem; font-weight: 600; backdrop-filter: blur(4px);">
+                                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                                                {{ _('Exit Fullscreen') }}
+                                                            </button>
+
+                                                            <iframe src="{{ t.link_sample.split('/view')[0].replace('/file/d/', '/file/d/').replace('/view', '') + '/preview' }}" class="position-absolute top-0 start-0 border-0" style="width: 150%; height: 150%; transform: scale(0.6667); transform-origin: top left;" allow="autoplay" allowfullscreen></iframe>
+                                                        </div>
+                                                        
+                                                        <!-- Tombol Fullscreen & New Tab -->
+                                                        <div class="d-flex justify-content-between align-items-center mt-1 px-1">
+                                                            <button type="button" onclick="toggleVideoFullscreen('video-wrapper-{{ t.id }}-1')" class="btn btn-sm btn-link text-decoration-none d-inline-flex align-items-center gap-1 p-0 shadow-none" style="color: var(--text-main); font-size: 0.75rem; font-weight: 600;">
+                                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                                                                {{ _('Fullscreen') }}
+                                                            </button>
+
+                                                            <a href="{{ t.link_sample }}" target="_blank" class="text-decoration-none d-inline-flex align-items-center gap-1 px-2 py-1 rounded" style="color: #3b82f6; font-size: 0.75rem; font-weight: 600; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(59, 130, 246, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                                                                {{ _('Open Video in New Tab') }}
+                                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                                            </a>
+                                                        </div>
+                                                    {% else %}
+                                                        <a href="{{ t.link_sample }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 py-2 shadow-none" style="border-radius: 8px;">{{ _('Visit Main External Link ↗') }}</a>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <div class="text-center py-5 small rounded-3" style="background-color: var(--input-bg); border: 1px dashed var(--border-color); color: var(--text-muted);">{{ _('No main media attached yet.') }}</div>
+                                                {% endif %}
+                                            </div>
+                                            
+                                            <!-- KONTEN MEDIA ALTERNATIF (SAMPEL 2) -->
+                                            <div class="tab-pane fade" id="link2-{{ t.id }}" role="tabpanel">
+                                                {% if t.link_sample_2 %}
+                                                    {% if 'drive.google.com' in t.link_sample_2 %}
+                                                        <!-- Sampel 2 -->
+                                                        <div id="video-wrapper-{{ t.id }}-2" class="rounded-3 overflow-hidden border shadow-sm mb-2 position-relative bg-black video-container-wrapper" style="aspect-ratio: 16/9; width: 100%; border-color: var(--border-color) !important;">
+
+                                                            <!-- Tombol Keluar Fullscreen dengan Teks & Ikon -->
+                                                            <button type="button" onclick="exitVideoFullscreen('video-wrapper-{{ t.id }}-2')" class="btn btn-sm position-absolute top-0 end-0 m-3 shadow exit-fs-btn d-none align-items-center gap-2 px-3 py-2 rounded-pill" style="z-index: 9999; background: rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.3); color: white; font-size: 0.8rem; font-weight: 600; backdrop-filter: blur(4px);">
+                                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                                                {{ _('Exit Fullscreen') }}
+                                                            </button>
+
+                                                            <iframe src="{{ t.link_sample_2.split('/view')[0].replace('/file/d/', '/file/d/').replace('/view', '') + '/preview' }}" class="position-absolute top-0 start-0 border-0" style="width: 150%; height: 150%; transform: scale(0.6667); transform-origin: top left;" allow="autoplay" allowfullscreen></iframe>
+                                                        </div>
+                                                        
+                                                        <!-- Tombol Fullscreen & New Tab -->
+                                                        <div class="d-flex justify-content-between align-items-center mt-1 px-1">
+                                                            <button type="button" onclick="toggleVideoFullscreen('video-wrapper-{{ t.id }}-2')" class="btn btn-sm btn-link text-decoration-none d-inline-flex align-items-center gap-1 p-0 shadow-none" style="color: var(--text-main); font-size: 0.75rem; font-weight: 600;">
+                                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                                                                {{ _('Fullscreen') }}
+                                                            </button>
+
+                                                            <a href="{{ t.link_sample_2 }}" target="_blank" class="text-decoration-none d-inline-flex align-items-center gap-1 px-2 py-1 rounded" style="color: #3b82f6; font-size: 0.75rem; font-weight: 600; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(59, 130, 246, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                                                                {{ _('Open Video in New Tab') }}
+                                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                                            </a>
+                                                        </div>
+                                                    {% else %}
+                                                        <a href="{{ t.link_sample_2 }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 py-2 shadow-none" style="border-radius: 8px;">{{ _('Visit Alternate External Link ↗') }}</a>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <div class="text-center py-5 small rounded-3" style="background-color: var(--input-bg); border: 1px dashed var(--border-color); color: var(--text-muted);">{{ _('No alternate media attached yet.') }}</div>
+                                                {% endif %}
+                                            </div>
                                         </div>
-
-                                        <div class="detail-label">{{ _('Environment Type') }}</div>
-                                        <div class="detail-value">{{ t.environment_type or '-' }}</div>
-
-                                        <div class="detail-label">{{ _('Source Template ID') }}</div>
-                                        <div class="detail-value">{{ t.source_template_id or '-' }}</div>
-
-                                        <div class="detail-label">{{ _('Target Num / Task') }}</div>
-                                        <div class="detail-value">{{ t.target_num_task or '-' }}</div>
-
-                                        <div class="detail-label">{{ _('Env Summary') }}</div>
-                                        <div class="detail-value">{{ t.env_summary or '-' }}</div>
-
-                                        <div class="detail-label">{{ _('Original Excel Status') }}</div>
-                                        <div class="detail-value">{{ t.excel_status or '-' }}</div>
-
-                                        <div class="detail-label">{{ _('Uploaded By') }}</div>
-                                        <div class="detail-value mb-0">{{ t.uploaded_by or _('System') }}</div>
                                     </div>
                                 </div>
 
-                                <!-- KANAN: STATUS & AKSI -->
-                                <div class="col-lg-7">
-                                    {% if role in ['Developer', 'Quality Control', 'Supervisor'] %}
-                                    <form action="/toggle_send/{{ t.id }}" method="POST" class="mb-4">
-                                        {% if t.sent_by_leader %}
-                                            <button type="submit" class="btn btn-outline-secondary w-100 py-2">{{ _('Pull Back from Production Team') }}</button>
-                                        {% else %}
-                                            <button type="submit" class="btn btn-primary w-100 py-2">{{ _('Send Task to Production Team') }}</button>
-                                        {% endif %}
-                                    </form>
-                                    {% endif %}
+                                <!-- FORMULIR EVALUASI QC -->
+                                <div class="detail-panel">
+                                    <h6 class="fw-bold mb-4" style="color: var(--text-main);">{{ _('Evaluation & Operations Form') }}</h6>
+                                    {% if role in ['Developer', 'Quality Control'] %}
+                                        <form action="/toggle_skip/{{ t.id }}" method="POST" class="mb-4">
+                                            <button type="submit" class="btn {% if t.can_buy_item %}btn-outline-danger{% else %}btn-outline-secondary{% endif %} btn-sm w-100">{% if t.can_buy_item %}{{ _('Mark as Skipped') }}{% else %}{{ _('Restore Task Status (Unskip)') }}{% endif %}</button>
+                                        </form>
 
-                                    <!-- TINJAUAN MEDIA (2 VIDEO) -->
-                                    <div class="detail-panel mb-4 p-0 overflow-hidden">
-                                        <div class="p-3 border-bottom" style="background-color: var(--input-bg);">
-                                            <div class="detail-label mb-0">{{ _('Extraction Media Review') }}</div>
-                                        </div>
-                                        <div class="p-3">
-                                            <ul class="nav custom-video-tabs mb-3" id="video-tabs-{{ t.id }}" role="tablist">
-                                                <li class="nav-item" role="presentation">
-                                                    <button class="nav-link active" id="link1-tab-{{ t.id }}" data-bs-toggle="tab" data-bs-target="#link1-{{ t.id }}" type="button" role="tab">{{ _('Sample 1') }}</button>
-                                                </li>
-                                                <li class="nav-item" role="presentation">
-                                                    <button class="nav-link" id="link2-tab-{{ t.id }}" data-bs-toggle="tab" data-bs-target="#link2-{{ t.id }}" type="button" role="tab">{{ _('Sample 2') }}</button>
-                                                </li>
-                                            </ul>
-                                            
-                                            <div class="tab-content" id="video-tabs-content-{{ t.id }}">
-                                                <!-- KONTEN MEDIA UTAMA (SAMPEL 1) -->
-                                                <div class="tab-pane fade show active" id="link1-{{ t.id }}" role="tabpanel">
-                                                    {% if t.link_sample %}
-                                                        {% if 'drive.google.com' in t.link_sample %}
-                                                            <!-- Sampel 1 -->
-                                                            <div id="video-wrapper-{{ t.id }}-1" class="rounded-3 overflow-hidden border shadow-sm mb-2 position-relative bg-black video-container-wrapper" style="aspect-ratio: 16/9; width: 100%; border-color: var(--border-color) !important;">
-    
-                                                                <!-- Tombol Keluar Fullscreen dengan Teks & Ikon -->
-                                                                <button type="button" onclick="exitVideoFullscreen('video-wrapper-{{ t.id }}-1')" class="btn btn-sm position-absolute top-0 end-0 m-3 shadow exit-fs-btn d-none align-items-center gap-2 px-3 py-2 rounded-pill" style="z-index: 9999; background: rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.3); color: white; font-size: 0.8rem; font-weight: 600; backdrop-filter: blur(4px);">
-                                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                                                                    {{ _('Exit Fullscreen') }}
-                                                                </button>
-
-                                                                <iframe src="{{ t.link_sample.split('/view')[0].replace('/file/d/', '/file/d/').replace('/view', '') + '/preview' }}" class="position-absolute top-0 start-0 border-0" style="width: 150%; height: 150%; transform: scale(0.6667); transform-origin: top left;" allow="autoplay" allowfullscreen></iframe>
-                                                            </div>
-                                                            
-                                                            <!-- Tombol Fullscreen & New Tab -->
-                                                            <div class="d-flex justify-content-between align-items-center mt-1 px-1">
-                                                                <button type="button" onclick="toggleVideoFullscreen('video-wrapper-{{ t.id }}-1')" class="btn btn-sm btn-link text-decoration-none d-inline-flex align-items-center gap-1 p-0 shadow-none" style="color: var(--text-main); font-size: 0.75rem; font-weight: 600;">
-                                                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-                                                                    {{ _('Fullscreen') }}
-                                                                </button>
-
-                                                                <a href="{{ t.link_sample }}" target="_blank" class="text-decoration-none d-inline-flex align-items-center gap-1 px-2 py-1 rounded" style="color: #3b82f6; font-size: 0.75rem; font-weight: 600; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(59, 130, 246, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
-                                                                    {{ _('Open Video in New Tab') }}
-                                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                                                                </a>
-                                                            </div>
-                                                        {% else %}
-                                                            <a href="{{ t.link_sample }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 py-2 shadow-none" style="border-radius: 8px;">{{ _('Visit Main External Link ↗') }}</a>
-                                                        {% endif %}
-                                                    {% else %}
-                                                        <div class="text-center py-5 small rounded-3" style="background-color: var(--input-bg); border: 1px dashed var(--border-color); color: var(--text-muted);">{{ _('No main media attached yet.') }}</div>
-                                                    {% endif %}
-                                                </div>
-                                                
-                                                <!-- KONTEN MEDIA ALTERNATIF (SAMPEL 2) -->
-                                                <div class="tab-pane fade" id="link2-{{ t.id }}" role="tabpanel">
-                                                    {% if t.link_sample_2 %}
-                                                        {% if 'drive.google.com' in t.link_sample_2 %}
-                                                            <!-- Sampel 2 -->
-                                                            <div id="video-wrapper-{{ t.id }}-2" class="rounded-3 overflow-hidden border shadow-sm mb-2 position-relative bg-black video-container-wrapper" style="aspect-ratio: 16/9; width: 100%; border-color: var(--border-color) !important;">
-    
-                                                                <!-- Tombol Keluar Fullscreen dengan Teks & Ikon -->
-                                                                <button type="button" onclick="exitVideoFullscreen('video-wrapper-{{ t.id }}-2')" class="btn btn-sm position-absolute top-0 end-0 m-3 shadow exit-fs-btn d-none align-items-center gap-2 px-3 py-2 rounded-pill" style="z-index: 9999; background: rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.3); color: white; font-size: 0.8rem; font-weight: 600; backdrop-filter: blur(4px);">
-                                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                                                                    {{ _('Exit Fullscreen') }}
-                                                                </button>
-
-                                                                <iframe src="{{ t.link_sample_2.split('/view')[0].replace('/file/d/', '/file/d/').replace('/view', '') + '/preview' }}" class="position-absolute top-0 start-0 border-0" style="width: 150%; height: 150%; transform: scale(0.6667); transform-origin: top left;" allow="autoplay" allowfullscreen></iframe>
-                                                            </div>
-                                                            
-                                                            <!-- Tombol Fullscreen & New Tab -->
-                                                            <div class="d-flex justify-content-between align-items-center mt-1 px-1">
-                                                                <button type="button" onclick="toggleVideoFullscreen('video-wrapper-{{ t.id }}-2')" class="btn btn-sm btn-link text-decoration-none d-inline-flex align-items-center gap-1 p-0 shadow-none" style="color: var(--text-main); font-size: 0.75rem; font-weight: 600;">
-                                                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-                                                                    {{ _('Fullscreen') }}
-                                                                </button>
-
-                                                                <a href="{{ t.link_sample_2 }}" target="_blank" class="text-decoration-none d-inline-flex align-items-center gap-1 px-2 py-1 rounded" style="color: #3b82f6; font-size: 0.75rem; font-weight: 600; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(59, 130, 246, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
-                                                                    {{ _('Open Video in New Tab') }}
-                                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                                                                </a>
-                                                            </div>
-                                                        {% else %}
-                                                            <a href="{{ t.link_sample_2 }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 py-2 shadow-none" style="border-radius: 8px;">{{ _('Visit Alternate External Link ↗') }}</a>
-                                                        {% endif %}
-                                                    {% else %}
-                                                        <div class="text-center py-5 small rounded-3" style="background-color: var(--input-bg); border: 1px dashed var(--border-color); color: var(--text-muted);">{{ _('No alternate media attached yet.') }}</div>
-                                                    {% endif %}
-                                                </div>
+                                        <form action="/update/{{ t.id }}" method="POST">
+                                            <div class="mb-3">
+                                                <label class="form-label detail-label">{{ _('Case Name') }}</label>
+                                                <input type="text" name="case_name" class="form-control" value="{{ t.case_name or '' }}">
                                             </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- FORMULIR EVALUASI QC -->
-                                    <div class="detail-panel">
-                                        <h6 class="fw-bold mb-4" style="color: var(--text-main);">{{ _('Evaluation & Operations Form') }}</h6>
-                                        {% if role in ['Developer', 'Quality Control'] %}
-                                            <form action="/toggle_skip/{{ t.id }}" method="POST" class="mb-4">
-                                                <button type="submit" class="btn {% if t.can_buy_item %}btn-outline-danger{% else %}btn-outline-secondary{% endif %} btn-sm w-100">{% if t.can_buy_item %}{{ _('Mark as Skipped') }}{% else %}{{ _('Restore Task Status (Unskip)') }}{% endif %}</button>
-                                            </form>
-
-                                            <form action="/update/{{ t.id }}" method="POST">
-                                                <div class="mb-3">
-                                                    <label class="form-label detail-label">{{ _('Case Name') }}</label>
-                                                    <input type="text" name="case_name" class="form-control" value="{{ t.case_name or '' }}">
-                                                </div>
-                                                <div class="row g-3 mb-3">
-                                                    <div class="col-sm-6">
+                                            <div class="row g-3 mb-3">
+                                                <div class="col-sm-6">
                                                         <label class="form-label detail-label">{{ _('Main Media Link') }}</label>
-                                                        <input type="text" name="link_sample" class="form-control" value="{{ t.link_sample or '' }}" placeholder="{{ _('Enter the main reference URL...') }}">
-                                                    </div>
-                                                    <div class="col-sm-6">
-                                                        <label class="form-label detail-label">{{ _('Alternate Media Link') }}</label>
-                                                        <input type="text" name="link_sample_2" class="form-control" value="{{ t.link_sample_2 or '' }}" placeholder="{{ _('Enter the backup reference URL...') }}">
-                                                    </div>
+                                                    <input type="text" name="link_sample" class="form-control" value="{{ t.link_sample or '' }}" placeholder="{{ _('Enter the main reference URL...') }}">
                                                 </div>
-                                                <div class="row g-3 mb-4">
-                                                    <div class="col-sm-6">
-                                                        <label class="form-label detail-label">{{ _('Inspector Evaluation Result') }}</label>
-                                                        <select name="inspector_result" class="form-select fw-medium">
-                                                            
-                                                            <!-- Jika t.inspector_result kosong ATAU bernilai 'Need Sample', jadikan ini yang terpilih -->
-                                                            <option value="Need Sample" {% if not t.inspector_result or t.inspector_result == 'Need Sample' %}selected{% endif %}>{{ _('Need Sample') }}</option>
-                                                            <option value="Sample Done" {% if t.inspector_result == 'Passed' %}selected{% endif %}>{{ _('Waiting Inspect') }}</option>
-                                                            <option value="Passed" {% if t.inspector_result == 'Passed' %}selected{% endif %}>{{ _('Approved (Passed)') }}</option>
-                                                            <option value="Failed" {% if t.inspector_result == 'Failed' %}selected{% endif %}>{{ _('Rejected (Failed)') }}</option>
-                                                            
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-sm-6">
-                                                        <label class="form-label detail-label">{{ _('Operational Status') }}</label>
-                                                        <select name="operational_status" class="form-select fw-medium">
-                                                            <option value="Active" {% if t.operational_status == 'Active' %}selected{% endif %}>{{ _('Running (Active)') }}</option>
-                                                            <option value="Offline" {% if t.operational_status == 'Offline' %}selected{% endif %}>{{ _('Offline') }}</option>
-                                                            <option value="Hold" {% if t.operational_status == 'Hold' %}selected{% endif %}>{{ _('On Hold') }}</option>
-                                                            <option value="Complete" {% if t.operational_status == 'Complete' %}selected{% endif %}>{{ _('Complete') }}</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="mb-4">
-                                                    <label class="form-label detail-label">{{ _('Inspection Notes') }}</label>
-                                                    <textarea name="notes" class="form-control lh-base" rows="3" placeholder="{{ _('Write down findings or special instructions...') }}">{{ t.notes or '' }}</textarea>
-                                                </div>
-                                                <button type="submit" class="btn btn-primary w-100 py-2">{{ _('Save Update') }}</button>
-                                            </form>
-
-                                        {% else %}
-                                            <!-- READ ONLY UNTUK LEADER/PUBLIC -->
-                                            <div class="row mb-4">
-                                                <div class="col-6">
-                                                    <div class="detail-label">{{ _('Case Name') }}</div>
-                                                    <div class="detail-value mb-0">{{ t.case_name or '-' }}</div>
-                                                </div>
-                                                <div class="col-6">
-                                                    <div class="detail-label">{{ _('Operational Status') }}</div>
-                                                    <div class="detail-value mb-0">{{ _(t.operational_status) }}</div>
+                                                <div class="col-sm-6">
+                                                    <label class="form-label detail-label">{{ _('Alternate Media Link') }}</label>
+                                                    <input type="text" name="link_sample_2" class="form-control" value="{{ t.link_sample_2 or '' }}" placeholder="{{ _('Enter the backup reference URL...') }}">
                                                 </div>
                                             </div>
-                                            <div class="detail-label">{{ _('Internal Inspector Decision') }}</div>
-                                            <div class="detail-value mb-4">
-                                                {% if t.inspector_result == 'Passed' %}<span class="badge" style="background-color: #10B981; color: white; padding: 0.5em 1em;">{{ _('Approved (Passed)') }}</span>
-                                                {% elif t.inspector_result == 'Failed' %}<span class="badge" style="background-color: #EF4444; color: white; padding: 0.5em 1em;">{{ _('Failed Testing (Failed)') }}</span>
-                                                {% else %}<span class="badge badge-soft border py-2 px-3">{{ _('Still Under Review') }}</span>{% endif %}
+                                            <div class="row g-3 mb-4">
+                                                <div class="col-sm-6">
+                                                    <label class="form-label detail-label">{{ _('Inspector Evaluation Result') }}</label>
+                                                    <select name="inspector_result" class="form-select fw-medium">
+                                                        <!-- Jika t.inspector_result kosong ATAU bernilai 'Need Sample', jadikan ini yang terpilih -->
+                                                        <option value="Need Sample" {% if not t.inspector_result or t.inspector_result == 'Need Sample' %}selected{% endif %}>{{ _('Need Sample') }}</option>
+                                                        <option value="Sample Done" {% if t.inspector_result == 'Passed' %}selected{% endif %}>{{ _('Waiting Inspect') }}</option>
+                                                        <option value="Passed" {% if t.inspector_result == 'Passed' %}selected{% endif %}>{{ _('Approved (Passed)') }}</option>
+                                                        <option value="Failed" {% if t.inspector_result == 'Failed' %}selected{% endif %}>{{ _('Rejected (Failed)') }}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <label class="form-label detail-label">{{ _('Operational Status') }}</label>
+                                                    <select name="operational_status" class="form-select fw-medium">
+                                                        <option value="Active" {% if t.operational_status == 'Active' %}selected{% endif %}>{{ _('Running (Active)') }}</option>
+                                                        <option value="Offline" {% if t.operational_status == 'Offline' %}selected{% endif %}>{{ _('Offline') }}</option>
+                                                        <option value="Hold" {% if t.operational_status == 'Hold' %}selected{% endif %}>{{ _('On Hold') }}</option>
+                                                        <option value="Complete" {% if t.operational_status == 'Complete' %}selected{% endif %}>{{ _('Complete') }}</option>
+                                                    </select>
+                                                </div>
                                             </div>
-                                            
-                                            <div class="detail-label pt-4 border-top">{{ _('Inspection Notes (Quality Team)') }}</div>
-                                            <div class="p-3 rounded lh-base" style="background-color: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-muted); white-space: pre-wrap;">{{ t.notes or _('The evaluation team has not left any notes for this task yet.') }}</div>
-                                        {% endif %}
-                                    </div>
+                                            <div class="mb-4">
+                                                <label class="form-label detail-label">{{ _('Inspection Notes') }}</label>
+                                                <textarea name="notes" class="form-control lh-base" rows="3" placeholder="{{ _('Write down findings or special instructions...') }}">{{ t.notes or '' }}</textarea>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary w-100 py-2">{{ _('Save Update') }}</button>
+                                        </form>
 
+                                    {% else %}
+                                        <!-- READ ONLY UNTUK LEADER/PUBLIC -->
+                                        <div class="row mb-4">
+                                            <div class="col-6">
+                                                <div class="detail-label">{{ _('Case Name') }}</div>
+                                                <div class="detail-value mb-0">{{ t.case_name or '-' }}</div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="detail-label">{{ _('Operational Status') }}</div>
+                                                <div class="detail-value mb-0">{{ _(t.operational_status) }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="detail-label">{{ _('Internal Inspector Decision') }}</div>
+                                        <div class="detail-value mb-4">
+                                            {% if t.inspector_result == 'Passed' %}<span class="badge" style="background-color: #10B981; color: white; padding: 0.5em 1em;">{{ _('Approved (Passed)') }}</span>
+                                            {% elif t.inspector_result == 'Failed' %}<span class="badge" style="background-color: #EF4444; color: white; padding: 0.5em 1em;">{{ _('Failed Testing (Failed)') }}</span>
+                                            {% else %}<span class="badge badge-soft border py-2 px-3">{{ _('Still Under Review') }}</span>{% endif %}
+                                        </div>
+                                        
+                                        <div class="detail-label pt-4 border-top">{{ _('Inspection Notes (Quality Team)') }}</div>
+                                        <div class="p-3 rounded lh-base" style="background-color: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-muted); white-space: pre-wrap;">{{ t.notes or _('The evaluation team has not left any notes for this task yet.') }}</div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            {% endfor %}
+        </div>
+        {% endfor %} <!-- LOOP KEDUA (KHUSUS MODAL) DITUTUP DI SINI -->
             <div class="col-12" id="emptyFilterMessage" style="display: none;">
                 <div class="detail-panel text-center py-5 small fw-medium mt-2 d-flex flex-column align-items-center" style="color: var(--text-muted);">
                     {{ _("Your sort criteria didn't turn up any results.") }}
