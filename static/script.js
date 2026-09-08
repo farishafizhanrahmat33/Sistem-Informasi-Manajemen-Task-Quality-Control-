@@ -550,19 +550,19 @@ function evaluateVisibility(item) {
     }
 }
 
-// 1. Fungsi Pencarian (Search Bar di dalam filter)
+// 1. Fungsi Pencarian (Search Bar di dalam filter) dengan Penjaga Posisi Scroll
 function searchFilterList(input, listId) {
     const searchTerm = input.value.toLowerCase();
     const listContainer = document.getElementById(listId);
     if (!listContainer) return;
     
+    const currentScrollTop = listContainer.scrollTop;
     const items = listContainer.querySelectorAll('.item-option');
 
     items.forEach(item => {
         const textElement = item.querySelector('.item-text');
         if (textElement) {
             const text = textElement.textContent.toLowerCase();
-            // Jika tidak cocok dengan pencarian, beri tanda sembunyi
             if (text.includes(searchTerm)) {
                 item.removeAttribute('data-search-hidden');
             } else {
@@ -571,25 +571,22 @@ function searchFilterList(input, listId) {
             evaluateVisibility(item);
         }
     });
+
+    listContainer.scrollTop = currentScrollTop;
 }
 
-// 2. Fungsi Filter Saling Bergantung (Cascading)
+// 2. Fungsi Filter Saling Bergantung (Cascading) yang Diperbarui
 function updateDependentFilters() {
     if (typeof projectPackageMap === 'undefined' || typeof packageProjectMap === 'undefined') return;
+
+    const filterBoxes = document.querySelectorAll('.premium-filter-box');
+    const scrollPositions = Array.from(filterBoxes).map(box => box.scrollTop);
 
     const allProjChecked = document.querySelector('#project-list .select-all-cb').checked;
     const allPkgChecked = document.querySelector('#package-list .select-all-cb').checked;
 
-    // Ambil nilai yang dicentang (Hanya jika "Select All" TIDAK dicentang)
-    let selectedProjects = [];
-    if (!allProjChecked) {
-        selectedProjects = Array.from(document.querySelectorAll('#project-list .item-cb:checked')).map(cb => cb.value);
-    }
-
-    let selectedPackages = [];
-    if (!allPkgChecked) {
-        selectedPackages = Array.from(document.querySelectorAll('#package-list .item-cb:checked')).map(cb => cb.value);
-    }
+    const checkedProjects = Array.from(document.querySelectorAll('#project-list .item-cb:checked')).map(cb => cb.value);
+    const checkedPackages = Array.from(document.querySelectorAll('#package-list .item-cb:checked')).map(cb => cb.value);
 
     // A. Update Visibilitas Opsi Paket berdasarkan Proyek
     const packageOptions = document.querySelectorAll('#package-list .item-option');
@@ -597,15 +594,16 @@ function updateDependentFilters() {
         const cb = option.querySelector('.item-cb');
         const pkgName = cb.value;
         
-        if (selectedProjects.length === 0) {
-            option.removeAttribute('data-dep-hidden'); // Tampilkan semua jika tidak ada spesifik proyek yang dipilih
+        // JIKA "Select All Projects" aktif ATAU TIDAK ADA proyek yang dicentang, TAMPILKAN SEMUA PAKET
+        if (allProjChecked || checkedProjects.length === 0) {
+            option.removeAttribute('data-dep-hidden');
         } else {
-            let isValid = selectedProjects.some(proj => projectPackageMap[proj] && projectPackageMap[proj].includes(pkgName));
+            let isValid = checkedProjects.some(proj => projectPackageMap[proj] && projectPackageMap[proj].includes(pkgName));
             if (isValid) {
                 option.removeAttribute('data-dep-hidden');
             } else {
                 option.setAttribute('data-dep-hidden', 'true');
-                cb.checked = false; // Uncheck otomatis opsi yang disembunyikan
+                cb.checked = false; 
             }
         }
         evaluateVisibility(option);
@@ -617,23 +615,27 @@ function updateDependentFilters() {
         const cb = option.querySelector('.item-cb');
         const projName = cb.value;
         
-        if (selectedPackages.length === 0) {
-            option.removeAttribute('data-dep-hidden'); // Tampilkan semua jika tidak ada spesifik paket yang dipilih
+        // JIKA "Select All Packages" aktif ATAU TIDAK ADA paket yang dicentang, TAMPILKAN SEMUA PROYEK
+        if (allPkgChecked || checkedPackages.length === 0) {
+            option.removeAttribute('data-dep-hidden');
         } else {
-            let isValid = selectedPackages.some(pkg => packageProjectMap[pkg] && packageProjectMap[pkg].includes(projName));
+            let isValid = checkedPackages.some(pkg => packageProjectMap[pkg] && packageProjectMap[pkg].includes(projName));
             if (isValid) {
                 option.removeAttribute('data-dep-hidden');
             } else {
                 option.setAttribute('data-dep-hidden', 'true');
-                cb.checked = false; // Uncheck otomatis opsi yang disembunyikan
+                cb.checked = false; 
             }
         }
         evaluateVisibility(option);
     });
 
-    // Sinkronkan ulang status centang "Select All" jika ada yang berubah
     syncSelectAllState('project-list');
     syncSelectAllState('package-list');
+
+    filterBoxes.forEach((box, index) => {
+        box.scrollTop = scrollPositions[index];
+    });
 }
 
 // 3. Fungsi Saat Tombol "Select All" Diklik
@@ -644,19 +646,16 @@ function toggleSelectAll(selectAllCheckbox, listId) {
     const itemCheckboxes = listContainer.querySelectorAll('.item-cb');
     itemCheckboxes.forEach(cb => {
         const parentOption = cb.closest('.item-option');
-        // Hanya manipulasi checkbox yang saat ini sedang "terlihat" di layar
         if (parentOption && parentOption.style.display !== 'none') {
             cb.checked = selectAllCheckbox.checked;
         }
     });
 
-    // Jalankan kalkulasi ketergantungan
     updateDependentFilters();
 }
 
-// 4. Fungsi Saat Salah Satu Item Diklik (CheckIndividual)
+// 4. Fungsi Saat Salah Satu Item Diklik
 function checkIndividualState(listId) {
-    // Setiap kali item di-klik, langsung evaluasi ketergantungannya
     updateDependentFilters();
 }
 
@@ -668,7 +667,6 @@ function syncSelectAllState(listId) {
     const selectAllCheckbox = listContainer.querySelector('.select-all-cb');
     const itemCheckboxes = Array.from(listContainer.querySelectorAll('.item-cb'));
     
-    // Cek apakah *semua opsi yang terlihat* sudah tercentang
     const visibleCheckboxes = itemCheckboxes.filter(cb => {
         const parent = cb.closest('.item-option');
         return parent && parent.style.display !== 'none';
@@ -702,7 +700,6 @@ function applyDrawerFilters() {
     url.searchParams.delete('project');
     url.searchParams.delete('package');
 
-    // Jika 'Select All' aktif, biarkan parameternya kosong (backend membaca sebagai 'All')
     if (allProjChecked) {
         url.searchParams.append('project', 'All');
     } else {

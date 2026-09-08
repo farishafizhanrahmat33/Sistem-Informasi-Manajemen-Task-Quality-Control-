@@ -55,11 +55,9 @@ def upload_qr():
     env_match = re.search(r'([a-zA-Z0-9_]+_x_[a-zA-Z0-9_]+_\d+)', original_filename, re.IGNORECASE)
     base_code = env_match.group(1) if env_match else os.path.splitext(secure_filename(original_filename))[0]
 
-    # Simpan file sementara atau baca stream-nya menggunakan PyMuPDF (fitz)
     file_bytes = file.read()
 
     try:
-        # Buka dokumen PDF langsung dari bytes memori menggunakan PyMuPDF
         doc = fitz.open(stream=file_bytes, filetype="pdf")
     except Exception as e:
         flash(_("Couldn't read that PDF: %(error)s", error=e), 'danger')
@@ -75,19 +73,38 @@ def upload_qr():
         doc_name = f"Scene {i}"
         safe_base = secure_filename(f"{base_code}_scene_{i}") or f"page_{i}"
         
-        # Ubah ekstensi file target menjadi .png
-        page_filename = _unique_filename(f"{safe_base}.png")
-        output_path = os.path.join(QR_UPLOAD_FOLDER, page_filename)
-
-        # Render halaman PDF menjadi gambar PNG dengan zoom/skala ketajaman (misal: 1.5x)
         zoom = 1.5
         mat = fitz.Matrix(zoom, zoom)
-        pix = page.get_pixmap(matrix=mat)
-        pix.save(output_path)
+
+        # 1. SIMPAN GAMBAR FULL (UTUH) UNTUK VIEW PREVIEW
+        full_filename = _unique_filename(f"{safe_base}.png")
+        full_path = os.path.join(QR_UPLOAD_FOLDER, full_filename)
+        
+        pix_full = page.get_pixmap(matrix=mat)
+        pix_full.save(full_path)
+
+        # 2. Simpan gambar thumbnail (Kustomisasi pas pada kotak gambar besar utama)
+        base_name, ext = os.path.splitext(full_filename)
+        thumb_filename = f"{base_name}_thumb{ext}"
+        thumb_path = os.path.join(QR_UPLOAD_FOLDER, thumb_filename)
+
+        page_rect = page.rect
+        
+        # --- KOORDINAT PRESISI UNTUK FOTO UTAMA SAJA ---
+        crop_x0 = page_rect.width * 0.55  # Batas kiri kotak foto utama
+        crop_y0 = page_rect.height * 0.42 # Batas atas kotak foto utama
+        crop_x1 = page_rect.width * 0.90  # Batas kanan kotak foto utama
+        crop_y1 = page_rect.height * 0.70 # Batas bawah kotak foto utama (tepat di atas 3 foto kecil)
+        # ----------------------------------------------
+
+        clip_area = fitz.Rect(crop_x0, crop_y0, crop_x1, crop_y1)
+
+        pix_thumb = page.get_pixmap(matrix=mat, clip=clip_area)
+        pix_thumb.save(thumb_path)
 
         new_qr = QRCodeModel(
             name=doc_name,
-            pdf_filename=page_filename,  # Nama kolom database tetap sama, tapi isinya sekarang file .png
+            pdf_filename=full_filename,  # Menyimpan file utuh untuk modal
             uploaded_at=datetime.utcnow(),
             uploaded_by=session.get('username'),
             source_document=base_code,
@@ -111,9 +128,17 @@ def delete_qr(qr_id):
 
     qr = db.session.get(QRCodeModel, qr_id)
     if qr:
+        # Hapus file full
         filepath = os.path.join(QR_UPLOAD_FOLDER, qr.pdf_filename)
         if os.path.exists(filepath):
             os.remove(filepath)
+            
+        # Hapus file thumbnail pendampingnya
+        base, ext = os.path.splitext(qr.pdf_filename)
+        thumb_filepath = os.path.join(QR_UPLOAD_FOLDER, f"{base}_thumb{ext}")
+        if os.path.exists(thumb_filepath):
+            os.remove(thumb_filepath)
+
         db.session.delete(qr)
         db.session.commit()
         flash(_('Document deleted.'), 'success')

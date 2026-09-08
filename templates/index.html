@@ -152,6 +152,52 @@
         </div>
         {% endif %}
 
+        <!-- INDIKATOR FILTER AKTIF (COMPACT & RESPONSIVE) -->
+        {% if (selected_projects and 'All' not in selected_projects) or (selected_packages and 'All' not in selected_packages) or (selected_status and selected_status != 'All') or search_query %}
+        <div class="d-flex align-items-center gap-2 mb-3 p-2 px-3 rounded-3 shadow-sm overflow-x-auto" style="background-color: var(--bg-surface); border: 1px solid var(--border-color); white-space: nowrap;">
+            <span class="small fw-bold text-muted me-1 flex-shrink-0" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                {{ _('Filters:') }}
+            </span>
+
+            <!-- Chip Status -->
+            {% if selected_status and selected_status != 'All' %}
+                <span class="badge d-inline-flex align-items-center gap-1 px-2.5 py-1 rounded-pill flex-shrink-0" style="background-color: rgba(245, 158, 11, 0.15); color: #F59E0B; font-size: 0.75rem; font-weight: 500;">
+                    Status: {{ _(selected_status) }}
+                </span>
+            {% endif %}
+
+            <!-- Chip Search Query -->
+            {% if search_query %}
+                <span class="badge d-inline-flex align-items-center gap-1 px-2.5 py-1 rounded-pill flex-shrink-0" style="background-color: rgba(59, 130, 246, 0.15); color: #3B82F6; font-size: 0.75rem; font-weight: 500; max-width: 150px; overflow: hidden; text-overflow: ellipsis;">
+                    Search: "{{ search_query }}"
+                </span>
+            {% endif %}
+
+            <!-- Chip Projects -->
+            {% if selected_projects and 'All' not in selected_projects %}
+                {% for proj in selected_projects %}
+                    <span class="badge badge-soft d-inline-flex align-items-center gap-1 px-2.5 py-1 rounded-pill border flex-shrink-0" style="font-size: 0.75rem; font-weight: 500; border-color: var(--border-color) !important; color: var(--text-main); max-width: 160px; overflow: hidden; text-overflow: ellipsis;" title="{{ proj }}">
+                        Proj: {{ proj }}
+                    </span>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Chip Packages -->
+            {% if selected_packages and 'All' not in selected_packages %}
+                {% for pkg in selected_packages %}
+                    <span class="badge badge-soft d-inline-flex align-items-center gap-1 px-2.5 py-1 rounded-pill border flex-shrink-0" style="font-size: 0.75rem; font-weight: 500; border-color: var(--border-color) !important; color: var(--text-main); max-width: 180px; overflow: hidden; text-overflow: ellipsis;" title="{{ pkg }}">
+                        Pkg: {{ pkg }}
+                    </span>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Tombol Reset / Clear All Filters -->
+            <a href="{{ url_for('task.task_list') }}" class="btn btn-link btn-sm text-decoration-none p-0 ms-auto text-danger fw-semibold flex-shrink-0 ps-2" style="font-size: 0.75rem;">
+                ✕ {{ _('Clear') }}
+            </a>
+        </div>
+        {% endif %}
+
         <!-- GRID KARTU TASK -->
         <div class="row" id="taskContainer">
             {% if not tasks %}
