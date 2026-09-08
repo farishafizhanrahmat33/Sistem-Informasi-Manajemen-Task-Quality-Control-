@@ -617,20 +617,19 @@
 
     <!-- 4. MODAL LOGIN POP-UP -->
 {% include 'login_modal.html' %}
-
-    <!-- DRAWER FILTER & SORT -->
+<!-- DRAWER FILTER & SORT -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="filterDrawer">
-        <div class="offcanvas-header border-bottom">
+        <div class="offcanvas-header border-bottom" style="border-color: var(--border-color) !important;">
             <h6 class="offcanvas-title fw-bold" style="color: var(--text-main);">{{ _('Filter & Sort') }}</h6>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" style="filter: var(--btn-close-filter, none);"></button>
         </div>
-        <div class="offcanvas-body p-4">
+        <div class="offcanvas-body p-4 d-flex flex-column">
             
-            <!-- BAGIAN SORT (PENGURUTAN) -->
-            <h6 class="fw-bold mb-3 small text-uppercase text-muted">{{ _('Sort By') }}</h6>
+            <!-- BAGIAN SORT -->
+            <h6 class="fw-bold mb-3 small text-uppercase" style="color: var(--text-muted); letter-spacing: 0.5px;">{{ _('Sort By') }}</h6>
             <div class="row g-2 mb-4">
                 <div class="col-12 mb-2">
-                    <select id="sortField" class="form-select" onchange="resetAndFilter();">
+                    <select id="sortField" class="form-select shadow-none border" style="border-color: var(--border-color) !important; font-size: 0.9rem;">
                         <option value="updated" {% if sort_by == 'updated' %}selected{% endif %}>{{ _('Latest Update') }}</option>
                         <option value="task-id" {% if sort_by == 'task-id' %}selected{% endif %}>{{ _('Task ID') }}</option>
                         <option value="pullable" {% if sort_by == 'pullable' %}selected{% endif %}>{{ _('Pullable Num (Target)') }}</option>
@@ -638,40 +637,101 @@
                     </select>
                 </div>
                 <div class="col-12">
-                    <select id="sortOrder" class="form-select" onchange="resetAndFilter();">
+                    <select id="sortOrder" class="form-select shadow-none border" style="border-color: var(--border-color) !important; font-size: 0.9rem;">
                         <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>{{ _('Descending (Highest / Newest First)') }}</option>
                         <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>{{ _('Ascending (Lowest / Oldest First)') }}</option>
                     </select>
                 </div>
             </div>
 
-            <!-- BAGIAN FILTER (PENYARINGAN) -->
-            <h6 class="fw-bold mb-3 small text-uppercase text-muted border-top pt-4">{{ _('Filter Data') }}</h6>
-            <div class="mb-3">
-                <label class="form-label detail-label">{{ _('By Project') }}</label>
-                <select id="projectFilter" class="form-select" onchange="resetAndFilter();">
-                    <option value="All" {% if selected_project == 'All' %}selected{% endif %}>{{ _('Show All Projects') }}</option>
-                    {% for p in projects %} <option value="{{ p }}" {% if selected_project == p %}selected{% endif %}>{{ p }}</option> {% endfor %}
-                </select>
-            </div>
+            <!-- BAGIAN MULTIPLY FILTER -->
+            <h6 class="fw-bold mb-3 small text-uppercase border-top pt-4" style="color: var(--text-muted); border-color: var(--border-color) !important; letter-spacing: 0.5px;">{{ _('Filter Data') }}</h6>
+            
+            <!-- FILTER PROYEK -->
             <div class="mb-4">
-                <label class="form-label detail-label">{{ _('By Package') }}</label>
-                <select id="packageFilter" class="form-select" onchange="resetAndFilter();">
-                    <option value="All" {% if selected_package == 'All' %}selected{% endif %}>{{ _('Show All Packages') }}</option>
-                    {% for pkg in packages %} <option value="{{ pkg }}" {% if selected_package == pkg %}selected{% endif %}>{{ pkg }}</option> {% endfor %}
-                </select>
+                <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+                    <label class="form-label detail-label fw-bold mb-0" style="color: var(--text-main);">{{ _('By Project') }}</label>
+                </div>
+                
+                <!-- Search Bar Proyek -->
+                <div class="position-relative mb-2">
+                    <svg class="position-absolute top-50 translate-middle-y ms-3" style="color: var(--text-muted);" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" class="form-control form-control-sm ps-5 bg-transparent shadow-none search-filter-input" placeholder="{{ _('Search project name...') }}" oninput="searchFilterList(this, 'project-list')">
+                </div>
+
+                <div class="premium-filter-box" id="project-list">
+                    <!-- Opsi Select All -->
+                    <label class="premium-filter-option select-all-option">
+                        <input type="checkbox" name="project" value="All" class="premium-filter-checkbox select-all-cb" onchange="toggleSelectAll(this, 'project-list')" {% if not selected_projects or 'All' in selected_projects %}checked{% endif %}>
+                        <div class="premium-filter-content">
+                            <span class="premium-filter-text fw-bold">{{ _('Select All Projects') }}</span>
+                            <svg class="premium-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </div>
+                    </label>
+                    
+                    <!-- Daftar Item -->
+                    {% for p in projects %}
+                    <label class="premium-filter-option item-option">
+                        <input type="checkbox" name="project" value="{{ p }}" class="premium-filter-checkbox item-cb" onchange="checkIndividualState('project-list')" {% if (not selected_projects) or ('All' in selected_projects) or (p in selected_projects) %}checked{% endif %}>
+                        <div class="premium-filter-content">
+                            <span class="premium-filter-text item-text" title="{{ p }}">{{ p }}</span>
+                            <svg class="premium-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- FILTER PAKET -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+                    <label class="form-label detail-label fw-bold mb-0" style="color: var(--text-main);">{{ _('By Package') }}</label>
+                </div>
+                
+                <!-- Search Bar Paket -->
+                <div class="position-relative mb-2">
+                    <svg class="position-absolute top-50 translate-middle-y ms-3" style="color: var(--text-muted);" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" class="form-control form-control-sm ps-5 bg-transparent shadow-none search-filter-input" placeholder="{{ _('Search package name...') }}" oninput="searchFilterList(this, 'package-list')">
+                </div>
+
+                <div class="premium-filter-box" id="package-list">
+                    <!-- Opsi Select All -->
+                    <label class="premium-filter-option select-all-option">
+                        <input type="checkbox" name="package" value="All" class="premium-filter-checkbox select-all-cb" onchange="toggleSelectAll(this, 'package-list')" {% if not selected_packages or 'All' in selected_packages %}checked{% endif %}>
+                        <div class="premium-filter-content">
+                            <span class="premium-filter-text fw-bold">{{ _('Select All Packages') }}</span>
+                            <svg class="premium-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </div>
+                    </label>
+                    
+                    <!-- Daftar Item -->
+                    {% for pkg in packages %}
+                    <label class="premium-filter-option item-option">
+                        <input type="checkbox" name="package" value="{{ pkg }}" class="premium-filter-checkbox item-cb" onchange="checkIndividualState('package-list')" {% if (not selected_packages) or ('All' in selected_packages) or (pkg in selected_packages) %}checked{% endif %}>
+                        <div class="premium-filter-content">
+                            <span class="premium-filter-text item-text" title="{{ pkg }}">{{ pkg }}</span>
+                            <svg class="premium-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
             </div>
             
-            <button type="button" class="btn btn-primary w-100 py-2 mt-3" data-bs-dismiss="offcanvas" onclick="resetAndFilter();">{{ _('Apply Settings') }}</button>
+            <div class="mt-auto pt-3">
+                <button type="button" class="btn btn-primary w-100 py-3 fw-bold shadow-sm" data-bs-dismiss="offcanvas" onclick="applyDrawerFilters()" style="border-radius: 8px; letter-spacing: 0.3px;">{{ _('Apply Settings') }}</button>
+            </div>
         </div>
     </div>
- 
 
     <!-- Bootstrap 5.3.3 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Script Eksternal dengan Cache Buster (?v=2) -->
     <script src="{{ url_for('static', filename='script.js') }}?v=2"></script>
+    <script>
+        const projectPackageMap = {{ project_package_map | tojson | safe }};
+        const packageProjectMap = {{ package_project_map | tojson | safe }};
+    </script>
 
 </body>
 </html>

@@ -85,6 +85,11 @@
                                 </form>
                             </td>
                             <td class="text-end px-4">
+                                <button type="button" class="btn btn-outline-secondary btn-sm px-3 py-1 me-1" style="font-size: 0.8rem; border-radius: 6px;"
+                                        data-bs-toggle="modal" data-bs-target="#resetPasswordModal"
+                                        data-user-id="{{ u.id }}" data-username="{{ u.username }}">
+                                    {{ _('Reset Password') }}
+                                </button>
                                 {% if u.id != session.get('user_id') %}
                                 <form action="{{ url_for('main.delete_user', user_id=u.id) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ _('Are you sure you want to delete this account?') }}');">
                                     <button type="submit" class="btn btn-outline-danger btn-sm px-3 py-1" style="font-size: 0.8rem; border-radius: 6px;">{{ _('Delete') }}</button>
@@ -154,8 +159,56 @@
         </div>
     </div>
 
+    <!-- MODAL RESET PASSWORD (shared -- dipakai buat semua baris user) -->
+    <div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+            <div class="modal-content border-0 shadow" style="background-color: var(--bg-surface); border-radius: 12px;">
+                <div class="modal-body p-4">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0" style="color: var(--text-main);">{{ _('Reset Password') }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: var(--btn-close-filter, none);"></button>
+                    </div>
+                    <p class="text-muted small mb-4">{{ _('Setting a new password for') }} <strong id="resetPasswordUsername">-</strong>.</p>
+
+                    <form id="resetPasswordForm" method="POST" action="/admin/users/reset_password/0">
+                        <div class="mb-4">
+                            <label class="form-label small fw-semibold text-muted mb-1">{{ _('New Password') }}</label>
+                            <input type="password" class="form-control bg-light border-0 py-2" name="new_password" placeholder="{{ _('••••••••') }}" required minlength="6" style="border-radius: 6px; font-size: 0.9rem;">
+                            <div class="form-text text-muted mt-1" style="font-size: 0.75rem;">{{ _('At least 6 characters.') }}</div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary py-2 fw-semibold" style="border-radius: 6px; font-size: 0.9rem;">{{ _('Save New Password') }}</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap JS & App Script -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='script.js') }}?v=2"></script>
+
+    <!-- Isi modal Reset Password sesuai baris user yang tombolnya diklik -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const resetModal = document.getElementById('resetPasswordModal');
+            if (!resetModal) return;
+
+            resetModal.addEventListener('show.bs.modal', function(event) {
+                const btn = event.relatedTarget;
+                const userId = btn.getAttribute('data-user-id');
+                const username = btn.getAttribute('data-username');
+
+                const form = document.getElementById('resetPasswordForm');
+                form.action = '/admin/users/reset_password/' + userId;
+                form.reset();
+
+                document.getElementById('resetPasswordUsername').textContent = username;
+            });
+        });
+    </script>
 </body>
 </html>

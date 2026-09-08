@@ -592,8 +592,8 @@ body {
     }
     /* Iframe media viewer tidak terlalu tinggi di HP */
     .modal-body iframe {
-        height: 220px !important;
-        min-height: 220px !important;
+        height: 200px !important;
+        min-height: 200px !important;
     }
 }
 
@@ -946,4 +946,174 @@ body {
 [data-theme="dark"] .filter-tab.active .task-count-badge {
     background-color: rgba(59, 130, 246, 0.2) !important;
     color: #60a5fa !important; /* Biru terang yang elegan di dark mode */
+}
+
+.hover-bg:hover {
+    background-color: rgba(255, 255, 255, 0.04);
+}
+[data-theme="light"] .hover-bg:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* ========================================= */
+/* PREMIUM MULTI-SELECT FILTER DRAWER STYLES */
+/* ========================================= */
+
+.offcanvas-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.premium-filter-box {
+    background-color: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    
+    /* MENGUBAH MAX-HEIGHT MENJADI TINGGI FIX (STABIL) */
+    height: 160px; /* Atur tinggi pas sesuai selera (misal 150px - 180px) */
+    min-height: 160px;
+    max-height: 160px;
+    
+    overflow-y: auto;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    position: relative;
+}
+
+/* Kustomisasi Scrollbar untuk Box Filter */
+.premium-filter-box::-webkit-scrollbar { 
+    width: 5px; 
+}
+.premium-filter-box::-webkit-scrollbar-track { 
+    background: transparent; 
+}
+.premium-filter-box::-webkit-scrollbar-thumb { 
+    background-color: rgba(150, 150, 150, 0.25); 
+    border-radius: 10px; 
+}
+.premium-filter-box:hover::-webkit-scrollbar-thumb { 
+    background-color: rgba(150, 150, 150, 0.4); 
+}
+
+.premium-filter-option {
+    display: block;
+    margin: 0;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.15s ease;
+}
+
+.premium-filter-option:last-child { 
+    border-bottom: none; 
+}
+
+.premium-filter-option:hover { 
+    background-color: rgba(255, 255, 255, 0.03); 
+}
+
+[data-theme="light"] .premium-filter-option:hover { 
+    background-color: rgba(0, 0, 0, 0.02); 
+}
+
+.premium-filter-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+}
+
+.premium-filter-text {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 12px;
+    transition: all 0.2s ease;
+}
+
+/* Sembunyikan Input Checkbox Bawaan */
+.premium-filter-checkbox { 
+    display: none; 
+}
+
+/* Animasi Ikon Centang (Default tersembunyi/mengecil) */
+.premium-check-icon {
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    color: #F59E0B; 
+    flex-shrink: 0;
+}
+
+/* Efek Saat Baris Dipilih (Checked State) */
+.premium-filter-checkbox:checked + .premium-filter-content .premium-filter-text {
+    color: var(--text-main);
+    font-weight: 700;
+}
+.premium-filter-checkbox:checked + .premium-filter-content .premium-check-icon {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Styling untuk baris "Select All" agar lengket di atas (Sticky) */
+.select-all-option {
+    position: sticky;
+    top: 0;
+    background-color: var(--input-bg);
+    z-index: 10;
+    border-bottom: 2px solid var(--border-color) !important;
+}
+
+/* Styling Search Input di dalam Filter */
+.search-filter-input {
+    border-radius: 8px;
+    border-color: var(--border-color);
+    color: var(--text-main);
+}
+.search-filter-input:focus {
+    box-shadow: none;
+    border-color: #F59E0B;
+}
+
+/* ========================================= */
+/* PENGATURAN SCROLL & LAYOUT SIDEBAR MOBILE */
+/* ========================================= */
+
+/* Pastikan kontainer utama sidebar menggunakan flexbox tinggi penuh */
+.sidebar-drawer, .offcanvas-sidebar, .sidebar-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 100vh;
+    overflow: hidden; /* Mencegah seluruh sidebar ikut bergeser */
+}
+
+/* Bagian Tengah (Menu Operasional sampai Pengaturan Profil) - Bisa di-scroll */
+.sidebar-menu-scrollable {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* Membuat scroll di HP/iOS menjadi sangat halus */
+    padding-bottom: 1rem;
+}
+
+/* Kustomisasi scrollbar tipis di sidebar */
+.sidebar-menu-scrollable::-webkit-scrollbar {
+    width: 4px;
+}
+.sidebar-menu-scrollable::-webkit-scrollbar-thumb {
+    background-color: rgba(150, 150, 150, 0.2);
+    border-radius: 4px;
+}
+
+/* Bagian Bawah (Dari pengaturan tema & bahasa) - Tetap/Fixed di bawah */
+.sidebar-sticky-footer {
+    flex: 0 0 auto;
+    background-color: var(--bg-surface, #1e1e1e);
+    border-top: 1px solid var(--border-color);
+    z-index: 10;
 }

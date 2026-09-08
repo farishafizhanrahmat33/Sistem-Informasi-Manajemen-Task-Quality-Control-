@@ -263,3 +263,27 @@ def update_user_role(user_id):
         flash(_('Something went wrong updating the role.'), 'danger')
 
     return redirect(url_for('main.user_management'))
+
+
+# BARU: Reset password akun user lain langsung dari halaman User Management
+# (khusus Developer) -- gantiin cara lama yang harus jalanin script terpisah.
+@main_bp.route('/admin/users/reset_password/<int:user_id>', methods=['POST'])
+def reset_user_password(user_id):
+    if session.get('role') != 'Developer':
+        flash(_('Access denied! Only Developers can change permissions.'), 'danger')
+        return redirect(url_for('main.dashboard'))
+
+    new_password = request.form.get('new_password', '')
+    if len(new_password) < 6:
+        flash(_('Password must be at least 6 characters long.'), 'danger')
+        return redirect(url_for('main.user_management'))
+
+    user = db.session.get(UserModel, user_id)
+    if user:
+        user.password = generate_password_hash(new_password)
+        db.session.commit()
+        flash(_('Password for "%(username)s" has been reset.', username=user.username), 'success')
+    else:
+        flash(_('User not found.'), 'danger')
+
+    return redirect(url_for('main.user_management'))

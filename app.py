@@ -57,7 +57,11 @@ def ensure_default_admin():
 
         # 1. Buat Akun Developer Default
         if db.session.query(UserModel).filter_by(username='developer').first() is None:
-            default_password = os.environ.get('DEFAULT_ADMIN_PASSWORD', 'admin123')
+            default_password = os.environ.get('DEFAULT_ADMIN_PASSWORD')
+            if not default_password:
+                print("WARNING: DEFAULT_ADMIN_PASSWORD belum di-set di .env -- akun developer default TIDAK dibuat.")
+                print("Tambahkan baris DEFAULT_ADMIN_PASSWORD=<password_kamu> ke file .env, lalu restart.")
+                return            
             default_admin = UserModel(
                 username='developer',
                 password=generate_password_hash(default_password),

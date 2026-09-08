@@ -51,7 +51,7 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e =
 //      supaya Flask yang menghitung & memfilter dari SELURUH data.
 //   2. Menampilkan progresif ("Load More") task yang sudah dikirim server
 //      untuk halaman saat ini (tanpa menyaring ulang).
-let itemsToShow = 9;
+let itemsToShow = 15;
 let searchDebounceTimer = null;
 
 // Ambil filter/search/sort yang sedang aktif dari URL saat ini
@@ -141,7 +141,7 @@ function initTaskDisplay() {
 }
 
 function loadMore() {
-    itemsToShow += 9;
+    itemsToShow += 15;
     initTaskDisplay();
 }
 
@@ -167,7 +167,7 @@ async function syncDataNow() {
         
         if (newContainer && currentContainer && newContainer.innerHTML !== currentContainer.innerHTML) {
             currentContainer.innerHTML = newContainer.innerHTML;
-            itemsToShow = 9;
+            itemsToShow = 15;
             initTaskDisplay();
         }
     } catch (e) { console.log('Background update waiting...'); }
@@ -454,3 +454,271 @@ function handleFullscreenExit() {
         });
     }
 }
+
+/* ========================================= */
+/* FILTER DRAWER & MULTI-SELECT LOGIC        */
+/* ========================================= */
+
+// Fungsi untuk mencari/menyaring daftar secara langsung (Real-time Search)
+function searchFilterList(input, listId) {
+    const searchTerm = input.value.toLowerCase();
+    const listContainer = document.getElementById(listId);
+    if (!listContainer) return;
+    
+    const items = listContainer.querySelectorAll('.item-option');
+
+    items.forEach(item => {
+        const textElement = item.querySelector('.item-text');
+        if (textElement) {
+            const text = textElement.textContent.toLowerCase();
+            if (text.includes(searchTerm)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        }
+    });
+}
+
+// Fungsi saat tombol "Select All" ditekan (Check/Uncheck semuanya)
+function toggleSelectAll(selectAllCheckbox, listId) {
+    const listContainer = document.getElementById(listId);
+    if (!listContainer) return;
+
+    const itemCheckboxes = listContainer.querySelectorAll('.item-cb');
+    itemCheckboxes.forEach(cb => {
+        // Hanya centang/uncheck item yang sedang terlihat (tidak tersembunyi oleh pencarian)
+        const parentOption = cb.closest('.item-option');
+        if (parentOption && parentOption.style.display !== 'none') {
+            cb.checked = selectAllCheckbox.checked;
+        }
+    });
+}
+
+// Fungsi saat salah satu item ditekan (Mengatur status tombol Select All)
+function checkIndividualState(listId) {
+    const listContainer = document.getElementById(listId);
+    if (!listContainer) return;
+
+    const selectAllCheckbox = listContainer.querySelector('.select-all-cb');
+    const itemCheckboxes = Array.from(listContainer.querySelectorAll('.item-cb'));
+    
+    if (selectAllCheckbox && itemCheckboxes.length > 0) {
+        // Cek apakah semua item yang ada sudah dicentang
+        const allChecked = itemCheckboxes.every(cb => cb.checked);
+        selectAllCheckbox.checked = allChecked;
+    }
+}
+
+// Fungsi Pengumpulan Data Saat Tombol Apply Ditekan
+function applyDrawerFilters() {
+    const selectedProjects = Array.from(document.querySelectorAll('input[name="project"]:checked')).map(cb => cb.value);
+    const selectedPackages = Array.from(document.querySelectorAll('input[name="package"]:checked')).map(cb => cb.value);
+    const sortField = document.getElementById('sortField') ? document.getElementById('sortField').value : 'updated';
+    const sortOrder = document.getElementById('sortOrder') ? document.getElementById('sortOrder').value : 'desc';
+
+    // Buat URL pencarian baru berdasarkan URL saat ini
+    const url = new URL(window.location.href);
+    url.searchParams.set('page', 1); // Kembalikan ke halaman 1
+    url.searchParams.set('sort_by', sortField);
+    url.searchParams.set('sort_order', sortOrder);
+
+    // Bersihkan parameter lama
+    url.searchParams.delete('project');
+    url.searchParams.delete('package');
+
+    // Set parameter baru
+    // Jika 'All' dicentang, kita bisa mengirimkan 'All' atau tidak mengirim parameter (Backend otomatis menangkap All)
+    // Berdasarkan kode python kita, jika 'All' ada di dalam list, filter akan diabaikan.
+    selectedProjects.forEach(p => url.searchParams.append('project', p));
+    selectedPackages.forEach(pkg => url.searchParams.append('package', pkg));
+
+    // Redirect ke URL yang sudah diperbarui
+    window.location.href = url.toString();
+}
+
+/* ========================================= */
+/* CASCADING FILTER & MULTI-SELECT LOGIC     */
+/* ========================================= */
+
+// Fungsi Bantuan: Menentukan apakah elemen harus tampil atau sembunyi
+function evaluateVisibility(item) {
+    if (item.hasAttribute('data-search-hidden') || item.hasAttribute('data-dep-hidden')) {
+        item.style.display = 'none';
+    } else {
+        item.style.display = 'block';
+    }
+}
+
+// 1. Fungsi Pencarian (Search Bar di dalam filter)
+function searchFilterList(input, listId) {
+    const searchTerm = input.value.toLowerCase();
+    const listContainer = document.getElementById(listId);
+    if (!listContainer) return;
+    
+    const items = listContainer.querySelectorAll('.item-option');
+
+    items.forEach(item => {
+        const textElement = item.querySelector('.item-text');
+        if (textElement) {
+            const text = textElement.textContent.toLowerCase();
+            // Jika tidak cocok dengan pencarian, beri tanda sembunyi
+            if (text.includes(searchTerm)) {
+                item.removeAttribute('data-search-hidden');
+            } else {
+                item.setAttribute('data-search-hidden', 'true');
+            }
+            evaluateVisibility(item);
+        }
+    });
+}
+
+// 2. Fungsi Filter Saling Bergantung (Cascading)
+function updateDependentFilters() {
+    if (typeof projectPackageMap === 'undefined' || typeof packageProjectMap === 'undefined') return;
+
+    const allProjChecked = document.querySelector('#project-list .select-all-cb').checked;
+    const allPkgChecked = document.querySelector('#package-list .select-all-cb').checked;
+
+    // Ambil nilai yang dicentang (Hanya jika "Select All" TIDAK dicentang)
+    let selectedProjects = [];
+    if (!allProjChecked) {
+        selectedProjects = Array.from(document.querySelectorAll('#project-list .item-cb:checked')).map(cb => cb.value);
+    }
+
+    let selectedPackages = [];
+    if (!allPkgChecked) {
+        selectedPackages = Array.from(document.querySelectorAll('#package-list .item-cb:checked')).map(cb => cb.value);
+    }
+
+    // A. Update Visibilitas Opsi Paket berdasarkan Proyek
+    const packageOptions = document.querySelectorAll('#package-list .item-option');
+    packageOptions.forEach(option => {
+        const cb = option.querySelector('.item-cb');
+        const pkgName = cb.value;
+        
+        if (selectedProjects.length === 0) {
+            option.removeAttribute('data-dep-hidden'); // Tampilkan semua jika tidak ada spesifik proyek yang dipilih
+        } else {
+            let isValid = selectedProjects.some(proj => projectPackageMap[proj] && projectPackageMap[proj].includes(pkgName));
+            if (isValid) {
+                option.removeAttribute('data-dep-hidden');
+            } else {
+                option.setAttribute('data-dep-hidden', 'true');
+                cb.checked = false; // Uncheck otomatis opsi yang disembunyikan
+            }
+        }
+        evaluateVisibility(option);
+    });
+
+    // B. Update Visibilitas Opsi Proyek berdasarkan Paket
+    const projectOptions = document.querySelectorAll('#project-list .item-option');
+    projectOptions.forEach(option => {
+        const cb = option.querySelector('.item-cb');
+        const projName = cb.value;
+        
+        if (selectedPackages.length === 0) {
+            option.removeAttribute('data-dep-hidden'); // Tampilkan semua jika tidak ada spesifik paket yang dipilih
+        } else {
+            let isValid = selectedPackages.some(pkg => packageProjectMap[pkg] && packageProjectMap[pkg].includes(projName));
+            if (isValid) {
+                option.removeAttribute('data-dep-hidden');
+            } else {
+                option.setAttribute('data-dep-hidden', 'true');
+                cb.checked = false; // Uncheck otomatis opsi yang disembunyikan
+            }
+        }
+        evaluateVisibility(option);
+    });
+
+    // Sinkronkan ulang status centang "Select All" jika ada yang berubah
+    syncSelectAllState('project-list');
+    syncSelectAllState('package-list');
+}
+
+// 3. Fungsi Saat Tombol "Select All" Diklik
+function toggleSelectAll(selectAllCheckbox, listId) {
+    const listContainer = document.getElementById(listId);
+    if (!listContainer) return;
+
+    const itemCheckboxes = listContainer.querySelectorAll('.item-cb');
+    itemCheckboxes.forEach(cb => {
+        const parentOption = cb.closest('.item-option');
+        // Hanya manipulasi checkbox yang saat ini sedang "terlihat" di layar
+        if (parentOption && parentOption.style.display !== 'none') {
+            cb.checked = selectAllCheckbox.checked;
+        }
+    });
+
+    // Jalankan kalkulasi ketergantungan
+    updateDependentFilters();
+}
+
+// 4. Fungsi Saat Salah Satu Item Diklik (CheckIndividual)
+function checkIndividualState(listId) {
+    // Setiap kali item di-klik, langsung evaluasi ketergantungannya
+    updateDependentFilters();
+}
+
+// 5. Fungsi Bantu: Sinkronisasi Status "Select All"
+function syncSelectAllState(listId) {
+    const listContainer = document.getElementById(listId);
+    if (!listContainer) return;
+
+    const selectAllCheckbox = listContainer.querySelector('.select-all-cb');
+    const itemCheckboxes = Array.from(listContainer.querySelectorAll('.item-cb'));
+    
+    // Cek apakah *semua opsi yang terlihat* sudah tercentang
+    const visibleCheckboxes = itemCheckboxes.filter(cb => {
+        const parent = cb.closest('.item-option');
+        return parent && parent.style.display !== 'none';
+    });
+
+    if (visibleCheckboxes.length > 0) {
+        const allChecked = visibleCheckboxes.every(cb => cb.checked);
+        selectAllCheckbox.checked = allChecked;
+    }
+}
+
+// 6. Fungsi Submit Filter ke URL
+function applyDrawerFilters() {
+    const allProjChecked = document.querySelector('#project-list .select-all-cb').checked;
+    const allPkgChecked = document.querySelector('#package-list .select-all-cb').checked;
+
+    let selectedProjects = [];
+    if (!allProjChecked) selectedProjects = Array.from(document.querySelectorAll('#project-list .item-cb:checked')).map(cb => cb.value);
+    
+    let selectedPackages = [];
+    if (!allPkgChecked) selectedPackages = Array.from(document.querySelectorAll('#package-list .item-cb:checked')).map(cb => cb.value);
+    
+    const sortField = document.getElementById('sortField') ? document.getElementById('sortField').value : 'updated';
+    const sortOrder = document.getElementById('sortOrder') ? document.getElementById('sortOrder').value : 'desc';
+
+    const url = new URL(window.location.href);
+    url.searchParams.set('page', 1);
+    url.searchParams.set('sort_by', sortField);
+    url.searchParams.set('sort_order', sortOrder);
+
+    url.searchParams.delete('project');
+    url.searchParams.delete('package');
+
+    // Jika 'Select All' aktif, biarkan parameternya kosong (backend membaca sebagai 'All')
+    if (allProjChecked) {
+        url.searchParams.append('project', 'All');
+    } else {
+        selectedProjects.forEach(p => url.searchParams.append('project', p));
+    }
+
+    if (allPkgChecked) {
+        url.searchParams.append('package', 'All');
+    } else {
+        selectedPackages.forEach(pkg => url.searchParams.append('package', pkg));
+    }
+
+    window.location.href = url.toString();
+}
+
+// Inisialisasi awal saat Drawer Filter dibuka
+document.getElementById('filterDrawer').addEventListener('shown.bs.offcanvas', function () {
+    updateDependentFilters();
+});
