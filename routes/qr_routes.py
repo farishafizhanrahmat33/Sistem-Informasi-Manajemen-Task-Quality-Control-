@@ -5,8 +5,8 @@ from flask import Blueprint, render_template, request, redirect, url_for, sessio
 from flask_babel import gettext as _
 from werkzeug.utils import secure_filename
 from database import db, QRCodeModel
-from pypdf import PdfReader  # Tetap dibutuhkan untuk membaca jumlah halaman PDF
-import fitz                  # Library baru untuk convert PDF page ke PNG
+from pypdf import PdfReader
+import pymupdf as fitz  # Diperbarui menggunakan pymupdf agar bersih dari warning
 
 qr_bp = Blueprint('qr', __name__)
 QR_UPLOAD_FOLDER = 'static/uploads/qr_codes'
@@ -73,7 +73,8 @@ def upload_qr():
         doc_name = f"Scene {i}"
         safe_base = secure_filename(f"{base_code}_scene_{i}") or f"page_{i}"
         
-        zoom = 1.5
+        # Dioptimalkan dari 1.5 ke 1.2 agar proses render lebih ringan & terhindar dari timeout server
+        zoom = 1.2
         mat = fitz.Matrix(zoom, zoom)
 
         # 1. SIMPAN GAMBAR FULL (UTUH) UNTUK VIEW PREVIEW
@@ -94,7 +95,7 @@ def upload_qr():
         crop_x0 = page_rect.width * 0.55  # Batas kiri kotak foto utama
         crop_y0 = page_rect.height * 0.42 # Batas atas kotak foto utama
         crop_x1 = page_rect.width * 0.90  # Batas kanan kotak foto utama
-        crop_y1 = page_rect.height * 0.70 # Batas bawah kotak foto utama (tepat di atas 3 foto kecil)
+        crop_y1 = page_rect.height * 0.70 # Batas bawah kotak foto utama
         # ----------------------------------------------
 
         clip_area = fitz.Rect(crop_x0, crop_y0, crop_x1, crop_y1)
