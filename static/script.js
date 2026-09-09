@@ -52,7 +52,6 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e =
 //   2. Menampilkan progresif ("Load More") task yang sudah dikirim server
 //      untuk halaman saat ini (tanpa menyaring ulang).
 let itemsToShow = 15;
-let searchDebounceTimer = null;
 
 // Ambil filter/search/sort yang sedang aktif dari URL saat ini
 function getCurrentFilterState() {
@@ -115,13 +114,14 @@ function resetAndFilter() {
     });
 }
 
-// Ketikan di kolom pencarian di-debounce (tunggu user berhenti mengetik ~600ms)
-// supaya tidak reload halaman di setiap huruf yang diketik
-function debouncedSearch() {
-    clearTimeout(searchDebounceTimer);
-    searchDebounceTimer = setTimeout(() => {
+// Kotak pencarian utama (Task ID/Spec/Deskripsi): mengetik perlu menekan Enter
+// (navigateWithFilters reload seluruh halaman, jadi tidak ideal kalau reload
+// tiap huruf diketik). TAPI kalau dikosongkan/dihapus semua, langsung jalan
+// otomatis tanpa perlu Enter.
+function handleMainSearchInput(input) {
+    if (input.value.trim() === '') {
         resetAndFilter();
-    }, 600);
+    }
 }
 
 // Task yang tampil di HTML adalah task hasil query server untuk page ini saja
@@ -492,6 +492,63 @@ function searchFilterList(input, listId) {
 
     listContainer.scrollTop = currentScrollTop;
 }
+
+// 1a. Dipanggil setiap kali user mengetik/menghapus (input event). Hanya
+// menjalankan pencarian di sini kalau teksnya sudah kosong (dihapus semua) --
+// supaya reset filter terjadi otomatis tanpa perlu Enter. Selama masih ada
+// teks, biarkan (nunggu Enter lewat handleSearchKeydown di bawah).
+function handleSearchInput(input, listId) {
+    if (input.value === '') {
+        searchFilterList(input, listId);
+    }
+}
+
+// 1b. Dipanggil saat user menekan tombol keyboard (keydown event). Kalau
+// tombolnya Enter, baru jalankan pencarian.
+function handleSearchKeydown(event, input, listId) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        searchFilterList(input, listId);
+    }
+}
+
+// 1c. Pasang listener secara langsung lewat JS (bukan atribut inline di HTML)
+// supaya lebih pasti terpasang dengan benar, tanpa bergantung ke urutan atribut
+// oninput/onkeydown di markup.
+document.addEventListener('DOMContentLoaded', function () {
+    const searchBoxConfigs = [
+        { selector: '#project-list-search', listId: 'project-list' },
+        { selector: '#package-list-search', listId: 'package-list' },
+    ];
+
+    searchBoxConfigs.forEach(({ selector, listId }) => {
+        const input = document.querySelector(selector);
+        if (!input) return;
+
+        input.addEventListener('input', function () {
+            handleSearchInput(input, listId);
+        });
+
+        input.addEventListener('keydown', function (event) {
+            handleSearchKeydown(event, input, listId);
+        });
+    });
+
+    // Kotak pencarian utama (Task ID/Spec/Deskripsi)
+    const mainSearchInput = document.getElementById('searchInput');
+    if (mainSearchInput) {
+        mainSearchInput.addEventListener('input', function () {
+            handleMainSearchInput(mainSearchInput);
+        });
+
+        mainSearchInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                resetAndFilter();
+            }
+        });
+    }
+});
 
 // 2. Fungsi Filter Saling Bergantung (Cascading) - Dua Arah, Aman dari Feedback Loop
 function updateDependentFilters() {
