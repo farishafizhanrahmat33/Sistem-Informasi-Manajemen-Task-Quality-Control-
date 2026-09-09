@@ -93,7 +93,11 @@ class TaskModel(db.Model):
     uploader = db.relationship("UserModel", back_populates="tasks_uploaded")
 
     __table_args__ = (
-        UniqueConstraint('project_name', 'task_id', name='uq_project_task_id'),
+        # task_id cuma unik DI DALAM satu package (bukan di seluruh project) --
+        # jadi package_name WAJIB ikut di constraint ini, kalau nggak, 2 task
+        # dari package berbeda yang task_id-nya kebetulan sama bakal ditolak
+        # database padahal itu data yang valid dan berbeda.
+        UniqueConstraint('project_name', 'package_name', 'task_id', name='uq_project_package_task_id'),
     )
 
 # ==========================================

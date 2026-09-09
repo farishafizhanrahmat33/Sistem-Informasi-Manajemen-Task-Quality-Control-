@@ -1117,3 +1117,26 @@ body {
     border-top: 1px solid var(--border-color);
     z-index: 10;
 }
+
+/* Pengaturan kontainer video Google Drive agar tombol kontrol bawah tidak terpotong di HP */
+.video-container-wrapper {
+    position: relative;
+    overflow: hidden;
+    background-color: #000;
+    aspect-ratio: 16 / 9;
+    width: 100%;
+}
+
+.video-container-wrapper iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border: none;
+}
+
+/* Penyesuaian khusus tampilan Handphone agar tinggi kontainer cukup menampung kontrol bawah GDrive */
+@media (max-width: 768px) {
+    .video-container-wrapper {
+        height: 300px !important;
+        aspect-ratio: unset !important;
+    }
+}

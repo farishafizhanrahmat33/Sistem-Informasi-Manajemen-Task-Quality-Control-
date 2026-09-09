@@ -153,6 +153,21 @@ def upload_file():
     try:
         df = pd.read_csv(file) if file.filename.endswith('.csv') else pd.read_excel(file)
 
+        # Bersihkan prefix kode bahasa/negara di Excel jika ada (misal: '包01_')
+        if 'Package Name' in df.columns:
+            df['Package Name'] = df['Package Name'].str.replace(r'^包\d+_', '', regex=True)
+
+        # Saring duplikat berdasarkan (Task ID + Package) -- BUKAN Task ID doang.
+        # Task ID memang bisa sama di package yang berbeda (unik-nya per package,
+        # bukan per project), jadi dedup harus ikut kolom package biar baris dari
+        # package lain yang task_id-nya kebetulan sama nggak ketendang.
+        package_col_candidates = ['Package', 'Package Name', 'package', 'package_name']
+        package_col = next((c for c in package_col_candidates if c in df.columns), None)
+
+        if 'Task ID' in df.columns:
+            dedup_subset = ['Task ID', package_col] if package_col else ['Task ID']
+            df = df.drop_duplicates(subset=dedup_subset, keep='first')
+
         # Helper untuk mencari nama kolom yang bervariasi di Excel
         def get_val(row, keys):
             for k in keys:
@@ -186,12 +201,18 @@ def upload_file():
             raw_num = get_val(row, ['Num', 'num'])
             num_val = int(raw_num) if raw_num.isdigit() else None
 
+            # Cek keberadaan task berdasarkan project_name + package_name + task_id
+            # (task_id cuma unik DI DALAM satu package, bukan di seluruh project --
+            # jadi package_name WAJIB ikut di sini, kalau nggak, task dari package
+            # lain yang task_id-nya kebetulan sama bisa ke-timpa/ke-gabung salah).
             existing_task = db.session.query(TaskModel).filter_by(
-                project_name=project_name, task_id=raw_task_id
+                project_name=project_name,
+                package_name=pkg_name,
+                task_id=raw_task_id
             ).first()
 
             if existing_task:
-                # Perbarui Data Mentah
+                # Perbarui Data Mentah & Package Name
                 existing_task.package_name = pkg_name
                 existing_task.task_name = get_val(row, ['Task Name', 'task_name'])
                 existing_task.description = get_val(row, ['Description', 'description'])

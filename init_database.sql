@@ -73,8 +73,8 @@ CREATE TABLE qc_system (
     CONSTRAINT fk_qc_system_uploaded_by FOREIGN KEY (uploaded_by) 
         REFERENCES users(username) ON DELETE SET NULL,
         
-    -- Anti Duplikat: Cegah kombinasi Project Name dan Task ID yang sama persis
-    CONSTRAINT uq_project_task_id UNIQUE (project_name, task_id)
+    -- Anti Duplikat: Cegah kombinasi Project Name, Package Name, dan Task ID yang sama persis
+    CONSTRAINT uq_project_package_task_id UNIQUE (project_name, package_name, task_id)
 );
 -- Index untuk mempercepat proses sortir dan filter di aplikasi
 CREATE INDEX ix_qc_system_project_name ON qc_system (project_name);

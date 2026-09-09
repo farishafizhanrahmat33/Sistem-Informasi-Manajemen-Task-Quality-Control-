@@ -29,7 +29,11 @@ Instruksi untuk mengonfigurasi dan menjalankan aplikasi di lingkungan *developme
 
 ### 1. Persiapan Database (PostgreSQL)
 1. Buat database baru di PostgreSQL (contoh: `qc_management_db`).
-2. Jalankan file **`init_database.sql`** yang tersedia di repositori untuk membangun skema tabel, relasi (*foreign keys*), dan indeks data secara otomatis.
+2. Jalankan perintah migrasi berikut di terminal untuk membangun skema tabel, relasi (*foreign keys*), dan indeks data secara otomatis:
+   ```bash
+   flask db upgrade
+   ```
+   *(Alternatif: Anda juga dapat menjalankan file **`init_database.sql`** yang tersedia di repositori secara manual di dalam database client Anda).*
 
 ### 2. Konfigurasi Environment Python
 Buka terminal dan arahkan ke direktori *root* proyek:
@@ -49,30 +53,34 @@ pip install -r requirements.txt
 ```
 
 ### 3. Pengaturan Variabel Lingkungan (.env)
-Buat file bernama .env di direktori root, lalu masukkan konfigurasi berikut:
-```
-Cuplikan kode
+Buat file bernama `.env` di direktori root, lalu masukkan konfigurasi berikut:
+```env
 SECRET_KEY=kunci_rahasia_aplikasi_anda_disini
 DATABASE_URL=postgresql+psycopg2://postgres:password_database_anda@localhost:5432/qc_management_db
 ```
+
 ### 4. Menjalankan Aplikasi
-Mode Development:
-```Bash
+
+**Mode Development:**
+```bash
 python app.py
-Akses aplikasi melalui browser di http://127.0.0.1:5000.
 ```
-Mode Production:
+Akses aplikasi melalui browser di `http://127.0.0.1:5000`.
+
+**Mode Production:**
 Gunakan WSGI server untuk stabilitas dan performa operasional yang lebih baik.
 
 Server Linux (Gunicorn):
-
-```Bash
+```bash
 pip install gunicorn
 gunicorn -w 4 -b 0.0.0.0:5000 app:app
-Server Windows (Waitress):
 ```
-```Bash
+
+Server Windows (Waitress):
+```bash
 pip install waitress
 waitress-serve --port=5000 app:app
-Dikembangkan untuk mendukung digitalisasi dan otomatisasi alur kerja Quality Control.
 ```
+
+---
+*Dikembangkan untuk mendukung digitalisasi dan otomatisasi alur kerja Quality Control.*

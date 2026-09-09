@@ -46,6 +46,13 @@ def upload_qr():
         flash(_('Access denied! Only Developer and Quality Control can add QR files.'), 'danger')
         return redirect(url_for('qr.qr_codes_page'))
 
+    # ======================================================
+    # PENCEGAHAN ERROR 500: Buat folder otomatis jika belum ada
+    # ======================================================
+    if not os.path.exists(QR_UPLOAD_FOLDER):
+        os.makedirs(QR_UPLOAD_FOLDER, exist_ok=True)
+    # ======================================================
+
     file = request.files.get('qr_file')
     if not (file and file.filename and _is_allowed(file.filename)):
         flash(_("That file format's not valid, or nothing was picked."), 'danger')
@@ -113,8 +120,19 @@ def upload_qr():
         )   
         db.session.add(new_qr)
         created += 1
+        
+        # ======================================================
+        # PENCEGAHAN CONNECTION RESET: Bersihkan memori per halaman
+        # ======================================================
+        pix_full = None
+        pix_thumb = None
 
     db.session.commit()
+    
+    # ======================================================
+    # PENCEGAHAN MEMORY LEAK: Tutup dokumen setelah selesai
+    # ======================================================
+    doc.close()
 
     flash(_('%(count)s page(s) successfully uploaded.', count=created), 'success')
     return redirect(url_for('qr.qr_codes_page'))
