@@ -14,7 +14,11 @@
             <div class="mb-3">
                 <div class="sidebar-section-title px-4">{{ _('Operations') }}</div>
                 <div class="d-flex flex-column gap-1 px-2 mt-2">
+                    <!-- Menu Dashboard hanya muncul jika bukan Public/Publik -->
+                    {% if role != 'Public' and role != 'Publik' %}
                     <a href="{{ url_for('main.dashboard') }}" class="sidebar-item">{{ _('Dashboard') }}</a>
+                    {% endif %}
+                    
                     <a href="{{ url_for('task.task_list') }}" class="sidebar-item">{{ _('Task Management') }}</a>
                     <a href="{{ url_for('qr.qr_codes_page') }}" class="sidebar-item">{{ _('QR Management') }}</a>
                 </div>

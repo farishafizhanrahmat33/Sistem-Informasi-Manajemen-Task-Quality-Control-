@@ -23,7 +23,15 @@ def set_language(lang_code):
 # F-04: Ringkasan Task (Dev, Quality Control, Supervisor, Publik)
 @main_bp.route('/dashboard')
 def dashboard():
+    # Cek apakah user sudah login (misalnya memeriksa keberadaan username atau user_id di session)
+    if 'username' not in session and 'user_id' not in session:
+        return redirect(url_for('auth.login')) # Sesuaikan nama blueprint/route halaman login Anda
+
     role = session.get('role', 'Public')
+    
+    # Ambil parameter filter dari URL (contoh: /dashboard?filter=Ready)
+    selected_filter = request.args.get('filter', 'All')
+
     metrics = {
         'need': db.session.query(TaskModel).filter_by(qc_category="Need Sample").count(),
         'done': db.session.query(TaskModel).filter_by(qc_category="Sample Done").count(),
@@ -32,12 +40,22 @@ def dashboard():
         'skip': db.session.query(TaskModel).filter_by(qc_category="Skipped").count(),
     }
     
-    # TAMBAHKAN BARIS INI: Mengambil 5 task terbaru berdasarkan waktu pembaruan
-    recent_tasks = db.session.query(TaskModel).order_by(TaskModel.updated_at.desc()).limit(5).all()
+    # Query task berdasarkan filter yang diklik di dashboard
+    query = db.session.query(TaskModel)
+    if selected_filter != 'All':
+        query = query.filter_by(qc_category=selected_filter)
+    
+    # Ambil data task untuk ditampilkan di tabel interaktif dashboard
+    recent_tasks = query.order_by(TaskModel.updated_at.desc()).limit(10).all()
 
-    # Sertakan recent_tasks ke dalam render_template
-    return render_template('dashboard.html', metrics=metrics, role=role, recent_tasks=recent_tasks)
-
+    return render_template(
+        'dashboard.html', 
+        metrics=metrics, 
+        role=role, 
+        recent_tasks=recent_tasks, 
+        selected_filter=selected_filter
+    )
+    
 # F-01: Autentikasi Login (Dev, Quality Control, Supervisor, Publik)
 @main_bp.route('/login', methods=['POST'])
 def login():

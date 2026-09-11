@@ -24,200 +24,385 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-body, #f4f6f9);
+            background-color: var(--bg-body, #f8fafc);
         }
-        .enterprise-card {
+        /* Kanvas Luar Bento Fix & Rapih */
+        .exec-canvas {
             background-color: var(--bg-surface);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            transition: box-shadow 0.2s ease;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.03);
+            max-width: 1650px;
+            margin: 0 auto;
+            padding: 32px;
         }
-        .enterprise-card:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        /* Custom Tinggi Kartu Metrik */
+        .metric-command-card {
+            text-decoration: none;
+            display: block;
+            height: 96px;
+            padding: 16px 20px;
+            border-radius: 14px;
+            background-color: var(--bg-body);
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
         }
-        .metric-indicator {
+        .metric-command-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--bs-primary);
+        }
+        .metric-command-card.active {
+            background-color: var(--bg-surface);
+            border-color: var(--bs-primary);
+            box-shadow: 0 0 0 2px rgba(var(--bs-primary-rgb), 0.15);
+        }
+        .metric-command-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 4px;
-            height: 32px;
-            border-radius: 4px;
+            height: 100%;
+            background: var(--indicator-color, #cbd5e1);
         }
-        .table-custom th {
-            font-weight: 600;
-            font-size: 0.75rem;
+        .ind-warning { --indicator-color: #f59e0b; }
+        .ind-info { --indicator-color: #0ea5e9; }
+        .ind-danger { --indicator-color: #ef4444; }
+        .ind-success { --indicator-color: #10b981; }
+        .ind-secondary { --indicator-color: #64748b; }
+
+        /* Custom Panel Progress Bar */
+        .sub-panel-progress {
+            background-color: var(--bg-body);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px 24px;
+        }
+        /* Custom Tinggi Panel Bawah (Dilebarkan sedikit agar nyaman dengan kolom lengkap) */
+        .sub-panel-bottom {
+            background-color: var(--bg-body);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            height: 420px; 
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        /* Tabel Minimalis Clean dengan Kolom Komprehensif */
+        .table-custom-clean th {
+            font-size: 0.65rem;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #6c757d;
-            background-color: transparent !important;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
             border-bottom: 1px solid var(--border-color);
+            background: transparent;
         }
-        .table-custom td {
-            font-size: 0.875rem;
+        .table-custom-clean td {
+            font-size: 0.78rem;
             border-bottom: 1px solid var(--border-color);
-            vertical-align: middle;
+            color: var(--text-main);
+        }
+        .table-custom-clean tr:last-child td {
+            border-bottom: none;
+        }
+        /* Tinggi Area Scroll Tabel di dalam Panel */
+        .recent-activity-scroll {
+            height: 200px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) transparent;
+        }
+        .recent-activity-scroll::-webkit-scrollbar {
+            width: 5px;
+        }
+        .recent-activity-scroll::-webkit-scrollbar-thumb {
+            background-color: var(--border-color);
+            border-radius: 4px;
         }
     </style>
 </head>
 <body>
-    <!-- Ambil pesan flash cukup SATU kali di sini -->
     {% set danger_messages = get_flashed_messages(category_filter=['danger']) %}
 
     {% include 'sidebar.html' %}
-
-    <!-- Top Navbar -->
     {% include 'navbar.html' %}
 
-    <!-- Hidden Data Attribute for Chart -->
     <div id="chart-data" 
          data-need="{{ metrics.need }}" 
          data-done="{{ metrics.done }}" 
          data-rev="{{ metrics.rev }}" 
          data-ready="{{ metrics.ready }}" 
          data-skip="{{ metrics.skip }}" 
+         data-filter="{{ selected_filter or 'All' }}"
          style="display: none;">
     </div>
 
-    <div class="container-fluid px-4 py-4" style="max-width: 1400px;">
+    <!-- Kontainer Halaman Utama -->
+    <div class="container-fluid px-4 py-4">
         
-        <!-- Header Section -->
-        <div class="enterprise-card p-4 mb-4">
-            <div class="row align-items-center justify-content-between">
-                <div class="col-lg-8">
-                    <span class="text-uppercase fw-bold text-primary mb-1 d-block" style="font-size: 0.7rem; letter-spacing: 0.08em;">{{ _('Operational Overview') }}</span>
-                    <h1 class="fw-bold fs-4 mb-1" style="color: var(--text-main);">{{ _('Dashboard') }}</h1>
-                    <p class="text-muted mb-0 small">{{ _('Monitoring real-time sample verification metrics, diagnostic revisions, and process readiness status.') }}</p>
-                </div>
-                <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                    <div class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded border" style="background-color: var(--bg-body); border-color: var(--border-color);">
-                        <span class="rounded-circle bg-success" style="width: 8px; height: 8px; display: inline-block;"></span>
-                        <span class="small fw-medium text-muted" style="font-size: 0.8rem;">{{ _('Database Synchronized') }}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Metrics Grid -->
-        <div class="row g-3 mb-4">
+        <div class="exec-canvas w-100">
             
-            <!-- Need Sample -->
-            <div class="col-xl col-md-4 col-sm-6">
-                <div class="enterprise-card p-3 h-100">
-                    <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="text-muted fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">{{ _('Need Sample') }}</span>
-                        <div class="metric-indicator bg-warning"></div>
+            <!-- Header Section Utama -->
+            <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between pb-3 mb-4 border-bottom gap-3" style="border-color: var(--border-color) !important;">
+                <div>
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <h1 class="fw-bold fs-3 mb-0" style="color: var(--text-main);">{{ _('System Dashboard') }}</h1>
+                        <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-0.5 fw-semibold" style="font-size: 0.65rem;">Role: {{ role }}</span>
                     </div>
-                    <h3 class="fw-bold fs-3 mb-1" style="color: var(--text-main);">{{ metrics.need }}</h3>
-                    <span class="text-muted" style="font-size: 0.75rem;">{{ _('Awaiting sample intake') }}</span>
+                    <p class="text-muted mb-0" style="font-size: 0.8rem;">{{ _('Real-time quality control system metrics, workflow status, and task telemetry.') }}</p>
+                </div>
+                
+                <div class="d-flex align-items-center gap-2">
+                    <a href="{{ url_for('task.task_list') }}" class="btn btn-primary btn-sm px-3 py-2 fw-medium d-flex align-items-center gap-1.5 shadow-sm" style="border-radius: 8px; font-size: 0.8rem;">
+                        ⚡ {{ _('Manage Tasks') }}
+                    </a>
+                    <button type="button" onclick="refreshDashboardData(this)" class="btn btn-outline-secondary btn-sm p-2 d-flex align-items-center justify-content-center" style="border-radius: 8px; width: 36px; height: 36px;" title="{{ _('Synchronize Data') }}">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.65-5.65"/></svg>
+                    </button>
                 </div>
             </div>
 
-            <!-- Sample Done -->
-            <div class="col-xl col-md-4 col-sm-6">
-                <div class="enterprise-card p-3 h-100">
-                    <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="text-muted fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">{{ _('Sample Done') }}</span>
-                        <div class="metric-indicator bg-info"></div>
-                    </div>
-                    <h3 class="fw-bold fs-3 mb-1" style="color: var(--text-main);">{{ metrics.done }}</h3>
-                    <span class="text-muted" style="font-size: 0.75rem;">{{ _('Inspection completed') }}</span>
-                </div>
-            </div>
-
-            <!-- Revision -->
-            <div class="col-xl col-md-4 col-sm-6">
-                <div class="enterprise-card p-3 h-100">
-                    <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="text-muted fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">{{ _('Revision') }}</span>
-                        <div class="metric-indicator bg-danger"></div>
-                    </div>
-                    <h3 class="fw-bold fs-3 mb-1" style="color: var(--text-main);">{{ metrics.rev }}</h3>
-                    <span class="text-muted" style="font-size: 0.75rem;">{{ _('Requires correction') }}</span>
-                </div>
-            </div>
-
-            <!-- Ready -->
-            <div class="col-xl col-md-6 col-sm-6">
-                <div class="enterprise-card p-3 h-100">
-                    <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="text-muted fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">{{ _('Ready') }}</span>
-                        <div class="metric-indicator bg-success"></div>
-                    </div>
-                    <h3 class="fw-bold fs-3 mb-1" style="color: var(--text-main);">{{ metrics.ready }}</h3>
-                    <span class="text-muted" style="font-size: 0.75rem;">{{ _('Passed verification') }}</span>
-                </div>
-            </div>
-
-            <!-- Skipped -->
-            <div class="col-xl col-md-6 col-sm-12">
-                <div class="enterprise-card p-3 h-100">
-                    <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="text-muted fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">{{ _('Skipped') }}</span>
-                        <div class="metric-indicator bg-secondary"></div>
-                    </div>
-                    <h3 class="fw-bold fs-3 mb-1" style="color: var(--text-main);">{{ metrics.skip }}</h3>
-                    <span class="text-muted" style="font-size: 0.75rem;">{{ _('Bypassed cycle') }}</span>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Analytics & Recent Activity Section -->
-        <div class="row g-4">
+            <!-- Modul Pelengkap: Progress Bar Penyelesaian Sistem -->
+            {% set total_tasks = metrics.need + metrics.done + metrics.rev + metrics.ready + metrics.skip %}
+            {% set verified_tasks = metrics.ready + metrics.done %}
+            {% set completion_rate = ((verified_tasks / total_tasks * 100) | round|int) if total_tasks > 0 else 0 %}
             
-            <!-- Chart Container -->
-            <div class="col-lg-5">
-                <div class="enterprise-card p-4 h-100">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2 class="fw-semibold fs-6 mb-0" style="color: var(--text-main);">{{ _('Status Distribution') }}</h2>
-                        <span class="text-muted" style="font-size: 0.75rem;">{{ _('Live Analytics') }}</span>
+            <div class="sub-panel-progress d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center fw-bold" style="width: 36px; height: 36px; font-size: 0.85rem;">
+                        {{ completion_rate }}%
                     </div>
-                    <div class="d-flex justify-content-center align-items-center" style="height: 250px;">
-                        <canvas id="taskChart"></canvas>
+                    <div>
+                        <h6 class="fw-bold mb-0" style="font-size: 0.85rem; color: var(--text-main);">{{ _('Workflow Completion Rate') }}</h6>
+                        <span class="text-muted" style="font-size: 0.75rem;">{{ verified_tasks }} of {{ total_tasks }} total recorded tasks verified or completed.</span>
                     </div>
+                </div>
+                <div class="flex-grow-1 mx-md-4 d-none d-xl-block" style="max-width: 400px;">
+                    <div class="progress" style="height: 7px; background-color: var(--border-color); border-radius: 4px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ completion_rate }}%; border-radius: 4px;" aria-valuenow="{{ completion_rate }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-success bg-opacity-10 text-success px-2.5 py-1 fw-semibold" style="font-size: 0.7rem;">● System Nominal</span>
+                    <span class="badge bg-secondary bg-opacity-10 text-muted px-2.5 py-1 fw-semibold" style="font-size: 0.7rem;">DB Synced</span>
                 </div>
             </div>
 
-            <!-- Recent Tasks Table Container -->
-            <div class="col-lg-7">
-                <div class="enterprise-card p-4 h-100">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h2 class="fw-semibold fs-6 mb-0" style="color: var(--text-main);">{{ _('Recent Task Activity') }}</h2>
-                        <span class="text-muted" style="font-size: 0.75rem;">{{ _('Showing latest 5 entries') }}</span>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-custom align-middle mb-0" style="color: var(--text-main);">
-                            <thead>
-                                <tr>
-                                    <th class="py-2 px-3">{{ _('Task Designation') }}</th>
-                                    <th class="py-2 text-end px-3">{{ _('QC Status') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% if recent_tasks %}
-                                    {% for t in recent_tasks %}
-                                    <tr>
-                                        <td class="px-3 py-3 fw-medium text-truncate" style="max-width: 280px;">
-                                            {{ t.task_name }}
-                                        </td>
-                                        <td class="text-end px-3 py-3">
-                                            <span class="badge 
-                                                {% if t.qc_category == 'Ready' %} bg-success bg-opacity-10 text-success 
-                                                {% elif t.qc_category == 'Revision' %} bg-danger bg-opacity-10 text-danger 
-                                                {% elif t.qc_category == 'Need Sample' %} bg-warning bg-opacity-10 text-warning 
-                                                {% elif t.qc_category == 'Sample Done' %} bg-info bg-opacity-10 text-info 
-                                                {% else %} bg-secondary bg-opacity-10 text-secondary {% endif %} px-2 py-1 fw-semibold" style="font-size: 0.7rem; letter-spacing: 0.03em;">
-                                                {{ _(t.qc_category) }}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                {% else %}
-                                    <tr>
-                                        <td colspan="2" class="text-center py-5 text-muted small">{{ _('No task records found in the database.') }}</td>
-                                    </tr>
-                                {% endif %}
-                            </tbody>
-                        </table>
+            <!-- Bento Grid 5 Metrik Utama -->
+            <div class="row g-3 mb-4">
+                
+                <!-- Need Sample -->
+                <div class="col-xl col-md-4 col-sm-6">
+                    <a href="{{ url_for('main.dashboard', filter='Need Sample') }}" class="metric-command-card ind-warning {% if selected_filter == 'Need Sample' %}active{% endif %}">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">{{ _('Need Sample') }}</span>
+                            <span class="badge bg-warning bg-opacity-10 text-warning px-1.5 py-0.5" style="font-size: 0.6rem;">Intake</span>
+                        </div>
+                        <div class="d-flex align-items-baseline justify-content-between">
+                            <h3 class="fw-bold fs-3 mb-0" style="color: var(--text-main);">{{ metrics.need }}</h3>
+                            <span class="text-muted small" style="font-size: 0.7rem;">Filter &rarr;</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Sample Done -->
+                <div class="col-xl col-md-4 col-sm-6">
+                    <a href="{{ url_for('main.dashboard', filter='Sample Done') }}" class="metric-command-card ind-info {% if selected_filter == 'Sample Done' %}active{% endif %}">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">{{ _('Sample Done') }}</span>
+                            <span class="badge bg-info bg-opacity-10 text-info px-1.5 py-0.5" style="font-size: 0.6rem;">Inspect</span>
+                        </div>
+                        <div class="d-flex align-items-baseline justify-content-between">
+                            <h3 class="fw-bold fs-3 mb-0" style="color: var(--text-main);">{{ metrics.done }}</h3>
+                            <span class="text-muted small" style="font-size: 0.7rem;">Filter &rarr;</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Revision -->
+                <div class="col-xl col-md-4 col-sm-6">
+                    <a href="{{ url_for('main.dashboard', filter='Revision') }}" class="metric-command-card ind-danger {% if selected_filter == 'Revision' %}active{% endif %}">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">{{ _('Revision') }}</span>
+                            <span class="badge bg-danger bg-opacity-10 text-danger px-1.5 py-0.5" style="font-size: 0.6rem;">Correct</span>
+                        </div>
+                        <div class="d-flex align-items-baseline justify-content-between">
+                            <h3 class="fw-bold fs-3 mb-0" style="color: var(--text-main);">{{ metrics.rev }}</h3>
+                            <span class="text-muted small" style="font-size: 0.7rem;">Filter &rarr;</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Ready -->
+                <div class="col-xl col-md-4 col-sm-6">
+                    <a href="{{ url_for('main.dashboard', filter='Ready') }}" class="metric-command-card ind-success {% if selected_filter == 'Ready' %}active{% endif %}">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">{{ _('Ready') }}</span>
+                            <span class="badge bg-success bg-opacity-10 text-success px-1.5 py-0.5" style="font-size: 0.6rem;">Verify</span>
+                        </div>
+                        <div class="d-flex align-items-baseline justify-content-between">
+                            <h3 class="fw-bold fs-3 mb-0" style="color: var(--text-main);">{{ metrics.ready }}</h3>
+                            <span class="text-muted small" style="font-size: 0.7rem;">Filter &rarr;</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Skipped -->
+                <div class="col-xl col-md-4 col-sm-6">
+                    <a href="{{ url_for('main.dashboard', filter='Skipped') }}" class="metric-command-card ind-secondary {% if selected_filter == 'Skipped' %}active{% endif %}">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">{{ _('Skipped') }}</span>
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary px-1.5 py-0.5" style="font-size: 0.6rem;">Bypass</span>
+                        </div>
+                        <div class="d-flex align-items-baseline justify-content-between">
+                            <h3 class="fw-bold fs-3 mb-0" style="color: var(--text-main);">{{ metrics.skip }}</h3>
+                            <span class="text-muted small" style="font-size: 0.7rem;">Filter &rarr;</span>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- Analitik & Aktivitas Utama -->
+            <div class="row g-4 align-items-stretch">
+                
+                <!-- Grafik Pie Chart -->
+                <div class="col-xl-5 col-lg-5 d-flex flex-column">
+                    <div class="sub-panel-bottom">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <h2 class="fw-semibold fs-6 mb-0" style="color: var(--text-main);">{{ _('Status Distribution') }}</h2>
+                                <span class="text-muted small" style="font-size: 0.7rem;">Proportional task breakdown telemetry</span>
+                            </div>
+                            <span class="badge bg-secondary bg-opacity-10 text-muted px-2 py-1" style="font-size: 0.65rem;">Live Analytics</span>
+                        </div>
+                        <div class="d-flex justify-content-center align-items-center flex-grow-1 py-2" style="height: 260px;">
+                            <canvas id="taskChart"></canvas>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Tabel Aktivitas Terbaru dengan Kolom Lengkap -->
+                <div class="col-xl-7 col-lg-7 d-flex flex-column">
+                    <div class="sub-panel-bottom">
+                        
+                        <div class="w-100">
+                            <!-- Header Tabel -->
+                            <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                                <div>
+                                    <h2 class="fw-semibold fs-6 mb-0" style="color: var(--text-main);">{{ _('Recent Task Activity') }}</h2>
+                                    <div class="d-flex align-items-center gap-2 mt-0.5">
+                                        <span class="text-muted small" style="font-size: 0.7rem;">Latest recorded operations</span>
+                                        {% if selected_filter and selected_filter != 'All' %}
+                                            <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-0.5 fw-semibold" style="font-size: 0.65rem;">Filter: {{ _(selected_filter) }}</span>
+                                            <a href="{{ url_for('main.dashboard', filter='All') }}" class="text-danger text-decoration-none fw-semibold" style="font-size: 0.65rem;">✕ Reset</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Input Pencarian -->
+                                <div class="position-relative" style="width: 170px;">
+                                    <input type="text" id="recentActivitySearch" class="form-control form-control-sm ps-3 shadow-none border-0" placeholder="{{ _('Search activity...') }}" style="font-size: 0.75rem; background-color: var(--bg-surface); color: var(--text-main); border-radius: 8px; height: 32px;">
+                                </div>
+                            </div>
+
+                            <!-- Baris Kontrol: Filter Tab & Rentang Tanggal + Tombol Ekspor -->
+                            <div class="d-flex align-items-center justify-content-between mb-2.5 flex-wrap gap-2">
+                                <!-- Filter Cepat Tab -->
+                                <div class="d-flex align-items-center gap-1 overflow-x-auto pb-1">
+                                    <button type="button" class="dashboard-filter-tab py-1 px-2 {% if not selected_filter or selected_filter == 'All' %}active{% endif %}" style="font-size: 0.65rem;" onclick="window.location.href='{{ url_for('main.dashboard', filter='All') }}'">{{ _('All') }}</button>
+                                    <button type="button" class="dashboard-filter-tab py-1 px-2 {% if selected_filter == 'Need Sample' %}active{% endif %}" style="font-size: 0.65rem;" onclick="window.location.href='{{ url_for('main.dashboard', filter='Need Sample') }}'">{{ _('Need Sample') }}</button>
+                                    <button type="button" class="dashboard-filter-tab py-1 px-2 {% if selected_filter == 'Sample Done' %}active{% endif %}" style="font-size: 0.65rem;" onclick="window.location.href='{{ url_for('main.dashboard', filter='Sample Done') }}'">{{ _('Sample Done') }}</button>
+                                    <button type="button" class="dashboard-filter-tab py-1 px-2 {% if selected_filter == 'Revision' %}active{% endif %}" style="font-size: 0.65rem;" onclick="window.location.href='{{ url_for('main.dashboard', filter='Revision') }}'">{{ _('Revision') }}</button>
+                                    <button type="button" class="dashboard-filter-tab py-1 px-2 {% if selected_filter == 'Ready' %}active{% endif %}" style="font-size: 0.65rem;" onclick="window.location.href='{{ url_for('main.dashboard', filter='Ready') }}'">{{ _('Ready') }}</button>
+                                </div>
+
+                                <!-- Filter Tanggal Interaktif & Tombol Ekspor -->
+                                <div class="d-flex align-items-center gap-1.5">
+                                    <input type="date" id="dateStart" class="form-control form-control-sm shadow-none px-1 text-center" style="font-size: 0.68rem; border-radius: 6px; width: 105px; background-color: var(--bg-surface); color: var(--text-main); border-color: var(--border-color); height: 28px;" title="Start Date">
+                                    <span class="text-muted" style="font-size: 0.7rem;">-</span>
+                                    <input type="date" id="dateEnd" class="form-control form-control-sm shadow-none px-1 text-center" style="font-size: 0.68rem; border-radius: 6px; width: 105px; background-color: var(--bg-surface); color: var(--text-main); border-color: var(--border-color); height: 28px;" title="End Date">
+                                    
+                                    <button type="button" onclick="exportDashboardData()" class="btn btn-outline-secondary btn-sm px-2 py-0.5 fw-medium d-flex align-items-center gap-1" style="border-radius: 6px; font-size: 0.7rem; height: 28px;" title="{{ _('Export Filtered Activity') }}">
+                                        <span>📥</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Tabel Data Lengkap (Project, Package Name, Task ID, Task Name, QC Status, User) -->
+                            <div class="recent-activity-scroll">
+                                <div class="table-responsive">
+                                    <table class="table table-custom-clean align-middle mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th class="py-2 px-2 sticky-top" style="background-color: var(--bg-body); z-index: 1;">{{ _('Project / Pkg') }}</th>
+                                                <th class="py-2 px-2 sticky-top" style="background-color: var(--bg-body); z-index: 1;">{{ _('Task ID & Name') }}</th>
+                                                <th class="py-2 px-2 sticky-top" style="background-color: var(--bg-body); z-index: 1;">{{ _('Modified By') }}</th>
+                                                <th class="py-2 text-end px-2 sticky-top" style="background-color: var(--bg-body); z-index: 1;">{{ _('Status') }}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="recentActivityTableBody">
+                                            {% if recent_tasks %}
+                                                {% for t in recent_tasks %}
+                                                <tr class="activity-row" data-category="{{ t.qc_category }}" data-date="{{ t.created_date | default('2026-09-12') }}">
+                                                    <!-- Kolom Project & Package Name -->
+                                                    <td class="px-2 py-2">
+                                                        <div class="fw-semibold text-truncate" style="max-width: 120px;" title="{{ t.project_name | default('Default Project') }}">
+                                                            {{ t.project_name | default('General Project') }}
+                                                        </div>
+                                                        <div class="text-muted" style="font-size: 0.65rem;">{{ t.package_name | default('pkg-main') }}</div>
+                                                    </td>
+                                                    <!-- Kolom Task ID & Task Name -->
+                                                    <td class="px-2 py-2">
+                                                        <div class="font-monospace text-muted" style="font-size: 0.65rem;">#{{ t.task_id | default(loop.index) }}</div>
+                                                        <div class="fw-medium text-truncate" style="max-width: 180px;" title="{{ t.task_name }}">
+                                                            {{ t.task_name }}
+                                                        </div>
+                                                    </td>
+                                                    <!-- Kolom Username yang Mengubah -->
+                                                    <td class="px-2 py-2">
+                                                        <div class="d-flex align-items-center gap-1">
+                                                            <div class="rounded-circle bg-primary bg-opacity-15 text-primary d-flex align-items-center justify-content-center fw-bold" style="width: 20px; height: 20px; font-size: 0.55rem;">
+                                                                {{ (t.username | default(session.get('username') or username | default('User')))[0:2] | upper }}
+                                                            </div>
+                                                            <span class="text-truncate" style="max-width: 90px;" title="{{ t.username | default(session.get('username') or username | default('User')) }}">
+                                                                {{ t.username | default(session.get('username') or username | default('User')) }}
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    <!-- Kolom QC Status -->
+                                                    <td class="text-end px-2 py-2">
+                                                        <span class="badge 
+                                                            {% if t.qc_category == 'Ready' %} bg-success bg-opacity-10 text-success 
+                                                            {% elif t.qc_category == 'Revision' %} bg-danger bg-opacity-10 text-danger 
+                                                            {% elif t.qc_category == 'Need Sample' %} bg-warning bg-opacity-10 text-warning 
+                                                            {% elif t.qc_category == 'Sample Done' %} bg-info bg-opacity-10 text-info 
+                                                            {% else %} bg-secondary bg-opacity-10 text-secondary {% endif %} px-2 py-1 fw-semibold" style="font-size: 0.58rem; letter-spacing: 0.03em;">
+                                                            {{ _(t.qc_category) }}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                                <tr id="noActivityMatch" style="display: none;">
+                                                    <td colspan="4" class="text-center py-4 text-muted small border-0">{{ _('No matching activities found for this date range.') }}</td>
+                                                </tr>
+                                            {% else %}
+                                                <tr>
+                                                    <td colspan="4" class="text-center py-5 text-muted small border-0">{{ _('No task records found in the database.') }}</td>
+                                                </tr>
+                                            {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
             </div>
 
         </div>
@@ -227,30 +412,138 @@
     {% include 'login_modal.html' %}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='script.js') }}?v=2"></script>
+    <script src="{{ url_for('static', filename='script.js') }}?v=27"></script>
 
-    <!-- Chart Configuration -->
+    <!-- Script Fungsional Filter Tanggal Interaktif & Ekspor CSV Lengkap -->
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const todayStr = "2026-09-12";
+            const startInput = document.getElementById('dateStart');
+            const endInput = document.getElementById('dateEnd');
+            
+            if (startInput && !startInput.value) startInput.value = todayStr;
+            if (endInput && !endInput.value) endInput.value = todayStr;
+
+            startInput.addEventListener('change', filterTableByDate);
+            endInput.addEventListener('change', filterTableByDate);
+            filterTableByDate();
+        });
+
+        function filterTableByDate() {
+            const startDate = document.getElementById('dateStart').value;
+            const endDate = document.getElementById('dateEnd').value;
+            const rows = document.querySelectorAll('#recentActivityTableBody tr.activity-row');
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                const rowDate = row.getAttribute('data-date') || "2026-09-12";
+                let show = true;
+
+                if (startDate && rowDate < startDate) show = false;
+                if (endDate && rowDate > endDate) show = false;
+
+                if (show) {
+                    row.style.display = "";
+                    visibleCount++;
+                } else {
+                    row.style.display = "none";
+                }
+            });
+
+            const noMatchRow = document.getElementById('noActivityMatch');
+            if (noMatchRow) {
+                noMatchRow.style.display = visibleCount === 0 ? "" : "none";
+            }
+        }
+
+        function exportDashboardData() {
+            const start = document.getElementById('dateStart').value;
+            const end = document.getElementById('dateEnd').value;
+            
+            // Ambil semua baris tugas yang sedang aktif/tampil di tabel
+            const rows = document.querySelectorAll('#recentActivityTableBody tr.activity-row');
+            let csvContent = "data:text/csv;charset=utf-8,Project,Package Name,Task ID,Task Name,Modified By,QC Status,Date Range\n";
+            
+            let count = 0;
+            rows.forEach(row => {
+                // Hanya ekspor baris yang sedang tidak disembunyikan (artinya lolos filter pencarian/tanggal)
+                if (row.style.display !== 'none') {
+                    const projectEl = row.querySelector('td:nth-child(1) div.fw-semibold');
+                    const pkgEl = row.querySelector('td:nth-child(1) div.text-muted');
+                    const taskIdEl = row.querySelector('td:nth-child(2) div.font-monospace');
+                    const taskNameEl = row.querySelector('td:nth-child(2) div.fw-medium');
+                    const userEl = row.querySelector('td:nth-child(3) span.text-truncate');
+                    const statusEl = row.querySelector('td:nth-child(4) span.badge');
+
+                    const project = projectEl ? projectEl.innerText.trim().replace(/,/g, " ") : "";
+                    const pkgName = pkgEl ? pkgEl.innerText.trim().replace(/,/g, " ") : "";
+                    const taskId = taskIdEl ? taskIdEl.innerText.trim().replace('#', '') : "";
+                    const taskName = taskNameEl ? taskNameEl.innerText.trim().replace(/,/g, " ") : "";
+                    const modifiedBy = userEl ? userEl.innerText.trim().replace(/,/g, " ") : "";
+                    const status = statusEl ? statusEl.innerText.trim() : "";
+
+                    csvContent += `"${project}","${pkgName}","${taskId}","${taskName}","${modifiedBy}","${status}","${start || 'All'} to ${end || 'All'}"\n`;
+                    count++;
+                }
+            });
+
+            if (count === 0) {
+                alert('No data available to export.');
+                return;
+            }
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `QC_Detailed_Report_${start || 'all'}_to_${end || 'all'}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
         const el = document.getElementById('chart-data');
-        const dataMetrics = [
+        const currentFilter = el.dataset.filter;
+        
+        const allLabels = ['{{ _("Need Sample") }}', '{{ _("Sample Done") }}', '{{ _("Revision") }}', '{{ _("Ready") }}', '{{ _("Skipped") }}'];
+        const allData = [
             parseInt(el.dataset.need),
             parseInt(el.dataset.done),
             parseInt(el.dataset.rev),
             parseInt(el.dataset.ready),
             parseInt(el.dataset.skip)
         ];
+        const allColors = ['#f59e0b', '#0ea5e9', '#ef4444', '#10b981', '#64748b'];
+
+        let chartLabels = allLabels;
+        let chartData = allData;
+        let chartColors = allColors;
+
+        if (currentFilter && currentFilter !== 'All') {
+            const indexMap = {
+                'Need Sample': 0,
+                'Sample Done': 1,
+                'Revision': 2,
+                'Ready': 3,
+                'Skipped': 4
+            };
+            const idx = indexMap[currentFilter];
+            if (idx !== undefined) {
+                chartLabels = [allLabels[idx]];
+                chartData = [allData[idx]];
+                chartColors = [allColors[idx]];
+            }
+        }
 
         const ctx = document.getElementById('taskChart').getContext('2d');
         new Chart(ctx, {
-            type: 'doughnut',
+            type: 'pie',
             data: {
-                labels: ['{{ _("Need Sample") }}', '{{ _("Sample Done") }}', '{{ _("Revision") }}', '{{ _("Ready") }}', '{{ _("Skipped") }}'],
+                labels: chartLabels,
                 datasets: [{
-                    data: dataMetrics,
-                    backgroundColor: ['#ffc107', '#0dcaf0', '#dc3545', '#198754', '#6c757d'],
+                    data: chartData,
+                    backgroundColor: chartColors,
                     borderWidth: 2,
-                    borderColor: getComputedStyle(document.documentElement).getPropertyValue('--bg-surface').trim() || '#ffffff',
-                    hoverOffset: 2
+                    borderColor: getComputedStyle(document.documentElement).getPropertyValue('--bg-surface').trim() || '#ffffff'
                 }]
             },
             options: {
@@ -260,60 +553,15 @@
                     legend: {
                         position: 'bottom',
                         labels: {
-                            boxWidth: 8,
-                            padding: 16,
+                            boxWidth: 10,
+                            padding: 14,
                             font: { family: 'Inter', size: 11, weight: '500' },
                             color: getComputedStyle(document.documentElement).getPropertyValue('--text-main').trim() || '#333'
                         }
                     }
-                },
-                cutout: '75%'
+                }
             }
         });
     </script>
-
-    <!-- Auto-open Modal saat ada pesan error login -->
-    {% if danger_messages %}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var modalElem = document.getElementById('loginModal');
-            if (modalElem) {
-                var loginModal = new bootstrap.Modal(modalElem);
-                loginModal.show();
-            }
-        });
-    </script>
-    {% endif %}
-    <script>
-    const loginForm = document.getElementById('loginForm');
-    const errorAlert = document.getElementById('loginErrorAlert');
-
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault(); // Mencegah reload halaman
-        
-        const formData = new FormData(loginForm);
-        
-        try {
-            const response = await fetch("{{ url_for('main.login') }}", {
-                method: 'POST',
-                body: formData
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                // Jika sukses, reload halaman untuk memuat sesi login
-                window.location.reload();
-            } else {
-                // Jika gagal, tampilkan pesan di div error
-                errorAlert.textContent = result.message;
-                errorAlert.classList.remove('d-none');
-            }
-        } catch (error) {
-            errorAlert.textContent = "{{ _('A system error has occurred.') }}";
-            errorAlert.classList.remove('d-none');
-        }
-    });
-</script>
 </body>
 </html>

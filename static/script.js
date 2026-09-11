@@ -1076,3 +1076,67 @@ function resetQrFilters() {
 
     applyQrDrawerFilters();
 }
+
+// --- INTERAKTIF DASHBOARD ---
+document.addEventListener("DOMContentLoaded", function() {
+    // Live Search untuk Tabel Recent Task Activity
+    const activitySearch = document.getElementById('recentActivitySearch');
+    if (activitySearch) {
+        activitySearch.addEventListener('input', function() {
+            const term = this.value.toLowerCase().trim();
+            const rows = document.querySelectorAll('#recentActivityTableBody tr.activity-row');
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(term)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            const emptyRow = document.getElementById('noActivityMatch');
+            if (emptyRow) {
+                emptyRow.style.display = (visibleCount === 0) ? '' : 'none';
+            }
+        });
+    }
+});
+
+// Fungsi Tombol Sinkronisasi / Refresh Manual
+function refreshDashboardData(btn) {
+    const icon = btn.querySelector('svg');
+    if (icon) icon.classList.add('spinning');
+    
+    // Simulasi jeda sejenak untuk efek visual sinkronisasi profesional, lalu reload
+    setTimeout(() => {
+        window.location.reload();
+    }, 600);
+}
+
+// Fungsi Filter Cepat Tabel Berdasarkan Status Kategori
+function filterDashboardTable(category, btnElement) {
+    // Ubah status aktif pada tombol tab
+    document.querySelectorAll('.dashboard-filter-tab').forEach(tab => tab.classList.remove('active'));
+    if (btnElement) btnElement.classList.add('active');
+
+    const rows = document.querySelectorAll('#recentActivityTableBody tr.activity-row');
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+        const rowCategory = row.getAttribute('data-category');
+        if (category === 'All' || rowCategory === category) {
+            row.style.display = '';
+            visibleCount++;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+
+    const emptyRow = document.getElementById('noActivityMatch');
+    if (emptyRow) {
+        emptyRow.style.display = (visibleCount === 0) ? '' : 'none';
+    }
+}
