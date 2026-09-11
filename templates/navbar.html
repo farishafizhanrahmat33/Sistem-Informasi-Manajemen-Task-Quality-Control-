@@ -5,9 +5,29 @@
         <button class="btn btn-outline-secondary btn-sm px-3 py-1 border shadow-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
             {{ _('Menu') }}
         </button>
-        <!-- Brand Info -->
+        <!-- Brand Info Sesuai Menu Sidebar -->
         <div>
-            <span class="fw-bold fs-6 d-block tracking-tight" style="color: var(--text-main);">{{ _('Manage Task') }}</span>
+            <span class="fw-bold fs-6 d-block tracking-tight" style="color: var(--text-main);">
+                {% if request.endpoint == 'main.dashboard' %}
+                    {{ _('Dashboard') }}
+                {% elif request.endpoint == 'task.task_list' %}
+                    {{ _('Task Management') }}
+                {% elif request.endpoint == 'qr.qr_codes_page' %}
+                    {{ _('QR Management') }}
+                {% elif request.endpoint == 'main.user_management' %}
+                    {{ _('User Management') }}
+                {% elif request.endpoint == 'main.view_tickets' %}
+                    {{ _('Support Tickets') }}
+                {% elif request.endpoint == 'main.support' %}
+                    {{ _('Customer Service') }}
+                {% elif request.endpoint == 'main.faq' %}
+                    {{ _('FAQ & Guidance') }}
+                {% elif request.endpoint == 'main.profile' %}
+                    {{ _('Profile Settings') }}
+                {% else %}
+                    {{ _('Manage Task') }}
+                {% endif %}
+            </span>
             <span class="text-muted" style="font-size: 0.7rem; letter-spacing: 0.03em;"></span>
         </div>
     </div>

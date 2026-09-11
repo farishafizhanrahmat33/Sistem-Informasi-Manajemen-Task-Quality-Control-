@@ -249,6 +249,152 @@ document.addEventListener('submit', async function(e) {
 });
 
 
+/* ==========================================================================
+   UPLOAD QR PDF -- CHUNKED PER-HALAMAN
+   ==========================================================================
+   Kenapa dipecah begini: kalau PDF-nya banyak halaman, render 1 request
+   untuk SEMUA halaman sekaligus bisa lebih lama dari batas timeout server/
+   reverse-proxy (yang konfigurasinya di luar kendali kita) -- hasilnya
+   Internal Server Error + browser menampilkan dialog "Confirm Form
+   Resubmission". Solusinya: browser yang memproses satu halaman per
+   request (lewat /upload_qr/init lalu /upload_qr/page berkali-kali), jadi
+   tiap request ke server selalu singkat, berapa pun jumlah halamannya.
+
+   INTEGRASI KE TEMPLATE (qr_management.html):
+   Form upload cukup diberi atribut id="qrUploadForm" dan biarkan input
+   file-nya tetap bernama "qr_file" seperti sekarang. Kalau mau progress bar
+   ditampilkan, tambahkan elemen ini di dalam/dekat form (opsional -- kalau
+   tidak ada, upload tetap jalan, hanya saja tanpa progress bar visual):
+
+     <div id="qrUploadProgressWrap" class="d-none mt-2">
+       <div class="progress">
+         <div id="qrUploadProgressBar" class="progress-bar" style="width:0%">0%</div>
+       </div>
+       <small id="qrUploadProgressText" class="text-muted"></small>
+     </div>
+
+   Tombol submit form idealnya punya id="qrUploadSubmitBtn" supaya bisa
+   di-disable otomatis selama proses upload berjalan.
+   ========================================================================== */
+
+async function handleQrUploadSubmit(form) {
+    const fileInput = form.querySelector('input[name="qr_file"]');
+    const submitBtn = form.querySelector('#qrUploadSubmitBtn') || form.querySelector('button[type="submit"]');
+    const progressWrap = document.getElementById('qrUploadProgressWrap');
+    const progressBar = document.getElementById('qrUploadProgressBar');
+    const progressText = document.getElementById('qrUploadProgressText');
+
+    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+        alert('Pilih file PDF terlebih dahulu.');
+        return;
+    }
+
+    const originalBtnHtml = submitBtn ? submitBtn.innerHTML : null;
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Uploading...';
+    }
+    if (progressWrap) progressWrap.classList.remove('d-none');
+
+    function setProgress(done, total, label) {
+        if (!progressBar) return;
+        const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+        progressBar.style.width = pct + '%';
+        progressBar.innerText = pct + '%';
+        if (progressText) progressText.innerText = label || `${done} / ${total} halaman`;
+    }
+
+    let baseCode = null;
+    let hadFailures = false;
+
+    try {
+        // 1) INIT: kirim file sekali, server balas total halaman + halaman
+        //    mana saja yang sudah pernah sukses dari percobaan sebelumnya
+        //    (kalau file persis sama, misal upload sebelumnya terputus).
+        const initForm = new FormData();
+        initForm.append('qr_file', fileInput.files[0]);
+
+        const initResp = await fetch('/upload_qr/init', { method: 'POST', body: initForm });
+        const initData = await initResp.json();
+
+        if (!initResp.ok || initData.error) {
+            throw new Error(initData.error || 'Gagal memulai upload.');
+        }
+
+        baseCode = initData.base_code;
+        const fileHash = initData.file_hash;
+        const totalPages = initData.total_pages;
+        const alreadyDone = new Set(initData.already_done || []);
+
+        let doneCount = alreadyDone.size;
+        setProgress(doneCount, totalPages);
+
+        // 2) PER-HALAMAN: proses satu-satu secara berurutan. Kalau koneksi
+        //    putus di tengah, tinggal upload ulang file yang sama -- halaman
+        //    yang sudah sukses otomatis dilewati (dicek server via hash).
+        const failedPages = [];
+        for (let page = 1; page <= totalPages; page++) {
+            if (alreadyDone.has(page)) continue;
+
+            const pageForm = new FormData();
+            pageForm.append('base_code', baseCode);
+            pageForm.append('file_hash', fileHash);
+            pageForm.append('page', String(page));
+
+            try {
+                const pageResp = await fetch('/upload_qr/page', { method: 'POST', body: pageForm });
+                const pageData = await pageResp.json();
+
+                if (!pageResp.ok || pageData.error) {
+                    failedPages.push(page);
+                } else if (pageData.status === 'failed') {
+                    failedPages.push(page);
+                }
+            } catch (err) {
+                // Koneksi putus di tengah satu halaman -- catat gagal, lanjut
+                // ke halaman berikutnya, jangan hentikan seluruh proses.
+                failedPages.push(page);
+            }
+
+            doneCount++;
+            setProgress(doneCount, totalPages);
+        }
+
+        hadFailures = failedPages.length > 0;
+
+        // 3) FINALIZE: beres-beres file sementara di server.
+        const finalizeForm = new FormData();
+        finalizeForm.append('base_code', baseCode);
+        finalizeForm.append('had_failures', hadFailures ? '1' : '0');
+        await fetch('/upload_qr/finalize', { method: 'POST', body: finalizeForm });
+
+        if (hadFailures) {
+            alert(`Upload selesai, tapi ${failedPages.length} halaman gagal diproses (halaman: ${failedPages.join(', ')}). Upload file yang SAMA lagi untuk mencoba ulang khusus halaman yang gagal.`);
+        }
+
+    } catch (err) {
+        alert('Upload gagal: ' + err.message);
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnHtml;
+        }
+        if (progressWrap) progressWrap.classList.add('d-none');
+        fileInput.value = '';
+        // Muat ulang daftar QR supaya kartu/scene yang baru langsung terlihat.
+        window.location.reload();
+    }
+}
+
+document.addEventListener('submit', function (e) {
+    const form = e.target;
+    if (form && (form.id === 'qrUploadForm' || (form.action && form.action.includes('/upload_qr') && !form.action.includes('/upload_qr/')))) {
+        e.preventDefault();
+        handleQrUploadSubmit(form);
+    }
+});
+
+
 // Tombol kembali ke atas
 window.addEventListener('scroll', function() {
     const btn = document.getElementById('scrollToTopBtn');
@@ -720,4 +866,213 @@ if (filterDrawerEl) {
     filterDrawerEl.addEventListener('shown.bs.offcanvas', function () {
         updateDependentFilters();
     });
+}
+
+// ==========================================
+// LOGIKA FILTER & SORT QR MANAGEMENT
+// ==========================================
+
+// --- LOGIKA FILTER & SORT QR MANAGEMENT (FLEKSIBEL: SOURCE CODE & SCENE) ---
+
+function toggleSelectAllSource(selectAllCb) {
+    const listContainer = document.getElementById('source-list');
+    if (!listContainer) return;
+    const checkboxes = listContainer.querySelectorAll('.source-checkbox');
+    checkboxes.forEach(cb => {
+        const parentItem = cb.closest('.item-option');
+        if (parentItem && parentItem.style.display !== 'none') {
+            cb.checked = selectAllCb.checked;
+        }
+    });
+}
+
+function checkIndividualSourceState() {
+    const selectAllCb = document.getElementById('selectAllSource');
+    const listContainer = document.getElementById('source-list');
+    if (!selectAllCb || !listContainer) return;
+    const checkboxes = Array.from(listContainer.querySelectorAll('.source-checkbox'));
+    const visibleCheckboxes = checkboxes.filter(cb => {
+        const parent = cb.closest('.item-option');
+        return parent && parent.style.display !== 'none';
+    });
+    if (visibleCheckboxes.length > 0) {
+        selectAllCb.checked = visibleCheckboxes.every(cb => cb.checked);
+    }
+}
+
+function toggleSelectAllScene(selectAllCb) {
+    const listContainer = document.getElementById('scene-list');
+    if (!listContainer) return;
+    const checkboxes = listContainer.querySelectorAll('.scene-checkbox');
+    checkboxes.forEach(cb => {
+        const parentItem = cb.closest('.item-option');
+        if (parentItem && parentItem.style.display !== 'none') {
+            cb.checked = selectAllCb.checked;
+        }
+    });
+}
+
+function checkIndividualSceneState() {
+    const selectAllCb = document.getElementById('selectAllScene');
+    const listContainer = document.getElementById('scene-list');
+    if (!selectAllCb || !listContainer) return;
+    const checkboxes = Array.from(listContainer.querySelectorAll('.scene-checkbox'));
+    const visibleCheckboxes = checkboxes.filter(cb => {
+        const parent = cb.closest('.item-option');
+        return parent && parent.style.display !== 'none';
+    });
+    if (visibleCheckboxes.length > 0) {
+        selectAllCb.checked = visibleCheckboxes.every(cb => cb.checked);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Search bar di dalam drawer untuk Source Code
+    const sourceSearch = document.getElementById('source-list-search');
+    if (sourceSearch) {
+        sourceSearch.addEventListener('input', function() {
+            const term = this.value.toLowerCase().trim();
+            document.querySelectorAll('#source-list .item-option').forEach(opt => {
+                const text = opt.querySelector('.item-text').textContent.toLowerCase();
+                opt.style.display = text.includes(term) ? 'block' : 'none';
+            });
+        });
+    }
+
+    // Search bar di dalam drawer untuk Scene Name
+    const sceneSearch = document.getElementById('scene-list-search');
+    if (sceneSearch) {
+        sceneSearch.addEventListener('input', function() {
+            const term = this.value.toLowerCase().trim();
+            document.querySelectorAll('#scene-list .item-option').forEach(opt => {
+                const text = opt.querySelector('.item-text').textContent.toLowerCase();
+                opt.style.display = text.includes(term) ? 'block' : 'none';
+            });
+        });
+    }
+});
+
+function applyQrDrawerFilters() {
+    const selectAllSource = document.getElementById('selectAllSource');
+    const selectAllScene = document.getElementById('selectAllScene');
+    
+    let selectedSources = [];
+    if (selectAllSource && !selectAllSource.checked) {
+        selectedSources = Array.from(document.querySelectorAll('.source-checkbox:checked')).map(cb => cb.value);
+    }
+
+    let selectedScenes = [];
+    if (selectAllScene && !selectAllScene.checked) {
+        selectedScenes = Array.from(document.querySelectorAll('.scene-checkbox:checked')).map(cb => cb.value);
+    }
+
+    const sortFieldEl = document.getElementById('sortField');
+    const sortField = sortFieldEl ? sortFieldEl.value : 'source'; // 'source' atau 'name'
+    
+    const sortOrderEl = document.getElementById('sortOrder');
+    const sortOrder = sortOrderEl ? sortOrderEl.value : 'asc';
+    
+    const gridContainer = document.getElementById('qrGridContainer');
+    if (!gridContainer) return;
+
+    const items = Array.from(gridContainer.querySelectorAll('.qr-item'));
+    const emptyMessage = document.getElementById('noQrFoundMessage');
+    const badge = document.getElementById('activeFilterBadge');
+    const indicatorBox = document.getElementById('activeFiltersIndicator');
+    const chipsContainer = document.getElementById('filterChipsContainer');
+
+    let visibleCount = 0;
+    items.forEach(item => {
+        const qrSource = item.getAttribute('data-source');
+        const qrName = item.getAttribute('data-name');
+
+        const matchSource = !selectAllSource || selectAllSource.checked || selectedSources.includes(qrSource);
+        const matchScene = !selectAllScene || selectAllScene.checked || selectedScenes.includes(qrName);
+
+        if (matchSource && matchScene) {
+            item.style.display = '';
+            visibleCount++;
+        } else {
+            item.style.display = 'none';
+        }
+    });
+
+    // Proses Sorting
+    items.sort((a, b) => {
+        let valA = '';
+        let valB = '';
+
+        if (sortField === 'name') {
+            valA = (a.getAttribute('data-name') || '').toLowerCase();
+            valB = (b.getAttribute('data-name') || '').toLowerCase();
+        } else {
+            valA = (a.getAttribute('data-source') || '').toLowerCase();
+            valB = (b.getAttribute('data-source') || '').toLowerCase();
+        }
+        
+        let comparison = valA.localeCompare(valB);
+        return sortOrder === 'asc' ? comparison : -comparison;
+    });
+
+    items.forEach(item => gridContainer.appendChild(item));
+
+    if (emptyMessage) {
+        emptyMessage.style.display = (visibleCount === 0) ? 'block' : 'none';
+    }
+
+    // Render Chip Indikator Aktif
+    const isFiltered = (selectAllSource && !selectAllSource.checked) || (selectAllScene && !selectAllScene.checked) || sortOrder !== 'asc';
+    if (indicatorBox && chipsContainer) {
+        if (isFiltered) {
+            indicatorBox.classList.remove('d-none');
+            indicatorBox.classList.add('d-flex');
+            
+            let chipsHtml = '';
+            if (selectAllSource && !selectAllSource.checked) {
+                selectedSources.forEach(src => {
+                    chipsHtml += `<span class="badge badge-soft d-inline-flex align-items-center gap-1 px-2.5 py-1 rounded-pill border flex-shrink-0" style="font-size: 0.75rem; font-weight: 500; border-color: var(--border-color) !important; color: var(--text-main); max-width: 200px; overflow: hidden; text-overflow: ellipsis;" title="${src}">Source: ${src}</span>`;
+                });
+            }
+            if (selectAllScene && !selectAllScene.checked) {
+                selectedScenes.forEach(scene => {
+                    chipsHtml += `<span class="badge badge-soft d-inline-flex align-items-center gap-1 px-2.5 py-1 rounded-pill border flex-shrink-0" style="font-size: 0.75rem; font-weight: 500; border-color: var(--border-color) !important; color: var(--text-main); max-width: 150px; overflow: hidden; text-overflow: ellipsis;" title="${scene}">Scene: ${scene}</span>`;
+                });
+            }
+            if (sortOrder !== 'asc') {
+                chipsHtml += `<span class="badge badge-soft d-inline-flex align-items-center gap-1 px-2.5 py-1 rounded-pill border flex-shrink-0" style="font-size: 0.75rem; font-weight: 500; border-color: var(--border-color) !important; color: var(--text-main);">Sort: Z-A</span>`;
+            }
+            chipsContainer.innerHTML = chipsHtml;
+        } else {
+            indicatorBox.classList.remove('d-flex');
+            indicatorBox.classList.add('d-none');
+        }
+    }
+
+    if (badge) {
+        if (isFiltered) {
+            badge.classList.remove('d-none');
+        } else {
+            badge.classList.add('d-none');
+        }
+    }
+}
+
+function resetQrFilters() {
+    const selectAllSource = document.getElementById('selectAllSource');
+    if (selectAllSource) {
+        selectAllSource.checked = true;
+        toggleSelectAllSource(selectAllSource);
+    }
+    const selectAllScene = document.getElementById('selectAllScene');
+    if (selectAllScene) {
+        selectAllScene.checked = true;
+        toggleSelectAllScene(selectAllScene);
+    }
+    const sortFieldEl = document.getElementById('sortField');
+    if (sortFieldEl) sortFieldEl.value = 'source';
+    
+    const sortOrderEl = document.getElementById('sortOrder');
+    if (sortOrderEl) sortOrderEl.value = 'asc';
+
+    applyQrDrawerFilters();
 }

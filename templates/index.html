@@ -570,9 +570,10 @@
             }
         </style>
 
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-5 pt-4 border-top" style="border-color: var(--border-color) !important;">
+        <!-- Navigasi Pagination dengan tambahan padding horizontal (px-3) agar tidak mepet ke kiri -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-3 pt-3 px-4 border-top pb-4" style="border-color: var(--border-color) !important;">
             
-            <!-- Info Halaman di Kiri -->
+            <!-- Info Halaman di Kiri dengan sedikit jarak -->
             <div class="small mb-3 mb-md-0" style="color: var(--text-muted); font-size: 0.85rem;">
                 {{ _('Showing page') }} <span class="fw-semibold" style="color: var(--text-main);">{{ pagination.page }}</span> {{ _('of') }} <span class="fw-semibold" style="color: var(--text-main);">{{ pagination.pages }}</span>
             </div>

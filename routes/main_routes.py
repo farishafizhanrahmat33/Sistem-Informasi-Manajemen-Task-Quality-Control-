@@ -31,7 +31,12 @@ def dashboard():
         'ready': db.session.query(TaskModel).filter_by(qc_category="Ready").count(),
         'skip': db.session.query(TaskModel).filter_by(qc_category="Skipped").count(),
     }
-    return render_template('dashboard.html', metrics=metrics, role=role)
+    
+    # TAMBAHKAN BARIS INI: Mengambil 5 task terbaru berdasarkan waktu pembaruan
+    recent_tasks = db.session.query(TaskModel).order_by(TaskModel.updated_at.desc()).limit(5).all()
+
+    # Sertakan recent_tasks ke dalam render_template
+    return render_template('dashboard.html', metrics=metrics, role=role, recent_tasks=recent_tasks)
 
 # F-01: Autentikasi Login (Dev, Quality Control, Supervisor, Publik)
 @main_bp.route('/login', methods=['POST'])

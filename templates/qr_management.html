@@ -31,25 +31,48 @@
         
         <!-- HEADER SECTION -->
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-            <div>
-                <h4 class="fw-bold mb-1" style="color: var(--text-main); letter-spacing: -0.02em;">{{ _('QR Document Management') }}</h4>
-                <p class="text-muted small mb-0">{{ _('Manage and keep track of all the QR documents (PDF) needed for day-to-day operations.') }}</p>
-            </div>
             
-            {% if role in ['Developer', 'Quality Control'] %}
-            <button class="btn btn-primary btn-sm px-3 py-2 fw-semibold" data-bs-toggle="modal" data-bs-target="#uploadQrModal" style="border-radius: 8px;">
-                + {{ _('Upload PDF File') }}
-            </button>
-            {% endif %}
+            <div class="d-flex w-100 justify-content-between align-items-center flex-wrap gap-2">
+                <!-- Tombol Upload di Kiri -->
+                <div>
+                    {% if role in ['Developer', 'Quality Control'] %}
+                    <button class="btn btn-primary btn-sm px-3 py-2 fw-semibold" data-bs-toggle="modal" data-bs-target="#uploadQrModal" style="border-radius: 8px;">
+                        + {{ _('Upload PDF File') }}
+                    </button>
+                    {% endif %}
+                </div>
+
+                <!-- Tombol Filter & Urutkan di Kanan -->
+                <div>
+                    <button class="btn btn-dark btn-sm d-flex align-items-center gap-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterDrawer" style="border-radius: 8px;">
+                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
+                        </svg>
+                        {{ _('Filter & Sort') }}
+                        <span id="activeFilterBadge" class="badge bg-primary rounded-circle d-none ms-1" style="font-size: 0.6rem;">!</span>
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <!-- GRID DOKUMEN -->
-        <div class="row g-4">
+        <!-- INDIKATOR FILTER AKTIF -->
+        <div id="activeFiltersIndicator" class="d-none align-items-center gap-2 mb-3 p-2 px-3 rounded-3 shadow-sm overflow-x-auto" style="background-color: var(--bg-surface); border: 1px solid var(--border-color); white-space: nowrap;">
+            <span class="small fw-bold text-muted me-1 flex-shrink-0" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                {{ _('Filters:') }}
+            </span>
+            <div id="filterChipsContainer" class="d-flex align-items-center gap-2 overflow-x-auto"></div>
+            <button type="button" onclick="resetQrFilters()" class="btn btn-link btn-sm text-decoration-none p-0 ms-auto text-danger fw-semibold flex-shrink-0 ps-2" style="font-size: 0.75rem;">
+                ✕ {{ _('Clear') }}
+            </button>
+        </div>
+
+        <!-- GRID DOKUMEN (Atribut data-name dan data-source dipasang) -->
+        <div class="row g-4" id="qrGridContainer">
             {% for qr in files %}
-            <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+            <div class="col-6 col-md-4 col-lg-3 col-xl-2 qr-item" data-name="{{ qr.name }}" data-source="{{ qr.source_document or '' }}">
                 <div class="card border-0 shadow-xs h-100" style="background-color: var(--bg-surface); border-radius: 12px; border: 1px solid var(--border-color) !important; overflow: hidden;">
                     
-                    <!-- THUMBNAIL / SAMPUL (Memanggil file _thumb) -->
+                    <!-- THUMBNAIL / SAMPUL -->
                     <div class="position-relative overflow-hidden bg-black" style="height: 140px; border-bottom: 1px solid var(--border-color);">
                         {% set parts = qr.pdf_filename.rsplit('.', 1) %}
                         {% set thumb_filename = parts[0] ~ '_thumb.' ~ parts[1] %}
@@ -77,7 +100,7 @@
                         <p class="text-muted text-center mb-1" style="font-size: 0.65rem;">{{ _('by') }} {{ qr.uploaded_by }}</p>
                         {% endif %}
                         
-                        <!-- TOMBOL PEMICU POPUP GAMBAR PENUH -->
+                        <!-- TOMBOL PEMICU POPUP -->
                         <button type="button" 
                                 data-pdf-url="{{ url_for('static', filename='uploads/qr_codes/' ~ qr.pdf_filename) }}"
                                 data-pdf-name="{{ qr.name }}"
@@ -103,12 +126,19 @@
             </div>
             {% endfor %}
         </div>
+        
+        <!-- Pesan Kosong Jika Filter Tidak Ditemukan -->
+        <div id="noQrFoundMessage" class="col-12 mt-4" style="display: none;">
+            <div class="text-center py-5 rounded-3 shadow-xs" style="background-color: var(--bg-surface); border: 1px dashed var(--border-color);">
+                <p class="text-muted fw-medium mb-0">{{ _('No documents match your filter criteria.') }}</p>
+            </div>
+        </div>
+    </div>
 
-    <!-- MODAL PENAMPIL GAMBAR QR (SaaS Style) -->
+    <!-- MODAL PENAMPIL GAMBAR QR -->
     <div class="modal fade" id="pdfViewerModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg" style="background-color: var(--bg-surface); border-radius: 12px;">
-                
                 <div class="modal-header border-bottom py-3" style="border-color: var(--border-color) !important;">
                     <div class="d-flex align-items-center gap-2 text-truncate flex-grow-1 me-2" style="min-width: 0;">
                         <svg width="20" height="20" fill="none" stroke="#22c55e" stroke-width="2" viewBox="0 0 24 24" class="flex-shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -116,7 +146,6 @@
                     </div>
                     
                     <div class="d-flex align-items-center gap-2 ms-auto flex-shrink-0">
-                        <!-- Tombol Buka Gambar di Tab Baru -->
                         <a href="#" id="btnPdfFullscreen" target="_blank" class="btn btn-sm btn-outline-secondary py-1 px-2 d-flex align-items-center gap-1" style="font-size: 0.75rem; border-radius: 6px;" title="{{ _('Open image in a new tab') }}">
                             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                             <span class="d-none d-sm-inline">{{ _('View Full') }}</span>
@@ -124,12 +153,9 @@
                         <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close" style="filter: var(--btn-close-filter, none);"></button>
                     </div>
                 </div>
-                
-                <!-- Area Tampilan Gambar PNG Resolusi Penuh -->
                 <div class="modal-body p-3 text-center bg-body" style="border-radius: 0 0 12px 12px; max-height: 80vh; overflow-y: auto;">
                     <img id="pdfIframe" src="" class="img-fluid rounded shadow-sm border" alt="QR Document Page" style="border-color: var(--border-color) !important; max-width: 100%; height: auto;">
                 </div>
-
             </div>
         </div>
     </div>
@@ -166,11 +192,123 @@
         </div>
     </div>
     {% endif %}
+
+    <!-- OFFCANVAS DRAWER FILTER & SORT (Ganda: By Source Code & By Scene) -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="filterDrawer">
+        <div class="offcanvas-header border-bottom" style="border-color: var(--border-color) !important;">
+            <h6 class="offcanvas-title fw-bold" style="color: var(--text-main);">{{ _('Filter & Sort') }}</h6>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" style="filter: var(--btn-close-filter, none);"></button>
+        </div>
+        <div class="offcanvas-body p-4 d-flex flex-column">
+            
+            <!-- BAGIAN SORT -->
+            <h6 class="fw-bold mb-3 small text-uppercase" style="color: var(--text-muted); letter-spacing: 0.5px;">{{ _('Sort By') }}</h6>
+            <div class="row g-2 mb-4">
+                <div class="col-12 mb-2">
+                    <select id="sortField" class="form-select shadow-none border" style="border-color: var(--border-color) !important; font-size: 0.9rem;">
+                        <option value="source">{{ _('QR Source Code (retail_x...)') }}</option>
+                        <option value="name">{{ _('Scene Name') }}</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <select id="sortOrder" class="form-select shadow-none border" style="border-color: var(--border-color) !important; font-size: 0.9rem;">
+                        <option value="asc">{{ _('Ascending (A-Z)') }}</option>
+                        <option value="desc">{{ _('Descending (Z-A)') }}</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- BAGIAN FILTER 1: BY QR SOURCE CODE -->
+            <h6 class="fw-bold mb-3 small text-uppercase border-top pt-4" style="color: var(--text-muted); border-color: var(--border-color) !important; letter-spacing: 0.5px;">{{ _('Filter Data') }}</h6>
+            
+            <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+                    <label class="form-label detail-label fw-bold mb-0" style="color: var(--text-main);">{{ _('By QR Source Code') }}</label>
+                </div>
+                
+                <div class="position-relative mb-2">
+                    <svg class="position-absolute top-50 translate-middle-y ms-3" style="color: var(--text-muted);" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="source-list-search" class="form-control form-control-sm ps-5 bg-transparent shadow-none search-filter-input" placeholder="{{ _('Search source code...') }}">
+                </div>
+
+                <div class="premium-filter-box" id="source-list">
+                    <label class="premium-filter-option select-all-option">
+                        <input type="checkbox" value="All" class="premium-filter-checkbox select-all-cb" id="selectAllSource" checked onchange="toggleSelectAllSource(this)">
+                        <div class="premium-filter-content">
+                            <span class="premium-filter-text fw-bold">{{ _('Select All Sources') }}</span>
+                            <svg class="premium-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </div>
+                    </label>
+                    
+                    {% set unique_sources = [] %}
+                    {% for qr in files %}
+                        {% if qr.source_document and qr.source_document not in unique_sources %}
+                            {% set _ = unique_sources.append(qr.source_document) %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% for src in unique_sources | sort %}
+                    <label class="premium-filter-option item-option">
+                        <input type="checkbox" value="{{ src }}" class="premium-filter-checkbox item-cb source-checkbox" checked onchange="checkIndividualSourceState()">
+                        <div class="premium-filter-content">
+                            <span class="premium-filter-text item-text" title="{{ src }}">{{ src }}</span>
+                            <svg class="premium-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- BAGIAN FILTER 2: BY SCENE NAME -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+                    <label class="form-label detail-label fw-bold mb-0" style="color: var(--text-main);">{{ _('By Scene Name') }}</label>
+                </div>
+                
+                <div class="position-relative mb-2">
+                    <svg class="position-absolute top-50 translate-middle-y ms-3" style="color: var(--text-muted);" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="scene-list-search" class="form-control form-control-sm ps-5 bg-transparent shadow-none search-filter-input" placeholder="{{ _('Search scene name...') }}">
+                </div>
+
+                <div class="premium-filter-box" id="scene-list">
+                    <label class="premium-filter-option select-all-option">
+                        <input type="checkbox" value="All" class="premium-filter-checkbox select-all-cb" id="selectAllScene" checked onchange="toggleSelectAllScene(this)">
+                        <div class="premium-filter-content">
+                            <span class="premium-filter-text fw-bold">{{ _('Select All Scenes') }}</span>
+                            <svg class="premium-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </div>
+                    </label>
+                    
+                    {% set unique_names = [] %}
+                    {% for qr in files %}
+                        {% if qr.name not in unique_names %}
+                            {% set _ = unique_names.append(qr.name) %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% for name in unique_names | sort %}
+                    <label class="premium-filter-option item-option">
+                        <input type="checkbox" value="{{ name }}" class="premium-filter-checkbox item-cb scene-checkbox" checked onchange="checkIndividualSceneState()">
+                        <div class="premium-filter-content">
+                            <span class="premium-filter-text item-text" title="{{ name }}">{{ name }}</span>
+                            <svg class="premium-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="mt-auto pt-3">
+                <button type="button" class="btn btn-primary w-100 py-3 fw-bold shadow-sm" data-bs-dismiss="offcanvas" onclick="applyQrDrawerFilters()" style="border-radius: 8px; letter-spacing: 0.3px;">{{ _('Apply Settings') }}</button>
+            </div>
+        </div>
+    </div>
+
     {% include 'login_modal.html' %}
 
     <!-- Bootstrap JS & App Script -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='script.js') }}?v=2"></script>
+    <script src="{{ url_for('static', filename='script.js') }}?v=7"></script>
     
 </body>
 </html>
