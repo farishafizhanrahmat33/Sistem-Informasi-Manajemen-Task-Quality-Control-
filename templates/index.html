@@ -389,36 +389,28 @@
                                                 <button class="nav-link" id="link2-tab-{{ t.id }}" data-bs-toggle="tab" data-bs-target="#link2-{{ t.id }}" type="button" role="tab">{{ _('Sample 2') }}</button>
                                             </li>
                                         </ul>
-                                        
                                         <div class="tab-content" id="video-tabs-content-{{ t.id }}">
                                             <!-- KONTEN MEDIA UTAMA (SAMPEL 1) -->
                                             <div class="tab-pane fade show active" id="link1-{{ t.id }}" role="tabpanel">
                                                 {% if t.link_sample %}
                                                     {% if 'drive.google.com' in t.link_sample %}
-                                                        <!-- SAMPEL 1: Ganti bagian iframe lama dengan tombol pemicu modal ini -->
-                                                        {% if t.link_sample %}
-                                                            {% if 'drive.google.com' in t.link_sample %}
-                                                                <div class="text-center py-4 rounded-3 mb-2" style="background-color: var(--input-bg); border: 1px solid var(--border-color);">
-                                                                    <p class="small mb-3" style="color: var(--text-muted);">{{ _('Google Drive Video Preview Ready') }}</p>
-                                                                    <button type="button" class="btn btn-primary btn-sm px-4 py-2 d-inline-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#videoModal-{{ t.id }}-1" style="border-radius: 8px; font-weight: 600;">
-                                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                                                                        {{ _('Play Video in Modal') }}
-                                                                    </button>
-                                                                </div>
-                                                            {% else %}
-                                                                <a href="{{ t.link_sample }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 py-2 shadow-none" style="border-radius: 8px;">{{ _('Visit Main External Link ↗') }}</a>
-                                                            {% endif %}
-                                                        {% else %}
-                                                            <div class="text-center py-5 small rounded-3" style="background-color: var(--input-bg); border: 1px dashed var(--border-color); color: var(--text-muted);">{{ _('No main media attached yet.') }}</div>
-                                                        {% endif %}
-                                                        
+                                                        <!-- Sampel 1 -->
+                                                        <div id="video-wrapper-{{ t.id }}-1" class="rounded-3 overflow-hidden border shadow-sm mb-2 position-relative bg-black video-container-wrapper" style="aspect-ratio: 1 / 1; width: 100%; border-color: var(--border-color) !important;">
+                                                            
+                                                            <!-- Tombol Keluar Fullscreen dengan Teks & Ikon -->
+                                                            <button type="button" onclick="exitVideoFullscreen('video-wrapper-{{ t.id }}-1')" class="btn btn-sm position-absolute top-0 end-0 m-3 shadow exit-fs-btn d-none align-items-center gap-2 px-3 py-2 rounded-pill" style="z-index: 9999; background: rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.3); color: white; font-size: 0.8rem; font-weight: 600; backdrop-filter: blur(4px);">
+                                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                                                {{ _('Exit Fullscreen') }}
+                                                            </button>
+                                                            <iframe src="{{ t.link_sample.split('/view')[0].replace('/file/d/', '/file/d/').replace('/view', '') + '/preview' }}" class="position-absolute top-0 start-0 border-0 w-100 h-100" allow="autoplay" allowfullscreen></iframe>
+                                                        </div>
+
                                                         <!-- Tombol Fullscreen & New Tab -->
                                                         <div class="d-flex justify-content-between align-items-center mt-1 px-1">
                                                             <button type="button" onclick="toggleVideoFullscreen('video-wrapper-{{ t.id }}-1')" class="btn btn-sm btn-link text-decoration-none d-inline-flex align-items-center gap-1 p-0 shadow-none" style="color: var(--text-main); font-size: 0.75rem; font-weight: 600;">
                                                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
                                                                 {{ _('Fullscreen') }}
                                                             </button>
-
                                                             <a href="{{ t.link_sample }}" target="_blank" class="text-decoration-none d-inline-flex align-items-center gap-1 px-2 py-1 rounded" style="color: #3b82f6; font-size: 0.75rem; font-weight: 600; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(59, 130, 246, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
                                                                 {{ _('Open Video in New Tab') }}
                                                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
@@ -431,35 +423,28 @@
                                                     <div class="text-center py-5 small rounded-3" style="background-color: var(--input-bg); border: 1px dashed var(--border-color); color: var(--text-muted);">{{ _('No main media attached yet.') }}</div>
                                                 {% endif %}
                                             </div>
-                                            
+
                                             <!-- KONTEN MEDIA ALTERNATIF (SAMPEL 2) -->
                                             <div class="tab-pane fade" id="link2-{{ t.id }}" role="tabpanel">
                                                 {% if t.link_sample_2 %}
                                                     {% if 'drive.google.com' in t.link_sample_2 %}
-                                                        <!-- SAMPEL 2: Ganti bagian iframe lama dengan tombol pemicu modal ini -->
-                                                        {% if t.link_sample %}
-                                                            {% if 'drive.google.com' in t.link_sample %}
-                                                                <div class="text-center py-4 rounded-3 mb-2" style="background-color: var(--input-bg); border: 1px solid var(--border-color);">
-                                                                    <p class="small mb-3" style="color: var(--text-muted);">{{ _('Google Drive Video Preview Ready') }}</p>
-                                                                    <button type="button" class="btn btn-primary btn-sm px-4 py-2 d-inline-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#videoModal-{{ t.id }}-1" style="border-radius: 8px; font-weight: 600;">
-                                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                                                                        {{ _('Play Video in Modal') }}
-                                                                    </button>
-                                                                </div>
-                                                            {% else %}
-                                                                <a href="{{ t.link_sample }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 py-2 shadow-none" style="border-radius: 8px;">{{ _('Visit Main External Link ↗') }}</a>
-                                                            {% endif %}
-                                                        {% else %}
-                                                            <div class="text-center py-5 small rounded-3" style="background-color: var(--input-bg); border: 1px dashed var(--border-color); color: var(--text-muted);">{{ _('No main media attached yet.') }}</div>
-                                                        {% endif %}
-                                                        
+                                                        <!-- Sampel 2 -->
+                                                        <div id="video-wrapper-{{ t.id }}-1" class="rounded-3 overflow-hidden border shadow-sm mb-2 position-relative bg-black video-container-wrapper" style="aspect-ratio: 16 / 10; width: 240%; border-color: var(--border-color) !important;">
+                                                            
+                                                            <!-- Tombol Keluar Fullscreen dengan Teks & Ikon -->
+                                                            <button type="button" onclick="exitVideoFullscreen('video-wrapper-{{ t.id }}-2')" class="btn btn-sm position-absolute top-0 end-0 m-3 shadow exit-fs-btn d-none align-items-center gap-2 px-3 py-2 rounded-pill" style="z-index: 9999; background: rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.3); color: white; font-size: 0.8rem; font-weight: 600; backdrop-filter: blur(4px);">
+                                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                                                {{ _('Exit Fullscreen') }}
+                                                            </button>
+                                                            <iframe src="{{ t.link_sample_2.split('/view')[0].replace('/file/d/', '/file/d/').replace('/view', '') + '/preview' }}" class="position-absolute top-0 start-0 border-0" style="width: 100%; height: 100%; transform: scale(0.8) translateY(-5px); transform-origin: center;" allow="autoplay" allowfullscreen></iframe>
+                                                        </div>
+
                                                         <!-- Tombol Fullscreen & New Tab -->
                                                         <div class="d-flex justify-content-between align-items-center mt-1 px-1">
                                                             <button type="button" onclick="toggleVideoFullscreen('video-wrapper-{{ t.id }}-2')" class="btn btn-sm btn-link text-decoration-none d-inline-flex align-items-center gap-1 p-0 shadow-none" style="color: var(--text-main); font-size: 0.75rem; font-weight: 600;">
                                                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
                                                                 {{ _('Fullscreen') }}
                                                             </button>
-
                                                             <a href="{{ t.link_sample_2 }}" target="_blank" class="text-decoration-none d-inline-flex align-items-center gap-1 px-2 py-1 rounded" style="color: #3b82f6; font-size: 0.75rem; font-weight: 600; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(59, 130, 246, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
                                                                 {{ _('Open Video in New Tab') }}
                                                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
@@ -474,7 +459,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> 
 
                                 <!-- FORMULIR EVALUASI QC -->
                                 <div class="detail-panel">
