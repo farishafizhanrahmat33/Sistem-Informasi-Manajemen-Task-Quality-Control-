@@ -1140,3 +1140,342 @@ function filterDashboardTable(category, btnElement) {
         emptyRow.style.display = (visibleCount === 0) ? '' : 'none';
     }
 }
+
+/* ==========================================================================
+   DASHBOARD PAGE (dipindahkan dari dashboard.html)
+   Catatan: nilai metrics awal & role dikirim dari server lewat
+   `window.dashboardConfig` (di-set oleh Jinja di dashboard.html), karena
+   file .js statis ini tidak diproses oleh Jinja.
+   ========================================================================== */
+
+// --- 1. GLOBAL VARIABLES & INITIALIZATION ---
+let myQCChart = null;
+
+const dashUrlParams = new URLSearchParams(window.location.search);
+let currentFilterCategory = dashUrlParams.get('filter') || 'All';
+let currentSelectedProjects = [];
+
+const dashProjParam = dashUrlParams.get('project');
+if (dashProjParam && dashProjParam !== 'All' && dashProjParam !== 'None') {
+    currentSelectedProjects = dashProjParam.split(',');
+}
+
+const allLabels = ['Need Sample', 'Sample Done', 'Revision', 'Ready', 'Skipped', 'Production'];
+const allColors = ['#f59e0b', '#0ea5e9', '#ef4444', '#10b981', '#64748b', '#0d6efd'];
+
+// Menyimpan data metrics global agar bisa diakses chart (nilai awal dari server)
+let currentMetrics = (window.dashboardConfig && window.dashboardConfig.metrics) || {
+    need: 0, done: 0, rev: 0, ready: 0, skip: 0, prod: 0,
+    total: 0, verified: 0, completion_rate: 0
+};
+
+document.addEventListener("DOMContentLoaded", function() {
+    const startInput = document.getElementById('dateStart');
+    const endInput = document.getElementById('dateEnd');
+    const searchInput = document.getElementById('recentActivitySearch');
+
+    if (!document.getElementById('qcBarChart')) return; // Bukan halaman dashboard, lewati init
+
+    if (startInput) startInput.addEventListener('change', runTableFilters);
+    if (endInput) endInput.addEventListener('change', runTableFilters);
+    if (searchInput) searchInput.addEventListener('keyup', runTableFilters);
+
+    syncUIToState();
+    initChart();
+    setupInteractiveFilters();
+    setupProjectListFilters();
+});
+
+function syncUIToState() {
+    document.querySelectorAll('.metric-command-card').forEach(c => {
+        c.classList.toggle('active', c.getAttribute('data-filter') === currentFilterCategory);
+    });
+    document.querySelectorAll('.dashboard-filter-tab').forEach(t => {
+        t.classList.toggle('active', t.getAttribute('data-filter') === currentFilterCategory);
+    });
+
+    const projectItems = document.querySelectorAll('#projectListContainer .proj-list-item');
+    projectItems.forEach(el => {
+        const pName = el.getAttribute('data-project');
+        if (currentSelectedProjects.length === 0 && pName === 'All') {
+            el.classList.add('active');
+        } else if (currentSelectedProjects.includes(pName)) {
+            el.classList.add('active');
+        } else {
+            el.classList.remove('active');
+        }
+    });
+}
+
+function updateURLParams() {
+    const url = new URL(window.location);
+    url.searchParams.set('filter', currentFilterCategory);
+
+    if (currentSelectedProjects.length === 0) {
+        url.searchParams.set('project', 'All');
+    } else {
+        url.searchParams.set('project', currentSelectedProjects.join(','));
+    }
+    window.history.pushState({}, '', url);
+}
+
+// --- 2. FUNGSI UTAMA AJAX: FETCH DATA DARI SERVER TANPA RELOAD ---
+function fetchDashboardData() {
+    const finalProject = currentSelectedProjects.length === 0 ? 'All' : currentSelectedProjects.join(',');
+    const endpoint = `/api/dashboard-data?filter=${encodeURIComponent(currentFilterCategory)}&project=${encodeURIComponent(finalProject)}`;
+
+    document.body.style.cursor = 'wait';
+
+    fetch(endpoint)
+        .then(response => response.json())
+        .then(data => {
+            document.body.style.cursor = 'default';
+            if (data.error) return;
+
+            // 1. Update Metrics Global & Kartu Angka
+            currentMetrics = data.metrics;
+            document.getElementById('count-need').innerText = currentMetrics.need;
+            document.getElementById('count-done').innerText = currentMetrics.done;
+            document.getElementById('count-rev').innerText = currentMetrics.rev;
+            document.getElementById('count-ready').innerText = currentMetrics.ready;
+            document.getElementById('count-skip').innerText = currentMetrics.skip;
+            document.getElementById('count-prod').innerText = currentMetrics.prod;
+
+            // 2. Update Progress Bar
+            document.getElementById('dynamic-progress-text').innerText = currentMetrics.completion_rate + '%';
+            document.getElementById('dynamic-progress-bar').style.width = currentMetrics.completion_rate + '%';
+            document.getElementById('dynamic-progress-bar').setAttribute('aria-valuenow', currentMetrics.completion_rate);
+            document.getElementById('dynamic-progress-sub').innerText = `${currentMetrics.verified} of ${currentMetrics.total} total recorded tasks verified or completed.`;
+
+            // 3. Update Chart
+            updateChartAnimation();
+
+            // 4. Render Ulang Tabel dengan Data Baru
+            renderTableTasks(data.tasks);
+        })
+        .catch(err => {
+            document.body.style.cursor = 'default';
+            console.error('Failed fetching dashboard data:', err);
+        });
+}
+
+// --- 3. RENDER TABEL DINAMIS ---
+function renderTableTasks(tasks) {
+    const tbody = document.getElementById('recentActivityTableBody');
+    let html = '';
+
+    if (tasks && tasks.length > 0) {
+        tasks.forEach((t, idx) => {
+            let badgeClass = 'bg-secondary bg-opacity-10 text-secondary';
+            if (t.display_category === 'Ready') badgeClass = 'bg-success bg-opacity-10 text-success';
+            else if (t.display_category === 'Revision') badgeClass = 'bg-danger bg-opacity-10 text-danger';
+            else if (t.display_category === 'Need Sample') badgeClass = 'bg-warning bg-opacity-10 text-warning';
+            else if (t.display_category === 'Sample Done') badgeClass = 'bg-info bg-opacity-10 text-info';
+            else if (t.display_category === 'Production') badgeClass = 'bg-primary bg-opacity-10 text-primary';
+
+            const initials = (t.uploaded_by || 'User').substring(0, 2).toUpperCase();
+
+            html += `
+                <tr class="activity-row" data-project="${t.project_name}" data-category="${t.display_category}" data-date="${t.updated_at}">
+                    <td>
+                        <div class="fw-semibold text-truncate" style="max-width: 150px;">${t.project_name}</div>
+                        <div class="text-muted" style="font-size: 0.65rem;">${t.package_name}</div>
+                    </td>
+                    <td>
+                        <div class="font-monospace text-muted" style="font-size: 0.65rem;">#${t.task_id || (idx + 1)}</div>
+                        <div class="fw-medium text-truncate" style="max-width: 250px;">${t.task_name}</div>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rounded-circle bg-primary bg-opacity-15 text-primary d-flex align-items-center justify-content-center fw-bold" style="width: 24px; height: 24px; font-size: 0.65rem;">
+                                ${initials}
+                            </div>
+                            <span class="text-truncate" style="max-width: 120px;">${t.uploaded_by}</span>
+                        </div>
+                    </td>
+                    <td class="text-end">
+                        <span class="badge ${badgeClass} px-2 py-1.5 fw-semibold" style="font-size: 0.6rem; letter-spacing: 0.03em;">
+                            ${t.display_category}
+                        </span>
+                    </td>
+                </tr>
+            `;
+        });
+        html += `<tr id="noActivityMatch" style="display: none;"><td colspan="4" class="text-center py-4 text-muted small border-0">No matching activities found for this filter combination.</td></tr>`;
+    } else {
+        html = `<tr><td colspan="4" class="text-center py-5 text-muted small border-0">No task records found in the database.</td></tr>`;
+    }
+
+    tbody.innerHTML = html;
+    runTableFilters();
+}
+
+// --- 4. LOGIKA GRAFIK BATANG ---
+function getFilteredChartData() {
+    const rawData = [currentMetrics.need, currentMetrics.done, currentMetrics.rev, currentMetrics.ready, currentMetrics.skip, currentMetrics.prod];
+    let chartDataToRender = [...rawData];
+
+    if (currentFilterCategory !== 'All') {
+        const indexMap = { 'Need Sample': 0, 'Sample Done': 1, 'Revision': 2, 'Ready': 3, 'Skipped': 4, 'Production': 5 };
+        const selectedIdx = indexMap[currentFilterCategory];
+
+        if (selectedIdx !== undefined) {
+            chartDataToRender = rawData.map((val, index) => index === selectedIdx ? val : 0);
+        }
+    }
+    return chartDataToRender;
+}
+
+function initChart() {
+    const canvasEl = document.getElementById('qcBarChart');
+    if (!canvasEl) return;
+    const ctx = canvasEl.getContext('2d');
+
+    myQCChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: allLabels,
+            datasets: [{
+                data: getFilteredChartData(),
+                backgroundColor: allColors,
+                borderWidth: 0,
+                borderRadius: 6,
+                barPercentage: 0.6,
+                maxBarThickness: 70
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            animation: { duration: 600, easing: 'easeOutQuart' },
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 11, weight: '500' }, color: '#64748b' } },
+                y: { beginAtZero: true, grid: { color: '#e2e8f0', borderDash: [4, 4] }, ticks: { font: { family: 'Inter', size: 11, weight: '500' }, color: '#64748b', precision: 0 } }
+            }
+        }
+    });
+}
+
+function updateChartAnimation() {
+    if (myQCChart) {
+        myQCChart.data.datasets[0].data = getFilteredChartData();
+        myQCChart.update();
+    }
+}
+
+// --- 5. INTERAKSI KARTU, TAB, & PROJECT LIST ---
+function setupInteractiveFilters() {
+    const elements = document.querySelectorAll('.metric-command-card, .dashboard-filter-tab');
+
+    elements.forEach(el => {
+        el.addEventListener('click', function(e) {
+            e.preventDefault();
+            const newFilter = this.getAttribute('data-filter') || 'All';
+
+            if (this.classList.contains('active') && this.classList.contains('metric-command-card')) {
+                currentFilterCategory = 'All';
+            } else {
+                currentFilterCategory = newFilter;
+            }
+
+            syncUIToState();
+            updateURLParams();
+            fetchDashboardData(); // Ambil data baru via AJAX tanpa reload
+        });
+    });
+}
+
+function setupProjectListFilters() {
+    const projectItems = document.querySelectorAll('#projectListContainer .proj-list-item');
+
+    projectItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const projName = this.getAttribute('data-project');
+
+            if (projName === 'All') {
+                currentSelectedProjects = [];
+            } else {
+                if (currentSelectedProjects.includes(projName)) {
+                    currentSelectedProjects = currentSelectedProjects.filter(p => p !== projName);
+                } else {
+                    currentSelectedProjects.push(projName);
+                }
+            }
+
+            syncUIToState();
+            updateURLParams();
+            fetchDashboardData(); // Ambil data baru via AJAX (card, chart, dan tabel ikut sinkron!)
+        });
+    });
+}
+
+// --- 6. FILTER LOKAL UNTUK PENCARIAN & TANGGAL PADA TABEL ---
+function runTableFilters() {
+    const startDate = document.getElementById('dateStart') ? document.getElementById('dateStart').value : '';
+    const endDate = document.getElementById('dateEnd') ? document.getElementById('dateEnd').value : '';
+    const searchVal = document.getElementById('recentActivitySearch') ? document.getElementById('recentActivitySearch').value.toLowerCase() : '';
+
+    const rows = document.querySelectorAll('#recentActivityTableBody tr.activity-row');
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+        const rowDate = row.getAttribute('data-date') || '';
+        const rowText = row.innerText.toLowerCase();
+
+        let match = true;
+        if (startDate && rowDate && rowDate < startDate) match = false;
+        if (endDate && rowDate && rowDate > endDate) match = false;
+        if (searchVal && !rowText.includes(searchVal)) match = false;
+
+        if (match) {
+            row.style.display = "";
+            visibleCount++;
+        } else {
+            row.style.display = "none";
+        }
+    });
+
+    const noMatchRow = document.getElementById('noActivityMatch');
+    if (noMatchRow) noMatchRow.style.display = visibleCount === 0 ? "" : "none";
+}
+
+// --- 7. EKSPOR DATA KE CSV ---
+function exportDashboardData() {
+    const currentRole = (window.dashboardConfig && window.dashboardConfig.role) || '';
+    if (currentRole === 'Supervisor') {
+        alert('Access denied! Supervisors are not allowed to export data.');
+        return;
+    }
+
+    const rows = document.querySelectorAll('#recentActivityTableBody tr.activity-row');
+    let csvContent = "data:text/csv;charset=utf-8,Project,Package Name,Task ID,Task Name,Modified By,QC Status\n";
+    let count = 0;
+
+    rows.forEach(row => {
+        if (row.style.display !== 'none') {
+            const cols = row.querySelectorAll('td');
+            if (cols.length >= 4) {
+                const projectPkg = cols[0].innerText.replace(/\n/g, " - ").replace(/,/g, " ");
+                const taskIdName = cols[1].innerText.replace(/\n/g, " - ").replace(/,/g, " ");
+                const modifiedBy = cols[2].innerText.trim().replace(/,/g, " ");
+                const status = cols[3].innerText.trim();
+                csvContent += `"${projectPkg}","${taskIdName}","${modifiedBy}","${status}"\n`;
+                count++;
+            }
+        }
+    });
+
+    if (count === 0) {
+        alert('No data available to export.');
+        return;
+    }
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `QC_Detailed_Report.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}

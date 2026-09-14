@@ -1,16 +1,23 @@
 import os
+from datetime import datetime, timedelta  # <-- TAMBAHAN: Modul waktu untuk membatasi query
 from werkzeug.utils import secure_filename
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify, current_app
 from flask_babel import gettext as _
 from database import db, TaskModel, UserModel, SupportTicket
-from sqlalchemy import or_
+from sqlalchemy import or_, case, func
 from werkzeug.security import generate_password_hash, check_password_hash
 
 main_bp = Blueprint('main', __name__)
 
 @main_bp.route('/')
 def root():
-    return redirect(url_for('main.dashboard'))
+    # Cek apakah user sudah login
+    if 'username' in session or 'user_id' in session:
+        return redirect(url_for('main.dashboard'))
+    else:
+        # Jika belum login (publik), jangan ke dashboard! 
+        # Arahkan ke halaman login atau tampilkan template halaman publik utama Anda
+        return redirect(url_for('task.task_list')) # Atau ganti ke halaman publik yang sesuai
 
 # BARU: Tombol/dropdown ganti bahasa manggil route ini, misal
 # url_for('main.set_language', lang_code='en') atau 'id'.
@@ -23,37 +30,92 @@ def set_language(lang_code):
 # F-04: Ringkasan Task (Dev, Quality Control, Supervisor, Publik)
 @main_bp.route('/dashboard')
 def dashboard():
-    # Cek apakah user sudah login (misalnya memeriksa keberadaan username atau user_id di session)
     if 'username' not in session and 'user_id' not in session:
-        return redirect(url_for('auth.login')) # Sesuaikan nama blueprint/route halaman login Anda
+        return redirect(url_for('main.root'))
 
     role = session.get('role', 'Public')
     
-    # Ambil parameter filter dari URL (contoh: /dashboard?filter=Ready)
     selected_filter = request.args.get('filter', 'All')
+    selected_project = request.args.get('project', 'All')
+
+    projects_query = db.session.query(TaskModel.project_name).distinct().all()
+    projects = sorted([p[0] for p in projects_query if p[0]])
+
+    project_list = selected_project.split(',') if selected_project != 'All' else []
+
+    # --- RINGKASAN (METRICS): 1 QUERY SAJA, bukan 6 query .count() terpisah ---
+    # Sebelumnya tiap kategori (need/done/rev/ready/skip/prod) manggil query
+    # .count() sendiri-sendiri ke database (6x bolak-balik). Sekarang semuanya
+    # dihitung dalam SATU query pakai conditional aggregation (SUM(CASE WHEN...)),
+    # jauh lebih ringan buat database & server.
+    def _cat_case(categories):
+        return case(
+            ((TaskModel.sent_by_leader == False) & (TaskModel.qc_category.in_(categories)), 1),
+            else_=0
+        )
+
+    need_case = _cat_case(["To Sample", "Need Sample", "Ke Sampel"])
+    done_case = _cat_case(["Sample Done", "Sampel Selesai"])
+    rev_case = _cat_case(["Revision", "Revisi"])
+    ready_case = _cat_case(["Ready for Production", "Ready", "Siap untuk Produksi", "Siap"])
+    skip_case = _cat_case(["Skipped", "Dilewati"])
+    prod_case = case((TaskModel.sent_by_leader == True, 1), else_=0)
+
+    metrics_query = db.session.query(
+        func.coalesce(func.sum(need_case), 0),
+        func.coalesce(func.sum(done_case), 0),
+        func.coalesce(func.sum(rev_case), 0),
+        func.coalesce(func.sum(ready_case), 0),
+        func.coalesce(func.sum(skip_case), 0),
+        func.coalesce(func.sum(prod_case), 0),
+    )
+    if project_list:
+        metrics_query = metrics_query.filter(TaskModel.project_name.in_(project_list))
+
+    need_n, done_n, rev_n, ready_n, skip_n, prod_n = metrics_query.one()
 
     metrics = {
-        'need': db.session.query(TaskModel).filter_by(qc_category="Need Sample").count(),
-        'done': db.session.query(TaskModel).filter_by(qc_category="Sample Done").count(),
-        'rev': db.session.query(TaskModel).filter_by(qc_category="Revision").count(),
-        'ready': db.session.query(TaskModel).filter_by(qc_category="Ready").count(),
-        'skip': db.session.query(TaskModel).filter_by(qc_category="Skipped").count(),
+        'need': need_n, 'done': done_n, 'rev': rev_n,
+        'ready': ready_n, 'skip': skip_n, 'prod': prod_n,
     }
+    metrics['total'] = need_n + done_n + rev_n + ready_n + skip_n + prod_n
+    metrics['verified'] = done_n + ready_n + prod_n
+    metrics['completion_rate'] = round(metrics['verified'] / metrics['total'] * 100) if metrics['total'] > 0 else 0
     
-    # Query task berdasarkan filter yang diklik di dashboard
+    # QUERY TABEL DIFILTER LANGSUNG DI DATABASE DAN DIBATASI (LIMIT 15)
     query = db.session.query(TaskModel)
     if selected_filter != 'All':
-        query = query.filter_by(qc_category=selected_filter)
+        if selected_filter in ['Need Sample', 'To Sample']:
+            query = query.filter(TaskModel.sent_by_leader == False, or_(TaskModel.qc_category == "To Sample", TaskModel.qc_category == "Need Sample", TaskModel.qc_category == "Ke Sampel"))
+        elif selected_filter == 'Sample Done':
+            query = query.filter(TaskModel.sent_by_leader == False, or_(TaskModel.qc_category == "Sample Done", TaskModel.qc_category == "Sampel Selesai"))
+        elif selected_filter == 'Revision':
+            query = query.filter(TaskModel.sent_by_leader == False, or_(TaskModel.qc_category == "Revision", TaskModel.qc_category == "Revisi"))
+        elif selected_filter in ['Ready', 'Ready for Production']:
+            query = query.filter(TaskModel.sent_by_leader == False, or_(TaskModel.qc_category == "Ready for Production", TaskModel.qc_category == "Ready", TaskModel.qc_category == "Siap untuk Produksi", TaskModel.qc_category == "Siap"))
+        elif selected_filter == 'Skipped':
+            query = query.filter(TaskModel.sent_by_leader == False, or_(TaskModel.qc_category == "Skipped", TaskModel.qc_category == "Dilewati"))
+        elif selected_filter in ['Production', 'Submitted / Sent', 'Sent', 'Sent to Team']:
+            query = query.filter(TaskModel.sent_by_leader == True)
+        else:
+            query = query.filter_by(qc_category=selected_filter)
+            
+    if project_list:
+        query = query.filter(TaskModel.project_name.in_(project_list))
     
-    # Ambil data task untuk ditampilkan di tabel interaktif dashboard
-    recent_tasks = query.order_by(TaskModel.updated_at.desc()).limit(10).all()
+    thirty_days_ago = datetime.utcnow() - timedelta(days=30)
+    query = query.filter(TaskModel.updated_at >= thirty_days_ago)
+    
+    recent_tasks = query.order_by(TaskModel.updated_at.desc()).limit(500).all()
 
     return render_template(
         'dashboard.html', 
         metrics=metrics, 
         role=role, 
         recent_tasks=recent_tasks, 
-        selected_filter=selected_filter
+        selected_filter=selected_filter,
+        selected_project=selected_project,
+        projects=projects
     )
     
 # F-01: Autentikasi Login (Dev, Quality Control, Supervisor, Publik)
@@ -79,13 +141,12 @@ def login():
             "status": "error",
             "message": _("Wrong username/email or password!")
         }), 401
-
+        
 # F-02: Mengakhiri Sesi (Logout)
 @main_bp.route('/logout')
 def logout():
     session.clear()
-    flash(_('You have been logged out.'), 'info')
-    return redirect(url_for('main.dashboard'))
+    return redirect(url_for('main.root')) # <-- AMAN: Tidak akan error 500 lagi
 
 # F-24 & F-25: Detail & Edit Profil
 @main_bp.route('/profile')
@@ -310,3 +371,89 @@ def reset_user_password(user_id):
         flash(_('User not found.'), 'danger')
 
     return redirect(url_for('main.user_management'))
+
+@main_bp.route('/api/dashboard-data')
+def api_dashboard_data():
+    if 'username' not in session and 'user_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+
+    selected_filter = request.args.get('filter', 'All')
+    selected_project = request.args.get('project', 'All')
+    project_list = selected_project.split(',') if selected_project != 'All' else []
+
+    def _cat_case(categories):
+        return case(
+            ((TaskModel.sent_by_leader == False) & (TaskModel.qc_category.in_(categories)), 1),
+            else_=0
+        )
+
+    need_case = _cat_case(["To Sample", "Need Sample", "Ke Sampel"])
+    done_case = _cat_case(["Sample Done", "Sampel Selesai"])
+    rev_case = _cat_case(["Revision", "Revisi"])
+    ready_case = _cat_case(["Ready for Production", "Ready", "Siap untuk Produksi", "Siap"])
+    skip_case = _cat_case(["Skipped", "Dilewati"])
+    prod_case = case((TaskModel.sent_by_leader == True, 1), else_=0)
+
+    metrics_query = db.session.query(
+        func.coalesce(func.sum(need_case), 0),
+        func.coalesce(func.sum(done_case), 0),
+        func.coalesce(func.sum(rev_case), 0),
+        func.coalesce(func.sum(ready_case), 0),
+        func.coalesce(func.sum(skip_case), 0),
+        func.coalesce(func.sum(prod_case), 0),
+    )
+    if project_list:
+        metrics_query = metrics_query.filter(TaskModel.project_name.in_(project_list))
+
+    need_n, done_n, rev_n, ready_n, skip_n, prod_n = metrics_query.one()
+
+    metrics = {
+        'need': need_n, 'done': done_n, 'rev': rev_n,
+        'ready': ready_n, 'skip': skip_n, 'prod': prod_n,
+    }
+    metrics['total'] = need_n + done_n + rev_n + ready_n + skip_n + prod_n
+    metrics['verified'] = done_n + ready_n + prod_n
+    metrics['completion_rate'] = round(metrics['verified'] / metrics['total'] * 100) if metrics['total'] > 0 else 0
+    
+    query = db.session.query(TaskModel)
+    if selected_filter != 'All':
+        if selected_filter in ['Need Sample', 'To Sample']:
+            query = query.filter(TaskModel.sent_by_leader == False, or_(TaskModel.qc_category == "To Sample", TaskModel.qc_category == "Need Sample", TaskModel.qc_category == "Ke Sampel"))
+        elif selected_filter == 'Sample Done':
+            query = query.filter(TaskModel.sent_by_leader == False, or_(TaskModel.qc_category == "Sample Done", TaskModel.qc_category == "Sampel Selesai"))
+        elif selected_filter == 'Revision':
+            query = query.filter(TaskModel.sent_by_leader == False, or_(TaskModel.qc_category == "Revision", TaskModel.qc_category == "Revisi"))
+        elif selected_filter in ['Ready', 'Ready for Production']:
+            query = query.filter(TaskModel.sent_by_leader == False, or_(TaskModel.qc_category == "Ready for Production", TaskModel.qc_category == "Ready", TaskModel.qc_category == "Siap untuk Produksi", TaskModel.qc_category == "Siap"))
+        elif selected_filter == 'Skipped':
+            query = query.filter(TaskModel.sent_by_leader == False, or_(TaskModel.qc_category == "Skipped", TaskModel.qc_category == "Dilewati"))
+        elif selected_filter in ['Production', 'Submitted / Sent', 'Sent', 'Sent to Team']:
+            query = query.filter(TaskModel.sent_by_leader == True)
+        else:
+            query = query.filter_by(qc_category=selected_filter)
+            
+    if project_list:
+        query = query.filter(TaskModel.project_name.in_(project_list))
+    
+    thirty_days_ago = datetime.utcnow() - timedelta(days=30)
+    query = query.filter(TaskModel.updated_at >= thirty_days_ago)
+    
+    tasks = query.order_by(TaskModel.updated_at.desc()).limit(500).all()
+
+    tasks_data = []
+    for t in tasks:
+        display_category = 'Production' if t.sent_by_leader else t.qc_category
+        tasks_data.append({
+            'project_name': t.project_name or 'General Project',
+            'package_name': t.package_name or 'pkg-main',
+            'task_id': t.task_id or '',
+            'task_name': t.task_name,
+            'uploaded_by': t.uploaded_by or 'User',
+            'display_category': display_category,
+            'updated_at': t.updated_at.strftime('%Y-%m-%d') if t.updated_at else ''
+        })
+
+    return jsonify({
+        'metrics': metrics,
+        'tasks': tasks_data
+    })

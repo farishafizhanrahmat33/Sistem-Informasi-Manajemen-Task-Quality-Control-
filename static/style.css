@@ -636,11 +636,14 @@ body {
    12.10  USER MANAGEMENT — tabel scroll horizontal di HP
    -------------------------------------------------------------------------- */
 @media (max-width: 767.98px) {
-    /* Tabel user: sembunyikan kolom yang tidak terlalu penting di HP */
-    .table th:nth-child(3),
-    .table td:nth-child(3),
-    .table th:nth-child(4),
-    .table td:nth-child(4) {
+    /* Tabel user: sembunyikan kolom yang tidak terlalu penting di HP.
+       Dikecualikan dari .table-custom-clean (tabel Recent Activity di
+       Dashboard) karena tabel itu sengaja dibuat scroll horizontal agar
+       SEMUA kolom (termasuk Modified By & Status) tetap bisa diakses. */
+    .table:not(.table-custom-clean) th:nth-child(3),
+    .table:not(.table-custom-clean) td:nth-child(3),
+    .table:not(.table-custom-clean) th:nth-child(4),
+    .table:not(.table-custom-clean) td:nth-child(4) {
         display: none !important;
     }
     /* Tabel selalu bisa di-scroll horizontal */
@@ -699,9 +702,12 @@ body {
    12.13  SUPPORT TICKETS TABLE — compact di HP
    -------------------------------------------------------------------------- */
 @media (max-width: 767.98px) {
-    /* Kolom waktu sembunyikan di HP */
-    .table th:last-child,
-    .table td:last-child {
+    /* Kolom waktu sembunyikan di HP.
+       Dikecualikan dari .table-custom-clean (tabel Recent Activity di
+       Dashboard) karena kolom terakhirnya (Status) harus tetap tampil
+       lewat scroll horizontal, bukan disembunyikan. */
+    .table:not(.table-custom-clean) th:last-child,
+    .table:not(.table-custom-clean) td:last-child {
         display: none !important;
     }
     /* Pesan ticket: batasi tinggi agar tabel tidak terlalu panjang */
@@ -1195,4 +1201,135 @@ body {
 .recent-activity-scroll::-webkit-scrollbar-thumb {
     background-color: var(--border-color);
     border-radius: 4px;
+}
+
+/* ==========================================================================
+   DASHBOARD PAGE (dipindahkan dari dashboard.html)
+   ========================================================================== */
+
+/* Gaya Dasar Halaman */
+html, body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-body, #f1f5f9);
+    font-family: 'Inter', sans-serif;
+}
+
+.dashboard-wrapper { display: flex; flex-direction: column; min-width: 0; gap: 16px; padding: 16px 24px; max-width: 1750px; margin: 0 auto; width: 100%; }
+.middle-row { height: auto; }
+.bento-panel.bottom-row { 
+    display: flex; 
+    flex-direction: column; 
+    min-width: 0; 
+}
+.middle-row .bento-panel { min-height: 350px; min-width: 0; }
+
+.bento-panel { background-color: var(--bg-surface, #ffffff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 12px; padding: 16px; box-shadow: 0 4px 10px -4px rgba(0, 0, 0, 0.03); }
+
+.metric-command-card {
+    text-decoration: none; display: block; height: 84px; padding: 12px 16px; border-radius: 12px;
+    background-color: var(--bg-surface, #ffffff); border: 1px solid var(--border-color, #e2e8f0);
+    box-shadow: 0 4px 10px -4px rgba(0, 0, 0, 0.03); transition: all 0.2s ease; position: relative; overflow: hidden; cursor: pointer;
+}
+.metric-command-card:hover { transform: translateY(-2px); border-color: var(--bs-primary); }
+.metric-command-card.active { border-color: var(--bs-primary); box-shadow: 0 0 0 2px rgba(var(--bs-primary-rgb), 0.15); }
+.metric-command-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3.5px; height: 100%; background: var(--indicator-color, #cbd5e1); }
+.ind-warning { --indicator-color: #f59e0b; } .ind-info { --indicator-color: #0ea5e9; } .ind-danger { --indicator-color: #ef4444; }
+.ind-success { --indicator-color: #10b981; } .ind-secondary { --indicator-color: #64748b; } .ind-primary { --indicator-color: #0d6efd; }
+
+.proj-list-item {
+    display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; margin-bottom: 6px;
+    border-radius: 8px; background-color: var(--bg-body, #f8fafc); border: 1px solid var(--border-color);
+    cursor: pointer; transition: all 0.2s ease-in-out; color: var(--text-main);
+}
+.proj-list-item:hover { border-color: var(--bs-primary); transform: translateX(2px); }
+.proj-list-item.active { background-color: rgba(13, 110, 253, 0.06); border-color: rgba(13, 110, 253, 0.4); color: var(--bs-primary); }
+.proj-list-item .check-icon { opacity: 0; transform: scale(0.5); transition: all 0.2s ease; color: var(--bs-primary); }
+.proj-list-item.active .check-icon { opacity: 1; transform: scale(1); }
+
+/* Kontainer Tabel & Scroll Fix (Dashboard) */
+.dashboard-wrapper .table-responsive {
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    border-radius: 8px; 
+    border: 1px solid var(--border-color); 
+    background-color: var(--bg-surface, #ffffff);
+    max-height: 500px;
+}
+
+.dashboard-wrapper .table-responsive::-webkit-scrollbar { width: 5px; height: 5px; }
+.dashboard-wrapper .table-responsive::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 4px; }
+
+.table-custom-clean { 
+    width: 100% !important; 
+    min-width: 750px !important; 
+    margin-bottom: 0 !important;
+}
+
+.table-custom-clean th, 
+.table-custom-clean td { 
+    white-space: nowrap !important; /* Mencegah teks terlipat agar tabel melebar ke samping */
+}
+
+.table-custom-clean th { 
+    font-size: 0.65rem; 
+    text-transform: uppercase; 
+    letter-spacing: 0.05em; 
+    color: var(--text-muted); 
+    border-bottom: 1px solid var(--border-color); 
+    background-color: var(--bg-surface, #ffffff) !important; 
+    padding: 10px 14px; 
+    position: sticky; 
+    top: 0; 
+    z-index: 20; 
+}
+
+.table-custom-clean td { 
+    font-size: 0.78rem; 
+    border-bottom: 1px solid var(--border-color); 
+    color: var(--text-main); 
+    padding: 10px 14px; 
+}
+
+.table-custom-clean tr:last-child td { border-bottom: none; }
+
+/* Pengaturan khusus layar Laptop/Desktop */
+@media (min-width: 992px) {
+    .table-custom-clean {
+        table-layout: fixed !important;
+        min-width: 100% !important;
+    }
+    .table-custom-clean th, .table-custom-clean td {
+        white-space: normal !important;
+    }
+    .table-custom-clean th:nth-child(1), .table-custom-clean td:nth-child(1) { width: 28%; }
+    .table-custom-clean th:nth-child(2), .table-custom-clean td:nth-child(2) { width: 42%; }
+    .table-custom-clean th:nth-child(3), .table-custom-clean td:nth-child(3) { width: 18%; }
+    .table-custom-clean th:nth-child(4), .table-custom-clean td:nth-child(4) { width: 12%; text-align: right; }
+}
+
+/* ==========================================================================
+   FIX FINAL: MEMBUKA KUNCI SCROLL HORIZONTAL TABEL DASHBOARD DI HP
+   (Diletakkan di akhir file agar tetap menang atas aturan umum
+   .table-custom-clean di atas pada layar mobile.)
+   ========================================================================== */
+@media (max-width: 991.98px) {
+    /* Memastikan kontainer tabel di dashboard leluasa digeser secara horizontal */
+    .table-scroll_container, 
+    .table-scroll-container {
+        display: block !important;
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    /* Memaksa tabel memiliki lebar minimum yang lebih panjang dari layar HP 
+       sehingga kolom Status terdorong ke kanan dan bisa di-scroll sampai ujung */
+    .table-scroll-container .table-custom-clean,
+    .table-custom-clean {
+        min-width: 850px !important;
+        width: max-content !important;
+        table-layout: auto !important;
+    }
 }
