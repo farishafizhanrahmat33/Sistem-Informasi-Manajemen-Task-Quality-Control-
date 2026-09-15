@@ -140,12 +140,14 @@
                 </div>
 
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-                    <div class="d-flex align-items-center gap-1 overflow-x-auto pb-1" id="tableFilterTabs">
-                        <button type="button" data-filter="All" class="dashboard-filter-tab py-1 px-3 active" style="font-size: 0.7rem;">{{ _('All') }}</button>
-                        <button type="button" data-filter="Need Sample" class="dashboard-filter-tab py-1 px-3" style="font-size: 0.7rem;">{{ _('Need Sample') }}</button>
-                        <button type="button" data-filter="Sample Done" class="dashboard-filter-tab py-1 px-3" style="font-size: 0.7rem;">{{ _('Sample Done') }}</button>
-                        <button type="button" data-filter="Revision" class="dashboard-filter-tab py-1 px-3" style="font-size: 0.7rem;">{{ _('Revision') }}</button>
-                        <button type="button" data-filter="Ready" class="dashboard-filter-tab py-1 px-3" style="font-size: 0.7rem;">{{ _('Ready') }}</button>
+                    <div class="d-flex align-items-center gap-1 overflow-x-auto pb-1 flex-nowrap" id="tableFilterTabs" style="-webkit-overflow-scrolling: touch; scrollbar-width: none;">
+                        <button type="button" data-filter="All" class="dashboard-filter-tab py-1 px-3 flex-shrink-0 active" style="font-size: 0.7rem;">{{ _('All') }}</button>
+                        <button type="button" data-filter="Need Sample" class="dashboard-filter-tab py-1 px-3 flex-shrink-0" style="font-size: 0.7rem;">{{ _('Need Sample') }}</button>
+                        <button type="button" data-filter="Sample Done" class="dashboard-filter-tab py-1 px-3 flex-shrink-0" style="font-size: 0.7rem;">{{ _('Sample Done') }}</button>
+                        <button type="button" data-filter="Revision" class="dashboard-filter-tab py-1 px-3 flex-shrink-0" style="font-size: 0.7rem;">{{ _('Revision') }}</button>
+                        <button type="button" data-filter="Ready" class="dashboard-filter-tab py-1 px-3 flex-shrink-0" style="font-size: 0.7rem;">{{ _('Ready') }}</button>
+                        <button type="button" data-filter="Skipped" class="dashboard-filter-tab py-1 px-3 flex-shrink-0" style="font-size: 0.7rem;">{{ _('Skipped') }}</button>
+                        <button type="button" data-filter="Production" class="dashboard-filter-tab py-1 px-3 flex-shrink-0" style="font-size: 0.7rem;">{{ _('Production') }}</button>
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
