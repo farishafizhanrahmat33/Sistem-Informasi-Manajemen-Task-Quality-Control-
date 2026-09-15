@@ -10,3 +10,5 @@ database.db
 
 # Log
 *.log
+
+static/uploads/qr_codes/
