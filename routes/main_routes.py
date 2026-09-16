@@ -38,8 +38,12 @@ def dashboard():
     selected_filter = request.args.get('filter', 'All')
     selected_project = request.args.get('project', 'All')
 
-    projects_query = db.session.query(TaskModel.project_name).distinct().all()
-    projects = sorted([p[0] for p in projects_query if p[0]])
+    projects_raw = db.session.query(
+    TaskModel.project_name, 
+    func.count(TaskModel.id)
+    ).filter(TaskModel.project_name.isnot(None)).group_by(TaskModel.project_name).all()
+
+    projects = sorted([{'name': p[0], 'count': p[1]} for p in projects_raw if p[0]], key=lambda x: x['name'])
 
     project_list = selected_project.split(',') if selected_project != 'All' else []
 
@@ -61,6 +65,22 @@ def dashboard():
     skip_case = _cat_case(["Skipped", "Dilewati"])
     prod_case = case((TaskModel.sent_by_leader == True, 1), else_=0)
 
+    # Menyesuaikan waktu ke WIB (UTC+7) agar perhitungan harian akurat
+    wib_now = datetime.utcnow() + timedelta(hours=7)
+    today_start_wib = wib_now.replace(hour=0, minute=0, second=0, microsecond=0)
+    # Kembalikan ke UTC untuk dicocokkan dengan database
+    today_start = today_start_wib - timedelta(hours=7)
+
+    # Tambahkan kondisi perhitungan harian (hari ini)
+    done_today_case = case(
+        ((TaskModel.sent_by_leader == False) & (TaskModel.qc_category.in_(["Sample Done", "Sampel Selesai"])) & (TaskModel.updated_at >= today_start), 1),
+        else_=0
+    )
+    ready_today_case = case(
+        ((TaskModel.sent_by_leader == False) & (TaskModel.qc_category.in_(["Ready for Production", "Ready", "Siap untuk Produksi", "Siap"])) & (TaskModel.updated_at >= today_start), 1),
+        else_=0
+    )
+
     metrics_query = db.session.query(
         func.coalesce(func.sum(need_case), 0),
         func.coalesce(func.sum(done_case), 0),
@@ -68,15 +88,20 @@ def dashboard():
         func.coalesce(func.sum(ready_case), 0),
         func.coalesce(func.sum(skip_case), 0),
         func.coalesce(func.sum(prod_case), 0),
+        func.coalesce(func.sum(done_today_case), 0),   # <- Tambahan query Sample Done hari ini
+        func.coalesce(func.sum(ready_today_case), 0),  # <- Tambahan query Ready hari ini
     )
     if project_list:
         metrics_query = metrics_query.filter(TaskModel.project_name.in_(project_list))
 
-    need_n, done_n, rev_n, ready_n, skip_n, prod_n = metrics_query.one()
+    # Ekstrak hasil query
+    need_n, done_n, rev_n, ready_n, skip_n, prod_n, done_today_n, ready_today_n = metrics_query.one()
 
     metrics = {
         'need': need_n, 'done': done_n, 'rev': rev_n,
         'ready': ready_n, 'skip': skip_n, 'prod': prod_n,
+        'done_today': done_today_n,       # <- Lempar ke frontend
+        'ready_today': ready_today_n      # <- Lempar ke frontend
     }
     metrics['total'] = need_n + done_n + rev_n + ready_n + skip_n + prod_n
     metrics['verified'] = done_n + ready_n + prod_n
@@ -116,6 +141,7 @@ def dashboard():
         selected_filter=selected_filter,
         selected_project=selected_project,
         projects=projects
+        
     )
     
 # F-01: Autentikasi Login (Dev, Quality Control, Supervisor, Publik)
@@ -394,6 +420,22 @@ def api_dashboard_data():
     skip_case = _cat_case(["Skipped", "Dilewati"])
     prod_case = case((TaskModel.sent_by_leader == True, 1), else_=0)
 
+    # Menyesuaikan waktu ke WIB (UTC+7) agar perhitungan harian akurat
+    wib_now = datetime.utcnow() + timedelta(hours=7)
+    today_start_wib = wib_now.replace(hour=0, minute=0, second=0, microsecond=0)
+    # Kembalikan ke UTC untuk dicocokkan dengan database
+    today_start = today_start_wib - timedelta(hours=7)
+
+    # Tambahkan kondisi perhitungan harian (hari ini)
+    done_today_case = case(
+        ((TaskModel.sent_by_leader == False) & (TaskModel.qc_category.in_(["Sample Done", "Sampel Selesai"])) & (TaskModel.updated_at >= today_start), 1),
+        else_=0
+    )
+    ready_today_case = case(
+        ((TaskModel.sent_by_leader == False) & (TaskModel.qc_category.in_(["Ready for Production", "Ready", "Siap untuk Produksi", "Siap"])) & (TaskModel.updated_at >= today_start), 1),
+        else_=0
+    )
+
     metrics_query = db.session.query(
         func.coalesce(func.sum(need_case), 0),
         func.coalesce(func.sum(done_case), 0),
@@ -401,15 +443,20 @@ def api_dashboard_data():
         func.coalesce(func.sum(ready_case), 0),
         func.coalesce(func.sum(skip_case), 0),
         func.coalesce(func.sum(prod_case), 0),
+        func.coalesce(func.sum(done_today_case), 0),   # <- Tambahan query Sample Done hari ini
+        func.coalesce(func.sum(ready_today_case), 0),  # <- Tambahan query Ready hari ini
     )
     if project_list:
         metrics_query = metrics_query.filter(TaskModel.project_name.in_(project_list))
 
-    need_n, done_n, rev_n, ready_n, skip_n, prod_n = metrics_query.one()
+    # Ekstrak hasil query
+    need_n, done_n, rev_n, ready_n, skip_n, prod_n, done_today_n, ready_today_n = metrics_query.one()
 
     metrics = {
         'need': need_n, 'done': done_n, 'rev': rev_n,
         'ready': ready_n, 'skip': skip_n, 'prod': prod_n,
+        'done_today': done_today_n,       # <- Lempar ke frontend
+        'ready_today': ready_today_n      # <- Lempar ke frontend
     }
     metrics['total'] = need_n + done_n + rev_n + ready_n + skip_n + prod_n
     metrics['verified'] = done_n + ready_n + prod_n

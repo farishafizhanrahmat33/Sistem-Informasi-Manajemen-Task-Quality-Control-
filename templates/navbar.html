@@ -1,13 +1,35 @@
 <!-- templates/navbar.html -->
-<nav class="navbar navbar-custom px-4 py-3 d-flex justify-content-between align-items-center shadow-xs" style="background-color: var(--bg-surface); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 1030;">
-    <div class="d-flex align-items-center gap-3">
-        <!-- Tombol Menu -->
-        <button class="btn btn-outline-secondary btn-sm px-3 py-1 border shadow-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
-            {{ _('Menu') }}
+<header class="tw-font-sans tw-sticky tw-top-0 tw-z-40 tw-h-16 tw-flex tw-items-center tw-justify-between tw-gap-3 tw-px-4 md:tw-px-6"
+        style="background-color: var(--bg-surface); border-bottom: 1px solid var(--border-color); backdrop-filter: blur(6px);">
+    <div class="tw-flex tw-items-center tw-gap-3 tw-min-w-0">
+        <!-- Hamburger: hanya tampil di mobile, membuka sidebar persistent -->
+        <button type="button" onclick="toggleSidebar(true)"
+                class="lg:tw-hidden tw-w-9 tw-h-9 tw-flex-shrink-0 tw-rounded-lg tw-flex tw-items-center tw-justify-center tw-border"
+                style="border-color: var(--border-color); color: var(--text-main);">
+            <span class="material-symbols-outlined tw-text-[20px]">menu</span>
         </button>
-        <!-- Brand Info Sesuai Menu Sidebar -->
-        <div>
-            <span class="fw-bold fs-6 d-block tracking-tight" style="color: var(--text-main);">
+
+        <!-- BREADCRUMBS DINAMIS BERDASARKAN KATEGORI SIDEBAR -->
+        {% set current_cat = '' %}
+        {% if request.endpoint in ['main.dashboard', 'task.task_list', 'qr.qr_codes_page'] %}
+            {% set current_cat = _('Operations') %}
+        {% elif request.endpoint in ['main.user_management', 'main.view_tickets'] %}
+            {% set current_cat = _('Administration') %}
+        {% elif request.endpoint in ['main.support', 'main.faq', 'main.profile'] %}
+            {% set current_cat = _('System & Account') %}
+        {% else %}
+            {% set current_cat = _('General') %}
+        {% endif %}
+
+        <div class="tw-min-w-0 tw-flex tw-items-center tw-gap-2 tw-text-xs md:tw-text-sm">
+            <span class="material-symbols-outlined tw-text-[16px] tw-flex-shrink-0" style="color: var(--text-main); opacity: 0.5;">home</span>
+            <span style="color: var(--text-main); opacity: 0.3;">/</span>
+            <!-- Kategori Sidebar Dinamis -->
+            <span class="tw-font-medium tw-hidden sm:tw-inline" style="color: var(--text-main); opacity: 0.7;">{{ current_cat }}</span>
+            <span class="tw-hidden sm:tw-inline" style="color: var(--text-main); opacity: 0.3;">/</span>
+            
+            <!-- Nama Halaman Aktif -->
+            <span class="tw-font-bold tw-tracking-tight tw-truncate" style="color: var(--text-main);">
                 {% if request.endpoint == 'main.dashboard' %}
                     {{ _('Dashboard') }}
                 {% elif request.endpoint == 'task.task_list' %}
@@ -28,12 +50,17 @@
                     {{ _('Manage Task') }}
                 {% endif %}
             </span>
-            <span class="text-muted" style="font-size: 0.7rem; letter-spacing: 0.03em;"></span>
         </div>
     </div>
-</nav>
 
-<!-- KOTAK NOTIFIKASI GLOBAL (Melayang Bebas di Depan Layar) -->
+    <div class="tw-flex tw-items-center tw-gap-2">
+        <div class="tw-w-8 tw-h-8 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-text-white" style="background-color: var(--primary);">
+            <span class="material-symbols-outlined tw-text-[16px]">person</span>
+        </div>
+    </div>
+</header>
+
+<!-- KOTAK NOTIFIKASI GLOBAL -->
 <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999; margin-top: 70px; pointer-events: none;">
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}

@@ -1,95 +1,193 @@
 <!-- templates/sidebar.html -->
-<div class="offcanvas offcanvas-start enterprise-sidebar" tabindex="-1" id="sidebarMenu">
-    <div class="offcanvas-header p-4 pb-2 flex-shrink-0">
-        <h5 class="offcanvas-title fw-bold sidebar-brand-title">{{ _('MENU CONTROLS') }}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    
-    <div class="offcanvas-body p-0 d-flex flex-column" style="height: 100%; overflow: hidden;">
-        
-        <!-- BAGIAN TENGAH (DARI OPERATIONS SAMPAI PROFILE SETTINGS) - BISA DI-SCROLL -->
-        <div class="sidebar-menu-scrollable pt-3 px-0 flex-grow-1 overflow-y-auto" style="-webkit-overflow-scrolling: touch;">
-            
-            <!-- SECTION: OPERATIONS -->
-            <div class="mb-3">
-                <div class="sidebar-section-title px-4">{{ _('Operations') }}</div>
-                <div class="d-flex flex-column gap-1 px-2 mt-2">
-                    <!-- Menu Dashboard hanya muncul jika bukan Public/Publik -->
-                    {% if role != 'Public' and role != 'Publik' %}
-                    <a href="{{ url_for('main.dashboard') }}" class="sidebar-item">{{ _('Dashboard') }}</a>
-                    {% endif %}
-                    
-                    <a href="{{ url_for('task.task_list') }}" class="sidebar-item">{{ _('Task Management') }}</a>
-                    <a href="{{ url_for('qr.qr_codes_page') }}" class="sidebar-item">{{ _('QR Management') }}</a>
-                </div>
-            </div>
+<!-- Font & Tailwind runtime dimuat di sini (bukan di <head> tiap halaman) supaya
+     sidebar tetap konsisten di semua halaman yang meng-include partial ini.
+     Semua utility Tailwind pakai prefix "tw-" dan preflight dimatikan, jadi
+     TIDAK bentrok dengan Bootstrap/CSS lama yang masih dipakai halaman lain. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  window.tailwind && (tailwind.config = {
+    prefix: 'tw-',
+    corePlugins: { preflight: false },
+    theme: {
+      extend: {
+        colors: {
+          'shell-bg': '#09201F',
+          'shell-surface': '#0E2A29',
+          'shell-border': '#163836',
+          'shell-text': '#F1F5F9',
+          'shell-muted': '#648A86',
+          primary: '#0F766E',
+          'primary-dark': '#0D9488',
+          secondary: '#0284C7'
+        },
+        fontFamily: {
+          sans: ['Inter', 'sans-serif'],
+          mono: ['JetBrains Mono', 'monospace']
+        }
+      }
+    }
+  });
+</script>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; font-size: 20px; line-height: 1; vertical-align: middle; }
+</style>
 
-            <!-- SECTION: ADMINISTRATION (Khusus Developer) -->
-            {% if session.get('role') == 'Developer' or role == 'Developer' %}
-            <div class="mb-3">
-                <div class="sidebar-section-title px-4">{{ _('Administration') }}</div>
-                
-                <div class="d-flex flex-column gap-1 px-2 mt-2">
-                    <a href="{{ url_for('main.user_management') }}" class="sidebar-item">{{ _('User Management') }}</a>
-                    <a href="{{ url_for('main.view_tickets') }}" class="sidebar-item">{{ _('Support Tickets') }}</a>
-                </div>
-            </div>
-            {% endif %}
+<aside id="appSidebar"
+       class="tw-font-sans tw-fixed tw-left-0 tw-top-0 tw-h-screen tw-w-64 tw-bg-shell-bg tw-border-r tw-border-shell-border tw-z-50 tw-flex tw-flex-col tw-justify-between tw-select-none -tw-translate-x-full lg:tw-translate-x-0 tw-transition-transform tw-duration-200">
+    <div class="tw-flex tw-flex-col tw-flex-1 tw-min-h-0">
 
-            <!-- SECTION: UTILITIES -->
-            <div class="mb-4">
-                <div class="sidebar-section-title px-4">{{ _('System & Account') }}</div>
-                <div class="d-flex flex-column gap-1 px-2">
-                    <a href="{{ url_for('main.support') }}" class="sidebar-item">{{ _('Customer Service') }}</a>
-                    <a href="{{ url_for('main.faq') }}" class="sidebar-item">{{ _('FAQ & Guidance') }}</a>
-                    <a href="{{ url_for('main.profile') }}" class="sidebar-item">{{ _('Profile Settings') }}</a>
+        <!-- Brand -->
+        <div class="tw-h-16 tw-px-4 tw-flex tw-items-center tw-justify-between tw-gap-2 tw-border-b tw-border-shell-border/60 tw-flex-shrink-0">
+            <div class="tw-flex tw-items-center tw-gap-2">
+                <div class="tw-w-9 tw-h-9 tw-rounded-lg tw-bg-primary/80 tw-border tw-border-primary-dark/30 tw-flex tw-items-center tw-justify-center tw-shadow-inner">
+                    <span class="material-symbols-outlined tw-text-white">verified</span>
+                </div>
+                <div class="tw-flex tw-flex-col">
+                    <span class="tw-text-shell-text tw-font-bold tw-text-sm tw-leading-none tw-tracking-tight">{{ _('QC SYSTEM') }}</span>
+                    <span class="tw-font-mono tw-text-primary/80 tw-uppercase tw-tracking-wider tw-text-[10px] tw-mt-0.5 tw-font-medium">{{ _('Control Center') }}</span>
                 </div>
             </div>
+            <button type="button" onclick="toggleSidebar(false)" class="lg:tw-hidden tw-w-7 tw-h-7 tw-rounded tw-flex tw-items-center tw-justify-center tw-text-shell-muted hover:tw-text-white hover:tw-bg-shell-surface tw-transition-colors">
+                <span class="material-symbols-outlined tw-text-[18px]">close</span>
+            </button>
         </div>
 
-        <!-- FOOTER: AUTHENTICATION & THEME (TETAP / STICKY DI BAWAH & TIDAK IKUT SCROLL) -->
-        <div class="sidebar-sticky-footer px-3 pb-4 border-top pt-3 flex-shrink-0" style="background-color: var(--bg-surface); z-index: 10;">
-            
-            <div class="mb-3">
-                {% if role == 'Public' or role == 'Publik' %}
-                    <button type="button" class="btn btn-dark w-100 py-2 fw-semibold sidebar-btn-action" data-bs-dismiss="offcanvas" data-bs-toggle="modal" data-bs-target="#loginModal">
-                        {{ _('Sign In') }}
-                    </button>
-                {% else %}
-                    <div class="d-flex flex-column gap-2">
-                        <div class="text-muted small px-1 role-text">
-                            <strong class="role-value">{{ role }}</strong>
-                        </div>
-                        <a href="{{ url_for('main.logout') }}" class="btn btn-outline-danger w-100 py-2 fw-medium sidebar-btn-action">
-                            {{ _('Sign Out') }}
-                        </a>
-                    </div>
-                {% endif %}
-            </div>
+        <!-- Nav (scrollable) -->
+        <div class="tw-overflow-y-auto tw-flex-1 tw-px-2 tw-py-3 tw-space-y-4">
 
-            <div class="dropdown mb-2">
-                <button class="btn w-100 text-start d-flex align-items-center justify-content-between py-2 px-3 dropdown-toggle shadow-none theme-dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    {% if get_locale() == 'id' %}🇮🇩 {{ _('Bahasa Indonesia') }}{% else %}🇬🇧 {{ _('English') }}{% endif %}
+            <!-- OPERATIONS -->
+            <nav class="tw-flex tw-flex-col tw-gap-1">
+                <div class="tw-px-2 tw-pt-1 tw-pb-1 tw-text-[11px] tw-font-semibold tw-uppercase tw-tracking-wider tw-text-shell-muted">{{ _('Operations') }}</div>
+
+                {% if role != 'Public' and role != 'Publik' %}
+                <a href="{{ url_for('main.dashboard') }}"
+                   class="tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-all tw-duration-150
+                          {% if request.endpoint == 'main.dashboard' %} tw-bg-primary tw-text-white tw-shadow-sm tw-border tw-border-primary-dark/40
+                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text {% endif %}">
+                    <span class="material-symbols-outlined tw-text-[18px]">space_dashboard</span>
+                    <span>{{ _('Dashboard') }}</span>
+                </a>
+                {% endif %}
+
+                <a href="{{ url_for('task.task_list') }}"
+                   class="tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-all tw-duration-150
+                          {% if request.endpoint == 'task.task_list' %} tw-bg-primary tw-text-white tw-shadow-sm tw-border tw-border-primary-dark/40
+                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text {% endif %}">
+                    <span class="material-symbols-outlined tw-text-[18px]">assignment</span>
+                    <span>{{ _('Task Management') }}</span>
+                </a>
+
+                <a href="{{ url_for('qr.qr_codes_page') }}"
+                   class="tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-all tw-duration-150
+                          {% if request.endpoint == 'qr.qr_codes_page' %} tw-bg-primary tw-text-white tw-shadow-sm tw-border tw-border-primary-dark/40
+                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text {% endif %}">
+                    <span class="material-symbols-outlined tw-text-[18px]">qr_code_scanner</span>
+                    <span>{{ _('QR Management') }}</span>
+                </a>
+            </nav>
+
+            <!-- ADMINISTRATION (Developer only) -->
+            {% if session.get('role') == 'Developer' or role == 'Developer' %}
+            <nav class="tw-flex tw-flex-col tw-gap-1">
+                <div class="tw-px-2 tw-pt-1 tw-pb-1 tw-text-[11px] tw-font-semibold tw-uppercase tw-tracking-wider tw-text-shell-muted">{{ _('Administration') }}</div>
+
+                <a href="{{ url_for('main.user_management') }}"
+                   class="tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-all tw-duration-150
+                          {% if request.endpoint == 'main.user_management' %} tw-bg-primary tw-text-white tw-shadow-sm tw-border tw-border-primary-dark/40
+                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text {% endif %}">
+                    <span class="material-symbols-outlined tw-text-[18px]">group</span>
+                    <span>{{ _('User Management') }}</span>
+                </a>
+
+                <a href="{{ url_for('main.view_tickets') }}"
+                   class="tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-all tw-duration-150
+                          {% if request.endpoint == 'main.view_tickets' %} tw-bg-primary tw-text-white tw-shadow-sm tw-border tw-border-primary-dark/40
+                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text {% endif %}">
+                    <span class="material-symbols-outlined tw-text-[18px]">confirmation_number</span>
+                    <span>{{ _('Support Tickets') }}</span>
+                </a>
+            </nav>
+            {% endif %}
+
+            <!-- SYSTEM & ACCOUNT -->
+            <nav class="tw-flex tw-flex-col tw-gap-1">
+                <div class="tw-px-2 tw-pt-1 tw-pb-1 tw-text-[11px] tw-font-semibold tw-uppercase tw-tracking-wider tw-text-shell-muted">{{ _('System & Account') }}</div>
+
+                <a href="{{ url_for('main.support') }}"
+                   class="tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-all tw-duration-150
+                          {% if request.endpoint == 'main.support' %} tw-bg-primary tw-text-white tw-shadow-sm tw-border tw-border-primary-dark/40
+                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text {% endif %}">
+                    <span class="material-symbols-outlined tw-text-[18px]">headset_mic</span>
+                    <span>{{ _('Customer Service') }}</span>
+                </a>
+
+                <a href="{{ url_for('main.faq') }}"
+                   class="tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-all tw-duration-150
+                          {% if request.endpoint == 'main.faq' %} tw-bg-primary tw-text-white tw-shadow-sm tw-border tw-border-primary-dark/40
+                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text {% endif %}">
+                    <span class="material-symbols-outlined tw-text-[18px]">menu_book</span>
+                    <span>{{ _('FAQ & Guidance') }}</span>
+                </a>
+
+                <a href="{{ url_for('main.profile') }}"
+                   class="tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-all tw-duration-150
+                          {% if request.endpoint == 'main.profile' %} tw-bg-primary tw-text-white tw-shadow-sm tw-border tw-border-primary-dark/40
+                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text {% endif %}">
+                    <span class="material-symbols-outlined tw-text-[18px]">manage_accounts</span>
+                    <span>{{ _('Profile Settings') }}</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Footer: auth + language + theme -->
+    <div class="tw-p-2 tw-bg-black/20 tw-border-t tw-border-shell-border tw-flex tw-flex-col tw-gap-2 tw-flex-shrink-0">
+
+        {% if role == 'Public' or role == 'Publik' %}
+        <button type="button" class="tw-w-full tw-py-2 tw-rounded-lg tw-bg-primary tw-text-white tw-text-sm tw-font-semibold hover:tw-bg-primary-dark tw-transition-colors" data-bs-toggle="modal" data-bs-target="#loginModal">
+            {{ _('Sign In') }}
+        </button>
+        {% else %}
+        <div class="tw-flex tw-items-center tw-gap-2 tw-p-2 tw-rounded-lg tw-bg-shell-surface tw-border tw-border-shell-border">
+            <div class="tw-relative tw-flex-shrink-0">
+                <div class="tw-w-8 tw-h-8 tw-rounded-full tw-bg-primary-dark tw-text-white tw-flex tw-items-center tw-justify-center">
+                    <span class="material-symbols-outlined tw-text-[16px]">person</span>
+                </div>
+                <span class="tw-absolute tw-bottom-0 tw-right-0 tw-w-2 tw-h-2 tw-rounded-full tw-bg-emerald-500 tw-ring-2 tw-ring-shell-surface"></span>
+            </div>
+            <div class="tw-flex tw-flex-col tw-min-w-0 tw-flex-1">
+                <span class="tw-text-shell-text tw-text-xs tw-font-medium">{{ _('Signed in as') }}</span>
+                <span class="tw-font-mono tw-text-primary/90 tw-text-[11px] tw-truncate">{{ role }}</span>
+            </div>
+            <a href="{{ url_for('main.logout') }}" title="{{ _('Sign Out') }}" class="tw-w-7 tw-h-7 tw-rounded tw-flex tw-items-center tw-justify-center tw-text-shell-muted hover:tw-bg-black/30 hover:tw-text-rose-400 tw-transition-colors">
+                <span class="material-symbols-outlined tw-text-[16px]">logout</span>
+            </a>
+        </div>
+        {% endif %}
+
+        <div class="tw-flex tw-items-center tw-gap-1.5">
+            <!-- Language switcher -->
+            <div class="dropup tw-flex-1">
+                <button class="tw-w-full tw-flex tw-items-center tw-justify-center tw-gap-1 tw-py-1.5 tw-rounded-md tw-bg-shell-surface tw-border tw-border-shell-border tw-text-shell-text tw-text-xs tw-font-medium hover:tw-bg-black/30 tw-transition-colors" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    {% if get_locale() == 'id' %}🇮🇩 ID{% else %}🇬🇧 EN{% endif %}
                 </button>
-                <ul class="dropdown-menu w-100 shadow-sm border-0 py-1 theme-dropdown-menu">
-                    <li>
-                        <a class="dropdown-item py-2 px-3 small {% if get_locale() == 'id' %}active{% endif %}" href="{{ url_for('main.set_language', lang_code='id') }}">
-                            🇮🇩 {{ _('Bahasa Indonesia') }}
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item py-2 px-3 small {% if get_locale() == 'en' %}active{% endif %}" href="{{ url_for('main.set_language', lang_code ='en') }}">
-                            🇬🇧 {{ _('English') }}
-                        </a>
-                    </li>
+                <ul class="dropdown-menu shadow-sm border-0 py-1 theme-dropdown-menu">
+                    <li><a class="dropdown-item py-2 px-3 small {% if get_locale() == 'id' %}active{% endif %}" href="{{ url_for('main.set_language', lang_code='id') }}">🇮🇩 {{ _('Bahasa Indonesia') }}</a></li>
+                    <li><a class="dropdown-item py-2 px-3 small {% if get_locale() == 'en' %}active{% endif %}" href="{{ url_for('main.set_language', lang_code='en') }}">🇬🇧 {{ _('English') }}</a></li>
                 </ul>
             </div>
 
-            <div class="dropdown">
-                <button class="btn w-100 text-start d-flex align-items-center justify-content-between py-2 px-3 dropdown-toggle shadow-none theme-dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    {{ _('Interface Theme') }}
+            <!-- Theme switcher -->
+            <div class="dropup tw-flex-1">
+                <button class="tw-w-full tw-flex tw-items-center tw-justify-center tw-gap-1 tw-py-1.5 tw-rounded-md tw-bg-shell-surface tw-border tw-border-shell-border tw-text-shell-text tw-text-xs tw-font-medium hover:tw-bg-black/30 tw-transition-colors" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="material-symbols-outlined tw-text-[15px]">contrast</span>
+                    {{ _('Theme') }}
                 </button>
-                <ul class="dropdown-menu w-100 shadow-sm border-0 py-1 theme-dropdown-menu">
+                <ul class="dropdown-menu shadow-sm border-0 py-1 theme-dropdown-menu">
                     <li><a class="dropdown-item py-2 px-3 small" href="javascript:void(0);" onclick="setTheme('light')">{{ _('Light') }}</a></li>
                     <li><a class="dropdown-item py-2 px-3 small" href="javascript:void(0);" onclick="setTheme('dark')">{{ _('Dark') }}</a></li>
                     <li><a class="dropdown-item py-2 px-3 small" href="javascript:void(0);" onclick="setTheme('system')">{{ _('System') }}</a></li>
@@ -97,4 +195,29 @@
             </div>
         </div>
     </div>
-</div>
+</aside>
+
+<!-- Backdrop mobile -->
+<div id="sidebarBackdrop" onclick="toggleSidebar(false)" class="tw-hidden tw-fixed tw-inset-0 tw-bg-black/50 tw-z-40 lg:tw-hidden"></div>
+
+<script>
+    document.body.classList.add('has-app-sidebar');
+
+    function toggleSidebar(open) {
+        const aside = document.getElementById('appSidebar');
+        const backdrop = document.getElementById('sidebarBackdrop');
+        if (!aside) return;
+        const willOpen = (typeof open === 'boolean') ? open : aside.classList.contains('-tw-translate-x-full');
+        aside.classList.toggle('-tw-translate-x-full', !willOpen);
+        aside.classList.toggle('tw-translate-x-0', willOpen);
+        if (backdrop) backdrop.classList.toggle('tw-hidden', !willOpen);
+    }
+    window.toggleSidebar = toggleSidebar;
+
+    // Tutup sidebar mobile otomatis saat sebuah menu diklik
+    document.getElementById('appSidebar') && document.getElementById('appSidebar').querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', function () {
+            if (window.innerWidth < 1024) toggleSidebar(false);
+        });
+    });
+</script>

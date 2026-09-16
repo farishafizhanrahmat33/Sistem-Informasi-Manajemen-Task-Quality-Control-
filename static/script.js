@@ -1,4 +1,11 @@
-// --- 1. LOGIKA TEMA (Global) ---
+/* ==========================================================================
+   APEX QA CONTROL CENTER - MAIN JAVASCRIPT
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. PROFIL SETTINGS & GLOBAL THEME LOGIC
+   ========================================================================== */
 function setTheme(mode) {
     let activeTheme = mode;
     if (mode === 'system') {
@@ -41,19 +48,11 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e =
 });
 
 
-// --- 2. LOGIKA TASK MANAGEMENT ---
-// PENTING: pencarian, filter (project/package), tab status, dan sort SEKARANG
-// dikerjakan oleh SERVER (Flask), bukan JavaScript. Alasannya: browser hanya
-// pernah menerima 50 task per halaman (hasil pagination), jadi menghitung atau
-// menyaring data lewat JS hanya akan melihat 50 data itu saja -- bukan seluruh
-// data yang ada di database. Sekarang JS hanya bertugas:
-//   1. Menyusun ulang URL (query string) sesuai pilihan user, lalu reload halaman
-//      supaya Flask yang menghitung & memfilter dari SELURUH data.
-//   2. Menampilkan progresif ("Load More") task yang sudah dikirim server
-//      untuk halaman saat ini (tanpa menyaring ulang).
+/* ==========================================================================
+   2. TASK MANAGEMENT (Pencarian, Filter Drawer, Sinkronisasi Data)
+   ========================================================================== */
 let itemsToShow = 15;
 
-// Ambil filter/search/sort yang sedang aktif dari URL saat ini
 function getCurrentFilterState() {
     const params = new URLSearchParams(window.location.search);
     return {
@@ -66,8 +65,6 @@ function getCurrentFilterState() {
     };
 }
 
-// Bangun URL baru dengan filter yang di-override, lalu reset ke page 1
-// (karena hasil filter/search/sort baru bisa jadi jumlah halamannya berbeda)
 function buildFilterURL(overrides = {}) {
     const state = Object.assign(getCurrentFilterState(), overrides);
     const newParams = new URLSearchParams();
@@ -96,8 +93,6 @@ function initTabs() {
     });
 }
 
-// Dipanggil saat dropdown Project/Package/Sort berubah, atau saat user
-// menekan Enter di kolom pencarian -> langsung ke server dengan filter baru
 function resetAndFilter() {
     const projectEl = document.getElementById('projectFilter');
     const packageEl = document.getElementById('packageFilter');
@@ -114,19 +109,12 @@ function resetAndFilter() {
     });
 }
 
-// Kotak pencarian utama (Task ID/Spec/Deskripsi): mengetik perlu menekan Enter
-// (navigateWithFilters reload seluruh halaman, jadi tidak ideal kalau reload
-// tiap huruf diketik). TAPI kalau dikosongkan/dihapus semua, langsung jalan
-// otomatis tanpa perlu Enter.
 function handleMainSearchInput(input) {
     if (input.value.trim() === '') {
         resetAndFilter();
     }
 }
 
-// Task yang tampil di HTML adalah task hasil query server untuk page ini saja
-// (sudah difilter & diurutkan oleh server). Load More di sini hanya menampilkan
-// lebih banyak dari batch yang sudah dikirim, tidak menyaring ulang apa pun.
 function initTaskDisplay() {
     const container = document.getElementById('taskContainer');
     if (!container) return;
@@ -155,7 +143,6 @@ function renderLoadMoreButton(totalItems) {
     }
 }
 
-// FUNGSI SINKRONISASI DATA PINTAR
 async function syncDataNow() {
     try {
         const response = await fetch(window.location.href);
@@ -174,36 +161,27 @@ async function syncDataNow() {
 }
 
 async function autoUpdateTasks() {
-    // Jangan update jika modal terbuka agar pekerjaan pengguna tidak terganggu
     if (!document.getElementById('taskContainer') || document.querySelector('.modal.show') || document.body.classList.contains('modal-open')) return;
     syncDataNow();
 }
 
-
-// --- 3. EVENT LISTENERS UTAMA ---
 document.addEventListener("DOMContentLoaded", () => {
     initTabs();
     initTaskDisplay();
     setInterval(autoUpdateTasks, 5000);
 });
 
-// AUTO SINKRONISASI KETIKA MODAL DITUTUP
 document.addEventListener('hidden.bs.modal', function () {
-    // Jika user baru saja menutup modal task, diam-diam perbarui kartu di belakangnya
     setTimeout(syncDataNow, 300);
 });
 
-/* ==========================================================================
-   AJAX FORM SUBMISSION (Simpan Tanpa Reload Halaman / Modal Hilang)
-   ========================================================================== */
 document.addEventListener('submit', async function(e) {
-    // Cegat hanya form yang ada hubungannya dengan Update, Send, atau Skip
     if (e.target && (
         e.target.action.includes('/update/') || 
         e.target.action.includes('/toggle_send/') || 
         e.target.action.includes('/toggle_skip/')
     )) {
-        e.preventDefault(); // Hentikan sifat reload halaman bawaan HTML
+        e.preventDefault(); 
         
         const form = e.target;
         const submitBtn = form.querySelector('button[type="submit"]');
@@ -212,24 +190,19 @@ document.addEventListener('submit', async function(e) {
         const originalText = submitBtn.innerHTML;
         const originalClass = submitBtn.className;
         
-        // Buat tombol jadi indikator loading
         submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
         submitBtn.disabled = true;
 
         try {
             const formData = new FormData(form);
-            // Kirim data ke Python (Backend) di belakang layar
             const response = await fetch(form.action, {
                 method: 'POST',
                 body: formData
             });
 
             if (response.ok) {
-                // Beri tahu user bahwa data sukses disimpan
                 submitBtn.innerHTML = '✓ Success!';
                 submitBtn.className = 'btn btn-success w-100 py-2 fw-bold text-white';
-                
-                // Kembalikan teks tombol setelah 2 detik
                 setTimeout(() => {
                     submitBtn.innerHTML = originalText;
                     submitBtn.className = originalClass;
@@ -248,364 +221,7 @@ document.addEventListener('submit', async function(e) {
     }
 });
 
-
-/* ==========================================================================
-   UPLOAD QR PDF -- CHUNKED PER-HALAMAN
-   ==========================================================================
-   Kenapa dipecah begini: kalau PDF-nya banyak halaman, render 1 request
-   untuk SEMUA halaman sekaligus bisa lebih lama dari batas timeout server/
-   reverse-proxy (yang konfigurasinya di luar kendali kita) -- hasilnya
-   Internal Server Error + browser menampilkan dialog "Confirm Form
-   Resubmission". Solusinya: browser yang memproses satu halaman per
-   request (lewat /upload_qr/init lalu /upload_qr/page berkali-kali), jadi
-   tiap request ke server selalu singkat, berapa pun jumlah halamannya.
-
-   INTEGRASI KE TEMPLATE (qr_management.html):
-   Form upload cukup diberi atribut id="qrUploadForm" dan biarkan input
-   file-nya tetap bernama "qr_file" seperti sekarang. Kalau mau progress bar
-   ditampilkan, tambahkan elemen ini di dalam/dekat form (opsional -- kalau
-   tidak ada, upload tetap jalan, hanya saja tanpa progress bar visual):
-
-     <div id="qrUploadProgressWrap" class="d-none mt-2">
-       <div class="progress">
-         <div id="qrUploadProgressBar" class="progress-bar" style="width:0%">0%</div>
-       </div>
-       <small id="qrUploadProgressText" class="text-muted"></small>
-     </div>
-
-   Tombol submit form idealnya punya id="qrUploadSubmitBtn" supaya bisa
-   di-disable otomatis selama proses upload berjalan.
-   ========================================================================== */
-
-async function handleQrUploadSubmit(form) {
-    const fileInput = form.querySelector('input[name="qr_file"]');
-    const submitBtn = form.querySelector('#qrUploadSubmitBtn') || form.querySelector('button[type="submit"]');
-    const progressWrap = document.getElementById('qrUploadProgressWrap');
-    const progressBar = document.getElementById('qrUploadProgressBar');
-    const progressText = document.getElementById('qrUploadProgressText');
-
-    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
-        alert('Pilih file PDF terlebih dahulu.');
-        return;
-    }
-
-    const originalBtnHtml = submitBtn ? submitBtn.innerHTML : null;
-    if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Uploading...';
-    }
-    if (progressWrap) progressWrap.classList.remove('d-none');
-
-    function setProgress(done, total, label) {
-        if (!progressBar) return;
-        const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-        progressBar.style.width = pct + '%';
-        progressBar.innerText = pct + '%';
-        if (progressText) progressText.innerText = label || `${done} / ${total} halaman`;
-    }
-
-    let baseCode = null;
-    let hadFailures = false;
-
-    try {
-        // 1) INIT: kirim file sekali, server balas total halaman + halaman
-        //    mana saja yang sudah pernah sukses dari percobaan sebelumnya
-        //    (kalau file persis sama, misal upload sebelumnya terputus).
-        const initForm = new FormData();
-        initForm.append('qr_file', fileInput.files[0]);
-
-        const initResp = await fetch('/upload_qr/init', { method: 'POST', body: initForm });
-        const initData = await initResp.json();
-
-        if (!initResp.ok || initData.error) {
-            throw new Error(initData.error || 'Gagal memulai upload.');
-        }
-
-        baseCode = initData.base_code;
-        const fileHash = initData.file_hash;
-        const totalPages = initData.total_pages;
-        const alreadyDone = new Set(initData.already_done || []);
-
-        let doneCount = alreadyDone.size;
-        setProgress(doneCount, totalPages);
-
-        // 2) PER-HALAMAN: proses satu-satu secara berurutan. Kalau koneksi
-        //    putus di tengah, tinggal upload ulang file yang sama -- halaman
-        //    yang sudah sukses otomatis dilewati (dicek server via hash).
-        const failedPages = [];
-        for (let page = 1; page <= totalPages; page++) {
-            if (alreadyDone.has(page)) continue;
-
-            const pageForm = new FormData();
-            pageForm.append('base_code', baseCode);
-            pageForm.append('file_hash', fileHash);
-            pageForm.append('page', String(page));
-
-            try {
-                const pageResp = await fetch('/upload_qr/page', { method: 'POST', body: pageForm });
-                const pageData = await pageResp.json();
-
-                if (!pageResp.ok || pageData.error) {
-                    failedPages.push(page);
-                } else if (pageData.status === 'failed') {
-                    failedPages.push(page);
-                }
-            } catch (err) {
-                // Koneksi putus di tengah satu halaman -- catat gagal, lanjut
-                // ke halaman berikutnya, jangan hentikan seluruh proses.
-                failedPages.push(page);
-            }
-
-            doneCount++;
-            setProgress(doneCount, totalPages);
-        }
-
-        hadFailures = failedPages.length > 0;
-
-        // 3) FINALIZE: beres-beres file sementara di server.
-        const finalizeForm = new FormData();
-        finalizeForm.append('base_code', baseCode);
-        finalizeForm.append('had_failures', hadFailures ? '1' : '0');
-        await fetch('/upload_qr/finalize', { method: 'POST', body: finalizeForm });
-
-        if (hadFailures) {
-            alert(`Upload selesai, tapi ${failedPages.length} halaman gagal diproses (halaman: ${failedPages.join(', ')}). Upload file yang SAMA lagi untuk mencoba ulang khusus halaman yang gagal.`);
-        }
-
-    } catch (err) {
-        alert('Upload gagal: ' + err.message);
-    } finally {
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalBtnHtml;
-        }
-        if (progressWrap) progressWrap.classList.add('d-none');
-        fileInput.value = '';
-        // Muat ulang daftar QR supaya kartu/scene yang baru langsung terlihat.
-        window.location.reload();
-    }
-}
-
-document.addEventListener('submit', function (e) {
-    const form = e.target;
-    if (form && (form.id === 'qrUploadForm' || (form.action && form.action.includes('/upload_qr') && !form.action.includes('/upload_qr/')))) {
-        e.preventDefault();
-        handleQrUploadSubmit(form);
-    }
-});
-
-
-// Tombol kembali ke atas
-window.addEventListener('scroll', function() {
-    const btn = document.getElementById('scrollToTopBtn');
-    if (btn) {
-        if (window.pageYOffset > 300) {
-            btn.classList.remove('d-none'); btn.classList.add('d-flex');
-        } else {
-            btn.classList.remove('d-flex'); btn.classList.add('d-none');
-        }
-    }
-});
-
-const scrollToTopBtn = document.getElementById('scrollToTopBtn');
-if (scrollToTopBtn) {
-    scrollToTopBtn.addEventListener('click', function() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-}
-
-// FITUR PENAMPIL PDF DOKUMEN
-function openPdfViewer(fileUrl, fileName) {
-    document.getElementById('pdfFileName').innerText = fileName;
-    document.getElementById('pdfIframe').src = fileUrl + "#toolbar=0&navpanes=0&scrollbar=0";
-    document.getElementById('btnPdfFullscreen').href = fileUrl;
-    
-    const pdfModalEl = document.getElementById('pdfViewerModal');
-    if (pdfModalEl) {
-        const myModal = new bootstrap.Modal(pdfModalEl);
-        myModal.show();
-    }
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-    const pdfModalEl = document.getElementById('pdfViewerModal');
-    if (pdfModalEl) {
-        pdfModalEl.addEventListener('hidden.bs.modal', function () {
-            const pdfIframe = document.getElementById('pdfIframe');
-            const btnPdfFullscreen = document.getElementById('btnPdfFullscreen');
-            if (pdfIframe) pdfIframe.src = "";
-            if (btnPdfFullscreen) btnPdfFullscreen.href = "#";
-        });
-    }
-});
-
-// CUSTOM AUTOCOMPLETE DROPDOWN UNTUK INPUT PROYEK
-document.addEventListener("DOMContentLoaded", function() {
-    const input = document.getElementById('projectNameInput');
-    const list = document.getElementById('projectSuggestionsList');
-    
-    if (input && list) {
-        const items = list.querySelectorAll('.project-suggestion-item');
-        input.addEventListener('focus', function() {
-            if (items.length > 0) list.style.display = 'block';
-        });
-        
-        input.addEventListener('input', function() {
-            const filter = input.value.toLowerCase().trim();
-            let hasVisible = false;
-            items.forEach(item => {
-                if (item.textContent.toLowerCase().includes(filter)) {
-                    item.style.display = 'block';
-                    hasVisible = true;
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-            list.style.display = (hasVisible && filter !== '') ? 'block' : (items.length > 0 && filter === '' ? 'block' : 'none');
-        });
-        
-        items.forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-                input.value = this.getAttribute('data-value');
-                list.style.display = 'none';
-            });
-        });
-        
-        document.addEventListener('click', function(e) {
-            if (!input.contains(e.target) && !list.contains(e.target)) list.style.display = 'none';
-        });
-    }
-});
-
-// AUTO-DISMISS FLASH NOTIFICATION
-document.addEventListener("DOMContentLoaded", function() {
-    const alerts = document.querySelectorAll('.alert');
-    if (alerts.length > 0) {
-        setTimeout(function() {
-            alerts.forEach(alertEl => {
-                const bsAlert = bootstrap.Alert.getOrCreateInstance(alertEl);
-                if (bsAlert) bsAlert.close();
-            });
-        }, 3000);
-    }
-});
-
-
-function filterAndSortCards() {
-    const stationFilter = document.getElementById('stationFilter');
-    const sortField = document.getElementById('sortField');
-    const sortOrder = document.getElementById('sortOrder');
-    const container = document.getElementById('qrCardsContainer');
-    const badge = document.getElementById('activeFilterBadge');
-    
-    if (!container) return;
-
-    const filterVal = stationFilter ? stationFilter.value : 'All';
-    const fieldVal = sortField ? sortField.value : 'scene';
-    const sortVal = sortOrder ? sortOrder.value : 'asc';
-    const cards = Array.from(container.getElementsByClassName('qr-card-item'));
-
-    // Indikator Badge aktif/tidak
-    if (badge) {
-        if (filterVal !== 'All') {
-            badge.classList.remove('d-none');
-        } else {
-            badge.classList.add('d-none');
-        }
-    }
-
-    // Filter berdasarkan Station
-    cards.forEach(card => {
-        const subtitle = card.getAttribute('data-subtitle');
-        if (filterVal === 'All' || subtitle === filterVal) {
-            card.style.display = '';
-        } else {
-            card.style.display = 'none';
-        }
-    });
-
-    // Urutkan kartu berdasarkan field yang dipilih (Scene Number atau Station Name)
-    cards.sort((a, b) => {
-        if (fieldVal === 'station') {
-            const subA = (a.getAttribute('data-subtitle') || '').toLowerCase();
-            const subB = (b.getAttribute('data-subtitle') || '').toLowerCase();
-            const comparison = subA.localeCompare(subB);
-            return sortVal === 'asc' ? comparison : -comparison;
-        } else {
-            // Default: Scene Number
-            const sceneA = parseInt(a.getAttribute('data-scene')) || 0;
-            const sceneB = parseInt(b.getAttribute('data-scene')) || 0;
-            return sortVal === 'asc' ? (sceneA - sceneB) : (sceneB - sceneA);
-        }
-    });
-
-    // Susun ulang urutan elemen di dalam container HTML
-    cards.forEach(card => container.appendChild(card));
-}
-
-// Fungsi untuk masuk ke mode fullscreen dan menampilkan tombol keluar
-function toggleVideoFullscreen(wrapperId) {
-    const elem = document.getElementById(wrapperId);
-    const exitBtn = elem.querySelector('.exit-fs-btn');
-
-    if (!document.fullscreenElement) {
-        if (elem.requestFullscreen) {
-            elem.requestFullscreen();
-        } else if (elem.webkitRequestFullscreen) { /* Safari / Mobile */
-            elem.webkitRequestFullscreen();
-        } else if (elem.msRequestFullscreen) { /* IE/Edge */
-            elem.msRequestFullscreen();
-        }
-        // Munculkan tombol keluar saat masuk fullscreen
-        if (exitBtn) {
-            exitBtn.classList.remove('d-none');
-            exitBtn.classList.add('d-flex');
-        }
-    } else {
-        exitVideoFullscreen(wrapperId);
-    }
-}
-
-// Fungsi khusus untuk keluar dari fullscreen
-function exitVideoFullscreen(wrapperId) {
-    const elem = document.getElementById(wrapperId);
-    const exitBtn = elem.querySelector('.exit-fs-btn');
-
-    if (document.fullscreenElement || document.webkitFullscreenElement) {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) {
-            document.msExitFullscreen();
-        }
-    }
-    // Sembunyikan kembali tombol keluar saat kembali normal
-    if (exitBtn) {
-        exitBtn.classList.remove('d-flex');
-        exitBtn.classList.add('d-none');
-    }
-}
-
-// Listener tambahan jika pengguna keluar fullscreen lewat tombol ESC keyboard bawaan browser
-document.addEventListener('fullscreenchange', handleFullscreenExit);
-document.addEventListener('webkitfullscreenchange', handleFullscreenExit);
-
-function handleFullscreenExit() {
-    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-        document.querySelectorAll('.exit-fs-btn').forEach(btn => {
-            btn.classList.remove('d-flex');
-            btn.classList.add('d-none');
-        });
-    }
-}
-
-/* ========================================= */
-/* CASCADING FILTER & MULTI-SELECT LOGIC     */
-/* ========================================= */
-
-// Fungsi Bantuan: Menentukan apakah elemen harus tampil atau sembunyi
+// -- CASCADING FILTER & MULTI-SELECT LOGIC (Untuk Drawer Task) --
 function evaluateVisibility(item) {
     if (item.hasAttribute('data-search-hidden') || item.hasAttribute('data-dep-hidden')) {
         item.style.display = 'none';
@@ -614,7 +230,6 @@ function evaluateVisibility(item) {
     }
 }
 
-// 1. Fungsi Pencarian (Search Bar di dalam filter) dengan Penjaga Posisi Scroll
 function searchFilterList(input, listId) {
     const searchTerm = input.value.toLowerCase();
     const listContainer = document.getElementById(listId);
@@ -639,18 +254,12 @@ function searchFilterList(input, listId) {
     listContainer.scrollTop = currentScrollTop;
 }
 
-// 1a. Dipanggil setiap kali user mengetik/menghapus (input event). Hanya
-// menjalankan pencarian di sini kalau teksnya sudah kosong (dihapus semua) --
-// supaya reset filter terjadi otomatis tanpa perlu Enter. Selama masih ada
-// teks, biarkan (nunggu Enter lewat handleSearchKeydown di bawah).
 function handleSearchInput(input, listId) {
     if (input.value === '') {
         searchFilterList(input, listId);
     }
 }
 
-// 1b. Dipanggil saat user menekan tombol keyboard (keydown event). Kalau
-// tombolnya Enter, baru jalankan pencarian.
 function handleSearchKeydown(event, input, listId) {
     if (event.key === 'Enter') {
         event.preventDefault();
@@ -658,9 +267,6 @@ function handleSearchKeydown(event, input, listId) {
     }
 }
 
-// 1c. Pasang listener secara langsung lewat JS (bukan atribut inline di HTML)
-// supaya lebih pasti terpasang dengan benar, tanpa bergantung ke urutan atribut
-// oninput/onkeydown di markup.
 document.addEventListener('DOMContentLoaded', function () {
     const searchBoxConfigs = [
         { selector: '#project-list-search', listId: 'project-list' },
@@ -680,7 +286,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Kotak pencarian utama (Task ID/Spec/Deskripsi)
     const mainSearchInput = document.getElementById('searchInput');
     if (mainSearchInput) {
         mainSearchInput.addEventListener('input', function () {
@@ -696,7 +301,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-// 2. Fungsi Filter Saling Bergantung (Cascading) - Dua Arah, Aman dari Feedback Loop
 function updateDependentFilters() {
     if (typeof projectPackageMap === 'undefined' || typeof packageProjectMap === 'undefined') return;
 
@@ -706,24 +310,12 @@ function updateDependentFilters() {
     const projItemCbs = Array.from(document.querySelectorAll('#project-list .item-cb'));
     const pkgItemCbs = Array.from(document.querySelectorAll('#package-list .item-cb'));
 
-    // Ambil daftar proyek dan paket yang sedang dicentang user (SNAPSHOT di awal,
-    // sebelum ada perubahan apapun pada baris-baris di bawah)
     const checkedProjects = projItemCbs.filter(cb => cb.checked).map(cb => cb.value);
     const checkedPackages = pkgItemCbs.filter(cb => cb.checked).map(cb => cb.value);
 
-    // PENTING: "mode Semua" ditentukan HANYA dari jumlah item yang benar-benar
-    // tercentang (dibandingkan total item), BUKAN dari status checkbox "Select
-    // All" itu sendiri. Kalau kita baca .checked dari checkbox Select All di sini,
-    // maka begitu salah satu sisi ter-auto-uncentang gara-gara filter (lihat di
-    // bawah), checkbox Select All bisa ikut ter-centang otomatis (karena semua
-    // yang MASIH TERLIHAT kebetulan tercentang semua) -- lalu pada pemanggilan
-    // berikutnya, itu dibaca sebagai "user pilih Semua" dan seluruh filter jadi
-    // reset/muncul lagi. Dengan menghitung dari jumlah item asli (tidak peduli
-    // status checkbox Select All), loop ini tidak akan terjadi lagi.
     const useAllProjects = checkedProjects.length === 0 || checkedProjects.length === projItemCbs.length;
     const useAllPackages = checkedPackages.length === 0 || checkedPackages.length === pkgItemCbs.length;
 
-    // A. Package menyesuaikan Project yang dipilih
     pkgItemCbs.forEach(cb => {
         const option = cb.closest('.item-option');
         if (!option) return;
@@ -732,7 +324,6 @@ function updateDependentFilters() {
         if (useAllProjects) {
             option.removeAttribute('data-dep-hidden');
         } else {
-            // Paket hanya muncul jika ia ada di DALAM SALAH SATU proyek yang dicentang
             let isValid = checkedProjects.some(proj =>
                 projectPackageMap[proj] && projectPackageMap[proj].includes(pkgName)
             );
@@ -740,14 +331,12 @@ function updateDependentFilters() {
                 option.removeAttribute('data-dep-hidden');
             } else {
                 option.setAttribute('data-dep-hidden', 'true');
-                cb.checked = false; // Uncheck otomatis jika paket di luar proyek terpilih
+                cb.checked = false; 
             }
         }
         evaluateVisibility(option);
     });
 
-    // B. Project menyesuaikan Package yang dipilih (pakai snapshot checkedPackages
-    // di atas, bukan hasil setelah bagian A berjalan, supaya kedua arah konsisten)
     projItemCbs.forEach(cb => {
         const option = cb.closest('.item-option');
         if (!option) return;
@@ -756,7 +345,6 @@ function updateDependentFilters() {
         if (useAllPackages) {
             option.removeAttribute('data-dep-hidden');
         } else {
-            // Proyek hanya muncul jika ia memiliki SALAH SATU paket yang dicentang
             let isValid = checkedPackages.some(pkg =>
                 packageProjectMap[pkg] && packageProjectMap[pkg].includes(projName)
             );
@@ -764,7 +352,7 @@ function updateDependentFilters() {
                 option.removeAttribute('data-dep-hidden');
             } else {
                 option.setAttribute('data-dep-hidden', 'true');
-                cb.checked = false; // Uncheck otomatis jika proyek tidak memiliki paket tersebut
+                cb.checked = false;
             }
         }
         evaluateVisibility(option);
@@ -778,7 +366,6 @@ function updateDependentFilters() {
     });
 }
 
-// 3. Fungsi Saat Tombol "Select All" Diklik
 function toggleSelectAll(selectAllCheckbox, listId) {
     const listContainer = document.getElementById(listId);
     if (!listContainer) return;
@@ -794,12 +381,10 @@ function toggleSelectAll(selectAllCheckbox, listId) {
     updateDependentFilters();
 }
 
-// 4. Fungsi Saat Salah Satu Item Diklik
 function checkIndividualState(listId) {
     updateDependentFilters();
 }
 
-// 5. Fungsi Bantu: Sinkronisasi Status "Select All"
 function syncSelectAllState(listId) {
     const listContainer = document.getElementById(listId);
     if (!listContainer) return;
@@ -807,11 +392,6 @@ function syncSelectAllState(listId) {
     const selectAllCheckbox = listContainer.querySelector('.select-all-cb');
     const itemCheckboxes = Array.from(listContainer.querySelectorAll('.item-cb'));
 
-    // Item yang disembunyikan karena PENCARIAN (search box) tidak dihitung --
-    // itu memang cara user mempersempit tampilan. TAPI item yang disembunyikan
-    // karena CASCADING (data-dep-hidden, gara-gara filter project/package yang
-    // lain) TETAP dihitung, supaya checkbox "Select All" tidak salah ke-centang
-    // otomatis hanya karena item lain sedang disembunyikan oleh sisi lain.
     const visibleCheckboxes = itemCheckboxes.filter(cb => {
         const parent = cb.closest('.item-option');
         return parent && !parent.hasAttribute('data-search-hidden');
@@ -823,7 +403,6 @@ function syncSelectAllState(listId) {
     }
 }
 
-// 6. Fungsi Submit Filter ke URL
 function applyDrawerFilters() {
     const allProjChecked = document.querySelector('#project-list .select-all-cb').checked;
     const allPkgChecked = document.querySelector('#package-list .select-all-cb').checked;
@@ -860,7 +439,6 @@ function applyDrawerFilters() {
     window.location.href = url.toString();
 }
 
-// Inisialisasi awal saat Drawer Filter dibuka
 const filterDrawerEl = document.getElementById('filterDrawer');
 if (filterDrawerEl) {
     filterDrawerEl.addEventListener('shown.bs.offcanvas', function () {
@@ -868,12 +446,187 @@ if (filterDrawerEl) {
     });
 }
 
-// ==========================================
-// LOGIKA FILTER & SORT QR MANAGEMENT
-// ==========================================
 
-// --- LOGIKA FILTER & SORT QR MANAGEMENT (FLEKSIBEL: SOURCE CODE & SCENE) ---
+/* ==========================================================================
+   3. QR MANAGEMENT (Upload Chunking, Sorting, Drawer Filtering)
+   ========================================================================== */
+async function handleQrUploadSubmit(form) {
+    const fileInput = form.querySelector('input[name="qr_file"]');
+    const submitBtn = form.querySelector('#qrUploadSubmitBtn') || form.querySelector('button[type="submit"]');
+    const progressWrap = document.getElementById('qrUploadProgressWrap');
+    const progressBar = document.getElementById('qrUploadProgressBar');
+    const progressText = document.getElementById('qrUploadProgressText');
 
+    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+        alert('Pilih file PDF terlebih dahulu.');
+        return;
+    }
+
+    const files = Array.from(fileInput.files);
+    const originalBtnHtml = submitBtn ? submitBtn.innerHTML : null;
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Uploading...';
+    }
+    if (progressWrap) progressWrap.classList.remove('d-none');
+
+    function setProgress(done, total, label) {
+        if (!progressBar) return;
+        const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+        progressBar.style.width = pct + '%';
+        progressBar.innerText = pct + '%';
+        if (progressText) progressText.innerText = label || `${done} / ${total} halaman`;
+    }
+
+    const problems = [];
+
+    try {
+        const jobs = [];
+        let overallTotal = 0;
+        let overallDone = 0;
+
+        for (const file of files) {
+            const initForm = new FormData();
+            initForm.append('qr_file', file);
+
+            try {
+                const initResp = await fetch('/upload_qr/init', { method: 'POST', body: initForm });
+                const initData = await initResp.json();
+
+                if (!initResp.ok || initData.error) {
+                    problems.push(`${file.name}: ${initData.error || 'gagal dibaca'}`);
+                    continue;
+                }
+
+                const alreadyDone = new Set(initData.already_done || []);
+                jobs.push({
+                    file,
+                    baseCode: initData.base_code,
+                    fileHash: initData.file_hash,
+                    totalPages: initData.total_pages,
+                    alreadyDone,
+                });
+                overallTotal += initData.total_pages;
+                overallDone += alreadyDone.size;
+            } catch (err) {
+                problems.push(`${file.name}: koneksi gagal saat memulai upload`);
+            }
+        }
+
+        setProgress(overallDone, overallTotal, `0 / ${jobs.length} file diproses`);
+
+        for (let fi = 0; fi < jobs.length; fi++) {
+            const job = jobs[fi];
+            const failedPagesThisFile = [];
+
+            for (let page = 1; page <= job.totalPages; page++) {
+                if (job.alreadyDone.has(page)) {
+                    continue;
+                }
+
+                const pageForm = new FormData();
+                pageForm.append('base_code', job.baseCode);
+                pageForm.append('file_hash', job.fileHash);
+                pageForm.append('page', String(page));
+
+                try {
+                    const pageResp = await fetch('/upload_qr/page', { method: 'POST', body: pageForm });
+                    const pageData = await pageResp.json();
+
+                    if (!pageResp.ok || pageData.error || pageData.status === 'failed') {
+                        failedPagesThisFile.push(page);
+                    }
+                } catch (err) {
+                    failedPagesThisFile.push(page);
+                }
+
+                overallDone++;
+                setProgress(overallDone, overallTotal, `File ${fi + 1}/${jobs.length}: ${job.file.name}`);
+            }
+
+            if (failedPagesThisFile.length > 0) {
+                problems.push(`${job.file.name}: halaman ${failedPagesThisFile.join(', ')} gagal diproses`);
+            }
+
+            const finalizeForm = new FormData();
+            finalizeForm.append('base_code', job.baseCode);
+            finalizeForm.append('had_failures', failedPagesThisFile.length > 0 ? '1' : '0');
+            await fetch('/upload_qr/finalize', { method: 'POST', body: finalizeForm });
+        }
+
+        if (problems.length > 0) {
+            alert(`Upload selesai, tapi ada masalah:\n- ${problems.join('\n- ')}\n\nUpload file yang SAMA lagi untuk mencoba ulang bagian yang gagal.`);
+        }
+
+    } catch (err) {
+        alert('Upload gagal: ' + err.message);
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnHtml;
+        }
+        if (progressWrap) progressWrap.classList.add('d-none');
+        fileInput.value = '';
+        window.location.reload();
+    }
+}
+
+document.addEventListener('submit', function (e) {
+    const form = e.target;
+    if (form && (form.id === 'qrUploadForm' || (form.action && form.action.includes('/upload_qr') && !form.action.includes('/upload_qr/')))) {
+        e.preventDefault();
+        handleQrUploadSubmit(form);
+    }
+});
+
+function filterAndSortCards() {
+    const stationFilter = document.getElementById('stationFilter');
+    const sortField = document.getElementById('sortField');
+    const sortOrder = document.getElementById('sortOrder');
+    const container = document.getElementById('qrCardsContainer');
+    const badge = document.getElementById('activeFilterBadge');
+    
+    if (!container) return;
+
+    const filterVal = stationFilter ? stationFilter.value : 'All';
+    const fieldVal = sortField ? sortField.value : 'scene';
+    const sortVal = sortOrder ? sortOrder.value : 'asc';
+    const cards = Array.from(container.getElementsByClassName('qr-card-item'));
+
+    if (badge) {
+        if (filterVal !== 'All') {
+            badge.classList.remove('d-none');
+        } else {
+            badge.classList.add('d-none');
+        }
+    }
+
+    cards.forEach(card => {
+        const subtitle = card.getAttribute('data-subtitle');
+        if (filterVal === 'All' || subtitle === filterVal) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    cards.sort((a, b) => {
+        if (fieldVal === 'station') {
+            const subA = (a.getAttribute('data-subtitle') || '').toLowerCase();
+            const subB = (b.getAttribute('data-subtitle') || '').toLowerCase();
+            const comparison = subA.localeCompare(subB);
+            return sortVal === 'asc' ? comparison : -comparison;
+        } else {
+            const sceneA = parseInt(a.getAttribute('data-scene')) || 0;
+            const sceneB = parseInt(b.getAttribute('data-scene')) || 0;
+            return sortVal === 'asc' ? (sceneA - sceneB) : (sceneB - sceneA);
+        }
+    });
+
+    cards.forEach(card => container.appendChild(card));
+}
+
+// -- FILTER & SORT QR MANAGEMENT (Drawer) --
 function toggleSelectAllSource(selectAllCb) {
     const listContainer = document.getElementById('source-list');
     if (!listContainer) return;
@@ -927,7 +680,6 @@ function checkIndividualSceneState() {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    // Search bar di dalam drawer untuk Source Code
     const sourceSearch = document.getElementById('source-list-search');
     if (sourceSearch) {
         sourceSearch.addEventListener('input', function() {
@@ -939,7 +691,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Search bar di dalam drawer untuk Scene Name
     const sceneSearch = document.getElementById('scene-list-search');
     if (sceneSearch) {
         sceneSearch.addEventListener('input', function() {
@@ -967,7 +718,7 @@ function applyQrDrawerFilters() {
     }
 
     const sortFieldEl = document.getElementById('sortField');
-    const sortField = sortFieldEl ? sortFieldEl.value : 'source'; // 'source' atau 'name'
+    const sortField = sortFieldEl ? sortFieldEl.value : 'source'; 
     
     const sortOrderEl = document.getElementById('sortOrder');
     const sortOrder = sortOrderEl ? sortOrderEl.value : 'asc';
@@ -997,7 +748,6 @@ function applyQrDrawerFilters() {
         }
     });
 
-    // Proses Sorting
     items.sort((a, b) => {
         let valA = '';
         let valB = '';
@@ -1020,7 +770,6 @@ function applyQrDrawerFilters() {
         emptyMessage.style.display = (visibleCount === 0) ? 'block' : 'none';
     }
 
-    // Render Chip Indikator Aktif
     const isFiltered = (selectAllSource && !selectAllSource.checked) || (selectAllScene && !selectAllScene.checked) || sortOrder !== 'asc';
     if (indicatorBox && chipsContainer) {
         if (isFiltered) {
@@ -1077,9 +826,11 @@ function resetQrFilters() {
     applyQrDrawerFilters();
 }
 
-// --- INTERAKTIF DASHBOARD ---
+
+/* ==========================================================================
+   4. DASHBOARD (Chart, Tabel Aktivitas, Sinkronisasi)
+   ========================================================================== */
 document.addEventListener("DOMContentLoaded", function() {
-    // Live Search untuk Tabel Recent Task Activity
     const activitySearch = document.getElementById('recentActivitySearch');
     if (activitySearch) {
         activitySearch.addEventListener('input', function() {
@@ -1105,20 +856,16 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-// Fungsi Tombol Sinkronisasi / Refresh Manual
 function refreshDashboardData(btn) {
     const icon = btn.querySelector('svg');
     if (icon) icon.classList.add('spinning');
     
-    // Simulasi jeda sejenak untuk efek visual sinkronisasi profesional, lalu reload
     setTimeout(() => {
         window.location.reload();
     }, 600);
 }
 
-// Fungsi Filter Cepat Tabel Berdasarkan Status Kategori
 function filterDashboardTable(category, btnElement) {
-    // Ubah status aktif pada tombol tab
     document.querySelectorAll('.dashboard-filter-tab').forEach(tab => tab.classList.remove('active'));
     if (btnElement) btnElement.classList.add('active');
 
@@ -1141,16 +888,7 @@ function filterDashboardTable(category, btnElement) {
     }
 }
 
-/* ==========================================================================
-   DASHBOARD PAGE (dipindahkan dari dashboard.html)
-   Catatan: nilai metrics awal & role dikirim dari server lewat
-   `window.dashboardConfig` (di-set oleh Jinja di dashboard.html), karena
-   file .js statis ini tidak diproses oleh Jinja.
-   ========================================================================== */
-
-// --- 1. GLOBAL VARIABLES & INITIALIZATION ---
 let myQCChart = null;
-
 const dashUrlParams = new URLSearchParams(window.location.search);
 let currentFilterCategory = dashUrlParams.get('filter') || 'All';
 let currentSelectedProjects = [];
@@ -1161,9 +899,7 @@ if (dashProjParam && dashProjParam !== 'All' && dashProjParam !== 'None') {
 }
 
 const allLabels = ['Need Sample', 'Sample Done', 'Revision', 'Ready', 'Skipped', 'Production'];
-const allColors = ['#f59e0b', '#0ea5e9', '#ef4444', '#10b981', '#64748b', '#0d6efd'];
 
-// Menyimpan data metrics global agar bisa diakses chart (nilai awal dari server)
 let currentMetrics = (window.dashboardConfig && window.dashboardConfig.metrics) || {
     need: 0, done: 0, rev: 0, ready: 0, skip: 0, prod: 0,
     total: 0, verified: 0, completion_rate: 0
@@ -1174,7 +910,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const endInput = document.getElementById('dateEnd');
     const searchInput = document.getElementById('recentActivitySearch');
 
-    if (!document.getElementById('qcBarChart')) return; // Bukan halaman dashboard, lewati init
+    if (!document.getElementById('qcBarChart')) return; 
 
     if (startInput) startInput.addEventListener('change', runTableFilters);
     if (endInput) endInput.addEventListener('change', runTableFilters);
@@ -1219,7 +955,6 @@ function updateURLParams() {
     window.history.pushState({}, '', url);
 }
 
-// --- 2. FUNGSI UTAMA AJAX: FETCH DATA DARI SERVER TANPA RELOAD ---
 function fetchDashboardData() {
     const finalProject = currentSelectedProjects.length === 0 ? 'All' : currentSelectedProjects.join(',');
     const endpoint = `/api/dashboard-data?filter=${encodeURIComponent(currentFilterCategory)}&project=${encodeURIComponent(finalProject)}`;
@@ -1232,25 +967,57 @@ function fetchDashboardData() {
             document.body.style.cursor = 'default';
             if (data.error) return;
 
-            // 1. Update Metrics Global & Kartu Angka
             currentMetrics = data.metrics;
-            document.getElementById('count-need').innerText = currentMetrics.need;
-            document.getElementById('count-done').innerText = currentMetrics.done;
-            document.getElementById('count-rev').innerText = currentMetrics.rev;
-            document.getElementById('count-ready').innerText = currentMetrics.ready;
-            document.getElementById('count-skip').innerText = currentMetrics.skip;
-            document.getElementById('count-prod').innerText = currentMetrics.prod;
+            document.getElementById('count-need').innerText = currentMetrics.need ?? 0;
+            document.getElementById('count-done').innerText = currentMetrics.done ?? 0;
+            document.getElementById('count-rev').innerText = currentMetrics.rev ?? 0;
+            document.getElementById('count-ready').innerText = currentMetrics.ready ?? 0;
+            document.getElementById('count-skip').innerText = currentMetrics.skip ?? 0;
+            document.getElementById('count-prod').innerText = currentMetrics.prod ?? 0;
 
-            // 2. Update Progress Bar
+            // Hitung persentase Need Sample (Task sudah disampling / Total task non-skip)
+            const needVal = currentMetrics.need || 0;
+            const doneVal = currentMetrics.done || 0;
+            const revVal = currentMetrics.rev || 0;
+            const readyVal = currentMetrics.ready || 0;
+            const prodVal = currentMetrics.prod || 0;
+            
+            const nonSkippedTotal = needVal + doneVal + revVal + readyVal + prodVal;
+            const sampledTotal = nonSkippedTotal - needVal;
+            const needPct = nonSkippedTotal > 0 ? ((sampledTotal / nonSkippedTotal) * 100).toFixed(1) + '%' : '0%';
+            
+            const badgeNeedPctEl = document.getElementById('badge-need-pct');
+            if (badgeNeedPctEl) badgeNeedPctEl.innerText = needPct;
+
+            // ==== TAMBAHKAN DUA BLOK INI ====
+            // Update angka penambahan harian secara dinamis (Sample Done)
+            const badgeDoneDaily = document.getElementById('badge-done-daily');
+            if (badgeDoneDaily) badgeDoneDaily.innerText = '+' + (currentMetrics.done_today ?? 0);
+
+            // Update angka penambahan harian secara dinamis (Ready)
+            const badgeReadyDaily = document.getElementById('badge-ready-daily');
+            if (badgeReadyDaily) badgeReadyDaily.innerText = '+' + (currentMetrics.ready_today ?? 0);
+
+            // ==== TAMBAHKAN BLOK INI ====
+            // Update Status Mutu (Revision) secara dinamis
+            const badgeRevStatus = document.getElementById('badge-rev-status');
+            if (badgeRevStatus) {
+                if (revVal === 0) {
+                    badgeRevStatus.innerText = '0 Defect';
+                    badgeRevStatus.className = 'px-2 py-0.5 rounded text-[11px] font-bold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]'; // Warna Hijau Aman
+                } else {
+                    badgeRevStatus.innerText = revVal + ' Defect';
+                    badgeRevStatus.className = 'px-2 py-0.5 rounded text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200'; // Warna Merah Peringatan
+                }
+            }
+            // ============================
+
             document.getElementById('dynamic-progress-text').innerText = currentMetrics.completion_rate + '%';
             document.getElementById('dynamic-progress-bar').style.width = currentMetrics.completion_rate + '%';
             document.getElementById('dynamic-progress-bar').setAttribute('aria-valuenow', currentMetrics.completion_rate);
             document.getElementById('dynamic-progress-sub').innerText = `${currentMetrics.verified} of ${currentMetrics.total} total recorded tasks verified or completed.`;
 
-            // 3. Update Chart
             updateChartAnimation();
-
-            // 4. Render Ulang Tabel dengan Data Baru
             renderTableTasks(data.tasks);
         })
         .catch(err => {
@@ -1259,58 +1026,124 @@ function fetchDashboardData() {
         });
 }
 
-// --- 3. RENDER TABEL DINAMIS ---
 function renderTableTasks(tasks) {
     const tbody = document.getElementById('recentActivityTableBody');
     let html = '';
 
     if (tasks && tasks.length > 0) {
         tasks.forEach((t, idx) => {
-            let badgeClass = 'bg-secondary bg-opacity-10 text-secondary';
-            if (t.display_category === 'Ready') badgeClass = 'bg-success bg-opacity-10 text-success';
-            else if (t.display_category === 'Revision') badgeClass = 'bg-danger bg-opacity-10 text-danger';
-            else if (t.display_category === 'Need Sample') badgeClass = 'bg-warning bg-opacity-10 text-warning';
-            else if (t.display_category === 'Sample Done') badgeClass = 'bg-info bg-opacity-10 text-info';
-            else if (t.display_category === 'Production') badgeClass = 'bg-primary bg-opacity-10 text-primary';
+            let badgeHtml = '';
+            const cat = t.display_category;
+            
+            if (cat === 'Ready') {
+                badgeHtml = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Ready</span>`;
+            } else if (cat === 'Production') {
+                badgeHtml = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-[#F0FDFA] text-[#0F766E] border border-[#99F6E4]"><span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span> Production</span>`;
+            } else if (cat === 'Skipped') {
+                badgeHtml = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-300"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Skipped</span>`;
+            } else if (cat === 'Need Sample') {
+                badgeHtml = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Need Sample</span>`;
+            } else if (cat === 'Revision') {
+                badgeHtml = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Revision</span>`;
+            } else {
+                badgeHtml = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-sky-50 text-sky-700 border border-sky-200"><span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> ${cat}</span>`;
+            }
 
-            const initials = (t.uploaded_by || 'User').substring(0, 2).toUpperCase();
+            const initials = (t.uploaded_by || 'User').substring(0, 1).toUpperCase();
+            const projectName = t.project_name || 'General Project';
+            const packageName = t.package_name || 'pkg-main';
+            const taskId = t.task_id || (idx + 1);
+            const taskName = t.task_name || '';
+            const uploadedBy = t.uploaded_by || 'User';
+            const updatedAt = t.updated_at || '';
+            
+            // Variabel aman untuk mencegah error kutip satu (') pada string JavaScript
+            const safeTaskName = (taskName || '').replace(/'/g, "\\'");
+            const safeProj = (projectName || '').replace(/'/g, "\\'");
+            const safePkg = (packageName || '').replace(/'/g, "\\'");
+            const safeUser = (uploadedBy || '').replace(/'/g, "\\'");
 
             html += `
-                <tr class="activity-row" data-project="${t.project_name}" data-category="${t.display_category}" data-date="${t.updated_at}">
-                    <td>
-                        <div class="fw-semibold text-truncate" style="max-width: 150px;">${t.project_name}</div>
-                        <div class="text-muted" style="font-size: 0.65rem;">${t.package_name}</div>
-                    </td>
-                    <td>
-                        <div class="font-monospace text-muted" style="font-size: 0.65rem;">#${t.task_id || (idx + 1)}</div>
-                        <div class="fw-medium text-truncate" style="max-width: 250px;">${t.task_name}</div>
-                    </td>
-                    <td>
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="rounded-circle bg-primary bg-opacity-15 text-primary d-flex align-items-center justify-content-center fw-bold" style="width: 24px; height: 24px; font-size: 0.65rem;">
-                                ${initials}
-                            </div>
-                            <span class="text-truncate" style="max-width: 120px;">${t.uploaded_by}</span>
+                <tr class="hover:bg-slate-50 transition-colors group cursor-pointer activity-row" data-project="${projectName}" data-category="${cat}" data-date="${updatedAt}">
+                    <td class="py-4 px-6">
+                        <div class="flex flex-col gap-0.5">
+                            <span class="font-bold text-[13px] text-on-surface tracking-tight group-hover:text-primary-container transition-colors truncate max-w-[200px]">${projectName}</span>
+                            <span class="font-body-sm text-text-secondary truncate max-w-[200px]">${packageName}</span>
                         </div>
                     </td>
-                    <td class="text-end">
-                        <span class="badge ${badgeClass} px-2 py-1.5 fw-semibold" style="font-size: 0.6rem; letter-spacing: 0.03em;">
-                            ${t.display_category}
-                        </span>
+                    <td class="py-4 px-4">
+                        <div class="flex flex-col gap-0.5">
+                            <span class="font-code-sm text-[12px] text-primary-container font-bold">#${taskId}</span>
+                            <span class="font-medium text-[13px] text-on-surface truncate max-w-[280px]">${taskName}</span>
+                        </div>
+                    </td>
+                    <td class="py-4 px-4">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-full bg-emerald-700 text-white flex items-center justify-center font-bold text-xs">
+                                ${initials}
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="font-bold text-[13px] text-on-surface">${uploadedBy}</span>
+                                <span class="text-[12px] text-text-muted">${updatedAt}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-4 px-4">
+                        ${badgeHtml}
+                    </td>
+                    <td class="py-4 px-6 text-right">
+                        <!-- Perbaikan: Menambahkan atribut onclick dengan parameter yang benar -->
+                        <button onclick="showTaskDetail('${taskId}', '${safeTaskName}', '${safeProj}', '${safePkg}', '${safeUser}', '${cat}', '${updatedAt}')" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border-subtle bg-white text-text-secondary hover:text-on-surface hover:bg-surface-container-low text-[12px] font-semibold transition-all">
+                            Lihat Detail <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                        </button>
                     </td>
                 </tr>
             `;
         });
-        html += `<tr id="noActivityMatch" style="display: none;"><td colspan="4" class="text-center py-4 text-muted small border-0">No matching activities found for this filter combination.</td></tr>`;
+        html += `<tr id="noActivityMatch" style="display: none;"><td colspan="5" class="text-center py-6 text-text-muted font-label-md">No matching activities found for this filter combination.</td></tr>`;
     } else {
-        html = `<tr><td colspan="4" class="text-center py-5 text-muted small border-0">No task records found in the database.</td></tr>`;
+        html = `<tr><td colspan="5" class="text-center py-6 text-text-muted font-label-md">No task records found in the database.</td></tr>`;
     }
 
     tbody.innerHTML = html;
     runTableFilters();
 }
 
-// --- 4. LOGIKA GRAFIK BATANG ---
+function showTaskDetail(taskId, taskName, projectName, packageName, uploadedBy, status, updatedAt) {
+    document.getElementById('modal-task-id').innerText = '#' + taskId;
+    document.getElementById('modal-task-name').innerText = taskName;
+    document.getElementById('modal-project-name').innerText = projectName;
+    document.getElementById('modal-package-name').innerText = packageName;
+    document.getElementById('modal-uploaded-by').innerText = uploadedBy;
+    document.getElementById('modal-updated-at').innerText = updatedAt;
+
+    const badgeEl = document.getElementById('modal-status-badge');
+    let badgeHtml = '';
+    if (status === 'Ready') {
+        badgeHtml = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Ready`;
+        badgeEl.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]';
+    } else if (status === 'Production') {
+        badgeHtml = `<span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span> Production`;
+        badgeEl.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#F0FDFA] text-[#0F766E] border border-[#99F6E4]';
+    } else if (status === 'Skipped') {
+        badgeHtml = `<span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Skipped`;
+        badgeEl.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-300';
+    } else if (status === 'Need Sample') {
+        badgeHtml = `<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Need Sample`;
+        badgeEl.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]';
+    } else if (status === 'Revision') {
+        badgeHtml = `<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Revision`;
+        badgeEl.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200';
+    } else {
+        badgeHtml = `<span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> ${status}`;
+        badgeEl.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-sky-50 text-sky-700 border border-sky-200';
+    }
+    badgeEl.innerHTML = badgeHtml;
+
+    const modal = new bootstrap.Modal(document.getElementById('taskDetailModal'));
+    modal.show();
+}
+
 function getFilteredChartData() {
     const rawData = [currentMetrics.need, currentMetrics.done, currentMetrics.rev, currentMetrics.ready, currentMetrics.skip, currentMetrics.prod];
     let chartDataToRender = [...rawData];
@@ -1326,6 +1159,27 @@ function getFilteredChartData() {
     return chartDataToRender;
 }
 
+// Helper untuk membuat efek gradient vertikal (dari terang di bawah ke pekat di atas)
+function createBarGradients(ctx, chartArea) {
+    if (!chartArea) return ['#f59e0b', '#0ea5e9', '#ef4444', '#10b981', '#64748b', '#0F766E'];
+    
+    const makeGradient = (colorTop, colorBottom) => {
+        const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+        gradient.addColorStop(0, colorBottom); // Bagian bawah (lebih terang/soft)
+        gradient.addColorStop(1, colorTop);    // Bagian atas (lebih pekat/vibrant)
+        return gradient;
+    };
+
+    return [
+        makeGradient('#D97706', '#FDE68A'), // 1. Need Sample (Amber / Kuning)
+        makeGradient('#0284C7', '#BAE6FD'), // 2. Sample Done (Sky / Biru Langit)
+        makeGradient('#DC2626', '#FECACA'), // 3. Revision (Rose / Merah)
+        makeGradient('#059669', '#A7F3D0'), // 4. Ready (Emerald / Hijau)
+        makeGradient('#64748B', '#CBD5E1'), // 5. Skipped (Slate / Abu-abu)
+        makeGradient('#0F766E', '#99F6E4')  // 6. Production (Teal / Hijau Kebiruan)
+    ];
+}
+
 function initChart() {
     const canvasEl = document.getElementById('qcBarChart');
     if (!canvasEl) return;
@@ -1334,23 +1188,87 @@ function initChart() {
     myQCChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: allLabels,
+            labels: ['Need Sample', 'Sample Done', 'Revision', 'Ready', 'Skipped', 'Production'],
             datasets: [{
+                label: 'Volume Saat Ini',
                 data: getFilteredChartData(),
-                backgroundColor: allColors,
-                borderWidth: 0,
-                borderRadius: 6,
+                // Menggunakan fungsi dinamis agar gradient otomatis menyesuaikan ukuran area chart
+                backgroundColor: function(context) {
+                    const chart = context.chart;
+                    const { ctx, chartArea } = chart;
+                    if (!chartArea) return null;
+                    return createBarGradients(ctx, chartArea);
+                },
+                borderRadius: 4,
                 barPercentage: 0.6,
-                maxBarThickness: 70
+                maxBarThickness: 50
             }]
         },
+        plugins: [{
+            // Plugin Kustom 1: Menampilkan angka putih di dalam batang bagian atas
+            id: 'customLabelsOnTop',
+            afterDatasetsDraw(chart) {
+                const { ctx, data } = chart;
+                chart.getDatasetMeta(0).data.forEach((bar, index) => {
+                    const value = data.datasets[0].data[index];
+                    if (value > 0) {
+                        ctx.save();
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillStyle = '#FFFFFF';
+                        ctx.font = 'bold 12px Inter';
+                        ctx.fillText(value, bar.x, bar.y + 15);
+                        ctx.restore();
+                    }
+                });
+            }
+        }, {
+            // Plugin Kustom 2: Garis bawah (underline) berwarna di tiap label sumbu X (menyesuaikan warna kategori)
+            id: 'customXAxisUnderlines',
+            afterDraw(chart) {
+                const { ctx, chartArea: { bottom }, scales: { x } } = chart;
+                // Warna garis bawah disamakan persis dengan tema masing-masing kartu
+                const colors = ['#f59e0b', '#0ea5e9', '#ef4444', '#10b981', '#64748b', '#0F766E'];
+                ctx.save();
+                x.ticks.forEach((tick, index) => {
+                    const xPos = x.getPixelForTick(index);
+                    ctx.beginPath();
+                    ctx.lineWidth = 3;
+                    ctx.strokeStyle = colors[index];
+                    ctx.moveTo(xPos - 20, bottom + 32);
+                    ctx.lineTo(xPos + 20, bottom + 32);
+                    ctx.stroke();
+                });
+                ctx.restore();
+            }
+        }],
         options: {
-            responsive: true, maintainAspectRatio: false,
-            animation: { duration: 600, easing: 'easeOutQuart' },
-            plugins: { legend: { display: false } },
+            responsive: true, 
+            maintainAspectRatio: false,
+            animation: { duration: 800, easing: 'easeOutQuart' },
+            plugins: { legend: { display: false }, tooltip: { enabled: true } },
+            layout: { padding: { bottom: 35 } }, 
             scales: {
-                x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 11, weight: '500' }, color: '#64748b' } },
-                y: { beginAtZero: true, grid: { color: '#e2e8f0', borderDash: [4, 4] }, ticks: { font: { family: 'Inter', size: 11, weight: '500' }, color: '#64748b', precision: 0 } }
+                x: { 
+                    grid: { display: false }, 
+                    ticks: { 
+                        font: { family: 'Inter', size: 11, weight: '600' }, 
+                        color: '#64748b',
+                        padding: 6 
+                    },
+                    border: { display: false }
+                },
+                y: { 
+                    beginAtZero: true, 
+                    grid: { color: '#e2e8f0', drawBorder: false, tickLength: 0 }, 
+                    ticks: { 
+                        font: { family: 'Inter', size: 11, weight: '500' }, 
+                        color: '#94a3b8',
+                        stepSize: 400,
+                        padding: 10
+                    },
+                    border: { display: false }
+                }
             }
         }
     });
@@ -1358,12 +1276,12 @@ function initChart() {
 
 function updateChartAnimation() {
     if (myQCChart) {
+        // Update dataset dengan data baru dari fungsi fetchDashboardData()
         myQCChart.data.datasets[0].data = getFilteredChartData();
         myQCChart.update();
     }
 }
 
-// --- 5. INTERAKSI KARTU, TAB, & PROJECT LIST ---
 function setupInteractiveFilters() {
     const elements = document.querySelectorAll('.metric-command-card, .dashboard-filter-tab');
 
@@ -1380,7 +1298,7 @@ function setupInteractiveFilters() {
 
             syncUIToState();
             updateURLParams();
-            fetchDashboardData(); // Ambil data baru via AJAX tanpa reload
+            fetchDashboardData(); 
         });
     });
 }
@@ -1405,12 +1323,11 @@ function setupProjectListFilters() {
 
             syncUIToState();
             updateURLParams();
-            fetchDashboardData(); // Ambil data baru via AJAX (card, chart, dan tabel ikut sinkron!)
+            fetchDashboardData(); 
         });
     });
 }
 
-// --- 6. FILTER LOKAL UNTUK PENCARIAN & TANGGAL PADA TABEL ---
 function runTableFilters() {
     const startDate = document.getElementById('dateStart') ? document.getElementById('dateStart').value : '';
     const endDate = document.getElementById('dateEnd') ? document.getElementById('dateEnd').value : '';
@@ -1440,42 +1357,202 @@ function runTableFilters() {
     if (noMatchRow) noMatchRow.style.display = visibleCount === 0 ? "" : "none";
 }
 
-// --- 7. EKSPOR DATA KE CSV ---
-function exportDashboardData() {
-    const currentRole = (window.dashboardConfig && window.dashboardConfig.role) || '';
-    if (currentRole === 'Supervisor') {
-        alert('Access denied! Supervisors are not allowed to export data.');
-        return;
+document.addEventListener("DOMContentLoaded", function() {
+    function updateClock() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('id-ID', { hour12: false });
+        const clockEl = document.getElementById('clockTicker');
+        if (clockEl) clockEl.innerText = timeString + ' WIB';
     }
+    setInterval(updateClock, 1000);
+    updateClock();
+    
+    const projectSearchField = document.getElementById('projectSearchField');
+    if (projectSearchField) {
+        projectSearchField.addEventListener('input', function(e) {
+            const val = e.target.value.toLowerCase();
+            const items = document.querySelectorAll('#projectListContainer .project-item');
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(val) ? 'flex' : 'none';
+            });
+        });
+    }
+});
 
-    const rows = document.querySelectorAll('#recentActivityTableBody tr.activity-row');
-    let csvContent = "data:text/csv;charset=utf-8,Project,Package Name,Task ID,Task Name,Modified By,QC Status\n";
-    let count = 0;
 
-    rows.forEach(row => {
-        if (row.style.display !== 'none') {
-            const cols = row.querySelectorAll('td');
-            if (cols.length >= 4) {
-                const projectPkg = cols[0].innerText.replace(/\n/g, " - ").replace(/,/g, " ");
-                const taskIdName = cols[1].innerText.replace(/\n/g, " - ").replace(/,/g, " ");
-                const modifiedBy = cols[2].innerText.trim().replace(/,/g, " ");
-                const status = cols[3].innerText.trim();
-                csvContent += `"${projectPkg}","${taskIdName}","${modifiedBy}","${status}"\n`;
-                count++;
-            }
+/* ==========================================================================
+   5. USER MANAGEMENT
+   ========================================================================== */
+// (Placeholder: Logika manajemen user / kontrol role pengguna ditaruh di sini)
+
+
+/* ==========================================================================
+   6. SUPPORT TICKET
+   ========================================================================== */
+// (Placeholder: Logika manajemen dan submission tiket dukungan ditaruh di sini)
+
+
+/* ==========================================================================
+   7. CUSTOMER SERVICE
+   ========================================================================== */
+// (Placeholder: Logika live chat / bot layanan pelanggan ditaruh di sini)
+
+
+/* ==========================================================================
+   8. FAQ & PANDUAN
+   ========================================================================== */
+// (Placeholder: Logika accordion FAQ dan pencarian artikel ditaruh di sini)
+
+
+/* ==========================================================================
+   9. GENERAL UI & UTILITIES (Global Helpers)
+   ========================================================================== */
+// Tombol kembali ke atas
+window.addEventListener('scroll', function() {
+    const btn = document.getElementById('scrollToTopBtn');
+    if (btn) {
+        if (window.pageYOffset > 300) {
+            btn.classList.remove('d-none'); btn.classList.add('d-flex');
+        } else {
+            btn.classList.remove('d-flex'); btn.classList.add('d-none');
         }
-    });
-
-    if (count === 0) {
-        alert('No data available to export.');
-        return;
     }
+});
 
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `QC_Detailed_Report.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+if (scrollToTopBtn) {
+    scrollToTopBtn.addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+}
+
+// Fitur Penampil PDF
+function openPdfViewer(fileUrl, fileName) {
+    document.getElementById('pdfFileName').innerText = fileName;
+    document.getElementById('pdfIframe').src = fileUrl + "#toolbar=0&navpanes=0&scrollbar=0";
+    document.getElementById('btnPdfFullscreen').href = fileUrl;
+    
+    const pdfModalEl = document.getElementById('pdfViewerModal');
+    if (pdfModalEl) {
+        const myModal = new bootstrap.Modal(pdfModalEl);
+        myModal.show();
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    const pdfModalEl = document.getElementById('pdfViewerModal');
+    if (pdfModalEl) {
+        pdfModalEl.addEventListener('hidden.bs.modal', function () {
+            const pdfIframe = document.getElementById('pdfIframe');
+            const btnPdfFullscreen = document.getElementById('btnPdfFullscreen');
+            if (pdfIframe) pdfIframe.src = "";
+            if (btnPdfFullscreen) btnPdfFullscreen.href = "#";
+        });
+    }
+});
+
+// Custom Autocomplete Dropdown
+document.addEventListener("DOMContentLoaded", function() {
+    const input = document.getElementById('projectNameInput');
+    const list = document.getElementById('projectSuggestionsList');
+    
+    if (input && list) {
+        const items = list.querySelectorAll('.project-suggestion-item');
+        input.addEventListener('focus', function() {
+            if (items.length > 0) list.style.display = 'block';
+        });
+        
+        input.addEventListener('input', function() {
+            const filter = input.value.toLowerCase().trim();
+            let hasVisible = false;
+            items.forEach(item => {
+                if (item.textContent.toLowerCase().includes(filter)) {
+                    item.style.display = 'block';
+                    hasVisible = true;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            list.style.display = (hasVisible && filter !== '') ? 'block' : (items.length > 0 && filter === '' ? 'block' : 'none');
+        });
+        
+        items.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                input.value = this.getAttribute('data-value');
+                list.style.display = 'none';
+            });
+        });
+        
+        document.addEventListener('click', function(e) {
+            if (!input.contains(e.target) && !list.contains(e.target)) list.style.display = 'none';
+        });
+    }
+});
+
+// Auto-Dismiss Flash Notification
+document.addEventListener("DOMContentLoaded", function() {
+    const alerts = document.querySelectorAll('.alert');
+    if (alerts.length > 0) {
+        setTimeout(function() {
+            alerts.forEach(alertEl => {
+                const bsAlert = bootstrap.Alert.getOrCreateInstance(alertEl);
+                if (bsAlert) bsAlert.close();
+            });
+        }, 3000);
+    }
+});
+
+// Video Fullscreen Logics
+function toggleVideoFullscreen(wrapperId) {
+    const elem = document.getElementById(wrapperId);
+    const exitBtn = elem.querySelector('.exit-fs-btn');
+
+    if (!document.fullscreenElement) {
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen();
+        }
+        if (exitBtn) {
+            exitBtn.classList.remove('d-none');
+            exitBtn.classList.add('d-flex');
+        }
+    } else {
+        exitVideoFullscreen(wrapperId);
+    }
+}
+
+function exitVideoFullscreen(wrapperId) {
+    const elem = document.getElementById(wrapperId);
+    const exitBtn = elem.querySelector('.exit-fs-btn');
+
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+    }
+    if (exitBtn) {
+        exitBtn.classList.remove('d-flex');
+        exitBtn.classList.add('d-none');
+    }
+}
+
+document.addEventListener('fullscreenchange', handleFullscreenExit);
+document.addEventListener('webkitfullscreenchange', handleFullscreenExit);
+
+function handleFullscreenExit() {
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        document.querySelectorAll('.exit-fs-btn').forEach(btn => {
+            btn.classList.remove('d-flex');
+            btn.classList.add('d-none');
+        });
+    }
 }

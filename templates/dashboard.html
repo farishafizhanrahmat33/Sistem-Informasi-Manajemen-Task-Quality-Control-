@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="{{ get_locale() }}">
 <head>
     <script>
     (function() {
@@ -13,214 +13,455 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ _('Dashboard - Quality Control System') }}</title>
+    <title>{{ _('Enterprise QA & Task Control Center') }}</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
+    <!-- BOOTSTRAP -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- TAILWIND & CUSTOM CONFIG -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config={darkMode:"class",theme:{extend:{"colors":{"status-success":"#059669","border-strong":"#CBD5E1","text-primary":"#0F172A","status-danger-bg":"#FEF2F2","surface-container-high":"#E2E8F0","shell-text-muted":"#648A86","surface-variant":"#E2E8F0","surface-bright":"#FFFFFF","secondary-fixed":"#cce5ff","primary-container":"#0F766E","tertiary-fixed":"#89f5e7","surface-tint":"#006a63","border-subtle":"#E2E8F0","surface-container-low":"#F1F5F9","tertiary":"#005c54","on-background":"#0F172A","status-danger":"#DC2626","status-success-border":"#A7F3D0","text-muted":"#94A3B8","inverse-on-surface":"#eaf1ff","shell-text-primary":"#F1F5F9","surface-dim":"#E2E8F0","surface":"#F8FAFC","primary-fixed":"#CCFBF1","tertiary-fixed-dim":"#6bd8cb","status-warning-border":"#FDE68A","on-error-container":"#93000a","status-warning":"#D97706","on-tertiary-fixed-variant":"#005049","on-secondary-container":"#00476e","status-info":"#0284C7","status-success-bg":"#ECFDF5","inverse-surface":"#213145","on-surface-variant":"#475569","primary-fixed-dim":"#99F6E4","tertiary-container":"#00776d","status-warning-bg":"#FFFBEB","error":"#DC2626","shell-border":"#163836","on-secondary":"#ffffff","on-tertiary-fixed":"#00201d","on-tertiary":"#ffffff","status-info-border":"#BAE6FD","on-error":"#ffffff","background":"#F8FAFC","surface-container":"#F1F5F9","status-danger-border":"#FECACA","card-bg":"#FFFFFF","shell-surface":"#0E2A29","on-primary":"#ffffff","on-secondary-fixed-variant":"#004b73","outline-variant":"#CBD5E1","surface-container-highest":"#E2E8F0","secondary-fixed-dim":"#93ccff","canvas-bg":"#F8FAFC","on-secondary-fixed":"#001d31","on-tertiary-container":"#91fdef","status-info-bg":"#F0F9FF","on-surface":"#0F172A","error-container":"#ffdad6","surface-container-lowest":"#ffffff","secondary":"#64748B","shell-bg":"#0A1C1A","inverse-primary":"#14B8A6","on-primary-fixed-variant":"#00504a","secondary-container":"#E0F2FE","text-secondary":"#64748B","outline":"#94A3B8","on-primary-fixed":"#042f2c","on-primary-container":"#CCFBF1","primary":"#0F766E"},"spacing":{"space-sm":"0.5rem","space-xs":"0.25rem","space-lg":"1.5rem","space-md":"1rem"},"fontFamily":{"code-sm":["JetBrains Mono"],"body-md":["Inter"],"headline-xl":["Inter"],"headline-sm":["Inter"],"body-lg":["Inter"],"label-md":["Inter"],"body-sm":["Inter"],"label-sm":["Inter"]}}}}
+    </script>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <style>
+        body { background-color: #F8FAFC !important; }
+        .metric-command-card.active { border-color: #0F766E !important; box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.15) !important; }
+        .dashboard-filter-tab.active { background-color: #0F766E !important; color: white !important; font-weight: 600 !important; }
+        .proj-list-item.active { background-color: rgba(16, 185, 129, 0.1) !important; border-color: rgba(16, 185, 129, 0.3) !important; color: #0F172A !important; }
+        .proj-list-item.active .check-icon { opacity: 1 !important; transform: scale(1) !important; color: #0F766E !important; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .spinning { animation: spin 0.8s linear infinite; }
+    </style>
 </head>
-<body>
+<body class="font-body-md text-on-surface antialiased bg-background">
     {% set danger_messages = get_flashed_messages(category_filter=['danger']) %}
+    
     {% include 'sidebar.html' %}
     {% include 'navbar.html' %}
 
-    <div class="dashboard-wrapper">
+    <main class="w-full bg-background flex-1 px-4 md:px-6 py-6 pb-12">
+        <div class="flex flex-col w-full gap-6 max-w-[1750px] mx-auto">
             
-        <!-- 1. Progress Bar Penyelesaian Sistem (Dihitung Dinamis via JS) -->
-        <div class="bento-panel d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 flex-shrink-0">
-            <div class="d-flex align-items-center gap-3">
-                <div id="dynamic-progress-text" class="rounded-circle bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center fw-bold" style="width: 38px; height: 38px; font-size: 0.85rem;">
-                    {{ metrics.completion_rate }}%
+            <!-- HEADER DASHBOARD (Bersih tanpa breadcrumbs ganda) -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2">
+                <div class="flex flex-col gap-1">
+                    <!-- Judul Utama -->
+                    <h1 class="text-[26px] sm:text-[30px] text-on-surface tracking-tight font-bold">
+                        Dashboard Monitoring Task
+                    </h1>
+                    
+                    <!-- Deskripsi & Badge Status -->
+                    <div class="flex flex-wrap items-center gap-3 mt-1.5">
+                        <p class="font-body-md text-text-secondary">
+                            Ringkasan progres pergerakan task dan kesiapan lini produksi secara real-time.
+                        </p>
+                    </div>
                 </div>
-                <div>
-                    <h6 class="fw-bold mb-0" style="font-size: 0.85rem; color: var(--text-main);">{{ _('Workflow Completion Rate') }}</h6>
-                    <span id="dynamic-progress-sub" class="text-muted" style="font-size: 0.7rem;">{{ metrics.verified }} of {{ metrics.total }} total recorded tasks verified or completed.</span>
-                </div>
-            </div>
-            <div class="flex-grow-1 mx-md-4 d-none d-xl-block" style="max-width: 450px;">
-                <div class="progress" style="height: 8px; background-color: var(--border-color); border-radius: 4px;">
-                    <div id="dynamic-progress-bar" class="progress-bar bg-success" role="progressbar" style="width: {{ metrics.completion_rate }}%; border-radius: 4px;" aria-valuenow="{{ metrics.completion_rate }}" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-            </div>
-        </div>
 
-        <!-- 2. Grid 6 Kartu Status QC (Angka Dihitung Dinamis via JS) -->
-        <div class="row g-3 flex-shrink-0">
-            <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
-                <div data-filter="Need Sample" class="metric-command-card ind-warning active">
-                    <div class="mb-1"><span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">{{ _('Need Sample') }}</span></div>
-                    <div class="d-flex align-items-baseline"><h3 id="count-need" class="fw-bold fs-3 mb-0" style="color: var(--text-main);">{{ metrics.need }}</h3></div>
+                <div class="flex items-center gap-2">
+                    <!-- Tombol Perbarui Data -->
+                    <button id="btn-sync" onclick="refreshDashboardData(this)" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-border-subtle text-on-surface font-label-md shadow-sm hover:bg-surface-container-low hover:border-primary-container/30 hover:text-primary-container transition-all active:scale-[0.98]" type="button">
+                        <span class="material-symbols-outlined text-[18px] transition-transform duration-500" id="sync-icon">sync</span>
+                        <span class="hidden sm:inline font-semibold">Perbarui Data</span>
+                    </button>
                 </div>
             </div>
-            <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
-                <div data-filter="Sample Done" class="metric-command-card ind-info">
-                    <div class="mb-1"><span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">{{ _('Sample Done') }}</span></div>
-                    <div class="d-flex align-items-baseline"><h3 id="count-done" class="fw-bold fs-3 mb-0" style="color: var(--text-main);">{{ metrics.done }}</h3></div>
-                </div>
-            </div>
-            <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
-                <div data-filter="Revision" class="metric-command-card ind-danger">
-                    <div class="mb-1"><span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">{{ _('Revision') }}</span></div>
-                    <div class="d-flex align-items-baseline"><h3 id="count-rev" class="fw-bold fs-3 mb-0" style="color: var(--text-main);">{{ metrics.rev }}</h3></div>
-                </div>
-            </div>
-            <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
-                <div data-filter="Ready" class="metric-command-card ind-success">
-                    <div class="mb-1"><span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">{{ _('Ready') }}</span></div>
-                    <div class="d-flex align-items-baseline"><h3 id="count-ready" class="fw-bold fs-3 mb-0" style="color: var(--text-main);">{{ metrics.ready }}</h3></div>
-                </div>
-            </div>
-            <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
-                <div data-filter="Skipped" class="metric-command-card ind-secondary">
-                    <div class="mb-1"><span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">{{ _('Skipped') }}</span></div>
-                    <div class="d-flex align-items-baseline"><h3 id="count-skip" class="fw-bold fs-3 mb-0" style="color: var(--text-main);">{{ metrics.skip }}</h3></div>
-                </div>
-            </div>
-            <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
-                <div data-filter="Production" class="metric-command-card ind-primary">
-                    <div class="mb-1"><span class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">{{ _('Production') }}</span></div>
-                    <div class="d-flex align-items-baseline"><h3 id="count-prod" class="fw-bold fs-3 mb-0" style="color: var(--text-main);">{{ metrics.prod }}</h3></div>
-                </div>
-            </div>
-        </div>
 
-        <!-- 3. Bagian Tengah (List Project & Diagram Batang) -->
-        <div class="row g-3 flex-shrink-0 middle-row">
-            <div class="col-xl-4 col-lg-5 h-100">
-                <div class="bento-panel h-100 d-flex flex-column">
-                    <h6 class="fw-bold mb-3" style="color: var(--text-main); font-size: 0.85rem;">{{ _('Active Projects') }}</h6>
-                    <div style="flex: 1; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border-color) transparent; padding-right: 4px;" id="projectListContainer">
-                        
-                        <div data-project="All" class="proj-list-item active">
-                            <div class="d-flex align-items-center gap-2"><span class="fw-medium" style="font-size: 0.8rem;">{{ _('All Projects') }}</span></div>
-                            <svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <!-- HERO METRIC: WORKFLOW COMPLETION BANNER -->
+            <div class="relative overflow-hidden rounded-xl bg-white border border-border-subtle shadow-sm p-4 sm:p-6 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+                <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-emerald-500/5 rounded-full pointer-events-none blur-2xl"></div>
+                <div class="flex items-center gap-4 z-10">
+                    <div class="relative w-16 h-16 flex-shrink-0 flex items-center justify-center">
+                        <svg class="w-full h-full -rotate-90" viewBox="0 0 44 44">
+                            <circle cx="22" cy="22" fill="none" r="18" stroke="#E2E8F0" stroke-width="4"></circle>
+                            <circle id="gauge-circle" cx="22" cy="22" fill="none" r="18" stroke="#0F766E" stroke-dasharray="113.1" stroke-dashoffset="{{ 113.1 - (113.1 * (metrics.completion_rate / 100)) }}" stroke-linecap="round" stroke-width="4" style="transition: stroke-dashoffset 1s ease-in-out;"></circle>
+                        </svg>
+                        <span id="dynamic-progress-text" class="absolute text-[15px] font-bold text-on-surface">{{ metrics.completion_rate }}%</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[15px] text-on-surface font-bold">{{ _('Taskflow Completion Rate') }}</span>
                         </div>
+                        <p class="font-body-md text-text-secondary mt-0.5" id="dynamic-progress-sub">
+                            <strong class="text-on-surface font-semibold">{{ metrics.verified }} dari {{ metrics.total }}</strong> total tugas terverifikasi & diselesaikan.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="w-full lg:w-96 flex flex-col gap-2 z-10">
+                    <div class="flex justify-between items-baseline font-code-sm">
+                        <span class="text-text-secondary">Troughtput Pipeline</span>
+                    </div>
+                    <div class="w-full h-2.5 bg-surface-container-low rounded-full overflow-hidden flex border border-border-subtle/50">
+                        <div id="dynamic-progress-bar" class="bg-primary-container h-full rounded-full transition-all duration-700" style="width: {{ metrics.completion_rate }}%"></div>
+                    </div>
+                    <div class="flex justify-between items-center text-xs text-text-secondary font-label-sm">
+                        <span>{{ _('Sisa Task') }}: <strong class="text-on-surface font-semibold">{{ metrics.total - metrics.verified }}</strong></span>
+                    </div>
+                </div>
+            </div>
 
-                        <!-- Daftar Nama Proyek -->
-                        {% for p in projects %}
-                        <div data-project="{{ p }}" class="proj-list-item" title="{{ p }}">
-                            <div class="d-flex align-items-center gap-2 w-100 pe-2 text-truncate">
-                                <span class="fw-medium text-truncate" style="font-size: 0.8rem; max-width: 90%;">{{ p }}</span>
-                            </div>
-                            <svg class="check-icon flex-shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        </div>
-                        {% endfor %}
+            <!-- 6 KARTU STATUS -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+                
+                <!-- Card 1: Need Sample (Persentase Progres Mulai dari 0% - Non Skipped) -->
+                <div data-filter="Need Sample" class="metric-command-card active group relative rounded-xl bg-white border border-border-subtle p-4 sm:p-5 shadow-sm hover:border-amber-300 transition-all duration-200 flex flex-col justify-between min-h-[125px] cursor-pointer">
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-amber-500 rounded-t-xl"></div>
+                    <div class="flex items-center justify-between mt-1">
+                        <span class="text-[11px] text-text-secondary uppercase tracking-wider font-bold">Need Sample</span>
+                        <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                    </div>
+                    <div class="flex items-baseline justify-between my-2">
+                        <span id="count-need" class="text-[28px] xl:text-[32px] font-bold text-on-surface tracking-tight leading-none">{{ metrics.need }}</span>
+                        {% set non_skipped = metrics.need + metrics.done + metrics.rev + metrics.ready + metrics.prod %}
+                        {% set sampled = non_skipped - metrics.need %}
+                        {% set need_pct = ((sampled / non_skipped * 100) | round(1)) if non_skipped > 0 else 0 %}
+                        <span id="badge-need-pct" class="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200">{{ need_pct }}%</span>
+                    </div>
+                    <div class="text-[12px] text-text-secondary font-medium flex items-center gap-1.5 pt-1 border-t border-slate-100">
+                        <span class="material-symbols-outlined text-[15px] text-amber-600">hourglass_top</span>
+                        <span class="truncate">Menunggu sampling</span>
+                    </div>
+                </div>
+                
+               <!-- Card 2: Sample Done (Menampilkan Angka Penambahan) -->
+                <div data-filter="Sample Done" class="metric-command-card group relative rounded-xl bg-white border border-border-subtle p-4 sm:p-5 shadow-sm hover:border-sky-300 transition-all duration-200 flex flex-col justify-between min-h-[125px] cursor-pointer">
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-sky-500 rounded-t-xl"></div>
+                    <div class="flex items-center justify-between mt-1">
+                        <span class="text-[11px] text-text-secondary uppercase tracking-wider font-bold">Sample Done</span>
+                        <span class="w-2 h-2 rounded-full bg-sky-500"></span>
+                    </div>
+                    <div class="flex items-baseline justify-between my-2">
+                        <span id="count-done" class="text-[28px] xl:text-[32px] font-bold text-on-surface tracking-tight leading-none">{{ metrics.done }}</span>
+                        <span id="badge-done-daily" class="px-2 py-0.5 rounded text-[11px] font-bold bg-sky-50 text-sky-700 border border-sky-200">+{{ metrics.done_today | default(0) }}</span>
+                    </div>
+                    <div class="text-[12px] text-text-secondary font-medium flex items-center gap-1.5 pt-1 border-t border-slate-100">
+                        <span class="material-symbols-outlined text-[15px] text-text-muted">check</span>
+                        <span class="truncate">Menunggu inspeksi</span>
+                    </div>
+                </div>
+
+                <!-- Card 3: Revision (Status Mutu Dinamis) -->
+                <div data-filter="Revision" class="metric-command-card group relative rounded-xl bg-white border border-border-subtle p-4 sm:p-5 shadow-sm hover:border-rose-300 transition-all duration-200 flex flex-col justify-between min-h-[125px] cursor-pointer">
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-rose-500 rounded-t-xl"></div>
+                    <div class="flex items-center justify-between mt-1">
+                        <span class="text-[11px] text-text-secondary uppercase tracking-wider font-bold">Revision</span>
+                        <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                    </div>
+                    <div class="flex items-baseline justify-between my-2">
+                        <span id="count-rev" class="text-[28px] xl:text-[32px] font-bold text-on-surface tracking-tight leading-none">{{ metrics.rev }}</span>
                         
-                    </div>
-                </div>
-            </div>
-
-            <!-- KANAN: Bar Chart -->
-            <div class="col-xl-8 col-lg-7 h-100">
-                <div class="bento-panel h-100 d-flex flex-column">
-                    <div class="w-100 text-start mb-2">
-                        <h6 class="fw-bold mb-0" style="color: var(--text-main); font-size: 0.85rem;">{{ _('QC Distribution Overview') }}</h6>
-                    </div>
-                    <div class="flex-grow-1 w-100 position-relative" style="min-height: 0;">
-                        <canvas id="qcBarChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 4. Bagian Bawah: Recent Activity Table -->
-        <div class="bento-panel bottom-row">
-            <div class="flex-shrink-0 mb-3">
-                <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
-                    <div>
-                        <h2 class="fw-semibold fs-6 mb-0" style="color: var(--text-main); font-size: 0.95rem !important;">{{ _('Recent Task Activity') }}</h2>
-                        <span class="text-muted small" style="font-size: 0.7rem;">Latest recorded operations</span>
-                    </div>
-                    <div class="position-relative" style="width: 200px;">
-                        <input type="text" id="recentActivitySearch" class="form-control form-control-sm ps-3 shadow-none border-0" placeholder="{{ _('Search activity...') }}" style="font-size: 0.75rem; background-color: var(--bg-body); color: var(--text-main); border-radius: 8px; height: 32px; border: 1px solid var(--border-color);">
-                    </div>
-                </div>
-
-                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-                    <div class="d-flex align-items-center gap-1 overflow-x-auto pb-1 flex-nowrap" id="tableFilterTabs" style="-webkit-overflow-scrolling: touch; scrollbar-width: none;">
-                        <button type="button" data-filter="All" class="dashboard-filter-tab py-1 px-3 flex-shrink-0 active" style="font-size: 0.7rem;">{{ _('All') }}</button>
-                        <button type="button" data-filter="Need Sample" class="dashboard-filter-tab py-1 px-3 flex-shrink-0" style="font-size: 0.7rem;">{{ _('Need Sample') }}</button>
-                        <button type="button" data-filter="Sample Done" class="dashboard-filter-tab py-1 px-3 flex-shrink-0" style="font-size: 0.7rem;">{{ _('Sample Done') }}</button>
-                        <button type="button" data-filter="Revision" class="dashboard-filter-tab py-1 px-3 flex-shrink-0" style="font-size: 0.7rem;">{{ _('Revision') }}</button>
-                        <button type="button" data-filter="Ready" class="dashboard-filter-tab py-1 px-3 flex-shrink-0" style="font-size: 0.7rem;">{{ _('Ready') }}</button>
-                        <button type="button" data-filter="Skipped" class="dashboard-filter-tab py-1 px-3 flex-shrink-0" style="font-size: 0.7rem;">{{ _('Skipped') }}</button>
-                        <button type="button" data-filter="Production" class="dashboard-filter-tab py-1 px-3 flex-shrink-0" style="font-size: 0.7rem;">{{ _('Production') }}</button>
-                    </div>
-
-                    <div class="d-flex align-items-center gap-2">
-                        <input type="date" id="dateStart" class="form-control form-control-sm shadow-none px-2 text-center" style="font-size: 0.7rem; border-radius: 6px; width: 110px; background-color: var(--bg-body); color: var(--text-main); border-color: var(--border-color); height: 28px;">
-                        <span class="text-muted" style="font-size: 0.7rem;">-</span>
-                        <input type="date" id="dateEnd" class="form-control form-control-sm shadow-none px-2 text-center" style="font-size: 0.7rem; border-radius: 6px; width: 110px; background-color: var(--bg-body); color: var(--text-main); border-color: var(--border-color); height: 28px;">
-                        
-                    </div>
-                </div>
-            </div>
-
-            <div class="table-responsive">
-                <table class="table table-custom-clean align-middle">
-                    <thead>
-                        <tr>
-                            <th>{{ _('Project / Pkg') }}</th>
-                            <th>{{ _('Task ID & Name') }}</th>
-                            <th>{{ _('Modified By') }}</th>
-                            <th class="text-end">{{ _('Status') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody id="recentActivityTableBody">
-                        {% if recent_tasks %}
-                            {% for t in recent_tasks %}
-                            {% set display_category = 'Production' if t.sent_by_leader else t.qc_category %}
-                            <tr class="activity-row" data-project="{{ t.project_name | default('General Project') }}" data-category="{{ display_category }}" data-date="{{ t.updated_at.strftime('%Y-%m-%d') if t.updated_at else '' }}">
-                                <td>
-                                    <div class="fw-semibold text-truncate" style="max-width: 150px;">{{ t.project_name | default('General Project') }}</div>
-                                    <div class="text-muted" style="font-size: 0.65rem;">{{ t.package_name | default('pkg-main') }}</div>
-                                </td>
-                                <td>
-                                    <div class="font-monospace text-muted" style="font-size: 0.65rem;">#{{ t.task_id | default(loop.index) }}</div>
-                                    <div class="fw-medium text-truncate" style="max-width: 250px;">{{ t.task_name }}</div>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <div class="rounded-circle bg-primary bg-opacity-15 text-primary d-flex align-items-center justify-content-center fw-bold" style="width: 24px; height: 24px; font-size: 0.65rem;">
-                                            {{ (t.uploaded_by | default('User'))[0:2] | upper }}
-                                        </div>
-                                        <span class="text-truncate" style="max-width: 120px;">{{ t.uploaded_by | default('User') }}</span>
-                                    </div>
-                                </td>
-                                <td class="text-end">
-                                    <span class="badge 
-                                        {% if display_category == 'Ready' %} bg-success bg-opacity-10 text-success 
-                                        {% elif display_category == 'Revision' %} bg-danger bg-opacity-10 text-danger 
-                                        {% elif display_category == 'Need Sample' %} bg-warning bg-opacity-10 text-warning 
-                                        {% elif display_category == 'Sample Done' %} bg-info bg-opacity-10 text-info 
-                                        {% elif display_category == 'Production' %} bg-primary bg-opacity-10 text-primary
-                                        {% else %} bg-secondary bg-opacity-10 text-secondary {% endif %} px-2 py-1.5 fw-semibold" style="font-size: 0.6rem; letter-spacing: 0.03em;">
-                                        {{ _(display_category) }}
-                                    </span>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                            <tr id="noActivityMatch" style="display: none;">
-                                <td colspan="4" class="text-center py-4 text-muted small border-0">{{ _('No matching activities found for this filter combination.') }}</td>
-                            </tr>
+                        <!-- Logika Jinja untuk Status Mutu Awal -->
+                        {% if metrics.rev == 0 %}
+                            <span id="badge-rev-status" class="px-2 py-0.5 rounded text-[11px] font-bold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">0 Defect</span>
                         {% else %}
-                            <tr>
-                                <td colspan="4" class="text-center py-5 text-muted small border-0">{{ _('No task records found in the database.') }}</td>
-                            </tr>
+                            <span id="badge-rev-status" class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">{{ metrics.rev }} Defect</span>
                         {% endif %}
-                    </tbody>
-                </table>
+                    </div>
+                    <div class="text-[12px] text-text-secondary font-medium flex items-center gap-1.5 pt-1 border-t border-slate-100">
+                        <span class="material-symbols-outlined text-[15px] text-text-muted">replay</span>
+                        <span class="truncate">Revisi sample</span>
+                    </div>
+                </div>
+
+                <!-- Card 4: Ready -->
+                <div data-filter="Ready" class="metric-command-card group relative rounded-xl bg-white border border-border-subtle p-4 sm:p-5 shadow-sm hover:border-emerald-300 transition-all duration-200 flex flex-col justify-between min-h-[125px] cursor-pointer">
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-emerald-600 rounded-t-xl"></div>
+                    <div class="flex items-center justify-between mt-1">
+                        <span class="text-[11px] text-text-secondary uppercase tracking-wider font-bold">Ready</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                    </div>
+                    <div class="flex items-baseline justify-between my-2">
+                        <span id="count-ready" class="text-[28px] xl:text-[32px] font-bold text-on-surface tracking-tight leading-none">{{ metrics.ready }}</span>
+                        <span id="badge-ready-daily" class="px-2 py-0.5 rounded text-[11px] font-bold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">+{{ metrics.ready_today | default(0) }}</span>
+                    </div>
+                    <div class="text-[12px] text-text-secondary font-medium flex items-center gap-1.5 pt-1 border-t border-slate-100">
+                        <span class="material-symbols-outlined text-[15px] text-emerald-600">verified</span>
+                        <span class="truncate">Lolos inspeksi</span>
+                    </div>
+                </div>
+
+                <!-- Card 5: Skipped -->
+                <div data-filter="Skipped" class="metric-command-card group relative rounded-xl bg-white border border-border-subtle p-4 sm:p-5 shadow-sm hover:border-slate-300 transition-all duration-200 flex flex-col justify-between min-h-[125px] cursor-pointer">
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-slate-400 rounded-t-xl"></div>
+                    <div class="flex items-center justify-between mt-1">
+                        <span class="text-[11px] text-text-secondary uppercase tracking-wider font-bold">Skipped</span>
+                        <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+                    </div>
+                    <div class="flex items-baseline justify-between my-2">
+                        <span id="count-skip" class="text-[28px] xl:text-[32px] font-bold text-on-surface tracking-tight leading-none">{{ metrics.skip }}</span>
+                        <span class="text-[11px] font-bold text-text-muted">N/A</span>
+                    </div>
+                    <div class="text-[12px] text-text-secondary font-medium flex items-center gap-1.5 pt-1 border-t border-slate-100">
+                        <span class="material-symbols-outlined text-[15px] text-slate-400">block</span>
+                        <span class="truncate">Tidak bisa dikerjakan</span>
+                    </div>
+                </div>
+
+                <!-- Card 6: Production -->
+                <div data-filter="Production" class="metric-command-card group relative rounded-xl bg-white border border-border-subtle p-4 sm:p-5 shadow-sm hover:border-teal-400 transition-all duration-200 flex flex-col justify-between min-h-[125px] cursor-pointer">
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-teal-600 rounded-t-xl"></div>
+                    <div class="flex items-center justify-between mt-1">
+                        <span class="text-[11px] text-text-secondary uppercase tracking-wider font-bold">Production</span>
+                        <span class="w-2 h-2 rounded-full bg-teal-600"></span>
+                    </div>
+                    <div class="flex items-baseline justify-between my-2">
+                        <span id="count-prod" class="text-[28px] xl:text-[32px] font-bold text-on-surface tracking-tight leading-none">{{ metrics.prod }}</span>
+                        <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-[#F0FDFA] text-[#0F766E] border border-[#99F6E4]">Rilis</span>
+                    </div>
+                    <div class="text-[12px] text-text-secondary font-medium flex items-center gap-1.5 pt-1 border-t border-slate-100">
+                        <span class="material-symbols-outlined text-[15px] text-teal-600">rocket_launch</span>
+                        <span class="truncate">Masuk produksi</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BAGIAN TENGAH: PROJECTS & GRAFIK -->
+            <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                
+                <!-- KIRI: Daftar Proyek -->
+                <div class="xl:col-span-4 rounded-xl bg-white border border-border-subtle p-4 shadow-sm flex flex-col h-[420px]">
+                    <div class="flex items-center justify-between pb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[20px] text-primary-container">domain</span>
+                            <h2 class="text-[15px] text-on-surface font-semibold">Active Projects</h2>
+                        </div>
+                    </div>
+                    
+                    <div class="relative w-full mb-3 mt-1">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-[18px] text-text-muted">search</span>
+                        <input type="text" id="projectSearchField" class="w-full h-9 pl-9 pr-3 rounded-lg bg-surface-container-low border border-transparent font-body-sm text-on-surface placeholder:text-text-muted focus:bg-white focus:border-primary-container focus:outline-none transition-all" placeholder="{{ _('Cari Project...') }}">
+                    </div>
+
+                    <div id="projectListContainer" class="flex flex-col gap-1.5 overflow-y-auto flex-1 pr-2" style="scrollbar-width: thin;">
+                        <button data-project="All" class="project-item proj-list-item w-full flex items-center justify-between p-3 rounded-lg text-text-secondary hover:bg-surface-container-low border border-transparent hover:border-border-subtle hover:text-on-surface font-label-md transition-all group active">
+                            <div class="flex flex-col items-start gap-0.5 min-w-0 text-left">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[18px] text-text-secondary group-hover:text-primary-container font-bold check-icon transition-colors">check_circle</span>
+                                    <span class="font-bold text-[14px] text-on-surface truncate">{{ _('All Projects') }}</span>
+                                </div>
+                            </div>
+                            <span class="font-code-sm px-2.5 py-0.5 rounded-full bg-primary-container text-white font-semibold">{{ metrics.total }}</span>
+                        </button>
+                        
+                        {% for p in projects %}
+                        <button data-project="{{ p.name }}" class="project-item proj-list-item w-full flex items-center justify-between p-3 rounded-lg text-text-secondary hover:bg-surface-container-low border border-transparent hover:border-border-subtle hover:text-on-surface font-label-md transition-all group">
+                            <div class="flex flex-col items-start gap-0.5 min-w-0 text-left">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0 check-icon"></span>
+                                    <span class="font-semibold text-[13px] text-on-surface truncate">{{ p.name }}</span>
+                                </div>
+                            </div>
+                            <span class="font-code-sm px-2.5 py-0.5 rounded-full bg-surface-container-highest text-text-secondary font-semibold text-xs">{{ p.count }}</span>
+                        </button>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- KANAN: QC Bar Chart dengan Header Custom -->
+                <div class="xl:col-span-8 rounded-xl bg-white border border-border-subtle p-5 sm:p-6 shadow-sm flex flex-col h-[420px]">
+                    <div class="flex flex-col sm:flex-row sm:items-start justify-between pb-4 gap-2">
+                        <div class="flex flex-col">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[20px] text-primary-container">bar_chart</span>
+                                <h2 class="text-[16px] text-on-surface font-bold">QC Distribution Overview</h2>
+                            </div>
+                            <p class="font-body-sm text-text-secondary mt-1">{{ _('Komparasi sebaran status task per tahapan alur verifikasi') }}</p>
+                        </div>
+                        <div class="flex items-center gap-4 mt-2 sm:mt-0">
+                            <div class="flex items-center gap-1.5 text-[12px] font-semibold text-text-secondary">
+                                <span class="w-3 h-3 rounded-[3px] bg-primary-container"></span> Volume Saat Ini
+                            </div>
+                            <div class="flex items-center gap-1.5 text-[12px] font-semibold text-text-secondary">
+                                <span class="w-3 h-3 rounded-[3px] bg-surface-container-highest"></span> Baseline Cap
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Area Canvas -->
+                    <div class="flex-1 w-full position-relative mt-2" style="min-height: 0;">
+                        <canvas id="qcBarChart" style="width: 100%; height: 100%;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BAGIAN BAWAH: TABEL RECENT ACTIVITY -->
+            <div class="rounded-xl bg-white border border-border-subtle shadow-sm flex flex-col overflow-hidden">
+                <div class="p-4 sm:p-6 bg-white border-b border-border-subtle">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[20px] text-primary-container">fact_check</span>
+                                <h2 class="text-[15px] text-on-surface font-bold">{{ _('Recent Task Activity') }}</h2>
+                            </div>
+                            <p class="font-body-sm text-text-secondary mt-0.5">{{ _('Aktivitas pencatatan dan audit eksekusi verifikasi terkini') }}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pt-4">
+                        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0" id="tableFilterTabs" style="-webkit-overflow-scrolling: touch; scrollbar-width: none;">
+                            <button type="button" data-filter="All" class="dashboard-filter-tab px-3 py-1.5 rounded-lg bg-surface-container-low text-text-secondary hover:text-on-surface font-label-md transition-all active">{{ _('All') }}</button>
+                            <button type="button" data-filter="Need Sample" class="dashboard-filter-tab px-3 py-1.5 rounded-lg bg-surface-container-low text-text-secondary hover:text-on-surface font-label-md transition-all">{{ _('Need Sample') }}</button>
+                            <button type="button" data-filter="Sample Done" class="dashboard-filter-tab px-3 py-1.5 rounded-lg bg-surface-container-low text-text-secondary hover:text-on-surface font-label-md transition-all">{{ _('Sample Done') }}</button>
+                            <button type="button" data-filter="Revision" class="dashboard-filter-tab px-3 py-1.5 rounded-lg bg-surface-container-low text-text-secondary hover:text-on-surface font-label-md transition-all">{{ _('Revision') }}</button>
+                            <button type="button" data-filter="Ready" class="dashboard-filter-tab px-3 py-1.5 rounded-lg bg-surface-container-low text-text-secondary hover:text-on-surface font-label-md transition-all">{{ _('Ready') }}</button>
+                            <button type="button" data-filter="Skipped" class="dashboard-filter-tab px-3 py-1.5 rounded-lg bg-surface-container-low text-text-secondary hover:text-on-surface font-label-md transition-all">{{ _('Skipped') }}</button>
+                        </div>
+
+                        <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                            <div class="relative flex-1 sm:w-64">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-[18px] text-text-muted">search</span>
+                                <input id="recentActivitySearch" class="w-full h-9 pl-9 pr-3 rounded-lg bg-surface-container-low border border-transparent font-body-sm text-on-surface placeholder:text-text-muted focus:bg-white focus:border-primary-container focus:outline-none transition-all" placeholder="{{ _('Search activity...') }}" type="text">
+                            </div>
+                            <div class="flex items-center gap-1 px-2.5 h-9 rounded-lg bg-surface-container-low border border-border-subtle font-code-sm text-text-secondary">
+                                <input type="date" id="dateStart" class="bg-transparent border-0 font-code-sm text-text-secondary focus:outline-none focus:ring-0 p-0 m-0 w-[105px]">
+                                <span class="text-text-muted">—</span>
+                                <input type="date" id="dateEnd" class="bg-transparent border-0 font-code-sm text-text-secondary focus:outline-none focus:ring-0 p-0 m-0 w-[105px]">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto" style="max-height: 500px; -webkit-overflow-scrolling: touch;">
+                    <table class="w-full text-left border-collapse min-w-[950px]">
+                        <thead class="sticky top-0 bg-surface-container-low border-b border-border-subtle z-10">
+                            <tr class="text-text-secondary text-[11px] font-bold uppercase tracking-wider">
+                                <th class="py-3 px-6">{{ _('Project / Pkg') }}</th>
+                                <th class="py-3 px-4">{{ _('Task ID & Name') }}</th>
+                                <th class="py-3 px-4">{{ _('Modified By') }}</th>
+                                <th class="py-3 px-4">{{ _('Status') }}</th>
+                                <th class="py-3 px-6 text-right">{{ _('Aksi') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentActivityTableBody" class="divide-y divide-border-subtle text-on-surface font-body-md">
+                            {% if recent_tasks %}
+                                {% for t in recent_tasks %}
+                                {% set display_category = 'Production' if t.sent_by_leader else t.qc_category %}
+                                <tr class="hover:bg-slate-50 transition-colors group cursor-pointer activity-row" data-project="{{ t.project_name | default('General Project') }}" data-category="{{ display_category }}" data-date="{{ t.updated_at.strftime('%Y-%m-%d') if t.updated_at else '' }}">
+                                    <td class="py-4 px-6">
+                                        <div class="flex flex-col gap-0.5">
+                                            <span data-export="project" class="font-bold text-[13px] text-on-surface tracking-tight group-hover:text-primary-container transition-colors truncate max-w-[200px]">{{ t.project_name | default('General Project') }}</span>
+                                            <span data-export="package" class="font-body-sm text-text-secondary truncate max-w-[200px]">{{ t.package_name | default('pkg-main') }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <div class="flex flex-col gap-0.5">
+                                            <span data-export="task-id" class="font-code-sm text-[12px] text-primary-container font-bold">#{{ t.task_id | default(loop.index) }}</span>
+                                            <span data-export="task-name" class="font-medium text-[13px] text-on-surface truncate max-w-[280px]">{{ t.task_name }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <div class="flex items-center gap-2.5">
+                                            <div class="w-8 h-8 rounded-full bg-emerald-700 text-white flex items-center justify-center font-bold text-xs">
+                                                {{ (t.uploaded_by | default('U'))[0:1] | upper }}
+                                            </div>
+                                            <div class="flex flex-col">
+                                                <span data-export="modified-by" class="font-bold text-[13px] text-on-surface">{{ t.uploaded_by | default('User') }}</span>
+                                                <span class="text-[12px] text-text-muted">{{ t.updated_at.strftime('%H:%M | %Y-%m-%d') if t.updated_at else '' }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        {% if display_category == 'Ready' %}
+                                            <span data-export="status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Ready</span>
+                                        {% elif display_category == 'Production' %}
+                                            <span data-export="status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-[#F0FDFA] text-[#0F766E] border border-[#99F6E4]"><span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span> Production</span>
+                                        {% elif display_category == 'Skipped' %}
+                                            <span data-export="status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-300"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Skipped</span>
+                                        {% elif display_category == 'Need Sample' %}
+                                            <span data-export="status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Need Sample</span>
+                                        {% elif display_category == 'Revision' %}
+                                            <span data-export="status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Revision</span>
+                                        {% else %}
+                                            <span data-export="status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-sky-50 text-sky-700 border border-sky-200"><span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> {{ display_category }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="py-4 px-6 text-right">
+                                        <button onclick="showTaskDetail('{{ t.task_id | default(loop.index) }}', '{{ t.task_name | e }}', '{{ t.project_name | default('General Project') | e }}', '{{ t.package_name | default('pkg-main') | e }}', '{{ t.uploaded_by | default('User') | e }}', '{{ display_category }}', '{{ t.updated_at.strftime('%Y-%m-%d %H:%M') if t.updated_at else '' }}')" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border-subtle bg-white text-text-secondary hover:text-on-surface hover:bg-surface-container-low text-[12px] font-semibold transition-all">
+                                            Lihat Detail <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                <tr id="noActivityMatch" style="display: none;">
+                                    <td colspan="5" class="text-center py-6 text-text-muted font-label-md">{{ _('No matching activities found for this filter combination.') }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-6 text-text-muted font-label-md">{{ _('No task records found in the database.') }}</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Task Detail Modal -->
+        <div class="modal fade" id="taskDetailModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg rounded-xl overflow-hidden">
+                    <div class="modal-header bg-surface-container-low border-b border-border-subtle px-6 py-4">
+                        <h5 class="modal-title font-bold text-on-surface text-base flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary-container">info</span> Detail Task
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-6 flex flex-col gap-4 font-body-md text-on-surface">
+                        <div class="flex justify-between items-center pb-3 border-b border-border-subtle">
+                            <span class="text-text-secondary text-xs uppercase font-bold tracking-wider">Task ID</span>
+                            <span id="modal-task-id" class="font-code-sm text-primary-container font-bold text-sm"></span>
+                        </div>
+                        <div class="flex flex-col gap-1 pb-3 border-b border-border-subtle">
+                            <span class="text-text-secondary text-xs uppercase font-bold tracking-wider">Nama Task</span>
+                            <span id="modal-task-name" class="font-semibold text-sm"></span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 pb-3 border-b border-border-subtle">
+                            <div class="flex flex-col gap-1">
+                                <span class="text-text-secondary text-xs uppercase font-bold tracking-wider">Project</span>
+                                <span id="modal-project-name" class="font-semibold text-sm truncate"></span>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <span class="text-text-secondary text-xs uppercase font-bold tracking-wider">Package</span>
+                                <span id="modal-package-name" class="font-semibold text-sm truncate"></span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 pb-3 border-b border-border-subtle">
+                            <div class="flex flex-col gap-1">
+                                <span class="text-text-secondary text-xs uppercase font-bold tracking-wider">Modified By</span>
+                                <span id="modal-uploaded-by" class="font-semibold text-sm"></span>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <span class="text-text-secondary text-xs uppercase font-bold tracking-wider">Waktu Update</span>
+                                <span id="modal-updated-at" class="font-semibold text-sm"></span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <span class="text-text-secondary text-xs uppercase font-bold tracking-wider">Status Saat Ini</span>
+                            <div><span id="modal-status-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold"></span></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-surface-container-low border-t border-border-subtle px-6 py-3">
+                        <button type="button" class="px-4 py-2 rounded-lg bg-surface-container border border-border-subtle text-on-surface font-semibold text-xs hover:bg-surface-container-high transition-all" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </main>
 
     {% include 'login_modal.html' %}
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Data dari server (Jinja) untuk dashboard.js. File .js statis tidak
-         diproses Jinja, jadi nilai dinamis dikirim lewat objek global ini. -->
+    
     <script>
         window.dashboardConfig = {
             metrics: {
@@ -232,11 +473,15 @@
                 prod: {{ metrics.prod }},
                 total: {{ metrics.total }},
                 verified: {{ metrics.verified }},
-                completion_rate: {{ metrics.completion_rate }}
+                completion_rate: {{ metrics.completion_rate }},
+                done_today: {{ metrics.done_today | default(0) }},   // <- Tambahan
+                ready_today: {{ metrics.ready_today | default(0) }}  // <- Tambahan
             },
             role: "{{ role }}"
         };
     </script>
-    <script src="{{ url_for('static', filename='script.js') }}?v=28"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+    
 </body>
 </html>
