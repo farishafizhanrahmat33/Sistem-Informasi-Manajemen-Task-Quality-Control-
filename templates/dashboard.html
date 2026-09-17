@@ -234,7 +234,7 @@
                     </div>
                 </div>
                 
-               <!-- Card 2: Sample Done (Menampilkan Angka Penambahan) -->
+               <!-- Card 2: Sample Done (Warna Biru / Sky) -->
                 <div data-filter="Sample Done" class="metric-command-card group relative rounded-xl bg-white border border-border-subtle p-4 sm:p-5 shadow-sm hover:border-sky-300 transition-all duration-200 flex flex-col justify-between min-h-[125px] cursor-pointer">
                     <div class="absolute top-0 left-0 right-0 h-1 bg-sky-500 rounded-t-xl"></div>
                     <div class="flex items-center justify-between mt-1">
@@ -245,13 +245,14 @@
                         <span id="count-done" class="text-[28px] xl:text-[32px] font-bold text-on-surface tracking-tight leading-none">{{ metrics.done }}</span>
                         <span id="badge-done-daily" class="px-2 py-0.5 rounded text-[11px] font-bold bg-sky-50 text-sky-700 border border-sky-200">+{{ metrics.done_today | default(0) }}</span>
                     </div>
-                    <div class="text-[12px] text-text-secondary font-medium flex items-center gap-1.5 pt-1 border-t border-slate-100">
-                        <span class="material-symbols-outlined text-[15px] text-text-muted">check</span>
+                    <!-- Diubah: Ikon dan teks menggunakan nuansa sky/biru -->
+                    <div class="text-[12px] font-medium flex items-center gap-1.5 pt-1 border-t border-slate-100" style="color: #0284C7;">
+                        <span class="material-symbols-outlined text-[15px]">check</span>
                         <span class="truncate">Menunggu inspeksi</span>
                     </div>
                 </div>
 
-                <!-- Card 3: Revision (Status Mutu Dinamis) -->
+                <!-- Card 3: Revision (Warna Merah / Rose) -->
                 <div data-filter="Revision" class="metric-command-card group relative rounded-xl bg-white border border-border-subtle p-4 sm:p-5 shadow-sm hover:border-rose-300 transition-all duration-200 flex flex-col justify-between min-h-[125px] cursor-pointer">
                     <div class="absolute top-0 left-0 right-0 h-1 bg-rose-500 rounded-t-xl"></div>
                     <div class="flex items-center justify-between mt-1">
@@ -261,15 +262,15 @@
                     <div class="flex items-baseline justify-between my-2">
                         <span id="count-rev" class="text-[28px] xl:text-[32px] font-bold text-on-surface tracking-tight leading-none">{{ metrics.rev }}</span>
                         
-                        <!-- Logika Jinja untuk Status Mutu Awal -->
                         {% if metrics.rev == 0 %}
                             <span id="badge-rev-status" class="px-2 py-0.5 rounded text-[11px] font-bold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">0 Defect</span>
                         {% else %}
                             <span id="badge-rev-status" class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">{{ metrics.rev }} Defect</span>
                         {% endif %}
                     </div>
-                    <div class="text-[12px] text-text-secondary font-medium flex items-center gap-1.5 pt-1 border-t border-slate-100">
-                        <span class="material-symbols-outlined text-[15px] text-text-muted">replay</span>
+                    <!-- Diubah: Ikon dan teks menggunakan nuansa rose/merah -->
+                    <div class="text-[12px] font-medium flex items-center gap-1.5 pt-1 border-t border-slate-100" style="color: #E11D48;">
+                        <span class="material-symbols-outlined text-[15px]">replay</span>
                         <span class="truncate">Revisi sample</span>
                     </div>
                 </div>
@@ -308,19 +309,19 @@
                     </div>
                 </div>
 
-                <!-- Card 6: Production -->
-                <div data-filter="Production" class="metric-command-card group relative rounded-xl bg-white border border-border-subtle p-4 sm:p-5 shadow-sm hover:border-teal-400 transition-all duration-200 flex flex-col justify-between min-h-[125px] cursor-pointer">
-                    <div class="absolute top-0 left-0 right-0 h-1 bg-teal-600 rounded-t-xl"></div>
+                <!-- Card 6: Production (Sudah Diubah ke Ungu Elegan) -->
+                <div data-filter="Production" class="metric-command-card group relative rounded-xl bg-white border border-border-subtle p-4 sm:p-5 shadow-sm hover:border-[#7C3AED] transition-all duration-200 flex flex-col justify-between min-h-[125px] cursor-pointer">
+                    <div class="absolute top-0 left-0 right-0 h-1 rounded-t-xl" style="background-color: #7C3AED;"></div>
                     <div class="flex items-center justify-between mt-1">
                         <span class="text-[11px] text-text-secondary uppercase tracking-wider font-bold">Production</span>
-                        <span class="w-2 h-2 rounded-full bg-teal-600"></span>
+                        <span class="w-2 h-2 rounded-full" style="background-color: #7C3AED;"></span>
                     </div>
                     <div class="flex items-baseline justify-between my-2">
                         <span id="count-prod" class="text-[28px] xl:text-[32px] font-bold text-on-surface tracking-tight leading-none">{{ metrics.prod }}</span>
-                        <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-[#F0FDFA] text-[#0F766E] border border-[#99F6E4]">Rilis</span>
+                        <span class="badge-purple-soft text-[11px]">Rilis</span>
                     </div>
                     <div class="text-[12px] text-text-secondary font-medium flex items-center gap-1.5 pt-1 border-t border-slate-100">
-                        <span class="material-symbols-outlined text-[15px] text-teal-600">rocket_launch</span>
+                        <span class="material-symbols-outlined text-[15px]" style="color: #7C3AED;">rocket_launch</span>
                         <span class="truncate">Masuk produksi</span>
                     </div>
                 </div>

@@ -77,9 +77,63 @@ function buildFilterURL(overrides = {}) {
     return window.location.pathname + '?' + newParams.toString();
 }
 
-function navigateWithFilters(overrides) {
-    window.location.href = buildFilterURL(overrides);
+async function navigateWithFilters(overrides) {
+    const newUrl = buildFilterURL(overrides);
+    
+    // 1. Ubah URL di address bar browser TANPA me-refresh halaman
+    window.history.pushState({ path: newUrl }, '', newUrl);
+    
+    // 2. Berikan efek loading transparan pada container task
+    const taskContainer = document.getElementById('taskContainer');
+    if (taskContainer) {
+        taskContainer.style.transition = 'opacity 0.2s';
+        taskContainer.style.opacity = '0.4';
+    }
+
+    try {
+        // 3. Ambil data HTML halaman baru di latar belakang secara diam-diam
+        const response = await fetch(newUrl);
+        const htmlText = await response.text();
+        
+        // 4. Ubah teks HTML yang didapat menjadi elemen yang bisa dibaca JS
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlText, 'text/html');
+        
+        // 5. Perbarui area Tab Menu (agar status 'active' dan angkanya berubah)
+        const currentTabMenu = document.getElementById('taskTabMenu');
+        const newTabMenu = doc.getElementById('taskTabMenu');
+        if (currentTabMenu && newTabMenu) {
+            currentTabMenu.innerHTML = newTabMenu.innerHTML;
+            initTabs(); // Pasang ulang deteksi klik pada tab yang baru
+        }
+
+        // 6. Perbarui area Daftar Kartu Task
+        const newTaskContainer = doc.getElementById('taskContainer');
+        if (taskContainer && newTaskContainer) {
+            taskContainer.innerHTML = newTaskContainer.innerHTML;
+            taskContainer.style.opacity = '1';
+            itemsToShow = 15;
+            initTaskDisplay();
+        }
+
+        // 7. PERBARUI AREA PAGINATION AGAR LINK & NOMOR HALAMAN IKUT MENYESUAIKAN
+        const currentPagination = document.getElementById('paginationWrapper');
+        const newPagination = doc.getElementById('paginationWrapper');
+        if (currentPagination && newPagination) {
+            currentPagination.innerHTML = newPagination.innerHTML;
+        }
+
+    } catch (error) {
+        // Fallback: Jika internet bermasalah/error, kembali gunakan cara lawas (refresh)
+        window.location.href = newUrl;
+    }
 }
+
+// === TAMBAHKAN KODE INI DI BAWAHNYA ===
+// Memastikan jika user menekan tombol "Back" atau "Forward" di browser, halaman tetap berjalan normal
+window.addEventListener('popstate', function() {
+    window.location.reload();
+});
 
 function initTabs() {
     const tabs = document.querySelectorAll('.filter-tab');
@@ -1175,22 +1229,22 @@ function getFilteredChartData() {
 
 // Helper untuk membuat efek gradient vertikal (dari terang di bawah ke pekat di atas)
 function createBarGradients(ctx, chartArea) {
-    if (!chartArea) return ['#f59e0b', '#0ea5e9', '#ef4444', '#10b981', '#64748b', '#0F766E'];
+    if (!chartArea) return ['#f59e0b', '#0ea5e9', '#ef4444', '#10b981', '#64748b', '#7C3AED'];
     
     const makeGradient = (colorTop, colorBottom) => {
         const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-        gradient.addColorStop(0, colorBottom); // Bagian bawah (lebih terang/soft)
-        gradient.addColorStop(1, colorTop);    // Bagian atas (lebih pekat/vibrant)
+        gradient.addColorStop(0, colorBottom); 
+        gradient.addColorStop(1, colorTop);    
         return gradient;
     };
 
     return [
-        makeGradient('#D97706', '#FDE68A'), // 1. Need Sample (Amber / Kuning)
-        makeGradient('#0284C7', '#BAE6FD'), // 2. Sample Done (Sky / Biru Langit)
-        makeGradient('#DC2626', '#FECACA'), // 3. Revision (Rose / Merah)
-        makeGradient('#059669', '#A7F3D0'), // 4. Ready (Emerald / Hijau)
-        makeGradient('#64748B', '#CBD5E1'), // 5. Skipped (Slate / Abu-abu)
-        makeGradient('#0F766E', '#99F6E4')  // 6. Production (Teal / Hijau Kebiruan)
+        makeGradient('#D97706', '#FDE68A'), // 1. Need Sample
+        makeGradient('#0284C7', '#BAE6FD'), // 2. Sample Done
+        makeGradient('#DC2626', '#FECACA'), // 3. Revision
+        makeGradient('#059669', '#A7F3D0'), // 4. Ready
+        makeGradient('#64748B', '#CBD5E1'), // 5. Skipped
+        makeGradient('#7C3AED', '#C4B5FD')  // 6. Production (Diubah ke Ungu Elegan)
     ];
 }
 
@@ -1237,12 +1291,12 @@ function initChart() {
                 });
             }
         }, {
-            // Plugin Kustom 2: Garis bawah (underline) berwarna di tiap label sumbu X (menyesuaikan warna kategori)
+            // Plugin Kustom 2: Garis bawah (underline) berwarna di tiap label sumbu X
             id: 'customXAxisUnderlines',
             afterDraw(chart) {
                 const { ctx, chartArea: { bottom }, scales: { x } } = chart;
-                // Warna garis bawah disamakan persis dengan tema masing-masing kartu
-                const colors = ['#f59e0b', '#0ea5e9', '#ef4444', '#10b981', '#64748b', '#0F766E'];
+                // Ubah elemen terakhir ke warna ungu (#7C3AED)
+                const colors = ['#f59e0b', '#0ea5e9', '#ef4444', '#10b981', '#64748b', '#7C3AED'];
                 ctx.save();
                 x.ticks.forEach((tick, index) => {
                     const xPos = x.getPixelForTick(index);

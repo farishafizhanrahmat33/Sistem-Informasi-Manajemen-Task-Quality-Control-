@@ -19,7 +19,7 @@
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
     
     <!-- Bootstrap 5.3.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -35,35 +35,45 @@
     {% include 'navbar.html' %}
 
     <!-- AREA KONTEN UTAMA -->
-    <div class="container-fluid px-4 pb-5 pt-4">
+    <div class="container-fluid px-4 pb-5 pt-4 qc-console">
 
-        <!-- TOOLBAR PENCARIAN & AKSI -->
-        <div class="d-flex align-items-center flex-wrap gap-3 mb-4">
-            
-            {% if role in ['Developer', 'Quality Control'] %}
-            <div class="d-flex gap-2">
-                <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#uploadModal">
+        <!-- HEADER HALAMAN: JUDUL, LIVE SYNC & DESKRIPSI -->
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+            <div>
+                <div class="tm-title-row">
+                    <h1 class="tm-title">{{ _('Manajemen Task') }}</h1>
+                    <span class="tm-live-badge"><span class="tm-live-dot"></span>{{ _('Live Sync') }}</span>
+                </div>
+            </div>
+
+            <!-- TOOLBAR PENCARIAN & AKSI -->
+            <div class="tm-toolbar-actions">
+
+                {% if role in ['Developer', 'Quality Control'] %}
+                <button class="btn btn-tm-primary btn-sm d-flex align-items-center gap-2" type="button" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                     {{ _('Import Project Data') }}
                 </button>
-                <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#deleteProjectModal">
+                <button class="btn btn-tm-danger-outline btn-sm d-flex align-items-center gap-2" type="button" data-bs-toggle="modal" data-bs-target="#deleteProjectModal">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg>
                     {{ _('Delete Project') }}
                 </button>
-            </div>
-            {% endif %}
+                {% endif %}
 
-            <div class="flex-grow-1 position-relative" style="min-width: 280px; max-width: 400px;">
-                <svg width="16" height="16" fill="currentColor" class="search-icon" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
-                <input type="text" id="searchInput" class="form-control form-control-sm search-pill border-0 shadow-sm" placeholder="{{ _('Search Task ID, Spec, or Description...') }}" value="{{ search_query }}">
-            </div>
+                <div class="position-relative tm-search-wrap">
+                    <svg width="16" height="16" fill="currentColor" class="search-icon" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
+                    <input type="text" id="searchInput" class="form-control form-control-sm search-pill border-0 shadow-sm" placeholder="{{ _('Search Task ID, Spec, or Description...') }}" value="{{ search_query }}">
+                </div>
 
-            <button class="btn btn-dark btn-sm ms-auto d-flex align-items-center gap-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterDrawer">
-                <!-- Ikon Filter SVG -->
-                <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
-                </svg>
-                {{ _('Filter & Sort') }}
-                <span id="activeFilterBadge" class="badge bg-primary rounded-circle d-none ms-1" style="font-size: 0.6rem;">!</span>
-            </button>
+                <button class="btn btn-tm-outline btn-sm d-flex align-items-center gap-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterDrawer">
+                    <!-- Ikon Filter SVG -->
+                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
+                    </svg>
+                    {{ _('Filter & Sort') }}
+                    <span id="activeFilterBadge" class="badge bg-primary rounded-circle d-none ms-1" style="font-size: 0.6rem;">!</span>
+                </button>
+            </div>
         </div>
 
         <!-- MODAL UPLOAD & HAPUS PROYEK -->
@@ -210,56 +220,61 @@
                     <div class="card-body d-flex flex-column p-3">
                         
                         <!-- Header: Task ID & Status Badge -->
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <h6 class="card-title fw-bold mb-0 text-truncate pe-2" style="font-size: 1rem; color: var(--text-main);">
-                                {{ _('Task ID :') }} {{ t.task_id }}
-                            </h6>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="d-flex align-items-center gap-2 text-truncate pe-2">
+                                <span class="tm-id-label">Task ID</span>
+                                <span class="tm-id-chip">#{{ t.task_id }}</span>
+                            </div>
                             {% if t.sent_by_leader %}
-                                <span class="badge shadow-sm flex-shrink-0" style="background-color: var(--badge-sent-bg); color: var(--badge-sent-text);">{{ _('Sent') }}</span>
+                                <span class="badge tm-status-badge shadow-sm flex-shrink-0" style="background-color: var(--badge-sent-bg); color: var(--badge-sent-text);">{{ _('Sent') }}</span>
                             {% else %}
                                 {% if t.qc_category == 'Need Sample' %}
-                                    <span class="badge badge-accent flex-shrink-0">{{ _('To Sample') }}</span>
+                                    <span class="badge tm-status-badge badge-accent flex-shrink-0">{{ _('To Sample') }}</span>
                                 {% elif t.qc_category == 'Sample Done' %}
-                                    <span class="badge bg-info text-dark flex-shrink-0">{{ _('Sample Done') }}</span>
+                                    <span class="badge tm-status-badge bg-info text-dark flex-shrink-0">{{ _('Sample Done') }}</span>
                                 {% elif t.qc_category == 'Revision' %}
-                                    <span class="badge bg-danger flex-shrink-0">{{ _('Revision') }}</span>
+                                    <span class="badge tm-status-badge bg-danger flex-shrink-0">{{ _('Revision') }}</span>
                                 {% elif t.qc_category == 'Ready' %}
-                                    <span class="badge bg-success flex-shrink-0">{{ _('Ready') }}</span>
+                                    <span class="badge tm-status-badge bg-success flex-shrink-0">{{ _('Ready') }}</span>
                                 {% elif t.qc_category == 'Skipped' %}
-                                    <span class="badge bg-secondary flex-shrink-0">{{ _('Skipped') }}</span>
+                                    <span class="badge tm-status-badge bg-secondary flex-shrink-0">{{ _('Skipped') }}</span>
                                 {% else %}
-                                    <span class="badge bg-secondary flex-shrink-0">{{ _(t.qc_category) }}</span>
+                                    <span class="badge tm-status-badge bg-secondary flex-shrink-0">{{ _(t.qc_category) }}</span>
                                 {% endif %}
                             {% endif %}
                         </div>
                         
                         <!-- Sub-Header: Project & Package Name -->
                         <div class="mb-3 d-flex flex-wrap gap-2">
-                            <span class="badge badge-soft" style="font-size: 0.75rem;">{{ _('Project:') }} {{ t.project_name or '-' }}</span>
-                            <span class="badge badge-soft" style="font-size: 0.75rem;">{{ _('Package:') }} {{ t.package_name or '-' }}</span>
+                            <span class="badge tm-tag" title="{{ t.project_name or '-' }}">{{ t.project_name or '-' }}</span>
+                            <span class="badge tm-tag" title="{{ t.package_name or '-' }}">{{ t.package_name or '-' }}</span>
                         </div>
 
-                        <!-- Content List (Task Name, Description, Target Pullable) -->
-                        <div class="card-text small mb-3" style="color: var(--text-muted);">
-                            <div class="mb-1"><strong>{{ _('Task Name:') }}</strong> {{ t.task_name or '-' }}</div>
-                            <div class="mb-1 text-truncate" title="{{ t.description }}"><strong>{{ _('Desc:') }}</strong> {{ t.description or '-' }}</div>
-                            <div>
-                                <strong>{{ _('Target Pullable:') }}</strong> {{ t.pullable_num }}
+                        <!-- Content List (Task Name & Description) -->
+                        <div class="card-text small mb-3">
+                            <div class="mb-1 fw-bold" style="color: var(--text-main); font-size: 0.95rem;">{{ t.task_name or '-' }}</div>
+                            <div class="tm-desc-clamp" title="{{ t.description }}" style="color: var(--text-muted);">{{ t.description or '-' }}</div>
+                        </div>
+
+                        <!-- Footer: Target Pullable & View Details -->
+                        <div class="card-footer-row">
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <span class="small" style="color: var(--text-muted);">{{ _('Target Pullable:') }}</span>
+                                <span class="small fw-semibold" style="color: var(--text-main);">{{ t.pullable_num }}</span>
                                 <!-- Indikator warna -->
                                 {% if t.pullable_num < 250 %}
-                                    <span class="badge ms-1" style="background-color: #EF4444; color: white;">{{ _('Critical') }}</span>
+                                    <span class="tm-chip" style="background-color: var(--tm-danger-bg); color: var(--tm-danger); border-color: var(--tm-danger-border);">{{ _('Critical') }}</span>
                                 {% elif t.pullable_num < 500 %}
-                                    <span class="badge ms-1" style="background-color: #F59E0B; color: white;">{{ _('Low') }}</span>
+                                    <span class="tm-chip" style="background-color: var(--tm-warning-bg); color: var(--tm-warning); border-color: var(--tm-warning-border);">{{ _('Low') }}</span>
                                 {% else %}
-                                    <span class="badge ms-1" style="background-color: #10B981; color: white;">{{ _('Safe') }}</span>
+                                    <span class="tm-chip" style="background-color: var(--tm-success-bg); color: var(--tm-success); border-color: var(--tm-success-border);">{{ _('Safe') }}</span>
                                 {% endif %}
                             </div>
-                        </div>
-
-                        <!-- Footer: View Details -->
-                        <div class="mt-auto pt-2 border-top">
                             <!-- PASTIKAN ADA type="button" DI SINI -->
-                            <button type="button" class="btn btn-outline-secondary btn-sm w-100 fw-semibold" data-bs-toggle="modal" data-bs-target="#modal-{{ t.id }}">{{ _('View Details') }}</button>
+                            <button type="button" class="btn btn-sm tm-detail-link" data-bs-toggle="modal" data-bs-target="#modal-{{ t.id }}">
+                                {{ _('View Details') }}
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -549,106 +564,119 @@
             </div>
         </div>
         
-       <!-- Navigasi Pagination Ultra-Premium SaaS Style -->
-        {% if pagination and pagination.pages > 1 %}
-        <style>
-            /* Menyembunyikan panah naik-turun bawaan browser pada input number */
-            .jump-input::-webkit-outer-spin-button,
-            .jump-input::-webkit-inner-spin-button {
-                -webkit-appearance: none;
-                margin: 0;
-            }
-            .jump-input[type=number] {
-                -moz-appearance: textfield;
-            }
-            /* Efek hover halus pada tombol */
-            .page-btn-custom {
-                transition: all 0.2s ease;
-            }
-            .page-btn-custom:hover {
-                background-color: var(--border-color) !important;
-            }
-        </style>
+       <!-- BUNGKUS DENGAN ID paginationWrapper AGAR BISA DI-REFRESH OLEH JS -->
+        <div id="paginationWrapper">
+            {% if pagination and pagination.pages > 1 %}
+            <style>
+                /* Menyembunyikan panah naik-turun bawaan browser pada input number */
+                .jump-input::-webkit-outer-spin-button,
+                .jump-input::-webkit-inner-spin-button {
+                    -webkit-appearance: none;
+                    margin: 0;
+                }
+                .jump-input[type=number] {
+                    -moz-appearance: textfield;
+                }
+                /* Efek hover halus pada tombol */
+                .page-btn-custom {
+                    transition: all 0.2s ease;
+                }
+                .page-btn-custom:hover {
+                    background-color: rgba(15, 118, 110, 0.1) !important;
+                    color: #0F766E !important;
+                }
+            </style>
 
-        <!-- Navigasi Pagination dengan tambahan padding horizontal (px-3) agar tidak mepet ke kiri -->
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-3 pt-3 px-4 border-top pb-4" style="border-color: var(--border-color) !important;">
-            
-            <!-- Info Halaman di Kiri dengan sedikit jarak -->
-            <div class="small mb-3 mb-md-0" style="color: var(--text-muted); font-size: 0.85rem;">
-                {{ _('Showing page') }} <span class="fw-semibold" style="color: var(--text-main);">{{ pagination.page }}</span> {{ _('of') }} <span class="fw-semibold" style="color: var(--text-main);">{{ pagination.pages }}</span>
-            </div>
-
-            <!-- Kontrol Navigasi di Kanan -->
-            <div class="d-flex align-items-center gap-3 flex-wrap justify-content-center">
+            <!-- Navigasi Pagination dengan tambahan padding horizontal (px-3) agar tidak mepet ke kiri -->
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-3 pt-3 px-4 border-top pb-4" style="border-color: var(--border-color) !important;">
                 
-                <!-- Deretan Tombol Halaman -->
-                <ul class="pagination pagination-sm m-0 gap-1">
+                <!-- Info Halaman di Kiri dengan sedikit jarak -->
+                {% set tm_start_item = ((pagination.page - 1) * pagination.per_page) + 1 %}
+                {% set tm_end_item = pagination.page * pagination.per_page if (pagination.page * pagination.per_page) < pagination.total else pagination.total %}
+                <div class="small mb-3 mb-md-0" style="color: var(--text-muted); font-size: 0.85rem;">
+                    {{ _('Menampilkan') }} <span class="fw-semibold" style="color: var(--text-main);">{{ tm_start_item }} - {{ tm_end_item }}</span> {{ _('dari') }} <span class="fw-semibold" style="color: var(--text-main);">{{ pagination.total }}</span> {{ _('total tugas aktif') }}
+                </div>
+
+                <!-- Kontrol Navigasi di Kanan -->
+                <div class="d-flex align-items-center gap-3 flex-wrap justify-content-center">
                     
-                    <!-- Tombol Prev (Icon) -->
-                    <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
-                        <a class="page-link page-btn-custom d-flex align-items-center justify-content-center shadow-none" 
-                           href="{% if pagination.has_prev %}{{ url_for(request.endpoint, page=pagination.prev_num, **current_args) }}{% else %}#{% endif %}"
-                           style="background-color: transparent; color: var(--text-main); border: 1px solid var(--border-color); border-radius: 6px; height: 32px; min-width: 32px;">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                        </a>
-                    </li>
-
-                    <!-- Nomor Halaman & Ellipsis -->
-                    {% for page_num in pagination.iter_pages(left_edge=1, left_current=1, right_current=1, right_edge=1) %}
-                        {% if page_num %}
-                            <li class="page-item">
-                                <a class="page-link page-btn-custom d-flex align-items-center justify-content-center shadow-none" 
-                                   href="{{ url_for(request.endpoint, page=page_num, **current_args) }}"
-                                   style="{% if page_num == pagination.page %}background-color: var(--text-main); border-color: var(--text-main); color: var(--bg-body); font-weight: 600; pointer-events: none;{% else %}background-color: transparent; color: var(--text-main); border: 1px solid transparent;{% endif %} border-radius: 6px; font-size: 0.85rem; height: 32px; min-width: 32px;">
-                                    {{ page_num }}
-                                </a>
-                            </li>
-                        {% else %}
-                            <li class="page-item disabled">
-                                <span class="page-link d-flex align-items-center justify-content-center border-0 bg-transparent shadow-none" style="color: var(--text-muted); font-size: 0.85rem; height: 32px; min-width: 24px;">&hellip;</span>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-
-                    <!-- Tombol Next (Icon) -->
-                    <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
-                        <a class="page-link page-btn-custom d-flex align-items-center justify-content-center shadow-none" 
-                           href="{% if pagination.has_next %}{{ url_for(request.endpoint, page=pagination.next_num, **current_args) }}{% else %}#{% endif %}"
-                           style="background-color: transparent; color: var(--text-main); border: 1px solid var(--border-color); border-radius: 6px; height: 32px; min-width: 32px;">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        </a>
-                    </li>
-                </ul>
-
-                <!-- Garis Pemisah Vertikal (Sembunyi di HP) -->
-                <div class="d-none d-sm-block" style="width: 1px; height: 20px; background-color: var(--border-color);"></div>
-
-                <!-- Input Group "Jump to Page" yang Menyatu -->
-                <form method="GET" action="{{ url_for(request.endpoint) }}" class="m-0">
-                    {% for k, v in current_args.items() %}
-                        <input type="hidden" name="{{ k }}" value="{{ v }}">
-                    {% endfor %}
-                    <div class="input-group input-group-sm" style="height: 32px;">
-                        <span class="input-group-text bg-transparent shadow-none" style="border-color: var(--border-color); color: var(--text-muted); font-size: 0.8rem; border-radius: 6px 0 0 6px;">{{ _('Jump') }}</span>
+                    <!-- Deretan Tombol Halaman -->
+                    <ul class="pagination pagination-sm m-0 gap-1">
                         
-                        <input type="number" name="page" min="1" max="{{ pagination.pages }}" value="{{ pagination.page }}" class="form-control jump-input text-center shadow-none border-start-0 border-end-0" style="width: 48px; background-color: transparent; color: var(--text-main); border-color: var(--border-color); font-size: 0.85rem; padding: 0 4px;" required>
-                        
-                        <button type="submit" class="btn page-btn-custom shadow-none d-flex align-items-center justify-content-center" style="background-color: transparent; color: var(--text-main); border: 1px solid var(--border-color); border-radius: 0 6px 6px 0; min-width: 32px;">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                        </button>
-                    </div>
-                </form>
+                        <!-- Tombol Prev (Icon + Teks) -->
+                        <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+                            <a class="page-link page-btn-custom d-flex align-items-center justify-content-center gap-1 shadow-none" 
+                            href="{% if pagination.has_prev %}{{ url_for(request.endpoint, page=pagination.prev_num, **current_args) }}{% else %}#{% endif %}"
+                            style="background-color: transparent; color: var(--text-main); border: 1px solid var(--border-color); border-radius: 6px; height: 32px; padding: 0 10px; font-size: 0.8rem; font-weight: 600;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                                {{ _('Prev') }}
+                            </a>
+                        </li>
 
+                        <!-- Nomor Halaman & Ellipsis -->
+                        {% for page_num in pagination.iter_pages(left_edge=1, left_current=1, right_current=1, right_edge=1) %}
+                            {% if page_num %}
+                                <li class="page-item">
+                                    <a class="page-link page-btn-custom d-flex align-items-center justify-content-center shadow-none" 
+                                    href="{{ url_for(request.endpoint, page=page_num, **current_args) }}"
+                                    style="{% if page_num == pagination.page %}background-color: #0F766E; border-color: #0F766E; color: #ffffff; font-weight: 700; pointer-events: none; box-shadow: 0 2px 4px rgba(15, 118, 110, 0.3);{% else %}background-color: transparent; color: var(--text-main); border: 1px solid transparent;{% endif %} border-radius: 6px; font-size: 0.85rem; height: 32px; min-width: 32px;">
+                                        {{ page_num }}
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link d-flex align-items-center justify-content-center border-0 bg-transparent shadow-none" style="color: var(--text-muted); font-size: 0.85rem; height: 32px; min-width: 24px;">&hellip;</span>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        <!-- Tombol Next (Icon + Teks) -->
+                        <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+                            <a class="page-link page-btn-custom d-flex align-items-center justify-content-center gap-1 shadow-none" 
+                            href="{% if pagination.has_next %}{{ url_for(request.endpoint, page=pagination.next_num, **current_args) }}{% else %}#{% endif %}"
+                            style="background-color: transparent; color: var(--text-main); border: 1px solid var(--border-color); border-radius: 6px; height: 32px; padding: 0 10px; font-size: 0.8rem; font-weight: 600;">
+                                {{ _('Next') }}
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <!-- Garis Pemisah Vertikal (Sembunyi di HP) -->
+                    <div class="d-none d-sm-block" style="width: 1px; height: 20px; background-color: var(--border-color);"></div>
+
+                    <!-- Input Group "Jump to Page" yang Menyatu -->
+                    <form method="GET" action="{{ url_for(request.endpoint) }}" class="m-0">
+                        <!-- DIPERBAIKI: Menggunakan Nested Loop untuk menangani filter list (multiselect) -->
+                        {% for k, values in current_args.items() %}
+                            {% for v in values %}
+                                <input type="hidden" name="{{ k }}" value="{{ v }}">
+                            {% endfor %}
+                        {% endfor %}
+                        <div class="input-group input-group-sm" style="height: 32px;">
+                            <span class="input-group-text bg-transparent shadow-none" style="border-color: var(--border-color); color: var(--text-muted); font-size: 0.8rem; border-radius: 6px 0 0 6px;">{{ _('Jump') }}</span>
+                            
+                            <input type="number" name="page" min="1" max="{{ pagination.pages }}" value="{{ pagination.page }}" class="form-control jump-input text-center shadow-none border-start-0 border-end-0" style="width: 48px; background-color: transparent; color: var(--text-main); border-color: var(--border-color); font-size: 0.85rem; padding: 0 4px;" required>
+                            
+                            <button type="submit" class="btn page-btn-custom shadow-none d-flex align-items-center justify-content-center" style="background-color: transparent; color: var(--text-main); border: 1px solid var(--border-color); border-radius: 0 6px 6px 0; min-width: 32px;">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
             </div>
-        </div>
-        {% endif %}
+            {% endif %}
+        </div> <!-- PENUTUP ID paginationWrapper -->
 
     <!-- 4. MODAL LOGIN POP-UP -->
 {% include 'login_modal.html' %}
 <!-- DRAWER FILTER & SORT -->
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="filterDrawer">
+    <div class="offcanvas offcanvas-end qc-console" tabindex="-1" id="filterDrawer">
         <div class="offcanvas-header border-bottom" style="border-color: var(--border-color) !important;">
-            <h6 class="offcanvas-title fw-bold" style="color: var(--text-main);">{{ _('Filter & Sort') }}</h6>
+            <h6 class="offcanvas-title fw-bold d-flex align-items-center gap-2" style="color: var(--text-main);">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+                {{ _('Filter & Sort') }}
+            </h6>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" style="filter: var(--btn-close-filter, none);"></button>
         </div>
         <div class="offcanvas-body p-4 d-flex flex-column">
@@ -746,7 +774,7 @@
             </div>
             
             <div class="mt-auto pt-3">
-                <button type="button" class="btn btn-primary w-100 py-3 fw-bold shadow-sm" data-bs-dismiss="offcanvas" onclick="applyDrawerFilters()" style="border-radius: 8px; letter-spacing: 0.3px;">{{ _('Apply Settings') }}</button>
+                <button type="button" class="btn btn-tm-primary w-100 py-3 fw-bold shadow-sm" data-bs-dismiss="offcanvas" onclick="applyDrawerFilters()" style="border-radius: 8px; letter-spacing: 0.3px;">{{ _('Apply Settings') }}</button>
             </div>
         </div>
     </div>

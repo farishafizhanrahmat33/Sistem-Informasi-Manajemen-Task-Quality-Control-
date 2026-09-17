@@ -37,8 +37,9 @@
     --dark-soft: rgba(15, 23, 42, 0.04);
     --modal-bg: #FFFFFF;
     --input-bg: #FFFFFF;
-    --badge-sent-bg: #0F172A;
-    --badge-sent-text: #F8FAFC;
+    /* Diubah ke nuansa Ungu Elegan untuk Light Mode */
+    --badge-sent-bg: rgba(139, 92, 246, 0.12);
+    --badge-sent-text: #7C3AED;
     --btn-close-filter: none;
 }
 
@@ -53,8 +54,9 @@
     --dark-soft: rgba(255, 255, 255, 0.06);
     --modal-bg: #0F201E;
     --input-bg: #10201E;
-    --badge-sent-bg: #99F6E4;
-    --badge-sent-text: #042F2C;
+    /* Diubah ke nuansa Ungu Terang untuk Dark Mode */
+    --badge-sent-bg: rgba(167, 139, 250, 0.15);
+    --badge-sent-text: #A78BFA;
     --btn-close-filter: invert(1) grayscale(100%) brightness(200%);
 }
 
@@ -1103,6 +1105,20 @@ h1, h2, h3, h4, h5, h6 {
     z-index: 10;
     border-bottom: 2px solid var(--border-color) !important;
 }
+    /* Mencegah "Select All" menjadi tembus pandang saat di-hover */
+    .premium-filter-option.select-all-option:hover {
+        background-color: var(--input-bg) !important; 
+    }
+
+    /* Efek hover dengan warna solid (tidak transparan) untuk Light Mode */
+    [data-theme="light"] .premium-filter-option.select-all-option:hover {
+        background-color: #F1F5F9 !important; 
+    }
+
+    /* Efek hover dengan warna solid (tidak transparan) untuk Dark Mode */
+    [data-theme="dark"] .premium-filter-option.select-all-option:hover {
+        background-color: #132724 !important; 
+    }
 
 /* Styling Search Input di dalam Filter */
 .search-filter-input {
@@ -1378,7 +1394,15 @@ html, body {
    DASHBOARD.HTML — dipindahkan dari <style> inline dashboard.html
    ========================================================================== */
 body { background-color: #F8FAFC !important; }
-.metric-command-card.active { border-color: #10B981 !important; box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15) !important; }
+
+/* Diubah: Tanpa outline/ring hijau, diganti efek elevasi lembut & background tipis */
+.metric-command-card.active { 
+    border-color: var(--border-color) !important; 
+    background-color: var(--dark-soft) !important; 
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06) !important; 
+    transform: translateY(-2px);
+}
+
 .dashboard-filter-tab.active { background-color: #10B981 !important; color: white !important; font-weight: 600 !important; }
 .proj-list-item.active { background-color: rgba(16, 185, 129, 0.1) !important; border-color: rgba(16, 185, 129, 0.3) !important; color: var(--text-main) !important; }
 .proj-list-item.active .check-icon { opacity: 1 !important; transform: scale(1) !important; color: #10B981 !important; }
@@ -1546,3 +1570,300 @@ body { background-color: #F8FAFC !important; }
 [data-theme="dark"] .dashboard-filter-tab.active {
     box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.4) !important;
 }
+
+/* ==========================================================================
+   13. HALAMAN MANAJEMEN TASK (index.html) — QA CONSOLE / TEAL RESTYLE
+   Semua rule di section ini di-scope ke wrapper ".qc-console" supaya HANYA
+   memengaruhi tampilan halaman Manajemen Task, tanpa mengubah var(--accent)
+   global / tampilan halaman lain (Dashboard, Manajemen QR, dst). Palet
+   warna mengikuti DESIGN.md (Obsidian Pine Control — Teal #0F766E) yang
+   sudah dipakai di sidebar & navbar.
+   ========================================================================== */
+/* ==========================================================================
+   13. HALAMAN MANAJEMEN TASK (index.html) — QA CONSOLE / TEAL RESTYLE
+   ========================================================================== */
+.qc-console {
+    --tm-primary: #0F766E;
+    --tm-primary-hover: #0D9488;
+    --tm-primary-soft: rgba(15, 118, 110, 0.08);
+    --tm-primary-ring: rgba(15, 118, 110, 0.35);
+    --tm-success: #059669; --tm-success-bg: #ECFDF5; --tm-success-border: #A7F3D0;
+    --tm-warning: #D97706; --tm-warning-bg: #FFFBEB; --tm-warning-border: #FDE68A;
+    --tm-danger:  #DC2626; --tm-danger-bg:  #FEF2F2; --tm-danger-border:  #FECACA;
+    --tm-info:    #0284C7; --tm-info-bg:    #F0F9FF; --tm-info-border:    #BAE6FD;
+    --tm-neutral: var(--text-muted);
+    --tm-neutral-bg: var(--dark-soft);
+}
+[data-theme="dark"] .qc-console {
+    --tm-success: #6EE7B7; --tm-success-bg: rgba(16, 185, 129, 0.14); --tm-success-border: rgba(16, 185, 129, 0.35);
+    --tm-warning: #FBBF24; --tm-warning-bg: rgba(245, 158, 11, 0.14); --tm-warning-border: rgba(245, 158, 11, 0.35);
+    --tm-danger:  #FCA5A5; --tm-danger-bg:  rgba(220, 38, 38, 0.16);  --tm-danger-border:  rgba(220, 38, 38, 0.35);
+    --tm-info:    #38BDF8; --tm-info-bg:    rgba(14, 165, 233, 0.14); --tm-info-border:    rgba(56, 189, 248, 0.35);
+}
+
+/* --- Header halaman: judul, badge Live Sync & subjudul --- */
+.qc-console .tm-title-row { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.qc-console .tm-title {
+    font-family: var(--font-headline);
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+    color: var(--text-main);
+    margin: 0;
+}
+.qc-console .tm-live-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 10px 3px 8px;
+    border-radius: 9999px;
+    background-color: var(--tm-info-bg);
+    color: var(--tm-info);
+    border: 1px solid var(--tm-info-border);
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+.qc-console .tm-live-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background-color: var(--tm-info);
+    animation: tm-pulse 1.6s ease-in-out infinite;
+}
+@keyframes tm-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.45; transform: scale(0.75); }
+}
+.qc-console .tm-subtitle {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin: 0.3rem 0 0;
+    max-width: 640px;
+}
+
+/* --- Toolbar: search & tombol aksi --- */
+.qc-console .tm-toolbar-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; }
+.qc-console .tm-search-wrap { min-width: 220px; flex: 1 1 240px; max-width: 340px; }
+.qc-console .search-pill {
+    border-radius: 8px !important;
+    padding-left: 2.6rem !important;
+    background-color: var(--bg-surface) !important;
+    border: 1px solid var(--border-color) !important;
+}
+.qc-console .search-pill:focus {
+    border-color: var(--tm-primary) !important;
+    box-shadow: 0 0 0 3px var(--tm-primary-soft) !important;
+}
+
+.qc-console .btn-tm-primary {
+    background-color: var(--tm-primary) !important;
+    border-color: var(--tm-primary) !important;
+    color: #fff !important;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(15, 118, 110, 0.25);
+}
+.qc-console .btn-tm-primary:hover {
+    background-color: var(--tm-primary-hover) !important;
+    border-color: var(--tm-primary-hover) !important;
+    color: #fff !important;
+}
+.qc-console .btn-tm-outline {
+    background-color: var(--bg-surface) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--tm-primary) !important;
+    font-weight: 600;
+    position: relative;
+}
+.qc-console .btn-tm-outline:hover {
+    background-color: var(--tm-primary-soft) !important;
+    border-color: var(--tm-primary-ring) !important;
+    color: var(--tm-primary) !important;
+}
+.qc-console .btn-tm-danger-outline {
+    background-color: var(--bg-surface) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--tm-danger) !important;
+    font-weight: 600;
+}
+.qc-console .btn-tm-danger-outline:hover {
+    background-color: var(--tm-danger-bg) !important;
+    border-color: var(--tm-danger-border) !important;
+    color: var(--tm-danger) !important;
+}
+.qc-console #activeFilterBadge { background-color: var(--tm-primary) !important; }
+
+/* --- Tabs status (Semua Data / Need Sample / dst.) --- */
+.qc-console .enterprise-tabs-wrapper {
+    border-bottom: none;
+    background-color: var(--dark-soft);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 4px;
+}
+.qc-console .enterprise-tabs { gap: 4px !important; }
+.qc-console .enterprise-tabs .filter-tab {
+    display: inline-flex; align-items: center;
+    padding: 0.45rem 0.75rem !important;
+    border-radius: 7px;
+    border-bottom: 2px solid transparent !important;
+    color: var(--text-muted) !important; /* Warna teks abu-abu saat belum diklik */
+    font-weight: 500;
+}
+.qc-console .enterprise-tabs .filter-tab:hover { 
+    color: var(--text-main) !important; 
+    background-color: var(--bg-surface); 
+}
+
+/* Status Aktif Umum (Teks Hitam di Light Mode, Putih di Dark Mode) */
+.qc-console .enterprise-tabs .filter-tab.active {
+    color: #000000 !important; 
+    font-weight: 700 !important;
+    background-color: var(--bg-surface) !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+[data-theme="dark"] .qc-console .enterprise-tabs .filter-tab.active {
+    color: #FFFFFF !important;
+}
+
+/* ==========================================================================
+   GARIS BAWAH (UNDERLINE) TAB AKTIF SESUAI STATUS
+   ========================================================================== */
+.qc-console .enterprise-tabs .filter-tab.active[data-status="All"] { border-bottom-color: var(--tm-primary) !important; }
+.qc-console .enterprise-tabs .filter-tab.active[data-status="Need Sample"] { border-bottom-color: var(--tm-warning) !important; }
+.qc-console .enterprise-tabs .filter-tab.active[data-status="Sample Done"] { border-bottom-color: var(--tm-info) !important; }
+.qc-console .enterprise-tabs .filter-tab.active[data-status="Revision"] { border-bottom-color: var(--tm-danger) !important; }
+.qc-console .enterprise-tabs .filter-tab.active[data-status="Ready"] { border-bottom-color: var(--tm-success) !important; }
+.qc-console .enterprise-tabs .filter-tab.active[data-status="Skipped"] { border-bottom-color: #64748B !important; }
+.qc-console .enterprise-tabs .filter-tab.active[data-status="Sent to Team"] { border-bottom-color: #7C3AED !important; }
+
+/* Garis bawah khusus Dark Mode */
+[data-theme="dark"] .qc-console .enterprise-tabs .filter-tab.active[data-status="Need Sample"] { border-bottom-color: #FBBF24 !important; }
+[data-theme="dark"] .qc-console .enterprise-tabs .filter-tab.active[data-status="Sample Done"] { border-bottom-color: #38BDF8 !important; }
+[data-theme="dark"] .qc-console .enterprise-tabs .filter-tab.active[data-status="Revision"] { border-bottom-color: #FCA5A5 !important; }
+[data-theme="dark"] .qc-console .enterprise-tabs .filter-tab.active[data-status="Ready"] { border-bottom-color: #6EE7B7 !important; }
+[data-theme="dark"] .qc-console .enterprise-tabs .filter-tab.active[data-status="Skipped"] { border-bottom-color: #94A3B8 !important; }
+[data-theme="dark"] .qc-console .enterprise-tabs .filter-tab.active[data-status="Sent to Team"] { border-bottom-color: #A78BFA !important; }
+
+/* ==========================================================================
+   WARNA ANGKA (BADGE) SAAT BELUM DIKLIK (DEFAULT / PUDAR)
+   ========================================================================== */
+.qc-console .task-count-badge {
+    border-radius: 9999px;
+    background-color: var(--tm-neutral-bg);
+    color: var(--tm-neutral);
+    font-family: var(--font-body);
+}
+.qc-console .filter-tab[data-status="All"] .task-count-badge { background-color: var(--tm-primary-soft); color: var(--tm-primary); border: 1px solid var(--tm-primary-ring); }
+.qc-console .filter-tab[data-status="Need Sample"] .task-count-badge { background-color: var(--tm-warning-bg); color: var(--tm-warning); border: 1px solid var(--tm-warning-border); }
+.qc-console .filter-tab[data-status="Sample Done"] .task-count-badge { background-color: var(--tm-info-bg); color: var(--tm-info); border: 1px solid var(--tm-info-border); }
+.qc-console .filter-tab[data-status="Revision"] .task-count-badge { background-color: var(--tm-danger-bg); color: var(--tm-danger); border: 1px solid var(--tm-danger-border); }
+.qc-console .filter-tab[data-status="Ready"] .task-count-badge { background-color: var(--tm-success-bg); color: var(--tm-success); border: 1px solid var(--tm-success-border); }
+.qc-console .filter-tab[data-status="Skipped"] .task-count-badge { background-color: var(--dark-soft); color: var(--text-muted); border: 1px solid var(--border-color); }
+.qc-console .filter-tab[data-status="Sent to Team"] .task-count-badge { 
+    background-color: rgba(139, 92, 246, 0.12) !important; 
+    color: #7C3AED !important; 
+    border: 1px solid rgba(139, 92, 246, 0.3) !important; 
+}
+
+/* ==========================================================================
+   WARNA ANGKA (BADGE) SAAT DIKLIK (ACTIVE / SOLID PEKAT TEKS PUTIH)
+   ========================================================================== */
+.qc-console .filter-tab.active[data-status="All"] .task-count-badge { background-color: var(--tm-primary) !important; color: #ffffff !important; border-color: var(--tm-primary) !important; }
+.qc-console .filter-tab.active[data-status="Need Sample"] .task-count-badge { background-color: var(--tm-warning) !important; color: #ffffff !important; border-color: var(--tm-warning) !important; }
+.qc-console .filter-tab.active[data-status="Sample Done"] .task-count-badge { background-color: var(--tm-info) !important; color: #ffffff !important; border-color: var(--tm-info) !important; }
+.qc-console .filter-tab.active[data-status="Revision"] .task-count-badge { background-color: var(--tm-danger) !important; color: #ffffff !important; border-color: var(--tm-danger) !important; }
+.qc-console .filter-tab.active[data-status="Ready"] .task-count-badge { background-color: var(--tm-success) !important; color: #ffffff !important; border-color: var(--tm-success) !important; }
+.qc-console .filter-tab.active[data-status="Skipped"] .task-count-badge { background-color: #64748B !important; color: #ffffff !important; border-color: #64748B !important; }
+.qc-console .filter-tab.active[data-status="Sent to Team"] .task-count-badge { 
+    background-color: #7C3AED !important; 
+    color: #ffffff !important; 
+    border-color: #7C3AED !important; 
+}
+
+/* Penyesuaian khusus Dark Mode pada badge aktif */
+[data-theme="dark"] .qc-console .filter-tab.active .task-count-badge { color: #0A1615 !important; font-weight: 800 !important; }
+
+/* --- Kartu Tugas --- */
+.qc-console .task-card { border-radius: 10px !important; }
+.qc-console .task-card:hover { border-color: var(--tm-primary-ring) !important; box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.08) !important; }
+.qc-console .tm-id-chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem; font-weight: 600;
+    padding: 2px 8px; border-radius: 6px;
+    background-color: var(--dark-soft);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+}
+.qc-console .tm-id-label { font-size: 0.7rem; color: var(--text-muted); }
+
+.qc-console .badge.tm-status-badge {
+    border-radius: 9999px !important;
+    font-size: 0.7rem !important;
+    font-weight: 600 !important;
+    padding: 0.3em 0.7em 0.3em 0.55em !important;
+    display: inline-flex; align-items: center; gap: 5px;
+    border: 1px solid transparent;
+}
+.qc-console .badge.tm-status-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background-color: currentColor; flex-shrink: 0; }
+.qc-console .badge.tm-status-badge.bg-success { background-color: var(--tm-success-bg) !important; color: var(--tm-success) !important; border-color: var(--tm-success-border) !important; }
+.qc-console .badge.tm-status-badge.bg-info { background-color: var(--tm-info-bg) !important; color: var(--tm-info) !important; border-color: var(--tm-info-border) !important; }
+.qc-console .badge.tm-status-badge.bg-danger { background-color: var(--tm-danger-bg) !important; color: var(--tm-danger) !important; border-color: var(--tm-danger-border) !important; }
+.qc-console .badge.tm-status-badge.bg-secondary { background-color: var(--tm-neutral-bg) !important; color: var(--tm-neutral) !important; border-color: var(--border-color) !important; }
+.qc-console .badge.tm-status-badge.badge-accent { background-color: var(--tm-warning-bg) !important; color: var(--tm-warning) !important; border-color: var(--tm-warning-border) !important; }
+
+.qc-console .tm-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 500;
+    background-color: var(--dark-soft) !important;
+    color: var(--text-muted) !important;
+    border: none !important;
+    border-radius: 5px;
+    padding: 3px 8px;
+    max-width: 170px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: middle;
+}
+.qc-console .tm-desc-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 0.80rem;
+    line-height: 1.4;
+}
+.qc-console .tm-chip {
+    border-radius: 6px;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 0.25em 0.5em;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+.qc-console .tm-detail-link {
+    background: transparent !important;
+    border: none !important;
+    color: var(--tm-primary) !important;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0 !important;
+    display: inline-flex; align-items: center; gap: 4px;
+    width: auto !important;
+    flex-shrink: 0;
+}
+.qc-console .tm-detail-link:hover { color: var(--tm-primary-hover) !important; }
+.qc-console .task-card .card-footer-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+    margin-top: auto; padding-top: 0.65rem; border-top: 1px solid var(--border-color);
+}
+
+/* --- Filter drawer: aksen teal (menggantikan amber default) --- */
+.qc-console .premium-check-icon { color: var(--tm-primary); }
+.qc-console .search-filter-input:focus { border-color: var(--tm-primary) !important; box-shadow: 0 0 0 3px var(--tm-primary-soft) !important; }
+.qc-console .form-select:focus, .qc-console .form-control:focus {
+    border-color: var(--tm-primary) !important;
+    box-shadow: 0 0 0 3px var(--tm-primary-soft) !important;
+}
+
