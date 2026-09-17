@@ -149,6 +149,8 @@ async function syncDataNow() {
         const htmlText = await response.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(htmlText, 'text/html');
+        
+        // 1. UPDATE DAFTAR KARTU TASK
         const newContainer = doc.getElementById('taskContainer');
         const currentContainer = document.getElementById('taskContainer');
         
@@ -157,7 +159,19 @@ async function syncDataNow() {
             itemsToShow = 15;
             initTaskDisplay();
         }
-    } catch (e) { console.log('Background update waiting...'); }
+
+        // 2. UPDATE AREA TAB MENU (ANGKA COUNTER)
+        const newTabMenu = doc.getElementById('taskTabMenu');
+        const currentTabMenu = document.getElementById('taskTabMenu');
+        
+        if (newTabMenu && currentTabMenu && newTabMenu.innerHTML !== currentTabMenu.innerHTML) {
+            currentTabMenu.innerHTML = newTabMenu.innerHTML;
+            initTabs(); // Panggil fungsi ini lagi agar tab baru tetap bisa diklik
+        }
+        
+    } catch (e) { 
+        console.log('Background update waiting...'); 
+    }
 }
 
 async function autoUpdateTasks() {

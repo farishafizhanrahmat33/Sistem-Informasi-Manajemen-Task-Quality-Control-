@@ -26,21 +26,122 @@
     <!-- TAILWIND & CUSTOM CONFIG -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script id="tailwind-config">
-        tailwind.config={darkMode:"class",theme:{extend:{"colors":{"status-success":"#059669","border-strong":"#CBD5E1","text-primary":"#0F172A","status-danger-bg":"#FEF2F2","surface-container-high":"#E2E8F0","shell-text-muted":"#648A86","surface-variant":"#E2E8F0","surface-bright":"#FFFFFF","secondary-fixed":"#cce5ff","primary-container":"#0F766E","tertiary-fixed":"#89f5e7","surface-tint":"#006a63","border-subtle":"#E2E8F0","surface-container-low":"#F1F5F9","tertiary":"#005c54","on-background":"#0F172A","status-danger":"#DC2626","status-success-border":"#A7F3D0","text-muted":"#94A3B8","inverse-on-surface":"#eaf1ff","shell-text-primary":"#F1F5F9","surface-dim":"#E2E8F0","surface":"#F8FAFC","primary-fixed":"#CCFBF1","tertiary-fixed-dim":"#6bd8cb","status-warning-border":"#FDE68A","on-error-container":"#93000a","status-warning":"#D97706","on-tertiary-fixed-variant":"#005049","on-secondary-container":"#00476e","status-info":"#0284C7","status-success-bg":"#ECFDF5","inverse-surface":"#213145","on-surface-variant":"#475569","primary-fixed-dim":"#99F6E4","tertiary-container":"#00776d","status-warning-bg":"#FFFBEB","error":"#DC2626","shell-border":"#163836","on-secondary":"#ffffff","on-tertiary-fixed":"#00201d","on-tertiary":"#ffffff","status-info-border":"#BAE6FD","on-error":"#ffffff","background":"#F8FAFC","surface-container":"#F1F5F9","status-danger-border":"#FECACA","card-bg":"#FFFFFF","shell-surface":"#0E2A29","on-primary":"#ffffff","on-secondary-fixed-variant":"#004b73","outline-variant":"#CBD5E1","surface-container-highest":"#E2E8F0","secondary-fixed-dim":"#93ccff","canvas-bg":"#F8FAFC","on-secondary-fixed":"#001d31","on-tertiary-container":"#91fdef","status-info-bg":"#F0F9FF","on-surface":"#0F172A","error-container":"#ffdad6","surface-container-lowest":"#ffffff","secondary":"#64748B","shell-bg":"#0A1C1A","inverse-primary":"#14B8A6","on-primary-fixed-variant":"#00504a","secondary-container":"#E0F2FE","text-secondary":"#64748B","outline":"#94A3B8","on-primary-fixed":"#042f2c","on-primary-container":"#CCFBF1","primary":"#0F766E"},"spacing":{"space-sm":"0.5rem","space-xs":"0.25rem","space-lg":"1.5rem","space-md":"1rem"},"fontFamily":{"code-sm":["JetBrains Mono"],"body-md":["Inter"],"headline-xl":["Inter"],"headline-sm":["Inter"],"body-lg":["Inter"],"label-md":["Inter"],"body-sm":["Inter"],"label-sm":["Inter"]}}}}
+        tailwind.config = {
+            darkMode: "class",
+            corePlugins: { preflight: false }, /* <-- TAMBAHKAN BARIS INI DI SINI */
+            /* Skala px eksplisit ini nilainya SAMA dengan skala rem default Tailwind
+               (16px root), jadi tidak mengubah tampilan konten dashboard yang sudah
+               ada. Ditambahkan agar konsisten dengan sidebar.html yang juga mengunci
+               fontSize ke px — supaya kalau salah satu config aktif duluan, ukuran
+               teks tetap sama di kedua sisi. */
+            theme: {
+                fontSize: {
+                    'xs': ['12px', '16px'],
+                    'sm': ['14px', '20px'],
+                    'base': ['16px', '24px'],
+                    'lg': ['18px', '28px'],
+                    'xl': ['20px', '28px'],
+                },
+                extend: {
+                    "colors": {
+                        "status-success": "#059669",
+                        "border-strong": "#CBD5E1",
+                        "text-primary": "#0F172A",
+                        "status-danger-bg": "#FEF2F2",
+                        "surface-container-high": "#E2E8F0",
+                        "shell-text-muted": "#648A86",
+                        "surface-variant": "#E2E8F0",
+                        "surface-bright": "#FFFFFF",
+                        "secondary-fixed": "#cce5ff",
+                        "primary-container": "#0F766E",
+                        "tertiary-fixed": "#89f5e7",
+                        "surface-tint": "#006a63",
+                        "border-subtle": "#E2E8F0",
+                        "surface-container-low": "#F1F5F9",
+                        "tertiary": "#005c54",
+                        "on-background": "#0F172A",
+                        "status-danger": "#DC2626",
+                        "status-success-border": "#A7F3D0",
+                        "text-muted": "#94A3B8",
+                        "inverse-on-surface": "#eaf1ff",
+                        "shell-text-primary": "#F1F5F9",
+                        "surface-dim": "#E2E8F0",
+                        "surface": "#F8FAFC",
+                        "primary-fixed": "#CCFBF1",
+                        "tertiary-fixed-dim": "#6bd8cb",
+                        "status-warning-border": "#FDE68A",
+                        "on-error-container": "#93000a",
+                        "status-warning": "#D97706",
+                        "on-tertiary-fixed-variant": "#005049",
+                        "on-secondary-container": "#00476e",
+                        "status-info": "#0284C7",
+                        "status-success-bg": "#ECFDF5",
+                        "inverse-surface": "#213145",
+                        "on-surface-variant": "#475569",
+                        "primary-fixed-dim": "#99F6E4",
+                        "tertiary-container": "#00776d",
+                        "status-warning-bg": "#FFFBEB",
+                        "error": "#DC2626",
+                        "shell-border": "#163836",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#00201d",
+                        "on-tertiary": "#ffffff",
+                        "status-info-border": "#BAE6FD",
+                        "on-error": "#ffffff",
+                        "background": "#F8FAFC",
+                        "surface-container": "#F1F5F9",
+                        "status-danger-border": "#FECACA",
+                        "card-bg": "#FFFFFF",
+                        "shell-surface": "#0E2A29",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed-variant": "#004b73",
+                        "outline-variant": "#CBD5E1",
+                        "surface-container-highest": "#E2E8F0",
+                        "secondary-fixed-dim": "#93ccff",
+                        "canvas-bg": "#F8FAFC",
+                        "on-secondary-fixed": "#001d31",
+                        "on-tertiary-container": "#91fdef",
+                        "status-info-bg": "#F0F9FF",
+                        "on-surface": "#0F172A",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#64748B",
+                        "shell-bg": "#0A1C1A",
+                        "inverse-primary": "#14B8A6",
+                        "on-primary-fixed-variant": "#00504a",
+                        "secondary-container": "#E0F2FE",
+                        "text-secondary": "#64748B",
+                        "outline": "#94A3B8",
+                        "on-primary-fixed": "#042f2c",
+                        "on-primary-container": "#CCFBF1",
+                        "primary": "#0F766E",
+                        "primary-dark": "#0D9488"
+                    },
+                    "spacing": {
+                        "space-sm": "0.5rem",
+                        "space-xs": "0.25rem",
+                        "space-lg": "1.5rem",
+                        "space-md": "1rem"
+                    },
+                    "fontFamily": {
+                        "code-sm": ["JetBrains Mono"],
+                        "body-md": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "sans": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    }
+                }
+            }
+        };
     </script>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    
-    <style>
-        body { background-color: #F8FAFC !important; }
-        .metric-command-card.active { border-color: #0F766E !important; box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.15) !important; }
-        .dashboard-filter-tab.active { background-color: #0F766E !important; color: white !important; font-weight: 600 !important; }
-        .proj-list-item.active { background-color: rgba(16, 185, 129, 0.1) !important; border-color: rgba(16, 185, 129, 0.3) !important; color: #0F172A !important; }
-        .proj-list-item.active .check-icon { opacity: 1 !important; transform: scale(1) !important; color: #0F766E !important; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .spinning { animation: spin 0.8s linear infinite; }
-    </style>
 </head>
 <body class="font-body-md text-on-surface antialiased bg-background">
     {% set danger_messages = get_flashed_messages(category_filter=['danger']) %}
@@ -114,7 +215,7 @@
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
                 
                 <!-- Card 1: Need Sample (Persentase Progres Mulai dari 0% - Non Skipped) -->
-                <div data-filter="Need Sample" class="metric-command-card active group relative rounded-xl bg-white border border-border-subtle p-4 sm:p-5 shadow-sm hover:border-amber-300 transition-all duration-200 flex flex-col justify-between min-h-[125px] cursor-pointer">
+                <div data-filter="Need Sample" class="metric-command-card group relative rounded-xl bg-white border border-border-subtle p-4 sm:p-5 shadow-sm hover:border-amber-300 transition-all duration-200 flex flex-col justify-between min-h-[125px] cursor-pointer">
                     <div class="absolute top-0 left-0 right-0 h-1 bg-amber-500 rounded-t-xl"></div>
                     <div class="flex items-center justify-between mt-1">
                         <span class="text-[11px] text-text-secondary uppercase tracking-wider font-bold">Need Sample</span>

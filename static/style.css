@@ -1,10 +1,24 @@
 /* ==========================================================================
-   1. VARIABEL WARNA & TEMA (MINIMALIST EXECUTIVE: CHARCOAL & WARM BRONZE)
+   0. FONT — Space Grotesk (Headline) dipakai bareng Inter (Body), sesuai
+   design system referensi. Diimpor di sini (bukan tiap file HTML) supaya
+   otomatis berlaku ke SEMUA halaman yang memuat style.css ini.
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap');
+
+/* ==========================================================================
+   1. VARIABEL WARNA & TEMA — QA PLATFORM (OBSIDIAN PINE / EMERALD)
+   Primary  #10B981 (Emerald)  — aksi utama, state aktif, fokus
+   Secondary#009688 (Teal)     — badge/aksen sekunder (dipakai di seksi 12)
+   Tertiary #009669 (Green)    — status sukses/varian aksen (dipakai di seksi 12)
+   Neutral  skala #000000→#FFFFFF — shell gelap & teks
    ========================================================================== */
 :root {
-    --accent: #0F766E; /* Deep Emerald (primary-container, DESIGN.md) */
-    --primary: #0F766E;
-    --primary-hover: #0D9488;
+    --font-headline: 'Space Grotesk', 'Inter', sans-serif;
+    --font-body: 'Inter', sans-serif;
+
+    --accent: #10B981; /* Primary — Emerald cerah (DESIGN.md referensi) */
+    --primary: #10B981;
+    --primary-hover: #059669;
     --shell-bg: #09201F;
     --shell-surface: #0E2A29;
     --shell-border: #163836;
@@ -19,7 +33,7 @@
     --text-main: #0F172A;        /* text-primary */
     --text-muted: #64748B;       /* text-secondary */
     --border-color: #E2E8F0;     /* border-subtle */
-    --accent-soft: rgba(15, 118, 110, 0.12);
+    --accent-soft: rgba(16, 185, 129, 0.12);
     --dark-soft: rgba(15, 23, 42, 0.04);
     --modal-bg: #FFFFFF;
     --input-bg: #FFFFFF;
@@ -35,7 +49,7 @@
     --text-main: #F1F5F9;
     --text-muted: #8FA6A3;
     --border-color: #1C3532;
-    --accent-soft: rgba(153, 246, 228, 0.15);
+    --accent-soft: rgba(110, 231, 183, 0.16);
     --dark-soft: rgba(255, 255, 255, 0.06);
     --modal-bg: #0F201E;
     --input-bg: #10201E;
@@ -49,12 +63,20 @@
    2. TIPOGRAFI, GLOBAL STYLING & SCROLLBAR
    ========================================================================== */
 body { 
-    font-family: 'Inter', sans-serif; 
+    font-family: var(--font-body); 
     background-color: var(--bg-body); 
     color: var(--text-main);
     -webkit-font-smoothing: antialiased;
     letter-spacing: -0.01em; 
     transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Headline font — berlaku otomatis di semua halaman (dashboard, task,
+   QR management, user management, support, FAQ, profile, dst.) karena
+   semua judul halaman/kartu/modal pakai tag h1–h6. */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-headline);
+    letter-spacing: -0.02em;
 }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; } 
@@ -77,8 +99,8 @@ body {
 }
 .btn-sm { padding: 0.4rem 1rem; font-size: 0.85rem; }
 
-.btn-primary { background-color: var(--accent) !important; border-color: var(--accent) !important; color: #111113 !important; font-weight: 600; box-shadow: 0 2px 4px rgba(212, 175, 55, 0.15); }
-.btn-primary:hover { background-color: #C5A028 !important; border-color: #C5A028 !important; box-shadow: 0 4px 6px rgba(212, 175, 55, 0.25); }
+.btn-primary { background-color: var(--accent) !important; border-color: var(--accent) !important; color: #052e1e !important; font-weight: 600; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2); }
+.btn-primary:hover { background-color: var(--primary-hover) !important; border-color: var(--primary-hover) !important; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3); }
 
 .btn-outline-primary { color: var(--accent) !important; border-color: var(--accent) !important; }
 .btn-outline-primary:hover { background-color: var(--accent) !important; color: #111113 !important; }
@@ -196,7 +218,7 @@ body {
 .badge-accent {
     background-color: var(--accent-soft);
     color: var(--accent);
-    border: 1px solid rgba(212, 175, 55, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.2);
     padding: 0.4em 0.8em;
     font-weight: 600;
     border-radius: 6px;
@@ -1239,10 +1261,10 @@ html, body {
     box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.04); transition: all 0.2s ease; position: relative; overflow: hidden; cursor: pointer;
 }
 .metric-command-card:hover { transform: translateY(-2px); border-color: var(--primary); }
-.metric-command-card.active { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.15); }
+.metric-command-card.active { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15); }
 .metric-command-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3.5px; height: 100%; background: var(--indicator-color, #cbd5e1); }
 .ind-warning { --indicator-color: #D97706; } .ind-info { --indicator-color: #0284C7; } .ind-danger { --indicator-color: #DC2626; }
-.ind-success { --indicator-color: #059669; } .ind-secondary { --indicator-color: #64748B; } .ind-primary { --indicator-color: #0F766E; }
+.ind-success { --indicator-color: #059669; } .ind-secondary { --indicator-color: #64748B; } .ind-primary { --indicator-color: #10B981; }
 
 .proj-list-item {
     display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; margin-bottom: 6px;
@@ -1250,7 +1272,7 @@ html, body {
     cursor: pointer; transition: all 0.2s ease-in-out; color: var(--text-main);
 }
 .proj-list-item:hover { border-color: var(--primary); transform: translateX(2px); }
-.proj-list-item.active { background-color: rgba(15, 118, 110, 0.08); border-color: rgba(15, 118, 110, 0.4); color: var(--primary); }
+.proj-list-item.active { background-color: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.4); color: var(--primary); }
 .proj-list-item .check-icon { opacity: 0; transform: scale(0.5); transition: all 0.2s ease; color: var(--primary); }
 .proj-list-item.active .check-icon { opacity: 1; transform: scale(1); }
 
@@ -1349,4 +1371,178 @@ html, body {
         width: max-content !important;
         table-layout: auto !important;
     }
+}
+
+
+/* ==========================================================================
+   DASHBOARD.HTML — dipindahkan dari <style> inline dashboard.html
+   ========================================================================== */
+body { background-color: #F8FAFC !important; }
+.metric-command-card.active { border-color: #10B981 !important; box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15) !important; }
+.dashboard-filter-tab.active { background-color: #10B981 !important; color: white !important; font-weight: 600 !important; }
+.proj-list-item.active { background-color: rgba(16, 185, 129, 0.1) !important; border-color: rgba(16, 185, 129, 0.3) !important; color: var(--text-main) !important; }
+.proj-list-item.active .check-icon { opacity: 1 !important; transform: scale(1) !important; color: #10B981 !important; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.spinning { animation: spin 0.8s linear infinite; }
+
+/* ==========================================================================
+   DARK MODE — DASHBOARD (Obsidian Pine, selaras dgn variabel :root di atas)
+   ========================================================================== */
+
+/* --- Lapisan permukaan (surface tiers) --- */
+[data-theme="dark"] body {
+    background-color: #0A1615 !important;
+    color: #F1F5F9 !important;
+}
+[data-theme="dark"] .bg-background {
+    background-color: #0A1615 !important;
+}
+[data-theme="dark"] .bg-white,
+[data-theme="dark"] .bg-surface-container-low {
+    background-color: #0F201E !important;
+    border-color: #1C3532 !important;
+}
+[data-theme="dark"] .bg-surface-container {
+    background-color: #132724 !important;
+    border-color: #1C3532 !important;
+}
+[data-theme="dark"] .bg-surface-container-high {
+    background-color: #16302C !important;
+    border-color: #23423E !important;
+}
+[data-theme="dark"] .bg-surface-container-highest {
+    background-color: #1C3D37 !important;
+    border-color: #23423E !important;
+}
+[data-theme="dark"] .bg-slate-50 {
+    background-color: #10201E !important;
+}
+[data-theme="dark"] thead.bg-surface-container-low {
+    background-color: #0D1C1A !important;
+}
+
+/* Kartu & panel: bayangan lembut khas dark-UI, bukan shadow terang bawaan light mode */
+[data-theme="dark"] .shadow-sm,
+[data-theme="dark"] .shadow-lg {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.02) !important;
+}
+
+/* --- Border --- */
+[data-theme="dark"] .border-border-subtle,
+[data-theme="dark"] .border-subtle,
+[data-theme="dark"] .border-slate-100,
+[data-theme="dark"] .border-slate-300 {
+    border-color: #1C3532 !important;
+}
+
+/* --- Teks --- */
+[data-theme="dark"] .text-on-surface {
+    color: #F8FAFC !important;
+}
+[data-theme="dark"] .text-text-secondary,
+[data-theme="dark"] .text-text-muted,
+[data-theme="dark"] .text-slate-400 {
+    color: #8FA6A3 !important;
+}
+[data-theme="dark"] .text-slate-700 {
+    color: #CBD5E1 !important;
+}
+[data-theme="dark"] .table th {
+    color: #8FA6A3 !important;
+}
+[data-theme="dark"] .table td {
+    color: #F1F5F9 !important;
+}
+
+/* --- Input & form --- */
+[data-theme="dark"] input.bg-surface-container-low,
+[data-theme="dark"] input#projectSearchField,
+[data-theme="dark"] input#recentActivitySearch {
+    background-color: #10201E !important;
+    color: #F8FAFC !important;
+    border-color: #23423E !important;
+}
+[data-theme="dark"] input::placeholder {
+    color: #648A86 !important;
+    opacity: 1 !important;
+}
+
+/* --- Badge status: bg pastel terang diganti tint gelap tipis + teks cerah,
+   supaya nyatu dgn kartu gelap alih-alih jadi tempelan kotak putih --- */
+[data-theme="dark"] .bg-\[\#ECFDF5\],
+[data-theme="dark"] .bg-emerald-500\/10,
+[data-theme="dark"] .proj-list-item.active {
+    background-color: rgba(16, 185, 129, 0.12) !important;
+}
+[data-theme="dark"] .text-\[\#059669\],
+[data-theme="dark"] .text-emerald-600 {
+    color: #6EE7B7 !important;
+}
+[data-theme="dark"] .border-\[\#A7F3D0\],
+[data-theme="dark"] .border-emerald-300 {
+    border-color: rgba(16, 185, 129, 0.35) !important;
+}
+
+[data-theme="dark"] .bg-\[\#F0FDFA\] {
+    background-color: rgba(45, 212, 191, 0.12) !important;
+}
+[data-theme="dark"] .text-\[\#0F766E\],
+[data-theme="dark"] .text-teal-600,
+[data-theme="dark"] .text-primary-container {
+    color: #5EEAD4 !important;
+}
+[data-theme="dark"] .border-\[\#99F6E4\],
+[data-theme="dark"] .border-teal-400,
+[data-theme="dark"] .border-primary-container {
+    border-color: rgba(45, 212, 191, 0.35) !important;
+}
+[data-theme="dark"] .bg-primary-container {
+    background-color: #0F766E !important;
+}
+
+[data-theme="dark"] .bg-\[\#FFFBEB\],
+[data-theme="dark"] .bg-amber-50 {
+    background-color: rgba(245, 158, 11, 0.12) !important;
+}
+[data-theme="dark"] .text-\[\#B45309\],
+[data-theme="dark"] .text-amber-600,
+[data-theme="dark"] .text-amber-700 {
+    color: #FBBF24 !important;
+}
+[data-theme="dark"] .border-\[\#FDE68A\],
+[data-theme="dark"] .border-amber-200,
+[data-theme="dark"] .border-amber-300 {
+    border-color: rgba(245, 158, 11, 0.35) !important;
+}
+
+[data-theme="dark"] .bg-rose-50 {
+    background-color: rgba(244, 63, 94, 0.12) !important;
+}
+[data-theme="dark"] .text-rose-700 {
+    color: #FB7185 !important;
+}
+[data-theme="dark"] .border-rose-200,
+[data-theme="dark"] .border-rose-300 {
+    border-color: rgba(244, 63, 94, 0.35) !important;
+}
+
+[data-theme="dark"] .bg-sky-50 {
+    background-color: rgba(14, 165, 233, 0.12) !important;
+}
+[data-theme="dark"] .text-sky-700 {
+    color: #38BDF8 !important;
+}
+[data-theme="dark"] .border-sky-200,
+[data-theme="dark"] .border-sky-300 {
+    border-color: rgba(56, 189, 248, 0.35) !important;
+}
+
+/* Badge netral (mis. "Skipped") */
+[data-theme="dark"] .bg-slate-100 {
+    background-color: rgba(148, 163, 184, 0.12) !important;
+}
+
+/* --- Tombol filter/tab aktif tetap solid (kontras cukup di kedua tema) --- */
+[data-theme="dark"] .dashboard-filter-tab.active {
+    box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.4) !important;
 }

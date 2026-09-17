@@ -1,7 +1,7 @@
 <!-- templates/navbar.html -->
-<header class="tw-font-sans tw-sticky tw-top-0 tw-z-40 tw-h-16 tw-flex tw-items-center tw-justify-between tw-gap-3 tw-px-4 md:tw-px-6"
+<header class="tw-font-sans tw-sticky tw-top-0 tw-z-40 tw-h-16 tw-flex tw-items-center tw-justify-between tw-gap-3 tw-px-4 md:tw-px-6 tw-flex-shrink-0"
         style="background-color: var(--bg-surface); border-bottom: 1px solid var(--border-color); backdrop-filter: blur(6px);">
-    <div class="tw-flex tw-items-center tw-gap-3 tw-min-w-0">
+    <div class="tw-flex tw-items-center tw-gap-3 tw-min-w-0 tw-flex-1">
         <!-- Hamburger: hanya tampil di mobile, membuka sidebar persistent -->
         <button type="button" onclick="toggleSidebar(true)"
                 class="lg:tw-hidden tw-w-9 tw-h-9 tw-flex-shrink-0 tw-rounded-lg tw-flex tw-items-center tw-justify-center tw-border"
@@ -21,12 +21,12 @@
             {% set current_cat = _('General') %}
         {% endif %}
 
-        <div class="tw-min-w-0 tw-flex tw-items-center tw-gap-2 tw-text-xs md:tw-text-sm">
+        <div class="tw-min-w-0 tw-flex tw-items-center tw-gap-2 tw-text-xs md:tw-text-sm tw-truncate">
             <span class="material-symbols-outlined tw-text-[16px] tw-flex-shrink-0" style="color: var(--text-main); opacity: 0.5;">home</span>
-            <span style="color: var(--text-main); opacity: 0.3;">/</span>
+            <span style="color: var(--text-main); opacity: 0.3;" class="tw-flex-shrink-0">/</span>
             <!-- Kategori Sidebar Dinamis -->
-            <span class="tw-font-medium tw-hidden sm:tw-inline" style="color: var(--text-main); opacity: 0.7;">{{ current_cat }}</span>
-            <span class="tw-hidden sm:tw-inline" style="color: var(--text-main); opacity: 0.3;">/</span>
+            <span class="tw-font-medium tw-hidden sm:tw-inline tw-flex-shrink-0" style="color: var(--text-main); opacity: 0.7;">{{ current_cat }}</span>
+            <span class="tw-hidden sm:tw-inline tw-flex-shrink-0" style="color: var(--text-main); opacity: 0.3;">/</span>
             
             <!-- Nama Halaman Aktif -->
             <span class="tw-font-bold tw-tracking-tight tw-truncate" style="color: var(--text-main);">
@@ -53,8 +53,8 @@
         </div>
     </div>
 
-    <div class="tw-flex tw-items-center tw-gap-2">
-        <div class="tw-w-8 tw-h-8 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-text-white" style="background-color: var(--primary);">
+    <div class="tw-flex tw-items-center tw-gap-2 tw-flex-shrink-0">
+        <div class="tw-w-8 tw-h-8 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-text-white tw-shadow-sm" style="background-color: var(--primary);">
             <span class="material-symbols-outlined tw-text-[16px]">person</span>
         </div>
     </div>

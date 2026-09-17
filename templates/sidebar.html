@@ -1,8 +1,4 @@
 <!-- templates/sidebar.html -->
-<!-- Font & Tailwind runtime dimuat di sini (bukan di <head> tiap halaman) supaya
-     sidebar tetap konsisten di semua halaman yang meng-include partial ini.
-     Semua utility Tailwind pakai prefix "tw-" dan preflight dimatikan, jadi
-     TIDAK bentrok dengan Bootstrap/CSS lama yang masih dipakai halaman lain. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -34,6 +30,44 @@
 </script>
 <style>
   .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; font-size: 20px; line-height: 1; vertical-align: middle; }
+  
+  /* KUNCI MUTLAK LAYOUT BROWSER */
+  html { overflow-y: scroll !important; }
+
+  body {
+    padding-right: 0 !important;
+  }
+  @media (min-width: 1024px) {
+    body.has-app-sidebar {
+      padding-left: 256px !important;
+    }
+  }
+
+  /* ISOLASI TOTAL TIPOGRAFI & BOX MODEL */
+  #appSidebar, #appSidebar * {
+    box-sizing: border-box !important;
+    letter-spacing: -0.01em !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+  }
+  
+  #appSidebar a { text-decoration: none !important; }
+  #appSidebar button { background: transparent; border: none; box-shadow: none; outline: none; }
+
+  /* KUNCI UKURAN MUTLAK SIDEBAR */
+  #appSidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 256px !important;
+    min-width: 256px !important;
+    max-width: 256px !important;
+    height: 100vh !important;
+    flex: 0 0 256px !important;
+    transform: translateZ(0);
+    will-change: transform;
+    contain: layout style paint;
+  }
 </style>
 
 <aside id="appSidebar"
@@ -41,17 +75,17 @@
     <div class="tw-flex tw-flex-col tw-flex-1 tw-min-h-0">
 
         <!-- Brand -->
-        <div class="tw-h-16 tw-px-4 tw-flex tw-items-center tw-justify-between tw-gap-2 tw-border-b tw-border-shell-border/60 tw-flex-shrink-0">
-            <div class="tw-flex tw-items-center tw-gap-2">
-                <div class="tw-w-9 tw-h-9 tw-rounded-lg tw-bg-primary/80 tw-border tw-border-primary-dark/30 tw-flex tw-items-center tw-justify-center tw-shadow-inner">
-                    <span class="material-symbols-outlined tw-text-white">verified</span>
+        <div class="tw-h-16 tw-px-4 tw-flex tw-items-center tw-justify-between tw-gap-2 tw-flex-shrink-0" style="border-bottom: 1px solid #163836 !important;">
+            <div class="tw-flex tw-items-center tw-gap-2.5 tw-min-w-0">
+                <div class="tw-w-8 tw-h-8 tw-rounded-lg tw-bg-primary/80 tw-border tw-border-primary-dark/30 tw-flex tw-items-center tw-justify-center tw-shadow-inner tw-flex-shrink-0">
+                    <span class="material-symbols-outlined tw-text-white tw-text-[18px]">verified</span>
                 </div>
-                <div class="tw-flex tw-flex-col">
-                    <span class="tw-text-shell-text tw-font-bold tw-text-sm tw-leading-none tw-tracking-tight">{{ _('QC SYSTEM') }}</span>
-                    <span class="tw-font-mono tw-text-primary/80 tw-uppercase tw-tracking-wider tw-text-[10px] tw-mt-0.5 tw-font-medium">{{ _('Control Center') }}</span>
+                <div class="tw-flex tw-flex-col tw-min-w-0">
+                    <span class="tw-text-shell-text tw-font-bold tw-text-sm tw-leading-none tw-tracking-tight tw-truncate">{{ _('CCIndonesia') }}</span>
+                    <span class="tw-font-mono tw-text-primary/80 tw-uppercase tw-tracking-wider tw-text-[10px] tw-mt-1 tw-font-medium tw-truncate">{{ _('Manage Task & QR Code') }}</span>
                 </div>
             </div>
-            <button type="button" onclick="toggleSidebar(false)" class="lg:tw-hidden tw-w-7 tw-h-7 tw-rounded tw-flex tw-items-center tw-justify-center tw-text-shell-muted hover:tw-text-white hover:tw-bg-shell-surface tw-transition-colors">
+            <button type="button" onclick="toggleSidebar(false)" class="lg:tw-hidden tw-w-7 tw-h-7 tw-rounded tw-flex tw-items-center tw-justify-center tw-text-shell-muted hover:tw-text-white hover:tw-bg-shell-surface tw-transition-colors tw-flex-shrink-0">
                 <span class="material-symbols-outlined tw-text-[18px]">close</span>
             </button>
         </div>
@@ -65,26 +99,26 @@
 
                 {% if role != 'Public' and role != 'Publik' %}
                 <a href="{{ url_for('main.dashboard') }}"
-                   class="tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-all tw-duration-150
-                          {% if request.endpoint == 'main.dashboard' %} tw-bg-primary tw-text-white tw-shadow-sm tw-border tw-border-primary-dark/40
-                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text {% endif %}">
+                   class="tw-no-underline tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-colors tw-border
+                          {% if request.endpoint == 'main.dashboard' %} tw-bg-primary tw-text-white tw-border-primary-dark/40
+                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text tw-border-transparent {% endif %}">
                     <span class="material-symbols-outlined tw-text-[18px]">space_dashboard</span>
                     <span>{{ _('Dashboard') }}</span>
                 </a>
                 {% endif %}
 
                 <a href="{{ url_for('task.task_list') }}"
-                   class="tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-all tw-duration-150
-                          {% if request.endpoint == 'task.task_list' %} tw-bg-primary tw-text-white tw-shadow-sm tw-border tw-border-primary-dark/40
-                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text {% endif %}">
+                   class="tw-no-underline tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-colors tw-border
+                          {% if request.endpoint == 'task.task_list' %} tw-bg-primary tw-text-white tw-border-primary-dark/40
+                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text tw-border-transparent {% endif %}">
                     <span class="material-symbols-outlined tw-text-[18px]">assignment</span>
                     <span>{{ _('Task Management') }}</span>
                 </a>
 
                 <a href="{{ url_for('qr.qr_codes_page') }}"
-                   class="tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-all tw-duration-150
-                          {% if request.endpoint == 'qr.qr_codes_page' %} tw-bg-primary tw-text-white tw-shadow-sm tw-border tw-border-primary-dark/40
-                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text {% endif %}">
+                   class="tw-no-underline tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-colors tw-border
+                          {% if request.endpoint == 'qr.qr_codes_page' %} tw-bg-primary tw-text-white tw-border-primary-dark/40
+                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text tw-border-transparent {% endif %}">
                     <span class="material-symbols-outlined tw-text-[18px]">qr_code_scanner</span>
                     <span>{{ _('QR Management') }}</span>
                 </a>
@@ -96,17 +130,17 @@
                 <div class="tw-px-2 tw-pt-1 tw-pb-1 tw-text-[11px] tw-font-semibold tw-uppercase tw-tracking-wider tw-text-shell-muted">{{ _('Administration') }}</div>
 
                 <a href="{{ url_for('main.user_management') }}"
-                   class="tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-all tw-duration-150
-                          {% if request.endpoint == 'main.user_management' %} tw-bg-primary tw-text-white tw-shadow-sm tw-border tw-border-primary-dark/40
-                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text {% endif %}">
+                   class="tw-no-underline tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-colors tw-border
+                          {% if request.endpoint == 'main.user_management' %} tw-bg-primary tw-text-white tw-border-primary-dark/40
+                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text tw-border-transparent {% endif %}">
                     <span class="material-symbols-outlined tw-text-[18px]">group</span>
                     <span>{{ _('User Management') }}</span>
                 </a>
 
                 <a href="{{ url_for('main.view_tickets') }}"
-                   class="tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-all tw-duration-150
-                          {% if request.endpoint == 'main.view_tickets' %} tw-bg-primary tw-text-white tw-shadow-sm tw-border tw-border-primary-dark/40
-                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text {% endif %}">
+                   class="tw-no-underline tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-colors tw-border
+                          {% if request.endpoint == 'main.view_tickets' %} tw-bg-primary tw-text-white tw-border-primary-dark/40
+                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text tw-border-transparent {% endif %}">
                     <span class="material-symbols-outlined tw-text-[18px]">confirmation_number</span>
                     <span>{{ _('Support Tickets') }}</span>
                 </a>
@@ -118,25 +152,25 @@
                 <div class="tw-px-2 tw-pt-1 tw-pb-1 tw-text-[11px] tw-font-semibold tw-uppercase tw-tracking-wider tw-text-shell-muted">{{ _('System & Account') }}</div>
 
                 <a href="{{ url_for('main.support') }}"
-                   class="tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-all tw-duration-150
-                          {% if request.endpoint == 'main.support' %} tw-bg-primary tw-text-white tw-shadow-sm tw-border tw-border-primary-dark/40
-                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text {% endif %}">
+                   class="tw-no-underline tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-colors tw-border
+                          {% if request.endpoint == 'main.support' %} tw-bg-primary tw-text-white tw-border-primary-dark/40
+                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text tw-border-transparent {% endif %}">
                     <span class="material-symbols-outlined tw-text-[18px]">headset_mic</span>
                     <span>{{ _('Customer Service') }}</span>
                 </a>
 
                 <a href="{{ url_for('main.faq') }}"
-                   class="tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-all tw-duration-150
-                          {% if request.endpoint == 'main.faq' %} tw-bg-primary tw-text-white tw-shadow-sm tw-border tw-border-primary-dark/40
-                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text {% endif %}">
+                   class="tw-no-underline tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-colors tw-border
+                          {% if request.endpoint == 'main.faq' %} tw-bg-primary tw-text-white tw-border-primary-dark/40
+                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text tw-border-transparent {% endif %}">
                     <span class="material-symbols-outlined tw-text-[18px]">menu_book</span>
                     <span>{{ _('FAQ & Guidance') }}</span>
                 </a>
 
                 <a href="{{ url_for('main.profile') }}"
-                   class="tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-all tw-duration-150
-                          {% if request.endpoint == 'main.profile' %} tw-bg-primary tw-text-white tw-shadow-sm tw-border tw-border-primary-dark/40
-                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text {% endif %}">
+                   class="tw-no-underline tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-colors tw-border
+                          {% if request.endpoint == 'main.profile' %} tw-bg-primary tw-text-white tw-border-primary-dark/40
+                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text tw-border-transparent {% endif %}">
                     <span class="material-symbols-outlined tw-text-[18px]">manage_accounts</span>
                     <span>{{ _('Profile Settings') }}</span>
                 </a>
@@ -144,36 +178,12 @@
         </div>
     </div>
 
-    <!-- Footer: auth + language + theme -->
+    <!-- Footer -->
     <div class="tw-p-2 tw-bg-black/20 tw-border-t tw-border-shell-border tw-flex tw-flex-col tw-gap-2 tw-flex-shrink-0">
-
-        {% if role == 'Public' or role == 'Publik' %}
-        <button type="button" class="tw-w-full tw-py-2 tw-rounded-lg tw-bg-primary tw-text-white tw-text-sm tw-font-semibold hover:tw-bg-primary-dark tw-transition-colors" data-bs-toggle="modal" data-bs-target="#loginModal">
-            {{ _('Sign In') }}
-        </button>
-        {% else %}
-        <div class="tw-flex tw-items-center tw-gap-2 tw-p-2 tw-rounded-lg tw-bg-shell-surface tw-border tw-border-shell-border">
-            <div class="tw-relative tw-flex-shrink-0">
-                <div class="tw-w-8 tw-h-8 tw-rounded-full tw-bg-primary-dark tw-text-white tw-flex tw-items-center tw-justify-center">
-                    <span class="material-symbols-outlined tw-text-[16px]">person</span>
-                </div>
-                <span class="tw-absolute tw-bottom-0 tw-right-0 tw-w-2 tw-h-2 tw-rounded-full tw-bg-emerald-500 tw-ring-2 tw-ring-shell-surface"></span>
-            </div>
-            <div class="tw-flex tw-flex-col tw-min-w-0 tw-flex-1">
-                <span class="tw-text-shell-text tw-text-xs tw-font-medium">{{ _('Signed in as') }}</span>
-                <span class="tw-font-mono tw-text-primary/90 tw-text-[11px] tw-truncate">{{ role }}</span>
-            </div>
-            <a href="{{ url_for('main.logout') }}" title="{{ _('Sign Out') }}" class="tw-w-7 tw-h-7 tw-rounded tw-flex tw-items-center tw-justify-center tw-text-shell-muted hover:tw-bg-black/30 hover:tw-text-rose-400 tw-transition-colors">
-                <span class="material-symbols-outlined tw-text-[16px]">logout</span>
-            </a>
-        </div>
-        {% endif %}
-
-        <div class="tw-flex tw-items-center tw-gap-1.5">
-            <!-- Language switcher -->
-            <div class="dropup tw-flex-1">
-                <button class="tw-w-full tw-flex tw-items-center tw-justify-center tw-gap-1 tw-py-1.5 tw-rounded-md tw-bg-shell-surface tw-border tw-border-shell-border tw-text-shell-text tw-text-xs tw-font-medium hover:tw-bg-black/30 tw-transition-colors" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    {% if get_locale() == 'id' %}🇮🇩 ID{% else %}🇬🇧 EN{% endif %}
+        <div class="tw-flex tw-items-center tw-gap-1 tw-px-1">
+            <div class="dropup">
+                <button class="tw-bg-transparent tw-border-0 tw-shadow-none tw-flex tw-items-center tw-gap-1 tw-px-2 tw-py-1 tw-rounded-md tw-text-shell-text tw-text-xs tw-font-mono hover:tw-bg-black/30 tw-transition-colors" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    {% if get_locale() == 'id' %}ID{% else %}EN{% endif %}
                 </button>
                 <ul class="dropdown-menu shadow-sm border-0 py-1 theme-dropdown-menu">
                     <li><a class="dropdown-item py-2 px-3 small {% if get_locale() == 'id' %}active{% endif %}" href="{{ url_for('main.set_language', lang_code='id') }}">🇮🇩 {{ _('Bahasa Indonesia') }}</a></li>
@@ -181,11 +191,9 @@
                 </ul>
             </div>
 
-            <!-- Theme switcher -->
-            <div class="dropup tw-flex-1">
-                <button class="tw-w-full tw-flex tw-items-center tw-justify-center tw-gap-1 tw-py-1.5 tw-rounded-md tw-bg-shell-surface tw-border tw-border-shell-border tw-text-shell-text tw-text-xs tw-font-medium hover:tw-bg-black/30 tw-transition-colors" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <span class="material-symbols-outlined tw-text-[15px]">contrast</span>
-                    {{ _('Theme') }}
+            <div class="dropup">
+                <button class="tw-bg-transparent tw-border-0 tw-shadow-none tw-flex tw-items-center tw-justify-center tw-w-7 tw-h-7 tw-rounded-md tw-text-shell-text hover:tw-bg-black/30 tw-transition-colors" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Theme">
+                    <span class="material-symbols-outlined tw-text-[16px]">wb_sunny</span>
                 </button>
                 <ul class="dropdown-menu shadow-sm border-0 py-1 theme-dropdown-menu">
                     <li><a class="dropdown-item py-2 px-3 small" href="javascript:void(0);" onclick="setTheme('light')">{{ _('Light') }}</a></li>
@@ -193,7 +201,32 @@
                     <li><a class="dropdown-item py-2 px-3 small" href="javascript:void(0);" onclick="setTheme('system')">{{ _('System') }}</a></li>
                 </ul>
             </div>
+
+            {% if role != 'Public' and role != 'Publik' %}
+            <a href="{{ url_for('main.logout') }}" title="{{ _('Sign Out') }}" class="tw-no-underline tw-ml-auto tw-w-7 tw-h-7 tw-rounded tw-flex tw-items-center tw-justify-center tw-text-shell-muted hover:tw-bg-black/30 hover:tw-text-rose-400 tw-transition-colors">
+                <span class="material-symbols-outlined tw-text-[16px]">logout</span>
+            </a>
+            {% endif %}
         </div>
+
+        {% if role == 'Public' or role == 'Publik' %}
+        <button type="button" class="tw-w-full tw-py-2 tw-rounded-lg tw-bg-primary tw-text-white tw-text-sm tw-font-semibold hover:tw-bg-primary-dark tw-transition-colors" data-bs-toggle="modal" data-bs-target="#loginModal">
+            {{ _('Sign In') }}
+        </button>
+        {% else %}
+        <div class="tw-flex tw-items-center tw-gap-2.5 tw-p-2 tw-rounded-lg tw-bg-shell-surface tw-border tw-border-shell-border">
+            <div class="tw-relative tw-flex-shrink-0">
+                <div class="tw-w-8 tw-h-8 tw-rounded-full tw-bg-primary/20 tw-text-primary tw-border tw-border-primary/30 tw-flex tw-items-center tw-justify-center">
+                    <span class="material-symbols-outlined tw-text-[16px]">person</span>
+                </div>
+            </div>
+            <div class="tw-flex tw-flex-col tw-min-w-0 tw-flex-1">
+                <span class="tw-text-shell-text tw-text-xs tw-font-bold tw-truncate">{{ session.get('username', role) }}</span>
+                <span class="tw-font-mono tw-text-primary/90 tw-text-[10px] tw-truncate">{{ role }}</span>
+            </div>
+            <span class="tw-w-2 tw-h-2 tw-rounded-full tw-bg-emerald-500 tw-flex-shrink-0"></span>
+        </div>
+        {% endif %}
     </div>
 </aside>
 
@@ -214,7 +247,6 @@
     }
     window.toggleSidebar = toggleSidebar;
 
-    // Tutup sidebar mobile otomatis saat sebuah menu diklik
     document.getElementById('appSidebar') && document.getElementById('appSidebar').querySelectorAll('a').forEach(function (a) {
         a.addEventListener('click', function () {
             if (window.innerWidth < 1024) toggleSidebar(false);
