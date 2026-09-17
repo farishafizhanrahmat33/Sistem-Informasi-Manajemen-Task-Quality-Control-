@@ -2,17 +2,23 @@ import os
 import re
 import json
 import hashlib
+import uuid
+import threading
 from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
 from flask_babel import gettext as _
 from werkzeug.utils import secure_filename
 from database import db, QRCodeModel
 from pypdf import PdfReader
+from sqlalchemy import func
 import pymupdf as fitz  # Diperbarui menggunakan pymupdf agar bersih dari warning
 
 qr_bp = Blueprint('qr', __name__)
 QR_UPLOAD_FOLDER = 'static/uploads/qr_codes'
 ALLOWED_EXTENSIONS = {'.pdf'}
+
+# Kunci global buat penomoran Scene -- lihat _render_and_save_page().
+scene_lock = threading.Lock()
 
 
 def get_current_role():
@@ -79,12 +85,19 @@ def _clear_progress(base_code: str):
         os.remove(path)
 
 
-def _tmp_pdf_path(base_code: str) -> str:
+def _tmp_pdf_path(upload_id: str) -> str:
     """Lokasi salinan sementara PDF mentah, dipakai endpoint per-halaman
     (/upload_qr/page) supaya file cukup dikirim SEKALI dari browser (lewat
     /upload_qr/init), lalu tiap request per-halaman berikutnya tinggal buka
-    salinan ini -- tidak perlu upload ulang seluruh file tiap halaman."""
-    return os.path.join(QR_UPLOAD_FOLDER, f".tmp_{secure_filename(base_code)}.pdf")
+    salinan ini -- tidak perlu upload ulang seluruh file tiap halaman.
+
+    PENTING: key-nya adalah upload_id (token acak per sesi upload, dibuat di
+    /upload_qr/init), BUKAN base_code. Kalau pakai base_code, dua file
+    berbeda yang kebetulan punya base_code sama (misal dari project yang
+    sama) akan saling menimpa salinan sementara masing-masing kalau upload-nya
+    tumpang tindih."""
+    safe_id = re.sub(r'[^a-zA-Z0-9_-]', '', upload_id)[:64]
+    return os.path.join(QR_UPLOAD_FOLDER, f".tmp_{safe_id}.pdf")
 
 
 def _resolve_base_code(original_filename: str) -> str:
@@ -98,61 +111,78 @@ def _render_and_save_page(doc, i: int, base_code: str, already_uploaded_pages: s
     maupun route baru (/upload_qr/page, proses 1 halaman per request) --
     supaya logikanya tidak ada yang duplikat/ketinggalan sinkron.
 
+    `i` adalah nomor halaman LOKAL di dalam file ini (dipakai buat baca
+    doc[i-1] dan buat state resume per-file). Nomor "Scene N" yang
+    ditampilkan ke user dihitung TERPISAH, secara GLOBAL lintas semua
+    file/project yang pernah di-upload -- lihat blok scene_lock di bawah.
+
     Return True kalau sukses, False kalau gagal (halaman ini dilewati,
     tapi tidak menjatuhkan proses halaman lain)."""
     page = doc[i - 1]
-    doc_name = f"Scene {i}"
-    safe_base = secure_filename(f"{base_code}_scene_{i}") or f"page_{i}"
 
     full_path = None
     thumb_path = None
     pix_full = None
     pix_thumb = None
     try:
-        # Dioptimalkan dari 1.5 ke 1.2 agar proses render lebih ringan & terhindar dari timeout server
-        zoom = 1.2
-        mat = fitz.Matrix(zoom, zoom)
+        # KUNCI UTAMA: nomor Scene dihitung dari MAX(page_number) di SELURUH
+        # tabel QRCodeModel (bukan cuma punya base_code ini), lalu +1. Ini
+        # yang bikin nomor Scene selalu lanjut & gak pernah duplikat, mau
+        # upload 1 file atau banyak file sekaligus, dari project apapun.
+        # Dikunci (scene_lock) supaya kalaupun ada 2 request halaman yang
+        # nyaris bersamaan, keduanya tidak baca MAX yang sama lalu berebut
+        # nomor yang sama.
+        with scene_lock:
+            max_page_query = db.session.query(func.max(QRCodeModel.page_number)).scalar()
+            scene_num = (max_page_query or 0) + 1
 
-        # 1. SIMPAN GAMBAR FULL (UTUH) UNTUK VIEW PREVIEW
-        full_filename = _unique_filename(f"{safe_base}.png")
-        full_path = os.path.join(QR_UPLOAD_FOLDER, full_filename)
+            doc_name = f"Scene {scene_num}"
+            safe_base = secure_filename(f"{base_code}_scene_{scene_num}") or f"page_{scene_num}"
 
-        pix_full = page.get_pixmap(matrix=mat)
-        pix_full.save(full_path)
+            # Dioptimalkan dari 1.5 ke 1.2 agar proses render lebih ringan & terhindar dari timeout server
+            zoom = 1.2
+            mat = fitz.Matrix(zoom, zoom)
 
-        # 2. Simpan gambar thumbnail (Kustomisasi pas pada kotak gambar besar utama)
-        base_name, ext = os.path.splitext(full_filename)
-        thumb_filename = f"{base_name}_thumb{ext}"
-        thumb_path = os.path.join(QR_UPLOAD_FOLDER, thumb_filename)
+            # 1. SIMPAN GAMBAR FULL (UTUH) UNTUK VIEW PREVIEW
+            full_filename = _unique_filename(f"{safe_base}.png")
+            full_path = os.path.join(QR_UPLOAD_FOLDER, full_filename)
 
-        page_rect = page.rect
+            pix_full = page.get_pixmap(matrix=mat)
+            pix_full.save(full_path)
 
-        # --- KOORDINAT PRESISI UNTUK FOTO UTAMA SAJA ---
-        crop_x0 = page_rect.width * 0.55  # Batas kiri kotak foto utama
-        crop_y0 = page_rect.height * 0.42  # Batas atas kotak foto utama
-        crop_x1 = page_rect.width * 0.90  # Batas kanan kotak foto utama
-        crop_y1 = page_rect.height * 0.70  # Batas bawah kotak foto utama
-        # ----------------------------------------------
+            # 2. Simpan gambar thumbnail (Kustomisasi pas pada kotak gambar besar utama)
+            base_name, ext = os.path.splitext(full_filename)
+            thumb_filename = f"{base_name}_thumb{ext}"
+            thumb_path = os.path.join(QR_UPLOAD_FOLDER, thumb_filename)
 
-        clip_area = fitz.Rect(crop_x0, crop_y0, crop_x1, crop_y1)
+            page_rect = page.rect
 
-        pix_thumb = page.get_pixmap(matrix=mat, clip=clip_area)
-        pix_thumb.save(thumb_path)
+            # --- KOORDINAT PRESISI UNTUK FOTO UTAMA SAJA ---
+            crop_x0 = page_rect.width * 0.55  # Batas kiri kotak foto utama
+            crop_y0 = page_rect.height * 0.42  # Batas atas kotak foto utama
+            crop_x1 = page_rect.width * 0.90  # Batas kanan kotak foto utama
+            crop_y1 = page_rect.height * 0.70  # Batas bawah kotak foto utama
+            # ----------------------------------------------
 
-        new_qr = QRCodeModel(
-            name=doc_name,
-            pdf_filename=full_filename,  # Menyimpan file utuh untuk modal
-            uploaded_at=datetime.utcnow(),
-            uploaded_by=session.get('username'),
-            source_document=base_code,
-            page_number=i,
-        )
-        db.session.add(new_qr)
-        db.session.commit()
+            clip_area = fitz.Rect(crop_x0, crop_y0, crop_x1, crop_y1)
 
-        already_uploaded_pages.add(i)
-        _save_progress(base_code, file_hash, already_uploaded_pages)
-        return True
+            pix_thumb = page.get_pixmap(matrix=mat, clip=clip_area)
+            pix_thumb.save(thumb_path)
+
+            new_qr = QRCodeModel(
+                name=doc_name,
+                pdf_filename=full_filename,  # Menyimpan file utuh untuk modal
+                uploaded_at=datetime.utcnow(),
+                uploaded_by=session.get('username'),
+                source_document=base_code,
+                page_number=scene_num,
+            )
+            db.session.add(new_qr)
+            db.session.commit()
+
+            already_uploaded_pages.add(i)
+            _save_progress(base_code, file_hash, already_uploaded_pages)
+            return True
 
     except Exception:
         db.session.rollback()
@@ -301,10 +331,13 @@ def upload_qr_init():
 
     file_hash = hashlib.sha256(file_bytes).hexdigest()
 
+    # Token acak unik buat sesi upload INI SAJA -- lihat catatan di _tmp_pdf_path().
+    upload_id = uuid.uuid4().hex
+
     # Simpan salinan file mentah sementara di server -- supaya endpoint
     # per-halaman (di bawah) bisa membukanya lagi tanpa perlu browser
     # mengirim ulang seluruh file di tiap request per-halaman.
-    with open(_tmp_pdf_path(base_code), 'wb') as f:
+    with open(_tmp_pdf_path(upload_id), 'wb') as f:
         f.write(file_bytes)
 
     already_done = _load_progress(base_code, file_hash)
@@ -312,6 +345,7 @@ def upload_qr_init():
     return jsonify({
         'base_code': base_code,
         'file_hash': file_hash,
+        'upload_id': upload_id,
         'total_pages': total_pages,
         'already_done': sorted(already_done),
     })
@@ -325,14 +359,15 @@ def upload_qr_page():
 
     base_code = request.form.get('base_code', '')
     file_hash = request.form.get('file_hash', '')
+    upload_id = request.form.get('upload_id', '')
 
     try:
         page_num = int(request.form.get('page', ''))
     except (TypeError, ValueError):
         return jsonify({'error': 'Invalid page number.'}), 400
 
-    tmp_path = _tmp_pdf_path(base_code)
-    if not base_code or not os.path.exists(tmp_path):
+    tmp_path = _tmp_pdf_path(upload_id)
+    if not upload_id or not base_code or not os.path.exists(tmp_path):
         return jsonify({'error': _('Upload session expired or invalid. Please upload the file again.')}), 400
 
     try:
@@ -366,16 +401,17 @@ def upload_qr_finalize():
         return jsonify({'error': _('Access denied!')}), 403
 
     base_code = request.form.get('base_code', '')
+    upload_id = request.form.get('upload_id', '')
     had_failures = request.form.get('had_failures') == '1'
 
-    if base_code:
-        tmp_path = _tmp_pdf_path(base_code)
+    if upload_id:
+        tmp_path = _tmp_pdf_path(upload_id)
         if os.path.exists(tmp_path):
             os.remove(tmp_path)
 
-        if not had_failures:
-            # Semua halaman tuntas -- file pelacak progres tidak dibutuhkan lagi.
-            _clear_progress(base_code)
+    if base_code and not had_failures:
+        # Semua halaman tuntas -- file pelacak progres tidak dibutuhkan lagi.
+        _clear_progress(base_code)
 
     return jsonify({'status': 'done'})
 

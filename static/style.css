@@ -1867,3 +1867,80 @@ body { background-color: #F8FAFC !important; }
     box-shadow: 0 0 0 3px var(--tm-primary-soft) !important;
 }
 
+/* ==========================================================================
+   QR MANAGEMENT REDESIGN (Obsidian Emerald / Jakarta Precision)
+   ========================================================================== */
+
+/* Typography & Layout Scoping */
+.qr-app-wrapper {
+    font-family: 'Plus Jakarta Sans', 'Inter', var(--font-body);
+}
+
+.tracking-tight { letter-spacing: -0.02em; }
+.tracking-wider { letter-spacing: 0.05em; }
+.leading-tight { line-height: 1.25; }
+
+/* Enhanced Button Styles to match code_3.html */
+.btn-brand-primary {
+    background-color: var(--accent);
+    color: #ffffff !important;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 1px 2px rgba(16, 185, 129, 0.2);
+}
+.btn-brand-primary:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+.btn-outline-slate {
+    background-color: var(--bg-surface);
+    color: var(--text-main) !important;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+}
+.btn-outline-slate:hover {
+    background-color: var(--dark-soft);
+    border-color: var(--border-color);
+}
+
+/* Redesigned Cards */
+.qr-card {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.qr-card:hover {
+    border-color: rgba(16, 185, 129, 0.3) !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08) !important;
+    transform: translateY(-3px);
+}
+[data-theme="dark"] .qr-card:hover {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(16, 185, 129, 0.15) !important;
+}
+
+/* Soft Hover for Danger Button inside Card */
+.hover-bg-danger:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* Adjust Chips Container (Filter active indicators) */
+#activeFiltersIndicator .badge {
+    background-color: var(--bg-surface) !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--border-color);
+    font-size: 0.7rem !important;
+    font-weight: 500 !important;
+    border-radius: 8px !important;
+    padding: 0.35rem 0.6rem !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+#activeFiltersIndicator .badge button {
+    color: var(--text-muted);
+}
+#activeFiltersIndicator .badge button:hover {
+    color: var(--text-main);
+}

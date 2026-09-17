@@ -546,55 +546,59 @@ async function handleQrUploadSubmit(form) {
         if (progressText) progressText.innerText = label || `${done} / ${total} halaman`;
     }
 
-    const problems = [];
+    const problems = []; // kumpulan masalah per file, buat ditampilin di akhir
 
     try {
-        const jobs = [];
-        let overallTotal = 0;
+        // PENTING: file diproses SATU PER SATU secara TUNTAS (init -> semua
+        // halamannya -> finalize) sebelum pindah ke file berikutnya. Kalau
+        // "init semua file dulu, baru proses semua halaman" (desain lama),
+        // dan 2+ file kebetulan punya base_code yang sama, salinan sementara
+        // file A bisa ketiban isi file B sebelum halaman file A selesai
+        // diproses. Makanya harus tuntas dulu satu-satu.
         let overallDone = 0;
+        let overallTotal = 0; // bertambah tiap kali total halaman file baru diketahui
 
-        for (const file of files) {
+        for (let fi = 0; fi < files.length; fi++) {
+            const file = files[fi];
+
+            // 1) INIT file ini
             const initForm = new FormData();
             initForm.append('qr_file', file);
 
+            let initData;
             try {
                 const initResp = await fetch('/upload_qr/init', { method: 'POST', body: initForm });
-                const initData = await initResp.json();
-
+                initData = await initResp.json();
                 if (!initResp.ok || initData.error) {
                     problems.push(`${file.name}: ${initData.error || 'gagal dibaca'}`);
-                    continue;
+                    continue; // lanjut ke file berikutnya
                 }
-
-                const alreadyDone = new Set(initData.already_done || []);
-                jobs.push({
-                    file,
-                    baseCode: initData.base_code,
-                    fileHash: initData.file_hash,
-                    totalPages: initData.total_pages,
-                    alreadyDone,
-                });
-                overallTotal += initData.total_pages;
-                overallDone += alreadyDone.size;
             } catch (err) {
                 problems.push(`${file.name}: koneksi gagal saat memulai upload`);
+                continue;
             }
-        }
 
-        setProgress(overallDone, overallTotal, `0 / ${jobs.length} file diproses`);
+            const baseCode = initData.base_code;
+            const fileHash = initData.file_hash;
+            const uploadId = initData.upload_id;
+            const totalPages = initData.total_pages;
+            const alreadyDone = new Set(initData.already_done || []);
 
-        for (let fi = 0; fi < jobs.length; fi++) {
-            const job = jobs[fi];
+            overallTotal += totalPages;
+            overallDone += alreadyDone.size;
+            setProgress(overallDone, overallTotal, `File ${fi + 1}/${files.length}: ${file.name}`);
+
+            // 2) PROSES SEMUA HALAMAN file ini, TUNTAS, sebelum lanjut ke file lain
             const failedPagesThisFile = [];
-
-            for (let page = 1; page <= job.totalPages; page++) {
-                if (job.alreadyDone.has(page)) {
+            for (let page = 1; page <= totalPages; page++) {
+                if (alreadyDone.has(page)) {
                     continue;
                 }
 
                 const pageForm = new FormData();
-                pageForm.append('base_code', job.baseCode);
-                pageForm.append('file_hash', job.fileHash);
+                pageForm.append('base_code', baseCode);
+                pageForm.append('file_hash', fileHash);
+                pageForm.append('upload_id', uploadId);
                 pageForm.append('page', String(page));
 
                 try {
@@ -609,15 +613,18 @@ async function handleQrUploadSubmit(form) {
                 }
 
                 overallDone++;
-                setProgress(overallDone, overallTotal, `File ${fi + 1}/${jobs.length}: ${job.file.name}`);
+                setProgress(overallDone, overallTotal, `File ${fi + 1}/${files.length}: ${file.name}`);
             }
 
             if (failedPagesThisFile.length > 0) {
-                problems.push(`${job.file.name}: halaman ${failedPagesThisFile.join(', ')} gagal diproses`);
+                problems.push(`${file.name}: halaman ${failedPagesThisFile.join(', ')} gagal diproses`);
             }
 
+            // 3) FINALIZE file ini (hapus salinan sementaranya) SEBELUM file
+            //    berikutnya mulai di-init -- ini kunci utama fix-nya.
             const finalizeForm = new FormData();
-            finalizeForm.append('base_code', job.baseCode);
+            finalizeForm.append('base_code', baseCode);
+            finalizeForm.append('upload_id', uploadId);
             finalizeForm.append('had_failures', failedPagesThisFile.length > 0 ? '1' : '0');
             await fetch('/upload_qr/finalize', { method: 'POST', body: finalizeForm });
         }
