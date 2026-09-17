@@ -27,8 +27,13 @@ def task_list():
     sort_by = request.args.get('sort_by', 'updated')
     sort_order = request.args.get('sort_order', 'desc')
 
-    # Query args yang perlu dipertahankan di link pagination
-    current_args = {k: v for k, v in request.args.lists() if k != 'page'}
+    # Query args yang perlu dipertahankan di link pagination secara presisi
+    current_args = {}
+    for k in request.args:
+        if k == 'page':
+            continue
+        values = request.args.getlist(k)
+        current_args[k] = values[0] if len(values) == 1 else values
 
     # Base query dengan batasan role
     base_query = db.session.query(TaskModel)
@@ -144,6 +149,8 @@ def upload_file():
 
     file = request.files.get('file')
     project_name = request.form.get('project_name')
+    # TANGKAP NILAI CHECKBOX DARI UI
+    overwrite_project = request.form.get('overwrite_project') == '1' 
     current_username = session.get('username')
 
     if not file or not project_name:
@@ -153,14 +160,10 @@ def upload_file():
     try:
         df = pd.read_csv(file) if file.filename.endswith('.csv') else pd.read_excel(file)
 
-        # Bersihkan prefix kode bahasa/negara di Excel jika ada (misal: '包01_')
+        # Bersihkan prefix kode bahasa/negara di Excel jika ada
         if 'Package Name' in df.columns:
             df['Package Name'] = df['Package Name'].str.replace(r'^包\d+_', '', regex=True)
 
-        # Saring duplikat berdasarkan (Task ID + Package) -- BUKAN Task ID doang.
-        # Task ID memang bisa sama di package yang berbeda (unik-nya per package,
-        # bukan per project), jadi dedup harus ikut kolom package biar baris dari
-        # package lain yang task_id-nya kebetulan sama nggak ketendang.
         package_col_candidates = ['Package', 'Package Name', 'package', 'package_name']
         package_col = next((c for c in package_col_candidates if c in df.columns), None)
 
@@ -168,7 +171,6 @@ def upload_file():
             dedup_subset = ['Task ID', package_col] if package_col else ['Task ID']
             df = df.drop_duplicates(subset=dedup_subset, keep='first')
 
-        # Helper untuk mencari nama kolom yang bervariasi di Excel
         def get_val(row, keys):
             for k in keys:
                 val = row.get(k)
@@ -176,17 +178,21 @@ def upload_file():
                     return str(val).strip()
             return ''
 
+        # LOGIKA BARU: TIMPA PROJECT
+        if overwrite_project:
+            # Hapus secara permanen semua data lama yang bernaung di bawah project_name ini
+            db.session.query(TaskModel).filter_by(project_name=project_name).delete()
+            db.session.flush() # Eksekusi penghapusan sebelum insert baris baru
+
         for _idx, row in df.iterrows():
             raw_task_id = get_val(row, ['Task ID', 'task_id'])
             if not raw_task_id:
                 continue  
 
             pkg_name = get_val(row, ['Package', 'Package Name', 'package', 'package_name']) or 'General'
-            
             raw_pullable = get_val(row, ['Pullable Num', 'pullable_num'])
             pullable_val = int(raw_pullable) if raw_pullable.isdigit() else 0
 
-            # Ekstraksi Semua Kolom Data Mentah Baru
             sop_val = get_val(row, ['SOP', 'sop'])
             init_status = get_val(row, ['Initialize Status', 'Initial Status', 'initialize_status'])
             gen_dir = get_val(row, ['Generalization Direction', 'Gen Direction', 'generalization_direction'])
@@ -201,62 +207,41 @@ def upload_file():
             raw_num = get_val(row, ['Num', 'num'])
             num_val = int(raw_num) if raw_num.isdigit() else None
 
-            # Cek keberadaan task berdasarkan project_name + package_name + task_id
-            # (task_id cuma unik DI DALAM satu package, bukan di seluruh project --
-            # jadi package_name WAJIB ikut di sini, kalau nggak, task dari package
-            # lain yang task_id-nya kebetulan sama bisa ke-timpa/ke-gabung salah).
-            existing_task = db.session.query(TaskModel).filter_by(
+            # Karena fitur update Task ID lama dihapus, sekarang sistem selalu membuat baris baru.
+            # Jika 'overwrite' aktif, data lama dihapus diganti ini.
+            # Jika 'overwrite' mati, baris ini sekadar ditambahkan ke proyek yang sama.
+            new_task = TaskModel(
                 project_name=project_name,
+                task_id=raw_task_id,
                 package_name=pkg_name,
-                task_id=raw_task_id
-            ).first()
-
-            if existing_task:
-                # Perbarui Data Mentah & Package Name
-                existing_task.package_name = pkg_name
-                existing_task.task_name = get_val(row, ['Task Name', 'task_name'])
-                existing_task.description = get_val(row, ['Description', 'description'])
-                existing_task.task_goal = get_val(row, ['Task Goal', 'task_goal'])
-                existing_task.pullable_num = pullable_val
-                existing_task.sop = sop_val
-                existing_task.initialize_status = init_status
-                existing_task.generalization_direction = gen_dir
-                existing_task.task_type = t_type
-                existing_task.num = num_val
-                existing_task.label = lbl
-                existing_task.environment_type = env_t
-                existing_task.source_template_id = src_tmpl
-                existing_task.target_num_task = tgt_num
-                existing_task.env_summary = env_sum
-                existing_task.excel_status = ex_status
-            else:
-                # Buat Data Baru
-                new_task = TaskModel(
-                    project_name=project_name,
-                    task_id=raw_task_id,
-                    package_name=pkg_name,
-                    task_name=get_val(row, ['Task Name', 'task_name']),
-                    description=get_val(row, ['Description', 'description']),
-                    task_goal=get_val(row, ['Task Goal', 'task_goal']),
-                    pullable_num=pullable_val,
-                    sop=sop_val,
-                    initialize_status=init_status,
-                    generalization_direction=gen_dir,
-                    task_type=t_type,
-                    num=num_val,
-                    label=lbl,
-                    environment_type=env_t,
-                    source_template_id=src_tmpl,
-                    target_num_task=tgt_num,
-                    env_summary=env_sum,
-                    excel_status=ex_status,
-                    qc_category="Need Sample",
-                    uploaded_by=current_username
-                )
-                db.session.add(new_task)
+                task_name=get_val(row, ['Task Name', 'task_name']),
+                description=get_val(row, ['Description', 'description']),
+                task_goal=get_val(row, ['Task Goal', 'task_goal']),
+                pullable_num=pullable_val,
+                sop=sop_val,
+                initialize_status=init_status,
+                generalization_direction=gen_dir,
+                task_type=t_type,
+                num=num_val,
+                label=lbl,
+                environment_type=env_t,
+                source_template_id=src_tmpl,
+                target_num_task=tgt_num,
+                env_summary=env_sum,
+                excel_status=ex_status,
+                qc_category="Need Sample",
+                uploaded_by=current_username
+            )
+            db.session.add(new_task)
 
         db.session.commit()
-        flash(_('Project data synced up! New stuff got added and old stuff got updated.'), 'success')
+        
+        # Memberikan notifikasi yang berbeda sesuai pilihan user
+        if overwrite_project:
+            flash(_('Data lama dihapus. Proyek "%(proj)s" berhasil ditimpa dengan berkas baru!', proj=project_name), 'success')
+        else:
+            flash(_('Data dari berkas berhasil ditambahkan (append) ke proyek "%(proj)s"!', proj=project_name), 'success')
+
     except Exception as e:
         db.session.rollback()
         flash(_('Could not process the file: %(error)s', error=str(e)), 'danger')

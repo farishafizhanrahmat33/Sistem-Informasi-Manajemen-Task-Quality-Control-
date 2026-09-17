@@ -78,67 +78,194 @@
 
         <!-- MODAL UPLOAD & HAPUS PROYEK -->
         {% if role in ['Developer', 'Quality Control'] %}
-        <!-- 1. MODAL UPLOAD -->
+        <!-- 1. MODAL UPLOAD (CLEAN & REDESIGNED) -->
         <div class="modal fade" id="uploadModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content" style="background-color: var(--bg-surface); border-color: var(--border-color);">
-                    <div class="modal-header border-bottom" style="border-color: var(--border-color) !important;">
-                        <h6 class="modal-title fw-bold" style="color: var(--text-main);">{{ _('Import New Project Data') }}</h6>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" style="filter: var(--btn-close-filter, none);"></button>
-                    </div>
-                    <form action="/upload" method="POST" enctype="multipart/form-data">
-                        <div class="modal-body p-4">
-                            <div class="mb-4">
-                                <label class="form-label detail-label">{{ _('Pick a File (.xlsx, .csv)') }}</label>
-                                <input type="file" name="file" class="form-control" accept=".xlsx, .xls, .csv" required>
+            <div class="modal-dialog modal-dialog-centered" style="max-width: 36rem;">
+                <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden; background-color: var(--bg-surface);">
+                    
+                    <!-- Top Accent Highlight -->
+                    <div style="height: 4px; width: 100%; background-color: #0F766E;"></div>
+
+                    <!-- Modal Header -->
+                    <div class="px-4 pt-4 pb-3 d-flex align-items-start justify-content-between border-bottom" style="border-color: var(--border-color) !important;">
+                        <div class="d-flex align-items-center gap-3">
+                            <!-- Icon Badge -->
+                            <div class="d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px; border-radius: 10px; background-color: rgba(15, 118, 110, 0.1); border: 1px solid rgba(15, 118, 110, 0.2); color: #0F766E;">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                </svg>
                             </div>
-                            
-                            <div class="mb-2 position-relative">
-                                <label class="form-label detail-label">{{ _('Project Name') }}</label>
-                                
-                                <!-- Input Teks Standar (Bebas Ketik) -->
-                                <input type="text" id="projectNameInput" name="project_name" class="form-control" autocomplete="off" required placeholder="{{ _('Type a new project name or pick one...') }}">
-                                
-                                <!-- Custom Dropdown Suggestions (Tampilan Profesional ala SaaS) -->
-                                <div id="projectSuggestionsList" class="dropdown-menu w-100 shadow-sm border mt-1" style="display: none; max-height: 200px; overflow-y: auto; background-color: var(--bg-surface); border-color: var(--border-color) !important; z-index: 1060;">
-                                    {% for p in projects %}
-                                        <a href="#" class="dropdown-item project-suggestion-item py-2 px-3" style="color: var(--text-main);" data-value="{{ p }}">{{ p }}</a>
-                                    {% endfor %}
+                            <div>
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <h5 class="mb-0 fw-bold" style="color: var(--text-main); font-size: 1.1rem; letter-spacing: -0.01em;">{{ _('Import Data Proyek Baru') }}</h5>
+                                    <span class="badge" style="font-size: 0.65rem; padding: 3px 6px; border-radius: 9999px; background-color: rgba(15, 118, 110, 0.1); color: #0F766E; border: 1px solid rgba(15, 118, 110, 0.2); letter-spacing: 1px;">BATCH SYNC</span>
                                 </div>
-                                
-                                <div class="form-text small text-muted mt-1">{{ _('Type a new name or pick one from existing projects.') }}</div>
+                                <p class="mb-0" style="font-size: 0.8rem; color: var(--text-muted);">{{ _('Unggah lembar kerja (.xlsx / .csv) untuk sinkronisasi otomatis daftar tugas QC.') }}</p>
                             </div>
                         </div>
-                        <div class="modal-footer border-top pt-0 bg-transparent" style="border-color: var(--border-color) !important;">
-                            <button type="button" class="btn btn-outline-secondary btn-sm px-3" data-bs-dismiss="modal">{{ _('Cancel') }}</button>
-                            <button type="submit" class="btn btn-primary btn-sm px-4">{{ _('Start Sync') }}</button>
+                        <button type="button" class="btn-close shadow-none mt-1" data-bs-dismiss="modal" aria-label="Close" style="filter: var(--btn-close-filter, none);"></button>
+                    </div>
+
+                    <!-- Modal Form Body -->
+                    <form action="/upload" method="POST" enctype="multipart/form-data" class="p-4">
+                        
+                        <!-- Field 1: File Upload -->
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <label class="mb-0 fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.03em; color: var(--text-muted);">{{ _('Pilih Berkas (.XLSX, .CSV)') }}</label>
+                                <span style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #0F766E; font-weight: 500;">Maks. 25MB</span>
+                            </div>
+                            
+                            <!-- Custom Upload Box -->
+                            <div class="d-flex align-items-center justify-content-between w-100 p-1 border transition-all" style="border-radius: 8px; background-color: var(--bg-surface); border-color: var(--border-color);" onmouseover="this.style.borderColor='#0F766E'" onmouseout="this.style.borderColor='var(--border-color)'">
+                                <div class="d-flex align-items-center gap-3 overflow-hidden">
+                                    <label for="file-upload" class="cursor-pointer mb-0 px-3 py-1 border d-flex align-items-center gap-2 transition-all" style="border-radius: 6px; background-color: var(--bg-surface); color: var(--text-main); font-size: 0.8rem; font-weight: 500; border-color: var(--border-color);" onmouseover="this.style.backgroundColor='rgba(0,0,0,0.02)'" onmouseout="this.style.backgroundColor='var(--bg-surface)'">
+                                        <svg width="16" height="16" fill="none" stroke="#0F766E" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        {{ _('Pilih Berkas') }}
+                                    </label>
+                                    <input type="file" id="file-upload" name="file" class="d-none" accept=".xlsx, .csv" required>
+                                    <span id="file-name-display" class="text-truncate" style="font-size: 0.8rem; color: var(--text-muted);">{{ _('Belum ada berkas dipilih') }}</span>
+                                </div>
+                                <div class="pe-2" style="color: var(--text-muted);">
+                                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Success/Info Banner -->
+                            <div class="mt-2 d-flex align-items-start gap-2 p-2 border" style="border-radius: 6px; background-color: rgba(15, 118, 110, 0.05); border-color: rgba(15, 118, 110, 0.15) !important;">
+                                <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20" style="color: #0F766E; margin-top: 2px; flex-shrink: 0;">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span style="font-size: 0.75rem; color: var(--text-main);">{{ _('Struktur kolom header harus mengikuti skema:') }} <code style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #065F46; background-color: rgba(15, 118, 110, 0.1); padding: 1px 4px; border-radius: 3px;">task_id, package_name, task_name, ...</code></span>
+                            </div>
+                        </div>
+
+                        <!-- Field 2: Project Name Selector -->
+                        <div class="mb-4">
+                            <label class="mb-2 fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.03em; color: var(--text-muted);">{{ _('Nama Projek (Project Name)') }}</label>
+                            
+                            <div class="position-relative mb-2">
+                                <input type="text" id="projectNameInput" name="project_name" class="form-control shadow-none" autocomplete="off" required placeholder="{{ _('Ketik nama proyek baru atau pilih dari daftar...') }}" style="font-size: 0.85rem; height: 38px; border-radius: 8px; border-color: var(--border-color); background-color: var(--bg-surface); color: var(--text-main);">
+                                <div class="position-absolute" style="right: 12px; top: 10px; color: var(--text-muted); pointer-events: none;">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </div>
+                                <div id="projectSuggestionsList" class="dropdown-menu w-100 shadow-sm border mt-1" style="display: none; max-height: 200px; overflow-y: auto; background-color: var(--bg-surface); border-color: var(--border-color) !important; z-index: 1060;">
+                                    {% for p in projects %}
+                                        <a href="#" class="dropdown-item project-suggestion-item py-2 px-3" style="color: var(--text-main); font-size: 0.85rem;" data-value="{{ p }}">{{ p }}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <!-- Suggestions Chips -->
+                            <div class="d-flex flex-wrap align-items-center gap-2">
+                                <span style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">{{ _('Proyek Terakhir:') }}</span>
+                                {% for p in projects[:3] %}
+                                <button type="button" class="btn btn-sm border shadow-none" onclick="document.getElementById('projectNameInput').value='{{ p }}'" style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; padding: 2px 6px; border-radius: 4px; background-color: transparent; color: var(--text-main); border-color: var(--border-color) !important; transition: all 0.2s;" onmouseover="this.style.backgroundColor='rgba(15, 118, 110, 0.05)'; this.style.color='#0F766E'; this.style.borderColor='#0F766E' !important;" onmouseout="this.style.backgroundColor='transparent'; this.style.color='var(--text-main)'; this.style.borderColor='var(--border-color)' !important;">{{ p }}</button>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Checkbox Fitur Timpa Project -->
+                        <div class="d-flex align-items-start gap-2 p-3 border mb-4" style="border-radius: 8px; background-color: rgba(0,0,0,0.01); border-color: var(--border-color) !important;">
+                            <input type="checkbox" id="overwrite-checkbox" name="overwrite_project" value="1" class="mt-1 form-check-input shadow-none" style="border-radius: 3px; cursor: pointer;">
+                            <span class="mb-0" style="font-size: 0.8rem; color: var(--text-main); line-height: 1.4; user-select: none;">
+                                {{ _('Timpa (hapus dan ganti) otomatis isi data jika nama Project sama dengan yang sudah terdaftar.') }}
+                            </span>
+                        </div>
+
+                        <!-- Modal Footer -->
+                        <div class="d-flex align-items-center justify-content-end gap-2 pt-2">
+                            <button type="button" class="btn btn-sm border shadow-none" data-bs-dismiss="modal" style="height: 38px; padding: 0 16px; border-radius: 8px; font-weight: 500; font-size: 0.8rem; background-color: var(--bg-surface); color: var(--text-main); border-color: var(--border-color) !important;" onmouseover="this.style.backgroundColor='rgba(0,0,0,0.03)'" onmouseout="this.style.backgroundColor='var(--bg-surface)'">
+                                {{ _('Batal') }}
+                            </button>
+                            <button type="submit" class="btn btn-sm d-flex align-items-center gap-2 shadow-sm group shadow-none" style="height: 38px; padding: 0 20px; border-radius: 8px; font-weight: 600; font-size: 0.8rem; background-color: #0F766E; color: #ffffff; border: none; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#0D9488'" onmouseout="this.style.backgroundColor='#0F766E'">
+                                <span>{{ _('Mulai Sinkronisasi') }}</span>
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="ms-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                </svg>
+                            </button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
 
-        <!-- 2. MODAL HAPUS -->
+        <!-- 2. MODAL HAPUS PROYEK (STRUKTUR SAMA PERSIS DENGAN MODAL UPLOAD, AKSEN MERAH) -->
         <div class="modal fade" id="deleteProjectModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content" style="background-color: var(--bg-surface); border-color: var(--border-color);">
-                    <div class="modal-header border-bottom" style="border-color: var(--border-color) !important;">
-                        <h6 class="modal-title fw-bold text-danger">{{ _('Delete Project Permanently') }}</h6>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" style="filter: var(--btn-close-filter, none);"></button>
-                    </div>
-                    <form action="/delete_project" method="POST" onsubmit="return confirm('{{ _("Heads up: all data and tasks in this project will be deleted for good. You sure you want to go ahead?") }}');">                        <div class="modal-body p-4">
-                            <p class="small mb-4 text-muted">{{ _('Pick the old project you want to permanently wipe from the system.') }}</p>
-                            <label class="form-label detail-label">{{ _('Pick a Target Project') }}</label>
-                            <select name="project_name" class="form-select border-danger" required>
-                                <option value="" disabled selected>{{ _('Pick a project...') }}</option>
-                                {% for p in projects %} 
-                                    <option value="{{ p }}">{{ p }}</option> 
-                                {% endfor %}
-                            </select>
+            <div class="modal-dialog modal-dialog-centered" style="max-width: 36rem;">
+                <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden; background-color: var(--bg-surface);">
+                    
+                    <!-- Top Accent Highlight (Danger Red) -->
+                    <div style="height: 4px; width: 100%; background-color: #EF4444;"></div>
+
+                    <!-- Modal Header -->
+                    <div class="px-4 pt-4 pb-3 d-flex align-items-start justify-content-between border-bottom" style="border-color: var(--border-color) !important;">
+                        <div class="d-flex align-items-center gap-3">
+                            <!-- Icon Badge -->
+                            <div class="d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px; border-radius: 10px; background-color: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.25); color: #EF4444;">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <h5 class="mb-0 fw-bold" style="color: var(--text-main); font-size: 1.1rem; letter-spacing: -0.01em;">{{ _('Hapus Proyek Secara Permanen') }}</h5>
+                                    <span class="badge" style="font-size: 0.65rem; padding: 3px 6px; border-radius: 9999px; background-color: rgba(239, 68, 68, 0.12); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.25); letter-spacing: 1px;">DANGER ZONE</span>
+                                </div>
+                                <p class="mb-0" style="font-size: 0.8rem; color: var(--text-muted);">{{ _('Pilih proyek lama yang ingin dihapus permanen dari sistem.') }}</p>
+                            </div>
                         </div>
-                        <div class="modal-footer border-top pt-0 bg-transparent" style="border-color: var(--border-color) !important;">
-                            <button type="button" class="btn btn-outline-secondary btn-sm px-3" data-bs-dismiss="modal">{{ _('Cancel') }}</button>
-                            <button type="submit" class="btn btn-danger btn-sm px-4" style="background-color: #EF4444; border:none; color: white;">{{ _('Delete Project') }}</button>
+                        <button type="button" class="btn-close shadow-none mt-1" data-bs-dismiss="modal" aria-label="Close" style="filter: var(--btn-close-filter, none);"></button>
+                    </div>
+
+                    <!-- Modal Form Body -->
+                    <form action="/delete_project" method="POST" onsubmit="return confirm('{{ _("Heads up: all data and tasks in this project will be deleted for good. You sure you want to go ahead?") }}');" class="p-4">
+                        
+                        <!-- Field: Select Project -->
+                        <div class="mb-4">
+                            <label class="mb-2 fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.03em; color: var(--text-muted);">{{ _('Pilih Target Proyek') }}</label>
+                            <div class="position-relative">
+                                <select name="project_name" class="form-select shadow-none" required style="background-color: var(--input-bg) !important; border: 1px solid var(--border-color) !important; color: var(--text-main) !important; font-size: 0.85rem; border-radius: 8px; height: 38px; padding-right: 36px;">
+                                    <option value="" disabled selected style="background-color: var(--bg-surface); color: var(--text-muted);">{{ _('Pilih proyek...') }}</option>
+                                    {% for p in projects %} 
+                                        <option value="{{ p }}" style="background-color: var(--bg-surface); color: var(--text-main);">{{ p }}</option> 
+                                    {% endfor %}
+                                </select>
+                                <div class="position-absolute" style="right: 12px; top: 10px; color: var(--text-muted); pointer-events: none;">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Danger Warning Notice Box -->
+                        <div class="rounded-3 p-3 d-flex align-items-start gap-3 mb-4" style="background-color: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25);">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #F59E0B; flex-shrink: 0; margin-top: 2px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                            <p class="mb-0 leading-relaxed" style="font-size: 0.75rem; color: var(--text-main);">
+                                <strong class="fw-semibold" style="color: #F59E0B;">{{ _('Perhatian:') }}</strong> {{ _('Tindakan ini bersifat permanen. Seluruh task, riwayat QC sampel, dan data QR terkait proyek ini tidak dapat dipulihkan.') }}
+                            </p>
+                        </div>
+
+                        <!-- Modal Actions Footer -->
+                        <div class="d-flex align-items-center justify-content-end gap-2 pt-2">
+                            <button type="button" class="btn btn-sm border shadow-none" data-bs-dismiss="modal" style="height: 38px; padding: 0 16px; border-radius: 8px; font-weight: 500; font-size: 0.8rem; background-color: var(--bg-surface); color: var(--text-main); border-color: var(--border-color) !important;" onmouseover="this.style.backgroundColor='rgba(0,0,0,0.03)'" onmouseout="this.style.backgroundColor='var(--bg-surface)'">
+                                {{ _('Batal') }}
+                            </button>
+                            <button type="submit" class="btn btn-sm d-flex align-items-center gap-2 shadow-sm shadow-none" style="height: 38px; padding: 0 20px; border-radius: 8px; font-weight: 600; font-size: 0.8rem; background-color: #EF4444; color: #ffffff; border: none; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#DC2626'" onmouseout="this.style.backgroundColor='#EF4444'">
+                                <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                                <span>{{ _('Hapus Proyek') }}</span>
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -223,7 +350,7 @@
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <div class="d-flex align-items-center gap-2 text-truncate pe-2">
                                 <span class="tm-id-label">Task ID</span>
-                                <span class="tm-id-chip">#{{ t.task_id }}</span>
+                                <span class="tm-id-chip">{{ t.task_id }}</span>
                             </div>
                             {% if t.sent_by_leader %}
                                 <span class="badge tm-status-badge shadow-sm flex-shrink-0" style="background-color: var(--badge-sent-bg); color: var(--badge-sent-text);">{{ _('Sent') }}</span>

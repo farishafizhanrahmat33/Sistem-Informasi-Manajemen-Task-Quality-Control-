@@ -1624,3 +1624,24 @@ function handleFullscreenExit() {
         });
     }
 }
+
+// File Upload Name Preview Logic
+document.addEventListener("DOMContentLoaded", function() {
+    const fileInput = document.getElementById('file-upload');
+    const fileNameDisplay = document.getElementById('file-name-display');
+
+    if (fileInput && fileNameDisplay) {
+        fileInput.addEventListener('change', (e) => {
+            const files = e.target.files;
+            if (files && files.length > 0) {
+                fileNameDisplay.textContent = files[0].name;
+                fileNameDisplay.style.color = '#0F766E';
+                fileNameDisplay.style.fontWeight = '600';
+            } else {
+                fileNameDisplay.textContent = 'Belum ada berkas dipilih';
+                fileNameDisplay.style.color = 'var(--text-muted)';
+                fileNameDisplay.style.fontWeight = 'normal';
+            }
+        });
+    }
+});
