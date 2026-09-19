@@ -76,125 +76,94 @@
             </div>
         </div>
 
-        <!-- MODAL UPLOAD & HAPUS PROYEK -->
-        {% if role in ['Developer', 'Quality Control'] %}
-        <!-- 1. MODAL UPLOAD (CLEAN & REDESIGNED) -->
-        <div class="modal fade" id="uploadModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" style="max-width: 36rem;">
-                <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden; background-color: var(--bg-surface);">
-                    
-                    <!-- Top Accent Highlight -->
-                    <div style="height: 4px; width: 100%; background-color: #0F766E;"></div>
+        <!-- MODAL UNGGAH PDF -->
+    {% if role in ['Developer', 'Quality Control'] %}
+    <div class="modal fade" id="uploadQrModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 560px;">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden; background-color: #ffffff; color: #1e293b;">
 
-                    <!-- Modal Header -->
-                    <div class="px-4 pt-4 pb-3 d-flex align-items-start justify-content-between border-bottom" style="border-color: var(--border-color) !important;">
-                        <div class="d-flex align-items-center gap-3">
-                            <!-- Icon Badge -->
-                            <div class="d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px; border-radius: 10px; background-color: rgba(15, 118, 110, 0.1); border: 1px solid rgba(15, 118, 110, 0.2); color: #0F766E;">
-                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                                </svg>
+                <!-- Header -->
+                <div class="modal-header px-4 py-3 d-flex align-items-start justify-content-between border-bottom" style="border-color: #f1f5f9 !important;">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="d-flex align-items-center justify-content-center flex-shrink-0 shadow-sm" style="width: 40px; height: 40px; border-radius: 12px; background-color: #f0fdfa; border: 1px solid rgba(20, 184, 166, 0.7); color: #0f766e;">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="fw-bold mb-1" style="font-size: 1.125rem; color: #0f172a; letter-spacing: -0.025em;">{{ _('Upload Dokumen QR') }}</h3>
+                            <p class="mb-0 text-muted" style="font-size: 0.75rem; line-height: 1.5; max-width: 380px;">
+                                {{ _('Upload satu file PDF dan otomatis akan dipecah jadi halaman-halaman terpisah, tiap halaman dinamai dari Scene atau Environment Code-nya.') }}
+                            </p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close shadow-none m-0" data-bs-dismiss="modal" aria-label="Close" style="font-size: 0.75rem;"></button>
+                </div>
+
+                <form id="qrUploadForm" action="{{ url_for('qr.upload_qr') }}" method="POST" enctype="multipart/form-data">
+                    <div class="modal-body px-4 py-4">
+
+                        <!-- Dropzone + File List -->
+                        <div class="d-flex flex-column gap-3">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <label class="fw-semibold mb-0" style="font-size: 0.75rem; color: #334155;">{{ _('PDF Document File(s)') }}</label>
+                                <span class="text-muted" style="font-size: 11px;">{{ _('Multi-page PDF') }}</span>
                             </div>
-                            <div>
-                                <div class="d-flex align-items-center gap-2 mb-1">
-                                    <h5 class="mb-0 fw-bold" style="color: var(--text-main); font-size: 1.1rem; letter-spacing: -0.01em;">{{ _('Import Data Proyek Baru') }}</h5>
+
+                            <!-- Dropzone -->
+                            <div id="qrDropzone" class="p-4 text-center mt-1" style="border: 2px dashed #99f6e4; border-radius: 0.75rem; background-color: rgba(240, 253, 250, 0.4); cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#14b8a6'; this.style.backgroundColor='rgba(240, 253, 250, 0.7)';" onmouseout="this.style.borderColor='#99f6e4'; this.style.backgroundColor='rgba(240, 253, 250, 0.4)';">
+                                <div class="mx-auto rounded-circle shadow-sm d-flex align-items-center justify-content-center mb-3" style="width: 48px; height: 48px; background-color: #fff; border: 1px solid #ccfbf1; color: #0f766e;">
+                                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                 </div>
-                                <p class="mb-0" style="font-size: 0.8rem; color: var(--text-muted);">{{ _('Unggah lembar kerja (.xlsx / .csv) untuk sinkronisasi otomatis daftar tugas.') }}</p>
+                                <p class="fw-medium mb-1" style="font-size: 0.75rem; color: #334155;">
+                                    {{ _('Tarik dan lepas file PDF di sini, atau') }}
+                                    <span class="fw-semibold text-decoration-underline" style="color: #0f766e; text-underline-offset: 2px;">{{ _('Pilih File') }}</span>
+                                </p>
+                                <p class="text-muted mb-0" style="font-size: 11px;">{{ _('Anda dapat memilih lebih dari satu file PDF sekaligus') }}</p>
+                            </div>
+                            
+                            <!-- Input file asli -->
+                            <input type="file" id="qrFileInput" name="qr_file" class="d-none" accept=".pdf" multiple>
+
+                            <!-- List file yang sudah dipilih -->
+                            <div id="qrFileList" class="d-flex flex-column gap-2 mt-2" style="max-height: 220px; overflow-y: auto; padding-right: 4px;"></div>
+                            
+                            <p id="qrEmptyDropzoneHint" class="text-muted mt-1 mb-0" style="font-size: 11px;">{{ _('Belum ada file yang dipilih.') }}</p>
+
+                            <!-- Progress bar upload -->
+                            <div id="qrUploadProgressWrap" class="d-none mt-2">
+                                <div class="d-flex align-items-center justify-content-between mb-1">
+                                    <span class="fw-medium text-muted" style="font-size: 11px;">{{ _('Mengunggah...') }}</span>
+                                    <span id="qrUploadProgressText" class="fw-medium text-muted" style="font-size: 11px;">0 / 0</span>
+                                </div>
+                                <div class="progress" style="height: 8px; border-radius: 10px; background-color: #f1f5f9;">
+                                    <div id="qrUploadProgressBar" class="progress-bar transition-all" role="progressbar" style="width: 0%; background-color: #0f766e;"></div>
+                                </div>
                             </div>
                         </div>
-                        <button type="button" class="btn-close shadow-none mt-1" data-bs-dismiss="modal" aria-label="Close" style="filter: var(--btn-close-filter, none);"></button>
+
                     </div>
 
-                    <!-- Modal Form Body -->
-                    <form action="/upload" method="POST" enctype="multipart/form-data" class="p-4">
-                        
-                        <!-- Field 1: File Upload -->
-                        <div class="mb-4">
-                            <div class="d-flex align-items-center justify-content-between mb-2">
-                                <label class="mb-0 fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.03em; color: var(--text-muted);">{{ _('Pilih Berkas (.XLSX, .CSV)') }}</label>
-                            </div>
-                            
-                            <!-- Custom Upload Box -->
-                            <div class="d-flex align-items-center justify-content-between w-100 p-1 border transition-all" style="border-radius: 8px; background-color: var(--bg-surface); border-color: var(--border-color);" onmouseover="this.style.borderColor='#0F766E'" onmouseout="this.style.borderColor='var(--border-color)'">
-                                <div class="d-flex align-items-center gap-3 overflow-hidden">
-                                    <label for="file-upload" class="cursor-pointer mb-0 px-3 py-1 border d-flex align-items-center gap-2 transition-all" style="border-radius: 6px; background-color: var(--bg-surface); color: var(--text-main); font-size: 0.8rem; font-weight: 500; border-color: var(--border-color);" onmouseover="this.style.backgroundColor='rgba(0,0,0,0.02)'" onmouseout="this.style.backgroundColor='var(--bg-surface)'">
-                                        <svg width="16" height="16" fill="none" stroke="#0F766E" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                        </svg>
-                                        {{ _('Pilih Berkas') }}
-                                    </label>
-                                    <input type="file" id="file-upload" name="file" class="d-none" accept=".xlsx, .csv" required>
-                                    <span id="file-name-display" class="text-truncate" style="font-size: 0.8rem; color: var(--text-muted);">{{ _('Belum ada berkas dipilih') }}</span>
-                                </div>
-                                <div class="pe-2" style="color: var(--text-muted);">
-                                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                                    </svg>
-                                </div>
-                            </div>
-
-                            <!-- Success/Info Banner -->
-                            <div class="mt-2 d-flex align-items-start gap-2 p-2 border" style="border-radius: 6px; background-color: rgba(15, 118, 110, 0.05); border-color: rgba(15, 118, 110, 0.15) !important;">
-                                <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20" style="color: #0F766E; margin-top: 2px; flex-shrink: 0;">
-                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-                                </svg>
-                                <span style="font-size: 0.75rem; color: var(--text-main);">{{ _('Struktur kolom header harus mengikuti skema:') }} <code style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #065F46; background-color: rgba(15, 118, 110, 0.1); padding: 1px 4px; border-radius: 3px;">task_id, package_name, task_name, ...</code></span>
-                            </div>
+                    <!-- Footer -->
+                    <div class="modal-footer px-4 py-3 d-flex align-items-center justify-content-between flex-wrap gap-2" style="background-color: #f8fafc; border-top: 1px solid #f1f5f9;">
+                        <div class="d-flex align-items-center gap-2 text-muted" style="font-size: 11px;">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #0f766e;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                            <span>{{ _('Internal APEX QA batch encryption validated') }}</span>
                         </div>
-
-                        <!-- Field 2: Project Name Selector -->
-                        <div class="mb-4">
-                            <label class="mb-2 fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.03em; color: var(--text-muted);">{{ _('Nama Projek (Project Name)') }}</label>
-                            
-                            <div class="position-relative mb-2">
-                                <input type="text" id="projectNameInput" name="project_name" class="form-control shadow-none" autocomplete="off" required placeholder="{{ _('Ketik nama proyek baru atau pilih dari daftar...') }}" style="font-size: 0.85rem; height: 38px; border-radius: 8px; border-color: var(--border-color); background-color: var(--bg-surface); color: var(--text-main);">
-                                <div class="position-absolute" style="right: 12px; top: 10px; color: var(--text-muted); pointer-events: none;">
-                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
-                                </div>
-                                <div id="projectSuggestionsList" class="dropdown-menu w-100 shadow-sm border mt-1" style="display: none; max-height: 200px; overflow-y: auto; background-color: var(--bg-surface); border-color: var(--border-color) !important; z-index: 1060;">
-                                    {% for p in projects %}
-                                        <a href="#" class="dropdown-item project-suggestion-item py-2 px-3" style="color: var(--text-main); font-size: 0.85rem;" data-value="{{ p }}">{{ p }}</a>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            
-                            <!-- Suggestions Chips -->
-                            <div class="d-flex flex-wrap align-items-center gap-2">
-                                <span style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">{{ _('Proyek Terakhir:') }}</span>
-                                {% for p in projects[:3] %}
-                                <button type="button" class="btn btn-sm border shadow-none" onclick="document.getElementById('projectNameInput').value='{{ p }}'" style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; padding: 2px 6px; border-radius: 4px; background-color: transparent; color: var(--text-main); border-color: var(--border-color) !important; transition: all 0.2s;" onmouseover="this.style.backgroundColor='rgba(15, 118, 110, 0.05)'; this.style.color='#0F766E'; this.style.borderColor='#0F766E' !important;" onmouseout="this.style.backgroundColor='transparent'; this.style.color='var(--text-main)'; this.style.borderColor='var(--border-color)' !important;">{{ p }}</button>
-                                {% endfor %}
-                            </div>
-                        </div>
-
-                        <!-- Checkbox Fitur Timpa Project -->
-                        <div class="d-flex align-items-start gap-2 p-3 border mb-4" style="border-radius: 8px; background-color: rgba(0,0,0,0.01); border-color: var(--border-color) !important;">
-                            <input type="checkbox" id="overwrite-checkbox" name="overwrite_project" value="1" class="mt-1 form-check-input shadow-none" style="border-radius: 3px; cursor: pointer;">
-                            <span class="mb-0" style="font-size: 0.8rem; color: var(--text-main); line-height: 1.4; user-select: none;">
-                                {{ _('Timpa (hapus dan ganti) otomatis isi data jika nama Project sama dengan yang sudah terdaftar.') }}
-                            </span>
-                        </div>
-
-                        <!-- Modal Footer -->
-                        <div class="d-flex align-items-center justify-content-end gap-2 pt-2">
-                            <button type="button" class="btn btn-sm border shadow-none" data-bs-dismiss="modal" style="height: 38px; padding: 0 16px; border-radius: 8px; font-weight: 500; font-size: 0.8rem; background-color: var(--bg-surface); color: var(--text-main); border-color: var(--border-color) !important;" onmouseover="this.style.backgroundColor='rgba(0,0,0,0.03)'" onmouseout="this.style.backgroundColor='var(--bg-surface)'">
-                                {{ _('Batal') }}
-                            </button>
-                            <button type="submit" class="btn btn-sm d-flex align-items-center gap-2 shadow-sm group shadow-none" style="height: 38px; padding: 0 20px; border-radius: 8px; font-weight: 600; font-size: 0.8rem; background-color: #0F766E; color: #ffffff; border: none; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#0D9488'" onmouseout="this.style.backgroundColor='#0F766E'">
-                                <span>{{ _('Mulai Sinkronisasi') }}</span>
-                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="ms-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                                </svg>
+                        <div class="d-flex align-items-center gap-2">
+                            <button type="button" class="btn btn-light border fw-semibold shadow-none" style="font-size: 0.75rem; color: #475569;" data-bs-dismiss="modal">{{ _('Batal') }}</button>
+                            <button type="submit" id="qrUploadSubmitBtn" class="btn fw-semibold shadow-sm d-flex align-items-center gap-2" style="font-size: 0.75rem; background-color: #0f766e; color: white; border: none;" onmouseover="this.style.backgroundColor='#0d645e'" onmouseout="this.style.backgroundColor='#0f766e'">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                {{ _('Mulai Upload & Parsing') }}
                             </button>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
+    {% endif %}
 
-        <!-- 2. MODAL HAPUS PROYEK (STRUKTUR SAMA PERSIS DENGAN MODAL UPLOAD, AKSEN MERAH) -->
+        <!-- 2. MODAL HAPUS PROYEK -->
+        {% if role in ['Developer', 'Quality Control'] %}
         <div class="modal fade" id="deleteProjectModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" style="max-width: 36rem;">
                 <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden; background-color: var(--bg-surface);">
@@ -796,111 +765,176 @@
     <!-- 4. MODAL LOGIN POP-UP -->
 {% include 'login_modal.html' %}
 <!-- DRAWER FILTER & SORT -->
-    <div class="offcanvas offcanvas-end qc-console" tabindex="-1" id="filterDrawer">
-        <div class="offcanvas-header border-bottom" style="border-color: var(--border-color) !important;">
-            <h6 class="offcanvas-title fw-bold d-flex align-items-center gap-2" style="color: var(--text-main);">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
-                {{ _('Filter & Sort') }}
-            </h6>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" style="filter: var(--btn-close-filter, none);"></button>
+    <div class="offcanvas offcanvas-end border-start-0" tabindex="-1" id="filterDrawer" style="width: 384px; box-shadow: -10px 0 25px rgba(0,0,0,0.1); background-color: #ffffff;">
+        <style>
+            /* Custom CSS khusus elemen di dalam drawer ini untuk menyamai desain tanpa ubah style.css global */
+            #filterDrawer .form-check-input:checked {
+                background-color: #059669;
+                border-color: #059669;
+            }
+            #filterDrawer .form-check-input:focus {
+                box-shadow: 0 0 0 0.2rem rgba(5, 150, 105, 0.25);
+                border-color: #059669;
+            }
+            #filterDrawer ::-webkit-scrollbar {
+                width: 6px;
+            }
+            #filterDrawer ::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            #filterDrawer ::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 10px;
+            }
+            #filterDrawer ::-webkit-scrollbar-thumb:hover {
+                background: #94a3b8;
+            }
+        </style>
+
+        <!-- Drawer Header -->
+        <div class="offcanvas-header d-flex align-items-center justify-content-between px-4" style="height: 64px; border-bottom: 1px solid #e2e8f0; background-color: #ffffff;">
+            <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center justify-content-center rounded-2" style="width: 32px; height: 32px; background-color: #ecfdf5; color: #059669;">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                </div>
+                <div>
+                    <h3 class="mb-0 fw-bold" style="font-size: 0.875rem; color: #0f172a; line-height: 1.25;">{{ _('Filter & Urutkan') }}</h3>
+                    <p class="mb-0" style="font-size: 11px; color: #94a3b8;">{{ _('Atur parameter tampilan task') }}</p>
+                </div>
+            </div>
+            <button type="button" class="btn-close shadow-none m-0 p-2" data-bs-dismiss="offcanvas" aria-label="Close" style="font-size: 0.75rem; color: #94a3b8; opacity: 0.6;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'"></button>
         </div>
-        <div class="offcanvas-body p-4 d-flex flex-column">
-            
-            <!-- BAGIAN SORT -->
-            <h6 class="fw-bold mb-3 small text-uppercase" style="color: var(--text-muted); letter-spacing: 0.5px;">{{ _('Sort By') }}</h6>
-            <div class="row g-2 mb-4">
-                <div class="col-12 mb-2">
-                    <select id="sortField" class="form-select shadow-none border" style="border-color: var(--border-color) !important; font-size: 0.9rem;">
-                        <option value="updated" {% if sort_by == 'updated' %}selected{% endif %}>{{ _('Latest Update') }}</option>
-                        <option value="task-id" {% if sort_by == 'task-id' %}selected{% endif %}>{{ _('Task ID') }}</option>
-                        <option value="pullable" {% if sort_by == 'pullable' %}selected{% endif %}>{{ _('Pullable Num (Target)') }}</option>
-                        <option value="task-name" {% if sort_by == 'task-name' %}selected{% endif %}>{{ _('Task Name') }}</option>
-                    </select>
-                </div>
-                <div class="col-12">
-                    <select id="sortOrder" class="form-select shadow-none border" style="border-color: var(--border-color) !important; font-size: 0.9rem;">
-                        <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>{{ _('Descending (Highest / Newest First)') }}</option>
-                        <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>{{ _('Ascending (Lowest / Oldest First)') }}</option>
-                    </select>
-                </div>
-            </div>
 
-            <!-- BAGIAN MULTIPLY FILTER -->
-            <h6 class="fw-bold mb-3 small text-uppercase border-top pt-4" style="color: var(--text-muted); border-color: var(--border-color) !important; letter-spacing: 0.5px;">{{ _('Filter Data') }}</h6>
+        <!-- Drawer Body -->
+        <div class="offcanvas-body p-4 d-flex flex-column gap-4" style="overflow-y: auto; background-color: #ffffff;">
             
-            <!-- FILTER PROYEK -->
-            <div class="mb-4">
-                <div class="d-flex justify-content-between align-items-center mb-2 px-1">
-                    <label class="form-label detail-label fw-bold mb-0" style="color: var(--text-main);">{{ _('By Project') }}</label>
+            <!-- SECTION 1: URUTKAN BERDASARKAN -->
+            <section class="d-flex flex-column gap-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <span class="fw-bold text-uppercase" style="font-size: 11px; color: #64748b; letter-spacing: 0.05em;">{{ _('Urutkan Berdasarkan') }}</span>
+                </div>
+                <div class="d-flex flex-column gap-2">
+                    <!-- Dropdown Sort Field -->
+                    <div class="position-relative">
+                        <select id="sortField" class="form-select shadow-none w-100 fw-medium" style="font-size: 0.75rem; color: #1e293b; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 0.625rem 2rem 0.625rem 0.75rem; appearance: none; cursor: pointer;" onmouseover="this.style.borderColor='#cbd5e1'" onmouseout="this.style.borderColor='#e2e8f0'">
+                            <option value="updated" {% if sort_by == 'updated' %}selected{% endif %}>{{ _('Pembaruan Terakhir (Latest Update)') }}</option>
+                            <option value="task-id" {% if sort_by == 'task-id' %}selected{% endif %}>{{ _('Task ID') }}</option>
+                            <option value="pullable" {% if sort_by == 'pullable' %}selected{% endif %}>{{ _('Target Pullable') }}</option>
+                            <option value="task-name" {% if sort_by == 'task-name' %}selected{% endif %}>{{ _('Nama Task') }}</option>
+                        </select>
+                        <div class="position-absolute top-50 translate-middle-y" style="right: 12px; pointer-events: none; color: #94a3b8;">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                    <!-- Dropdown Sort Order -->
+                    <div class="position-relative">
+                        <select id="sortOrder" class="form-select shadow-none w-100 fw-medium" style="font-size: 0.75rem; color: #1e293b; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 0.625rem 2rem 0.625rem 0.75rem; appearance: none; cursor: pointer;" onmouseover="this.style.borderColor='#cbd5e1'" onmouseout="this.style.borderColor='#e2e8f0'">
+                            <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>{{ _('Menurun (Terbaru ke Terlama)') }}</option>
+                            <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>{{ _('Menaik (Terlama ke Terbaru)') }}</option>
+                        </select>
+                        <div class="position-absolute top-50 translate-middle-y" style="right: 12px; pointer-events: none; color: #94a3b8;">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path></svg>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Divider -->
+            <hr style="border-color: #e2e8f0; opacity: 1; margin: 0;">
+
+            <!-- SECTION 2: FILTER BERDASARKAN PROYEK -->
+            <section class="d-flex flex-column gap-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <span class="fw-bold text-uppercase" style="font-size: 11px; color: #64748b; letter-spacing: 0.05em;">{{ _('Filter Berdasarkan Proyek') }}</span>
+                    <button type="button" class="btn btn-link p-0 text-decoration-none fw-semibold" style="font-size: 11px; color: #059669;" onclick="document.querySelector('#selectAllProject').click()">{{ _('Pilih Semua') }}</button>
                 </div>
                 
-                <!-- Search Bar Proyek -->
-                <div class="position-relative mb-2">
-                    <svg class="position-absolute top-50 translate-middle-y ms-3" style="color: var(--text-muted);" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <input type="text" id="project-list-search" class="form-control form-control-sm ps-5 bg-transparent shadow-none search-filter-input" placeholder="{{ _('Search project name...') }}">
+                <!-- Search -->
+                <div class="position-relative">
+                    <div class="position-absolute top-50 translate-middle-y" style="left: 10px; color: #94a3b8; pointer-events: none;">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <input type="text" id="project-list-search" class="form-control shadow-none search-filter-input" placeholder="{{ _('Cari nama project...') }}" style="font-size: 0.75rem; padding: 0.375rem 0.75rem 0.375rem 2rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; background-color: #f8fafc; color: #334155;">
                 </div>
 
-                <div class="premium-filter-box" id="project-list">
-                    <!-- Opsi Select All -->
-                    <label class="premium-filter-option select-all-option">
-                        <input type="checkbox" name="project" value="All" class="premium-filter-checkbox select-all-cb" onchange="toggleSelectAll(this, 'project-list')" {% if not selected_projects or 'All' in selected_projects %}checked{% endif %}>
-                        <div class="premium-filter-content">
-                            <span class="premium-filter-text fw-bold">{{ _('Select All Projects') }}</span>
-                            <svg class="premium-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <!-- List -->
+                <div class="d-flex flex-column gap-1 pt-1 premium-filter-box" id="project-list" style="max-height: 220px; overflow-y: auto;">
+                    <!-- Select All Checkbox -->
+                    <label class="d-flex align-items-center justify-content-between p-2 rounded item-option select-all-option" style="cursor: pointer; border: 1px solid transparent; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'; this.style.borderColor='#f1f5f9';" onmouseout="this.style.backgroundColor='transparent'; this.style.borderColor='transparent';">
+                        <div class="d-flex align-items-center gap-2 overflow-hidden">
+                            <input type="checkbox" id="selectAllProject" name="project" value="All" class="form-check-input mt-0 select-all-cb shadow-none flex-shrink-0" onchange="toggleSelectAll(this, 'project-list')" {% if not selected_projects or 'All' in selected_projects %}checked{% endif %} style="width: 16px; height: 16px; border-color: #cbd5e1; cursor: pointer;">
+                            <span class="fw-semibold text-truncate" style="font-size: 0.75rem; color: #0f172a;">{{ _('Pilih Semua Proyek') }}</span>
                         </div>
                     </label>
                     
-                    <!-- Daftar Item -->
+                    <!-- Project Items -->
                     {% for p in projects %}
-                    <label class="premium-filter-option item-option">
-                        <input type="checkbox" name="project" value="{{ p }}" class="premium-filter-checkbox item-cb" onchange="checkIndividualState('project-list')" {% if (not selected_projects) or ('All' in selected_projects) or (p in selected_projects) %}checked{% endif %}>
-                        <div class="premium-filter-content">
-                            <span class="premium-filter-text item-text" title="{{ p }}">{{ p }}</span>
-                            <svg class="premium-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <label class="d-flex align-items-center justify-content-between p-2 rounded item-option" style="cursor: pointer; border: 1px solid transparent; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'; this.style.borderColor='#f1f5f9';" onmouseout="this.style.backgroundColor='transparent'; this.style.borderColor='transparent';">
+                        <div class="d-flex align-items-center gap-2 overflow-hidden me-2">
+                            <input type="checkbox" name="project" value="{{ p }}" class="form-check-input mt-0 item-cb shadow-none flex-shrink-0" onchange="checkIndividualState('project-list')" {% if (not selected_projects) or ('All' in selected_projects) or (p in selected_projects) %}checked{% endif %} style="width: 16px; height: 16px; border-color: #cbd5e1; cursor: pointer;">
+                            <span class="text-truncate item-text" title="{{ p }}" style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #334155;">{{ p }}</span>
                         </div>
+                        <!-- Badge Total Project -->
+                        <span class="badge rounded-pill bg-light text-muted border flex-shrink-0" style="font-size: 9px; font-family: 'JetBrains Mono', monospace;">{{ project_counts.get(p, 0) }}</span>
                     </label>
                     {% endfor %}
                 </div>
-            </div>
+            </section>
 
-            <!-- FILTER PAKET -->
-            <div class="mb-4">
-                <div class="d-flex justify-content-between align-items-center mb-2 px-1">
-                    <label class="form-label detail-label fw-bold mb-0" style="color: var(--text-main);">{{ _('By Package') }}</label>
+            <!-- Divider -->
+            <hr style="border-color: #e2e8f0; opacity: 1; margin: 0;">
+
+            <!-- SECTION 3: FILTER BERDASARKAN PAKET -->
+            <section class="d-flex flex-column gap-3 mb-2">
+                <div class="d-flex align-items-center justify-content-between">
+                    <span class="fw-bold text-uppercase" style="font-size: 11px; color: #64748b; letter-spacing: 0.05em;">{{ _('Filter Berdasarkan Paket') }}</span>
+                    <button type="button" class="btn btn-link p-0 text-decoration-none fw-semibold" style="font-size: 11px; color: #059669;" onclick="document.querySelector('#selectAllPackage').click()">{{ _('Pilih Semua') }}</button>
                 </div>
                 
-                <!-- Search Bar Paket -->
-                <div class="position-relative mb-2">
-                    <svg class="position-absolute top-50 translate-middle-y ms-3" style="color: var(--text-muted);" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <input type="text" id="package-list-search" class="form-control form-control-sm ps-5 bg-transparent shadow-none search-filter-input" placeholder="{{ _('Search package name...') }}">
+                <!-- Search -->
+                <div class="position-relative">
+                    <div class="position-absolute top-50 translate-middle-y" style="left: 10px; color: #94a3b8; pointer-events: none;">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <input type="text" id="package-list-search" class="form-control shadow-none search-filter-input" placeholder="{{ _('Cari nama paket...') }}" style="font-size: 0.75rem; padding: 0.375rem 0.75rem 0.375rem 2rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; background-color: #f8fafc; color: #334155;">
                 </div>
 
-                <div class="premium-filter-box" id="package-list">
-                    <!-- Opsi Select All -->
-                    <label class="premium-filter-option select-all-option">
-                        <input type="checkbox" name="package" value="All" class="premium-filter-checkbox select-all-cb" onchange="toggleSelectAll(this, 'package-list')" {% if not selected_packages or 'All' in selected_packages %}checked{% endif %}>
-                        <div class="premium-filter-content">
-                            <span class="premium-filter-text fw-bold">{{ _('Select All Packages') }}</span>
-                            <svg class="premium-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <!-- List -->
+                <div class="d-flex flex-column gap-1 pt-1 premium-filter-box" id="package-list" style="max-height: 220px; overflow-y: auto;">
+                    <!-- Select All Checkbox -->
+                    <label class="d-flex align-items-center justify-content-between p-2 rounded item-option select-all-option" style="cursor: pointer; border: 1px solid transparent; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'; this.style.borderColor='#f1f5f9';" onmouseout="this.style.backgroundColor='transparent'; this.style.borderColor='transparent';">
+                        <div class="d-flex align-items-center gap-2 overflow-hidden">
+                            <input type="checkbox" id="selectAllPackage" name="package" value="All" class="form-check-input mt-0 select-all-cb shadow-none flex-shrink-0" onchange="toggleSelectAll(this, 'package-list')" {% if not selected_packages or 'All' in selected_packages %}checked{% endif %} style="width: 16px; height: 16px; border-color: #cbd5e1; cursor: pointer;">
+                            <span class="fw-semibold text-truncate" style="font-size: 0.75rem; color: #0f172a;">{{ _('Pilih Semua Paket') }}</span>
                         </div>
                     </label>
                     
-                    <!-- Daftar Item -->
+                    <!-- Package Items -->
                     {% for pkg in packages %}
-                    <label class="premium-filter-option item-option">
-                        <input type="checkbox" name="package" value="{{ pkg }}" class="premium-filter-checkbox item-cb" onchange="checkIndividualState('package-list')" {% if (not selected_packages) or ('All' in selected_packages) or (pkg in selected_packages) %}checked{% endif %}>
-                        <div class="premium-filter-content">
-                            <span class="premium-filter-text item-text" title="{{ pkg }}">{{ pkg }}</span>
-                            <svg class="premium-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <label class="d-flex align-items-center justify-content-between p-2 rounded item-option" style="cursor: pointer; border: 1px solid transparent; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'; this.style.borderColor='#f1f5f9';" onmouseout="this.style.backgroundColor='transparent'; this.style.borderColor='transparent';">
+                        <div class="d-flex align-items-center gap-2 overflow-hidden me-2">
+                            <input type="checkbox" name="package" value="{{ pkg }}" class="form-check-input mt-0 item-cb shadow-none flex-shrink-0" onchange="checkIndividualState('package-list')" {% if (not selected_packages) or ('All' in selected_packages) or (pkg in selected_packages) %}checked{% endif %} style="width: 16px; height: 16px; border-color: #cbd5e1; cursor: pointer;">
+                            <span class="text-truncate item-text" title="{{ pkg }}" style="font-size: 0.75rem; color: #334155;">{{ pkg }}</span>
                         </div>
+                        <!-- Badge Total Package -->
+                        <span class="badge rounded-pill bg-light text-muted border flex-shrink-0" style="font-size: 9px; font-family: 'JetBrains Mono', monospace;">{{ package_counts.get(pkg, 0) }}</span>
                     </label>
                     {% endfor %}
                 </div>
-            </div>
-            
-            <div class="mt-auto pt-3">
-                <button type="button" class="btn btn-tm-primary w-100 py-3 fw-bold shadow-sm" data-bs-dismiss="offcanvas" onclick="applyDrawerFilters()" style="border-radius: 8px; letter-spacing: 0.3px;">{{ _('Apply Settings') }}</button>
-            </div>
+            </section>
+        </div>
+
+        <!-- Drawer Sticky Footer -->
+        <div class="p-4 d-flex align-items-center gap-3" style="border-top: 1px solid #e2e8f0; background-color: rgba(248, 250, 252, 0.8); backdrop-filter: blur(4px);">
+            <!-- Tombol Reset kembali ke root list -->
+            <a href="{{ url_for('task.task_list') }}" class="btn flex-grow-1 shadow-none text-decoration-none text-center" style="font-size: 0.75rem; font-weight: 600; color: #334155; background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 0.5rem; padding: 0.625rem 1rem;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='#ffffff'">
+                {{ _('Reset Filter') }}
+            </a>
+            <!-- Tombol Terapkan JS Logic -->
+            <button type="button" class="btn flex-grow-1 d-flex align-items-center justify-content-center gap-2 shadow-sm" style="font-size: 0.75rem; font-weight: 600; color: #ffffff; background-color: #059669; border: none; border-radius: 0.5rem; padding: 0.625rem 1rem; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#047857'" onmouseout="this.style.backgroundColor='#059669'" data-bs-dismiss="offcanvas" onclick="applyDrawerFilters()">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                {{ _('Terapkan Filter') }}
+            </button>
         </div>
     </div>
 

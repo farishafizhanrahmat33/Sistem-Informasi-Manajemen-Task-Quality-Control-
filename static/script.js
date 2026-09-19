@@ -292,9 +292,11 @@ document.addEventListener('submit', async function(e) {
 // -- CASCADING FILTER & MULTI-SELECT LOGIC (Untuk Drawer Task) --
 function evaluateVisibility(item) {
     if (item.hasAttribute('data-search-hidden') || item.hasAttribute('data-dep-hidden')) {
-        item.style.display = 'none';
+        item.classList.remove('d-flex');
+        item.classList.add('d-none');
     } else {
-        item.style.display = 'block';
+        item.classList.remove('d-none');
+        item.classList.add('d-flex');
     }
 }
 
@@ -441,7 +443,7 @@ function toggleSelectAll(selectAllCheckbox, listId) {
     const itemCheckboxes = listContainer.querySelectorAll('.item-cb');
     itemCheckboxes.forEach(cb => {
         const parentOption = cb.closest('.item-option');
-        if (parentOption && parentOption.style.display !== 'none') {
+        if (parentOption && !parentOption.classList.contains('d-none')) {
             cb.checked = selectAllCheckbox.checked;
         }
     });
@@ -708,7 +710,7 @@ function toggleSelectAllSource(selectAllCb) {
     const checkboxes = listContainer.querySelectorAll('.source-checkbox');
     checkboxes.forEach(cb => {
         const parentItem = cb.closest('.item-option');
-        if (parentItem && parentItem.style.display !== 'none') {
+        if (parentItem && !parentItem.classList.contains('d-none')) {
             cb.checked = selectAllCb.checked;
         }
     });
@@ -721,7 +723,7 @@ function checkIndividualSourceState() {
     const checkboxes = Array.from(listContainer.querySelectorAll('.source-checkbox'));
     const visibleCheckboxes = checkboxes.filter(cb => {
         const parent = cb.closest('.item-option');
-        return parent && parent.style.display !== 'none';
+        return parent && !parent.classList.contains('d-none');
     });
     if (visibleCheckboxes.length > 0) {
         selectAllCb.checked = visibleCheckboxes.every(cb => cb.checked);
@@ -734,7 +736,7 @@ function toggleSelectAllScene(selectAllCb) {
     const checkboxes = listContainer.querySelectorAll('.scene-checkbox');
     checkboxes.forEach(cb => {
         const parentItem = cb.closest('.item-option');
-        if (parentItem && parentItem.style.display !== 'none') {
+        if (parentItem && !parentItem.classList.contains('d-none')) {
             cb.checked = selectAllCb.checked;
         }
     });
@@ -747,7 +749,7 @@ function checkIndividualSceneState() {
     const checkboxes = Array.from(listContainer.querySelectorAll('.scene-checkbox'));
     const visibleCheckboxes = checkboxes.filter(cb => {
         const parent = cb.closest('.item-option');
-        return parent && parent.style.display !== 'none';
+        return parent && !parent.classList.contains('d-none');
     });
     if (visibleCheckboxes.length > 0) {
         selectAllCb.checked = visibleCheckboxes.every(cb => cb.checked);
@@ -761,7 +763,13 @@ document.addEventListener("DOMContentLoaded", function() {
             const term = this.value.toLowerCase().trim();
             document.querySelectorAll('#source-list .item-option').forEach(opt => {
                 const text = opt.querySelector('.item-text').textContent.toLowerCase();
-                opt.style.display = text.includes(term) ? 'block' : 'none';
+                if (text.includes(term)) {
+                    opt.classList.remove('d-none');
+                    opt.classList.add('d-flex');
+                } else {
+                    opt.classList.add('d-none');
+                    opt.classList.remove('d-flex');
+                }
             });
         });
     }
@@ -772,7 +780,13 @@ document.addEventListener("DOMContentLoaded", function() {
             const term = this.value.toLowerCase().trim();
             document.querySelectorAll('#scene-list .item-option').forEach(opt => {
                 const text = opt.querySelector('.item-text').textContent.toLowerCase();
-                opt.style.display = text.includes(term) ? 'block' : 'none';
+                if (text.includes(term)) {
+                    opt.classList.remove('d-none');
+                    opt.classList.add('d-flex');
+                } else {
+                    opt.classList.add('d-none');
+                    opt.classList.remove('d-flex');
+                }
             });
         });
     }
@@ -1649,6 +1663,109 @@ document.addEventListener("DOMContentLoaded", function() {
                 fileNameDisplay.style.color = 'var(--text-muted)';
                 fileNameDisplay.style.fontWeight = 'normal';
             }
+        });
+    }
+});
+// ============================================================================
+// DROPZONE & FILE LIST -- Modal Upload QR (qr_management.html)
+//
+// Dropzone ini cuma UI: klik atau drag & drop tetap mengisi <input type="file"
+// id="qrFileInput" name="qr_file"> yang SEBENARNYA (via DataTransfer), jadi
+// handleQrUploadSubmit() yang sudah ada tetap jalan tanpa perubahan apapun.
+// ============================================================================
+let qrSelectedFiles = [];
+
+function qrFormatFileSize(bytes) {
+    const kb = bytes / 1024;
+    if (kb > 1024) return (kb / 1024).toFixed(1) + ' MB';
+    return Math.round(kb) + ' KB';
+}
+
+function qrRenderFileList() {
+    const listEl = document.getElementById('qrFileList');
+    const inputEl = document.getElementById('qrFileInput');
+    const emptyHint = document.getElementById('qrEmptyDropzoneHint');
+    if (!listEl || !inputEl) return;
+
+    // Sinkronkan array JS balik ke <input type="file"> yang sebenarnya
+    const dt = new DataTransfer();
+    qrSelectedFiles.forEach(f => dt.items.add(f));
+    inputEl.files = dt.files;
+
+    listEl.innerHTML = '';
+    qrSelectedFiles.forEach((file, idx) => {
+        const card = document.createElement('div');
+        // Desain daftar file menggunakan Bootstrap 5 dan Inline CSS
+        card.className = 'd-flex align-items-center justify-content-between p-3 rounded-3';
+        card.style.backgroundColor = '#f8fafc';
+        card.style.border = '1px solid rgba(226, 232, 240, 0.8)';
+        card.innerHTML = `
+            <div class="d-flex align-items-center gap-3" style="min-width: 0;">
+                <div class="d-flex align-items-center justify-content-center rounded flex-shrink-0 fw-bold" style="width: 32px; height: 32px; background-color: #fef2f2; border: 1px solid #fee2e2; color: #dc2626; font-size: 10px; font-family: monospace;">PDF</div>
+                <div style="min-width: 0;">
+                    <div class="d-flex align-items-center gap-2 mb-1" style="min-width: 0;">
+                        <span class="fw-semibold text-truncate" style="font-size: 0.75rem; color: #1e293b; max-width: 200px;">${file.name}</span>
+                        <span class="badge rounded-pill fw-medium flex-shrink-0" style="font-size: 10px; background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;">Siap Diproses</span>
+                    </div>
+                    <p class="mb-0" style="font-size: 11px; color: #94a3b8;">${qrFormatFileSize(file.size)}</p>
+                </div>
+            </div>
+            <button type="button" data-idx="${idx}" class="btn btn-link p-1 text-decoration-none qr-remove-file flex-shrink-0 shadow-none" style="color: #94a3b8;" onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#94a3b8'" title="Hapus Berkas">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </button>`;
+        listEl.appendChild(card);
+    });
+
+    listEl.querySelectorAll('.qr-remove-file').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const idx = parseInt(btn.getAttribute('data-idx'), 10);
+            qrSelectedFiles.splice(idx, 1);
+            qrRenderFileList();
+        });
+    });
+
+    if (emptyHint) emptyHint.classList.toggle('d-none', qrSelectedFiles.length > 0);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const inputEl = document.getElementById('qrFileInput');
+    const dropzone = document.getElementById('qrDropzone');
+    if (!inputEl || !dropzone) return;
+
+    inputEl.addEventListener('change', () => {
+        qrSelectedFiles = Array.from(inputEl.files || []);
+        qrRenderFileList();
+    });
+
+    dropzone.addEventListener('click', () => inputEl.click());
+
+    ['dragover', 'dragenter'].forEach(evt => {
+        dropzone.addEventListener(evt, (e) => {
+            e.preventDefault();
+            dropzone.classList.add('border-teal-500', 'bg-teal-50/70');
+        });
+    });
+    ['dragleave', 'dragend'].forEach(evt => {
+        dropzone.addEventListener(evt, (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('border-teal-500', 'bg-teal-50/70');
+        });
+    });
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('border-teal-500', 'bg-teal-50/70');
+        const dropped = Array.from(e.dataTransfer.files || []).filter(f => f.name.toLowerCase().endsWith('.pdf'));
+        if (dropped.length === 0) return;
+        qrSelectedFiles = qrSelectedFiles.concat(dropped);
+        qrRenderFileList();
+    });
+
+    // Kosongkan lagi daftar file kalau modal ditutup, biar gak nyisa pas dibuka lagi
+    const modalEl = document.getElementById('uploadQrModal');
+    if (modalEl) {
+        modalEl.addEventListener('hidden.bs.modal', () => {
+            qrSelectedFiles = [];
+            qrRenderFileList();
         });
     }
 });

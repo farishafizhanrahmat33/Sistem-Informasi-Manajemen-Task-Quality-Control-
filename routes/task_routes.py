@@ -20,14 +20,12 @@ def task_list():
     selected_status = request.args.get('status', 'All')
     search_query = request.args.get('q', '').strip()
     
-    # MENANGKAP BANYAK NILAI SEKALIGUS (MULTIPLY FILTER)
     selected_projects = request.args.getlist('project')
     selected_packages = request.args.getlist('package')
     
     sort_by = request.args.get('sort_by', 'updated')
     sort_order = request.args.get('sort_order', 'desc')
 
-    # Query args yang perlu dipertahankan di link pagination secara presisi
     current_args = {}
     for k in request.args:
         if k == 'page':
@@ -35,19 +33,29 @@ def task_list():
         values = request.args.getlist(k)
         current_args[k] = values[0] if len(values) == 1 else values
 
-    # Base query dengan batasan role
     base_query = db.session.query(TaskModel)
     if role.lower() in ['publik', 'public']:
         base_query = base_query.filter_by(sent_by_leader=True)
 
-    # Ambil daftar proyek & paket unik untuk pilihan filter
     projects_query = db.session.query(TaskModel.project_name).filter(TaskModel.project_name.isnot(None)).distinct().all()
     projects = sorted([p[0] for p in projects_query])
 
     packages_query = db.session.query(TaskModel.package_name).filter(TaskModel.package_name.isnot(None)).distinct().all()
     packages = sorted([p[0] for p in packages_query])
 
-    # --- TAMBAHAN BARU: PEMETAAN RELASI CASCADING FILTER ---
+    # --- TAMBAHAN BARU: HITUNG TOTAL ITEM PER PROYEK & PAKET ---
+    from sqlalchemy import func
+    project_counts_query = db.session.query(TaskModel.project_name, func.count(TaskModel.id))\
+        .filter(TaskModel.project_name.isnot(None))\
+        .group_by(TaskModel.project_name).all()
+    project_counts = {proj: count for proj, count in project_counts_query}
+
+    package_counts_query = db.session.query(TaskModel.package_name, func.count(TaskModel.id))\
+        .filter(TaskModel.package_name.isnot(None))\
+        .group_by(TaskModel.package_name).all()
+    package_counts = {pkg: count for pkg, count in package_counts_query}
+    # -----------------------------------------------------------
+
     proj_pkg_pairs = db.session.query(TaskModel.project_name, TaskModel.package_name)\
         .filter(TaskModel.project_name.isnot(None), TaskModel.package_name.isnot(None))\
         .distinct().all()
@@ -58,9 +66,7 @@ def task_list():
     for proj, pkg in proj_pkg_pairs:
         project_package_map.setdefault(proj, []).append(pkg)
         package_project_map.setdefault(pkg, []).append(proj)
-    # -----------------------------------------------------
 
-    # Helper untuk menerapkan filter pencarian, proyek, dan paket (MENGGUNAKAN .in_())
     def apply_filters(q):
         if selected_projects and 'All' not in selected_projects:
             q = q.filter(TaskModel.project_name.in_(selected_projects))
@@ -76,7 +82,6 @@ def task_list():
             ))
         return q
 
-    # Hitung jumlah total data (count) secara global untuk setiap tab status
     def get_count_for_status(status_val):
         q = apply_filters(base_query)
         if status_val != 'All':
@@ -94,7 +99,6 @@ def task_list():
     count_skipped = get_count_for_status('Skipped')
     count_sent = get_count_for_status('Sent to Team')
 
-    # Terapkan filter status yang sedang aktif untuk data utama
     main_query = apply_filters(base_query)
     if selected_status != 'All':
         if selected_status == 'Sent to Team':
@@ -102,7 +106,6 @@ def task_list():
         else:
             main_query = main_query.filter_by(sent_by_leader=False, qc_category=selected_status)
 
-    # Pemetaan opsi sort di UI ke kolom aslinya di database
     sort_columns = {
         'updated': TaskModel.updated_at,
         'task-id': TaskModel.task_id,
@@ -120,8 +123,10 @@ def task_list():
         tasks=tasks,
         projects=projects,
         packages=packages,
-        project_package_map=project_package_map, # DIKIRIM KE HTML
-        package_project_map=package_project_map, # DIKIRIM KE HTML
+        project_counts=project_counts,       # DIKIRIM KE HTML
+        package_counts=package_counts,       # DIKIRIM KE HTML
+        project_package_map=project_package_map,
+        package_project_map=package_project_map,
         role=role,
         pagination=pagination,
         current_args=current_args,

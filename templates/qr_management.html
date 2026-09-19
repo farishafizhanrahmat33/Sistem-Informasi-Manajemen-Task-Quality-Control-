@@ -28,7 +28,7 @@
     {% include 'navbar.html' %}
 
     <!-- KONTEN UTAMA QR MANAGEMENT -->
-    <div class="container-fluid px-4 pb-5 pt-4 qr-app-wrapper">
+    <div class="container-fluid px-4 pb-5 pt-4 qr-app-wrapper qc-console">
         
         <!-- HEADER SECTION -->
         <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-4 mb-4">
@@ -42,15 +42,20 @@
             
             <div class="d-flex flex-wrap align-items-center gap-2">
                 {% if role in ['Developer', 'Quality Control'] %}
-                <button class="btn btn-brand-primary btn-sm d-flex align-items-center gap-2 px-3 py-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#uploadQrModal">
-                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                <!-- Menggunakan class btn-tm-primary agar warnanya sama persis dengan Task Management -->
+                <button class="btn btn-tm-primary btn-sm d-flex align-items-center gap-2" type="button" data-bs-toggle="modal" data-bs-target="#uploadQrModal">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                     {{ _('Upload PDF File') }}
                 </button>
                 {% endif %}
-                <button class="btn btn-outline-slate btn-sm d-flex align-items-center gap-2 px-3 py-2 shadow-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterDrawer">
-                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
-                    {{ _('Filter & Sort') }}
-                    <span id="activeFilterBadge" class="badge bg-danger rounded-circle d-none ms-1" style="font-size: 0.55rem; padding: 0.25em 0.4em;">!</span>
+                
+                <!-- Menggunakan class btn-tm-outline dan ikon SVG corong yang serasi -->
+                <button class="btn btn-tm-outline btn-sm d-flex align-items-center gap-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterDrawer">
+                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
+                    </svg>
+                    {{ _('Filter & Urutkan') }}
+                    <span id="activeFilterBadge" class="badge bg-primary rounded-circle d-none ms-1" style="font-size: 0.6rem;">!</span>
                 </button>
             </div>
         </div>
@@ -174,44 +179,82 @@
     <!-- MODAL UNGGAH PDF -->
     {% if role in ['Developer', 'Quality Control'] %}
     <div class="modal fade" id="uploadQrModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" style="max-width: 440px;">
-            <div class="modal-content border-0 shadow-lg" style="background-color: var(--bg-surface); border-radius: 16px; overflow: hidden;">
-                <!-- Header Enterprise Style -->
-                <div class="p-4 border-bottom" style="border-color: var(--border-color) !important;">
-                    <div class="d-flex align-items-start justify-content-between">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="d-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px; border-radius: 12px; background-color: var(--accent-soft); border: 1px solid rgba(16, 185, 129, 0.2); color: var(--accent);">
-                                <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                            </div>
-                            <div>
-                                <h3 class="fw-bold mb-0 leading-tight" style="font-size: 1.15rem; color: var(--text-main);">{{ _('Upload QR Document') }}</h3>
-                                <p class="mb-0 mt-1" style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.4;">{{ _('Sistem akan memecah file PDF menjadi satuan halaman berdasarkan Kode Scene secara otomatis.') }}</p>
-                            </div>
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 560px;">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden; background-color: #ffffff; color: #1e293b;">
+
+                <!-- Header -->
+                <div class="modal-header px-4 py-3 d-flex align-items-start justify-content-between border-bottom" style="border-color: #f1f5f9 !important;">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="d-flex align-items-center justify-content-center flex-shrink-0 shadow-sm" style="width: 40px; height: 40px; border-radius: 12px; background-color: #f0fdfa; border: 1px solid rgba(20, 184, 166, 0.7); color: #0f766e;">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
                         </div>
-                        <button type="button" class="btn-close shadow-none mt-1" data-bs-dismiss="modal" aria-label="Close" style="filter: var(--btn-close-filter, none);"></button>
+                        <div>
+                            <h3 class="fw-bold mb-1" style="font-size: 1.125rem; color: #0f172a; letter-spacing: -0.025em;">{{ _('Upload Dokumen QR') }}</h3>
+                            <p class="mb-0 text-muted" style="font-size: 0.75rem; line-height: 1.5; max-width: 380px;">
+                                {{ _('Upload satu file PDF dan otomatis akan dipecah jadi halaman-halaman terpisah, tiap halaman dinamai dari Scene atau Environment Code-nya.') }}
+                            </p>
+                        </div>
                     </div>
+                    <button type="button" class="btn-close shadow-none m-0" data-bs-dismiss="modal" aria-label="Close" style="font-size: 0.75rem;"></button>
                 </div>
 
-                <form action="{{ url_for('qr.upload_qr') }}" method="POST" enctype="multipart/form-data">
-                    <div class="p-4 space-y-4">
-                        <div class="mb-3">
-                            <label for="docNameInput" class="form-label fw-bold text-uppercase tracking-wider mb-1" style="font-size: 0.7rem; color: var(--text-muted);">{{ _('Fallback Label (Opsional)') }}</label>
-                            <input type="text" id="docNameInput" name="doc_name" class="form-control shadow-none" placeholder="{{ _('e.g. SOP Packing v2') }}" style="background-color: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 10px; font-size: 0.9rem; padding: 0.6rem 0.8rem;">
-                            <div class="form-text mt-2" style="font-size: 0.7rem; color: var(--text-muted);">{{ _('Digunakan sebagai penamaan alternatif jika Kode Scene tidak ditemukan pada halaman PDF.') }}</div>
+                <form id="qrUploadForm" action="{{ url_for('qr.upload_qr') }}" method="POST" enctype="multipart/form-data">
+                    <div class="modal-body px-4 py-4">
+
+                        <!-- Dropzone + File List -->
+                        <div class="d-flex flex-column gap-3">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <label class="fw-semibold mb-0" style="font-size: 0.75rem; color: #334155;">{{ _('PDF Document File(s)') }}</label>
+                                <span class="text-muted" style="font-size: 11px;">{{ _('Multi-page PDF') }}</span>
+                            </div>
+
+                            <!-- Dropzone -->
+                            <div id="qrDropzone" class="p-4 text-center mt-1" style="border: 2px dashed #99f6e4; border-radius: 0.75rem; background-color: rgba(240, 253, 250, 0.4); cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#14b8a6'; this.style.backgroundColor='rgba(240, 253, 250, 0.7)';" onmouseout="this.style.borderColor='#99f6e4'; this.style.backgroundColor='rgba(240, 253, 250, 0.4)';">
+                                <div class="mx-auto rounded-circle shadow-sm d-flex align-items-center justify-content-center mb-3" style="width: 48px; height: 48px; background-color: #fff; border: 1px solid #ccfbf1; color: #0f766e;">
+                                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                </div>
+                                <p class="fw-medium mb-1" style="font-size: 0.75rem; color: #334155;">
+                                    {{ _('Tarik dan lepas file PDF di sini, atau') }}
+                                    <span class="fw-semibold text-decoration-underline" style="color: #0f766e; text-underline-offset: 2px;">{{ _('Pilih File') }}</span>
+                                </p>
+                                <p class="text-muted mb-0" style="font-size: 11px;">{{ _('Anda dapat memilih lebih dari satu file PDF sekaligus') }}</p>
+                            </div>
+                            
+                            <!-- Input file asli -->
+                            <input type="file" id="qrFileInput" name="qr_file" class="d-none" accept=".pdf" multiple>
+
+                            <!-- List file yang sudah dipilih -->
+                            <div id="qrFileList" class="d-flex flex-column gap-2 mt-2" style="max-height: 220px; overflow-y: auto; padding-right: 4px;"></div>
+                            
+                            <p id="qrEmptyDropzoneHint" class="text-muted mt-1 mb-0" style="font-size: 11px;">{{ _('Belum ada file yang dipilih.') }}</p>
+
+                            <!-- Progress bar upload -->
+                            <div id="qrUploadProgressWrap" class="d-none mt-2">
+                                <div class="d-flex align-items-center justify-content-between mb-1">
+                                    <span class="fw-medium text-muted" style="font-size: 11px;">{{ _('Mengunggah...') }}</span>
+                                    <span id="qrUploadProgressText" class="fw-medium text-muted" style="font-size: 11px;">0 / 0</span>
+                                </div>
+                                <div class="progress" style="height: 8px; border-radius: 10px; background-color: #f1f5f9;">
+                                    <div id="qrUploadProgressBar" class="progress-bar transition-all" role="progressbar" style="width: 0%; background-color: #0f766e;"></div>
+                                </div>
+                            </div>
                         </div>
-                        
-                        <div class="mb-2">
-                            <label class="form-label fw-bold text-uppercase tracking-wider mb-1" style="font-size: 0.7rem; color: var(--text-muted);">{{ _('File Dokumen (.PDF)') }}</label>
-                            <input type="file" name="qr_file" class="form-control shadow-none" required style="background-color: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 10px; font-size: 0.85rem; padding: 0.5rem 0.8rem;" accept=".pdf" multiple>
-                        </div>
+
                     </div>
-                    
-                    <div class="px-4 py-3 border-top d-flex align-items-center justify-content-end gap-2" style="background-color: rgba(0,0,0,0.02); border-color: var(--border-color) !important;">
-                        <button type="button" class="btn btn-outline-slate px-4 py-2" data-bs-dismiss="modal" style="font-size: 0.85rem;">{{ _('Batal') }}</button>
-                        <button type="submit" class="btn btn-brand-primary px-4 py-2 d-flex align-items-center gap-2" style="font-size: 0.85rem;">
-                            {{ _('Mulai Upload') }}
-                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                        </button>
+
+                    <!-- Footer -->
+                    <div class="modal-footer px-4 py-3 d-flex align-items-center justify-content-between flex-wrap gap-2" style="background-color: #f8fafc; border-top: 1px solid #f1f5f9;">
+                        <div class="d-flex align-items-center gap-2 text-muted" style="font-size: 11px;">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #0f766e;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                            <span>{{ _('Internal APEX QA batch encryption validated') }}</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <button type="button" class="btn btn-light border fw-semibold shadow-none" style="font-size: 0.75rem; color: #475569;" data-bs-dismiss="modal">{{ _('Batal') }}</button>
+                            <button type="submit" id="qrUploadSubmitBtn" class="btn fw-semibold shadow-sm d-flex align-items-center gap-2" style="font-size: 0.75rem; background-color: #0f766e; color: white; border: none;" onmouseover="this.style.backgroundColor='#0d645e'" onmouseout="this.style.backgroundColor='#0f766e'">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                {{ _('Mulai Upload & Parsing') }}
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -219,96 +262,183 @@
     </div>
     {% endif %}
 
+    <!-- PRE-COMPUTE METRICS -->
+    {% set ns = namespace(source_counts={}, name_counts={}) %}
+    {% for qr in files %}
+        {% if qr.source_document %}
+            {% set cnt = ns.source_counts.get(qr.source_document, 0) + 1 %}
+            {% set _ = ns.source_counts.update({qr.source_document: cnt}) %}
+        {% endif %}
+        {% if qr.name %}
+            {% set cnt_name = ns.name_counts.get(qr.name, 0) + 1 %}
+            {% set _ = ns.name_counts.update({qr.name: cnt_name}) %}
+        {% endif %}
+    {% endfor %}
+
     <!-- OFFCANVAS DRAWER FILTER & SORT -->
-    <div class="offcanvas offcanvas-end border-start" tabindex="-1" id="filterDrawer" style="border-color: var(--border-color) !important;">
-        <div class="offcanvas-header border-bottom px-4 py-3" style="border-color: var(--border-color) !important;">
-            <h5 class="offcanvas-title fw-bold" style="color: var(--text-main); font-size: 1.1rem;">{{ _('Filter & Sort') }}</h5>
-            <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas" aria-label="Close" style="filter: var(--btn-close-filter, none);"></button>
-        </div>
-        
-        <div class="offcanvas-body p-4 d-flex flex-column">
-            
-            <!-- Sort Section -->
-            <h6 class="fw-bold mb-3 text-uppercase tracking-wider" style="font-size: 0.7rem; color: var(--text-muted);">{{ _('Urutkan Berdasarkan') }}</h6>
-            <div class="row g-3 mb-4">
-                <div class="col-12">
-                    <select id="sortField" class="form-select shadow-none" style="background-color: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 10px; font-size: 0.9rem;">
-                        <option value="source">{{ _('QR Source Code (retail_x...)') }}</option>
-                        <option value="name">{{ _('Scene Name') }}</option>
-                    </select>
+    <div class="offcanvas offcanvas-end border-start-0" tabindex="-1" id="filterDrawer" style="width: 384px; box-shadow: -10px 0 25px rgba(0,0,0,0.1); background-color: #ffffff;">
+        <style>
+            #filterDrawer .form-check-input:checked {
+                background-color: #059669;
+                border-color: #059669;
+            }
+            #filterDrawer .form-check-input:focus {
+                box-shadow: 0 0 0 0.2rem rgba(5, 150, 105, 0.25);
+                border-color: #059669;
+            }
+            #filterDrawer ::-webkit-scrollbar {
+                width: 6px;
+            }
+            #filterDrawer ::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            #filterDrawer ::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 10px;
+            }
+            #filterDrawer ::-webkit-scrollbar-thumb:hover {
+                background: #94a3b8;
+            }
+        </style>
+
+        <!-- Drawer Header -->
+        <div class="offcanvas-header d-flex align-items-center justify-content-between px-4" style="height: 64px; border-bottom: 1px solid #e2e8f0; background-color: #ffffff;">
+            <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center justify-content-center rounded-2" style="width: 32px; height: 32px; background-color: #ecfdf5; color: #059669;">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
                 </div>
-                <div class="col-12">
-                    <select id="sortOrder" class="form-select shadow-none" style="background-color: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 10px; font-size: 0.9rem;">
-                        <option value="asc">{{ _('Ascending (A-Z)') }}</option>
-                        <option value="desc">{{ _('Descending (Z-A)') }}</option>
-                    </select>
+                <div>
+                    <h3 class="mb-0 fw-bold" style="font-size: 0.875rem; color: #0f172a; line-height: 1.25;">{{ _('Filter & Urutkan') }}</h3>
+                    <p class="mb-0" style="font-size: 11px; color: #94a3b8;">{{ _('Atur parameter tampilan QR') }}</p>
                 </div>
             </div>
+            <button type="button" class="btn-close shadow-none m-0 p-2" data-bs-dismiss="offcanvas" aria-label="Close" style="font-size: 0.75rem; color: #94a3b8; opacity: 0.6;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'"></button>
+        </div>
 
-            <!-- Filter Section 1: By QR Source Code -->
-            <h6 class="fw-bold mb-3 text-uppercase tracking-wider border-top pt-4" style="font-size: 0.7rem; color: var(--text-muted); border-color: var(--border-color) !important;">{{ _('Filter Spesifik') }}</h6>
+        <!-- Drawer Body -->
+        <div class="offcanvas-body p-4 d-flex flex-column gap-4" style="overflow-y: auto; background-color: #ffffff;">
             
-            <div class="mb-4">
-                <label class="form-label fw-bold mb-2" style="font-size: 0.8rem; color: var(--text-main);">{{ _('Berdasarkan Source Code') }}</label>
-                <div class="position-relative mb-2">
-                    <svg class="position-absolute top-50 translate-middle-y ms-3" style="color: var(--text-muted);" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <input type="text" id="source-list-search" class="form-control form-control-sm ps-5 shadow-none search-filter-input" placeholder="{{ _('Search source code...') }}" style="background-color: var(--input-bg); border-radius: 8px;">
+            <!-- SECTION 1: URUTKAN BERDASARKAN -->
+            <section class="d-flex flex-column gap-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <span class="fw-bold text-uppercase" style="font-size: 11px; color: #64748b; letter-spacing: 0.05em;">{{ _('Urutkan Berdasarkan') }}</span>
                 </div>
-                <div class="premium-filter-box" id="source-list">
-                    <!-- Checkbox Select All dipasang disini -->
-                    <label class="premium-filter-option select-all-option">
-                        <input type="checkbox" value="All" class="premium-filter-checkbox select-all-cb" id="selectAllSource" checked onchange="toggleSelectAllSource(this)">
-                        <div class="premium-filter-content">
-                            <span class="premium-filter-text fw-bold">{{ _('Select All Sources') }}</span>
-                            <svg class="premium-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <div class="d-flex flex-column gap-2">
+                    <!-- Dropdown Sort Field -->
+                    <div class="position-relative">
+                        <select id="sortField" class="form-select shadow-none w-100 fw-medium" style="font-size: 0.75rem; color: #1e293b; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 0.625rem 2rem 0.625rem 0.75rem; appearance: none; cursor: pointer;" onmouseover="this.style.borderColor='#cbd5e1'" onmouseout="this.style.borderColor='#e2e8f0'">
+                            <option value="source">{{ _('QR Source Code (retail_x...)') }}</option>
+                            <option value="name">{{ _('Nama Scene') }}</option>
+                        </select>
+                        <div class="position-absolute top-50 translate-middle-y" style="right: 12px; pointer-events: none; color: #94a3b8;">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                    <!-- Dropdown Sort Order -->
+                    <div class="position-relative">
+                        <select id="sortOrder" class="form-select shadow-none w-100 fw-medium" style="font-size: 0.75rem; color: #1e293b; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 0.625rem 2rem 0.625rem 0.75rem; appearance: none; cursor: pointer;" onmouseover="this.style.borderColor='#cbd5e1'" onmouseout="this.style.borderColor='#e2e8f0'">
+                            <option value="asc">{{ _('Menaik (A-Z)') }}</option>
+                            <option value="desc">{{ _('Menurun (Z-A)') }}</option>
+                        </select>
+                        <div class="position-absolute top-50 translate-middle-y" style="right: 12px; pointer-events: none; color: #94a3b8;">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path></svg>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Divider -->
+            <hr style="border-color: #e2e8f0; opacity: 1; margin: 0;">
+
+            <!-- SECTION 2: FILTER BERDASARKAN SOURCE -->
+            <section class="d-flex flex-column gap-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <span class="fw-bold text-uppercase" style="font-size: 11px; color: #64748b; letter-spacing: 0.05em;">{{ _('Filter Berdasarkan Source') }}</span>
+                    <button type="button" class="btn btn-link p-0 text-decoration-none fw-semibold" style="font-size: 11px; color: #059669;" onclick="document.querySelector('#selectAllSource').click()">{{ _('Pilih Semua') }}</button>
+                </div>
+                
+                <!-- Search -->
+                <div class="position-relative">
+                    <div class="position-absolute top-50 translate-middle-y" style="left: 10px; color: #94a3b8; pointer-events: none;">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <input type="text" id="qr-source-search" class="form-control shadow-none search-filter-input" placeholder="{{ _('Cari source code...') }}" style="font-size: 0.75rem; padding: 0.375rem 0.75rem 0.375rem 2rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; background-color: #f8fafc; color: #334155;">
+                </div>
+
+                <!-- List -->
+                <div class="d-flex flex-column gap-1 pt-1 premium-filter-box" id="source-list" style="max-height: 220px; overflow-y: auto;">
+                    <label class="d-flex align-items-center justify-content-between p-2 rounded item-option select-all-option" style="cursor: pointer; border: 1px solid transparent; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'; this.style.borderColor='#f1f5f9';" onmouseout="this.style.backgroundColor='transparent'; this.style.borderColor='transparent';">
+                        <div class="d-flex align-items-center gap-2 overflow-hidden">
+                            <input type="checkbox" id="selectAllSource" value="All" class="form-check-input mt-0 select-all-cb shadow-none flex-shrink-0" onchange="toggleSelectAllSource(this); updateQrDependentFilters();" checked style="width: 16px; height: 16px; border-color: #cbd5e1; cursor: pointer;">
+                            <span class="fw-semibold text-truncate item-text" style="font-size: 0.75rem; color: #0f172a;">{{ _('Pilih Semua Source') }}</span>
                         </div>
                     </label>
+                    
                     {% set unique_sources = [] %}
                     {% for qr in files %}{% if qr.source_document and qr.source_document not in unique_sources %}{% set _ = unique_sources.append(qr.source_document) %}{% endif %}{% endfor %}
                     {% for src in unique_sources | sort %}
-                    <label class="premium-filter-option item-option">
-                        <input type="checkbox" value="{{ src }}" class="premium-filter-checkbox item-cb source-checkbox" checked onchange="checkIndividualSourceState()">
-                        <div class="premium-filter-content">
-                            <span class="premium-filter-text item-text" title="{{ src }}">{{ src }}</span>
-                            <svg class="premium-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <label class="d-flex align-items-center justify-content-between p-2 rounded item-option" style="cursor: pointer; border: 1px solid transparent; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'; this.style.borderColor='#f1f5f9';" onmouseout="this.style.backgroundColor='transparent'; this.style.borderColor='transparent';">
+                        <div class="d-flex align-items-center gap-2 overflow-hidden me-2">
+                            <input type="checkbox" value="{{ src }}" class="form-check-input mt-0 item-cb source-checkbox shadow-none flex-shrink-0" onchange="checkIndividualSourceState(); updateQrDependentFilters();" checked style="width: 16px; height: 16px; border-color: #cbd5e1; cursor: pointer;">
+                            <span class="text-truncate item-text" title="{{ src }}" style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #334155;">{{ src }}</span>
                         </div>
+                        <span class="badge rounded-pill bg-light text-muted border flex-shrink-0" style="font-size: 9px; font-family: 'JetBrains Mono', monospace;">{{ ns.source_counts.get(src, 0) }}</span>
                     </label>
                     {% endfor %}
                 </div>
-            </div>
+            </section>
 
-            <!-- Filter Section 2: By Scene Name -->
-            <div class="mb-4">
-                <label class="form-label fw-bold mb-2" style="font-size: 0.8rem; color: var(--text-main);">{{ _('Berdasarkan Nama Scene') }}</label>
-                <div class="position-relative mb-2">
-                    <svg class="position-absolute top-50 translate-middle-y ms-3" style="color: var(--text-muted);" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <input type="text" id="scene-list-search" class="form-control form-control-sm ps-5 shadow-none search-filter-input" placeholder="{{ _('Search scene name...') }}" style="background-color: var(--input-bg); border-radius: 8px;">
+            <!-- Divider -->
+            <hr style="border-color: #e2e8f0; opacity: 1; margin: 0;">
+
+            <!-- SECTION 3: FILTER BERDASARKAN SCENE -->
+            <section class="d-flex flex-column gap-3 mb-2">
+                <div class="d-flex align-items-center justify-content-between">
+                    <span class="fw-bold text-uppercase" style="font-size: 11px; color: #64748b; letter-spacing: 0.05em;">{{ _('Filter Berdasarkan Scene') }}</span>
+                    <button type="button" class="btn btn-link p-0 text-decoration-none fw-semibold" style="font-size: 11px; color: #059669;" onclick="document.querySelector('#selectAllScene').click()">{{ _('Pilih Semua') }}</button>
                 </div>
-                <div class="premium-filter-box" id="scene-list">
-                    <label class="premium-filter-option select-all-option">
-                        <input type="checkbox" value="All" class="premium-filter-checkbox select-all-cb" id="selectAllScene" checked onchange="toggleSelectAllScene(this)">
-                        <div class="premium-filter-content">
-                            <span class="premium-filter-text fw-bold">{{ _('Select All Scenes') }}</span>
-                            <svg class="premium-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                
+                <!-- Search -->
+                <div class="position-relative">
+                    <div class="position-absolute top-50 translate-middle-y" style="left: 10px; color: #94a3b8; pointer-events: none;">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <input type="text" id="qr-scene-search" class="form-control shadow-none search-filter-input" placeholder="{{ _('Cari nama scene...') }}" style="font-size: 0.75rem; padding: 0.375rem 0.75rem 0.375rem 2rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; background-color: #f8fafc; color: #334155;">
+                </div>
+
+                <!-- List -->
+                <div class="d-flex flex-column gap-1 pt-1 premium-filter-box" id="scene-list" style="max-height: 220px; overflow-y: auto;">
+                    <label class="d-flex align-items-center justify-content-between p-2 rounded item-option select-all-option" style="cursor: pointer; border: 1px solid transparent; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'; this.style.borderColor='#f1f5f9';" onmouseout="this.style.backgroundColor='transparent'; this.style.borderColor='transparent';">
+                        <div class="d-flex align-items-center gap-2 overflow-hidden">
+                            <input type="checkbox" id="selectAllScene" value="All" class="form-check-input mt-0 select-all-cb shadow-none flex-shrink-0" onchange="toggleSelectAllScene(this); updateQrDependentFilters();" checked style="width: 16px; height: 16px; border-color: #cbd5e1; cursor: pointer;">
+                            <span class="fw-semibold text-truncate item-text" style="font-size: 0.75rem; color: #0f172a;">{{ _('Pilih Semua Scene') }}</span>
                         </div>
                     </label>
+                    
                     {% set unique_names = [] %}
                     {% for qr in files %}{% if qr.name not in unique_names %}{% set _ = unique_names.append(qr.name) %}{% endif %}{% endfor %}
                     {% for name in unique_names | sort %}
-                    <label class="premium-filter-option item-option">
-                        <input type="checkbox" value="{{ name }}" class="premium-filter-checkbox item-cb scene-checkbox" checked onchange="checkIndividualSceneState()">
-                        <div class="premium-filter-content">
-                            <span class="premium-filter-text item-text" title="{{ name }}">{{ name }}</span>
-                            <svg class="premium-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <label class="d-flex align-items-center justify-content-between p-2 rounded item-option" style="cursor: pointer; border: 1px solid transparent; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'; this.style.borderColor='#f1f5f9';" onmouseout="this.style.backgroundColor='transparent'; this.style.borderColor='transparent';">
+                        <div class="d-flex align-items-center gap-2 overflow-hidden me-2">
+                            <input type="checkbox" value="{{ name }}" class="form-check-input mt-0 item-cb scene-checkbox shadow-none flex-shrink-0" onchange="checkIndividualSceneState(); updateQrDependentFilters();" checked style="width: 16px; height: 16px; border-color: #cbd5e1; cursor: pointer;">
+                            <span class="text-truncate item-text" title="{{ name }}" style="font-size: 0.75rem; color: #334155;">{{ name }}</span>
                         </div>
+                        <span class="badge rounded-pill bg-light text-muted border flex-shrink-0" style="font-size: 9px; font-family: 'JetBrains Mono', monospace;">{{ ns.name_counts.get(name, 0) }}</span>
                     </label>
                     {% endfor %}
                 </div>
-            </div>
-            
-            <div class="mt-auto pt-4">
-                <button type="button" class="btn btn-brand-primary w-100 py-3 fw-bold shadow-sm" data-bs-dismiss="offcanvas" onclick="applyQrDrawerFilters()" style="border-radius: 12px; letter-spacing: 0.3px;">{{ _('Terapkan Pengaturan') }}</button>
-            </div>
+            </section>
+        </div>
+
+        <!-- Drawer Sticky Footer -->
+        <div class="p-4 d-flex align-items-center gap-3" style="border-top: 1px solid #e2e8f0; background-color: rgba(248, 250, 252, 0.8); backdrop-filter: blur(4px);">
+            <button type="button" class="btn flex-grow-1 shadow-none text-decoration-none text-center" style="font-size: 0.75rem; font-weight: 600; color: #334155; background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 0.5rem; padding: 0.625rem 1rem;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='#ffffff'" data-bs-dismiss="offcanvas" onclick="resetQrFilters()">
+                {{ _('Reset Filter') }}
+            </button>
+            <button type="button" class="btn flex-grow-1 d-flex align-items-center justify-content-center gap-2 shadow-sm" style="font-size: 0.75rem; font-weight: 600; color: #ffffff; background-color: #059669; border: none; border-radius: 0.5rem; padding: 0.625rem 1rem; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#047857'" onmouseout="this.style.backgroundColor='#059669'" data-bs-dismiss="offcanvas" onclick="applyQrDrawerFilters()">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                {{ _('Terapkan Filter') }}
+            </button>
         </div>
     </div>
 
@@ -318,5 +448,165 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='script.js') }}?v=7"></script>
     
+    <!-- SCRIPT CASCADING FILTER INTERAKTIF MANDIRI (MENGHINDARI KONFLIK SCRIPT.JS) -->
+    <script>
+        // 1. Build Relasi Map Langsung Dari Elemen HTML Supaya 100% Akurat
+        const sourceSceneMap = {};
+        const sceneSourceMap = {};
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Ambil semua grid item
+            document.querySelectorAll('.qr-item').forEach(item => {
+                const src = item.getAttribute('data-source');
+                const name = item.getAttribute('data-name');
+                if (src && name) {
+                    if (!sourceSceneMap[src]) sourceSceneMap[src] = [];
+                    if (!sourceSceneMap[src].includes(name)) sourceSceneMap[src].push(name);
+
+                    if (!sceneSourceMap[name]) sceneSourceMap[name] = [];
+                    if (!sceneSourceMap[name].includes(src)) sceneSourceMap[name].push(src);
+                }
+            });
+            
+            updateQrDependentFilters(); // Panggil state awal
+            
+            // 2. Binding Search Box Manual (Karena ID diubah agar terhindar bentrok script.js)
+            const qrSourceSearch = document.getElementById('qr-source-search');
+            const qrSceneSearch = document.getElementById('qr-scene-search');
+
+            function handleQrSearch(input, listId) {
+                const term = input.value.toLowerCase().trim();
+                const container = document.getElementById(listId);
+                if (!container) return;
+                
+                container.querySelectorAll('.item-option:not(.select-all-option)').forEach(opt => {
+                    const textEl = opt.querySelector('.item-text');
+                    if (textEl && textEl.textContent.toLowerCase().includes(term)) {
+                        opt.removeAttribute('data-search-hidden');
+                    } else {
+                        opt.setAttribute('data-search-hidden', 'true');
+                    }
+                    evaluateQrItemVisibility(opt);
+                });
+                syncQrSelectAllState(listId);
+            }
+
+            if (qrSourceSearch) qrSourceSearch.addEventListener('input', () => handleQrSearch(qrSourceSearch, 'source-list'));
+            if (qrSceneSearch) qrSceneSearch.addEventListener('input', () => handleQrSearch(qrSceneSearch, 'scene-list'));
+        });
+
+        // 3. Fungsi Logika Visibility Utama
+        function evaluateQrItemVisibility(item) {
+            if (item.hasAttribute('data-search-hidden') || item.hasAttribute('data-dep-hidden')) {
+                item.classList.remove('d-flex');
+                item.classList.add('d-none');
+            } else {
+                item.classList.remove('d-none');
+                item.classList.add('d-flex');
+            }
+        }
+
+        // 4. Engine Cascading Filter Utama
+        function updateQrDependentFilters() {
+            const sourceItemCbs = Array.from(document.querySelectorAll('#source-list .source-checkbox'));
+            const sceneItemCbs = Array.from(document.querySelectorAll('#scene-list .scene-checkbox'));
+
+            const checkedSources = sourceItemCbs.filter(cb => cb.checked).map(cb => cb.value);
+            const checkedScenes = sceneItemCbs.filter(cb => cb.checked).map(cb => cb.value);
+
+            // Kondisi Jika "Pilih Semua" (Atau kosong/belum disentuh = bertindak sebagai Select All)
+            const useAllSources = checkedSources.length === 0 || checkedSources.length === sourceItemCbs.length;
+            const useAllScenes = checkedScenes.length === 0 || checkedScenes.length === sceneItemCbs.length;
+
+            // Sortir Scene berdasar Source terpilih
+            sceneItemCbs.forEach(cb => {
+                const option = cb.closest('.item-option');
+                if (!option) return;
+                const sceneName = cb.value;
+
+                if (useAllSources) {
+                    option.removeAttribute('data-dep-hidden');
+                } else {
+                    let isValid = checkedSources.some(src => sourceSceneMap[src] && sourceSceneMap[src].includes(sceneName));
+                    if (isValid) {
+                        option.removeAttribute('data-dep-hidden');
+                    } else {
+                        option.setAttribute('data-dep-hidden', 'true');
+                        cb.checked = false; // Uncheck yang tersembunyi
+                    }
+                }
+                evaluateQrItemVisibility(option);
+            });
+
+            // Sortir Source berdasar Scene terpilih
+            sourceItemCbs.forEach(cb => {
+                const option = cb.closest('.item-option');
+                if (!option) return;
+                const srcName = cb.value;
+
+                if (useAllScenes) {
+                    option.removeAttribute('data-dep-hidden');
+                } else {
+                    let isValid = checkedScenes.some(scene => sceneSourceMap[scene] && sceneSourceMap[scene].includes(srcName));
+                    if (isValid) {
+                        option.removeAttribute('data-dep-hidden');
+                    } else {
+                        option.setAttribute('data-dep-hidden', 'true');
+                        cb.checked = false;
+                    }
+                }
+                evaluateQrItemVisibility(option);
+            });
+
+            syncQrSelectAllState('source-list');
+            syncQrSelectAllState('scene-list');
+        }
+
+        function syncQrSelectAllState(listId) {
+            const listContainer = document.getElementById(listId);
+            if (!listContainer) return;
+            const selectAllCheckbox = listContainer.querySelector('.select-all-cb');
+            const itemCheckboxes = Array.from(listContainer.querySelectorAll('.item-cb')).filter(cb => !cb.classList.contains('select-all-cb'));
+            
+            const visibleCheckboxes = itemCheckboxes.filter(cb => {
+                const parent = cb.closest('.item-option');
+                return parent && !parent.hasAttribute('data-search-hidden') && !parent.hasAttribute('data-dep-hidden');
+            });
+            
+            if (selectAllCheckbox) {
+                if (visibleCheckboxes.length > 0) {
+                    selectAllCheckbox.checked = visibleCheckboxes.every(cb => cb.checked);
+                } else {
+                    selectAllCheckbox.checked = false;
+                }
+            }
+        }
+
+        // 5. Override Paksa Fungsi `resetQrFilters` bawaan script.js untuk menghapus atribut hidden sepenuhnya
+        window.resetQrFilters = function() {
+            // Check kembali semuanya
+            document.querySelectorAll('.source-checkbox, .scene-checkbox, .select-all-cb').forEach(cb => cb.checked = true);
+            
+            // Reset Sorting
+            const sortFieldEl = document.getElementById('sortField');
+            if (sortFieldEl) sortFieldEl.value = 'source';
+            
+            const sortOrderEl = document.getElementById('sortOrder');
+            if (sortOrderEl) sortOrderEl.value = 'asc';
+
+            // Bersihkan semua properti hidden
+            document.querySelectorAll('#source-list .item-option, #scene-list .item-option').forEach(opt => {
+                opt.removeAttribute('data-search-hidden');
+                opt.removeAttribute('data-dep-hidden');
+                evaluateQrItemVisibility(opt);
+            });
+
+            // Terapkan dan eksekusi
+            updateQrDependentFilters();
+            if (typeof applyQrDrawerFilters === 'function') {
+                applyQrDrawerFilters();
+            }
+        };
+    </script>
 </body>
 </html>

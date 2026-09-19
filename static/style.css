@@ -1097,28 +1097,45 @@ h1, h2, h3, h4, h5, h6 {
     transform: scale(1);
 }
 
-/* Styling untuk baris "Select All" agar lengket di atas (Sticky) */
-.select-all-option {
-    position: sticky;
-    top: 0;
-    background-color: var(--input-bg);
-    z-index: 10;
-    border-bottom: 2px solid var(--border-color) !important;
+/* 1. Menghilangkan ruang kosong (padding) atas bawaan class pt-1 pada container */
+.premium-filter-box {
+    padding-top: 0 !important;
 }
-    /* Mencegah "Select All" menjadi tembus pandang saat di-hover */
-    .premium-filter-option.select-all-option:hover {
-        background-color: var(--input-bg) !important; 
-    }
 
-    /* Efek hover dengan warna solid (tidak transparan) untuk Light Mode */
-    [data-theme="light"] .premium-filter-option.select-all-option:hover {
-        background-color: #F1F5F9 !important; 
-    }
+/* 2. Styling "Pilih Semua" agar benar-benar menempel sebagai Header Statis */
+.select-all-option {
+    position: sticky !important;
+    top: 0 !important;
+    background-color: var(--bg-surface) !important;
+    z-index: 20 !important;
+    
+    /* Memaksa margin 0 */
+    margin: 0 !important;
+    
+    /* Membulatkan HANYA sudut atas (8px mengikuti kotak luar), sudut bawah siku/rata */
+    border-radius: 8px 8px 0 0 !important;
+    
+    /* Garis bawah tegas pembatas dengan daftar di bawahnya */
+    border-bottom: 1px solid var(--border-color) !important;
+}
 
-    /* Efek hover dengan warna solid (tidak transparan) untuk Dark Mode */
-    [data-theme="dark"] .premium-filter-option.select-all-option:hover {
-        background-color: #132724 !important; 
-    }
+/* 3. Mencegah tembus pandang saat di-hover */
+.premium-filter-option.select-all-option:hover,
+.select-all-option:hover {
+    background-color: var(--bg-surface) !important; 
+}
+
+/* Efek hover untuk Light Mode */
+[data-theme="light"] .premium-filter-option.select-all-option:hover,
+[data-theme="light"] .select-all-option:hover {
+    background-color: #F1F5F9 !important; 
+}
+
+/* Efek hover untuk Dark Mode */
+[data-theme="dark"] .premium-filter-option.select-all-option:hover,
+[data-theme="dark"] .select-all-option:hover {
+    background-color: #132724 !important; 
+}
 
 /* Styling Search Input di dalam Filter */
 .search-filter-input {
