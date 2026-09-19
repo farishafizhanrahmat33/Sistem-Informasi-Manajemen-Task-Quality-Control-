@@ -14,89 +14,1030 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ _('Customer Support - QA Control Center') }}</title>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        /* ── Support Page Overrides ── */
+        .support-page-wrap {
+            background-color: var(--canvas-bg, #F8FAFC);
+            min-height: 100vh;
+        }
+
+        /* KPI Cards */
+        .kpi-card {
+            background-color: var(--card-bg, #FFFFFF);
+            border: 1px solid var(--border-subtle, #E2E8F0);
+            border-radius: 12px;
+            padding: 1rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 1px 2px 0 rgba(15,23,42,0.04);
+        }
+        .kpi-card .kpi-bar {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 3px;
+        }
+        .kpi-card .kpi-icon {
+            width: 40px; height: 40px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .kpi-card .kpi-value {
+            font-family: 'Inter', sans-serif;
+            font-size: 30px;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.025em;
+            color: var(--text-primary, #0F172A);
+        }
+        .kpi-card .kpi-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--text-muted, #94A3B8);
+        }
+        .kpi-card .kpi-sub {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-secondary, #475569);
+        }
+
+        /* Section Tabs */
+        .section-tabs-wrap {
+            background-color: var(--surface-container-low, #eff4ff);
+            border-radius: 12px;
+            padding: 4px;
+            display: inline-flex;
+            gap: 2px;
+        }
+        .section-tab {
+            display: flex; align-items: center; gap: 6px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary, #475569);
+            border: none; background: transparent;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .section-tab:hover { color: var(--text-primary, #0F172A); background-color: rgba(255,255,255,0.6); }
+        .section-tab.active {
+            background-color: #0F766E;
+            color: #ffffff;
+            box-shadow: 0 1px 4px rgba(15,118,110,0.3);
+        }
+        .section-tab .tab-badge {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 18px; height: 18px;
+            background-color: #0F766E;
+            color: #fff;
+            border-radius: 9999px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 0 5px;
+        }
+        .section-tab.active .tab-badge {
+            background-color: rgba(255,255,255,0.25);
+        }
+
+        /* Main content card panels */
+        .content-panel {
+            background-color: var(--card-bg, #FFFFFF);
+            border: 1px solid var(--border-subtle, #E2E8F0);
+            border-radius: 12px;
+            box-shadow: 0 1px 2px 0 rgba(15,23,42,0.04);
+            overflow: hidden;
+        }
+        .panel-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-subtle, #E2E8F0);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .panel-body { padding: 1.25rem; }
+
+        /* Form Controls Override */
+        .support-form .form-label-custom {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--text-primary, #0F172A);
+            margin-bottom: 6px;
+            display: block;
+        }
+        .support-form .form-control-custom,
+        .support-form .form-select-custom {
+            width: 100%;
+            height: 40px;
+            padding: 0 12px;
+            border: 1px solid var(--border-strong, #CBD5E1);
+            border-radius: 8px;
+            background-color: var(--input-bg, #FFFFFF);
+            color: var(--text-primary, #0F172A);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            appearance: none;
+        }
+        .support-form .form-control-custom:focus,
+        .support-form .form-select-custom:focus {
+            border-color: #0F766E;
+            box-shadow: 0 0 0 2px rgba(15,118,110,0.15);
+        }
+        .support-form .form-control-custom::placeholder { color: var(--text-muted, #94A3B8); }
+        .support-form textarea.form-control-custom {
+            height: auto; padding: 10px 12px; resize: vertical;
+        }
+        .select-wrap { position: relative; }
+        .select-wrap .form-select-custom { padding-right: 32px; }
+        .select-wrap .select-arrow {
+            position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+            pointer-events: none; font-size: 18px;
+            color: var(--text-muted, #94A3B8);
+        }
+        .input-icon-wrap { position: relative; }
+        .input-icon-wrap .form-control-custom { padding-left: 36px; }
+        .input-icon-wrap .input-icon {
+            position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+            font-size: 17px; color: var(--text-muted, #94A3B8); pointer-events: none;
+        }
+
+        /* Urgency Chips */
+        .urgency-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+        .urgency-chip input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+        .urgency-chip label {
+            display: flex; flex-direction: column; align-items: center;
+            padding: 8px 6px;
+            border-radius: 8px;
+            border: 1.5px solid transparent;
+            background-color: var(--surface-container-low, #eff4ff);
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: 'Inter', sans-serif;
+            user-select: none;
+        }
+        .urgency-chip input:checked + label {
+            border-color: #0F766E;
+            background-color: rgba(15,118,110,0.08);
+        }
+        .urgency-chip input[value="high"]:checked + label {
+            border-color: #DC2626;
+            background-color: rgba(220,38,38,0.07);
+        }
+        .urgency-chip input[value="blocker"]:checked + label {
+            border-color: #DC2626;
+            background-color: #DC2626;
+            color: #fff;
+        }
+        .urgency-chip .chip-dot {
+            width: 8px; height: 8px; border-radius: 50%; margin-bottom: 4px;
+        }
+        .urgency-chip .chip-title {
+            font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+            color: var(--text-primary, #0F172A);
+        }
+        .urgency-chip .chip-sub {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px; color: var(--text-muted, #94A3B8); margin-top: 2px;
+        }
+        .urgency-chip input[value="blocker"]:checked + label .chip-title,
+        .urgency-chip input[value="blocker"]:checked + label .chip-sub { color: #fff; }
+
+        /* Dropzone */
+        .dropzone-area {
+            border: 1.5px dashed var(--border-strong, #CBD5E1);
+            border-radius: 10px;
+            background-color: var(--surface-container-low, #eff4ff);
+            padding: 1.25rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.15s, background-color 0.15s;
+        }
+        .dropzone-area:hover {
+            border-color: #0F766E;
+            background-color: rgba(15,118,110,0.04);
+        }
+        .dropzone-icon {
+            width: 40px; height: 40px; border-radius: 50%;
+            background-color: rgba(15,118,110,0.1);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 8px;
+            color: #0F766E;
+            transition: transform 0.2s;
+        }
+        .dropzone-area:hover .dropzone-icon { transform: scale(1.05); }
+
+        /* Buttons */
+        .btn-primary-custom {
+            height: 36px; padding: 0 20px;
+            background-color: #0F766E; color: #fff;
+            border: none; border-radius: 8px;
+            font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+            display: inline-flex; align-items: center; gap: 6px;
+            cursor: pointer; transition: background-color 0.15s, box-shadow 0.15s;
+            box-shadow: 0 1px 3px rgba(15,118,110,0.2);
+        }
+        .btn-primary-custom:hover { background-color: #115E59; }
+        .btn-ghost-custom {
+            height: 36px; padding: 0 16px;
+            background-color: var(--surface-container-low, #eff4ff); color: var(--text-secondary, #475569);
+            border: none; border-radius: 8px;
+            font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+            display: inline-flex; align-items: center; gap: 6px;
+            cursor: pointer; transition: all 0.15s;
+        }
+        .btn-ghost-custom:hover { background-color: var(--surface-container, #e5eeff); color: var(--text-primary, #0F172A); }
+
+        /* Status badges */
+        .badge-pill {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 2px 8px; border-radius: 9999px;
+            font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+            border: 1px solid transparent;
+        }
+        .badge-pill .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+        .badge-warning { color: #92400E; background-color: #FFFBEB; border-color: #FDE68A; }
+        .badge-warning .dot { background-color: #D97706; }
+        .badge-success { color: #065F46; background-color: #ECFDF5; border-color: #A7F3D0; }
+        .badge-success .dot { background-color: #059669; }
+        .badge-info { color: #0369A1; background-color: #F0F9FF; border-color: #BAE6FD; }
+        .badge-info .dot { background-color: #0284C7; }
+
+        /* Ticket item */
+        .ticket-item {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-subtle, #E2E8F0);
+            transition: background-color 0.1s;
+        }
+        .ticket-item:last-child { border-bottom: none; }
+        .ticket-item:hover { background-color: rgba(248,250,252,0.6); }
+        .ticket-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px; font-weight: 700;
+        }
+        .ticket-time {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px; color: var(--text-muted, #94A3B8);
+        }
+        .ticket-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px; font-weight: 600;
+            color: var(--text-primary, #0F172A);
+        }
+        .ticket-desc {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px; color: var(--text-secondary, #475569);
+            display: -webkit-box; -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical; overflow: hidden;
+        }
+        .ticket-link {
+            font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+            color: #0F766E; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 4px;
+            transition: color 0.1s;
+        }
+        .ticket-link:hover { color: #115E59; text-decoration: underline; }
+
+        /* Service status grid */
+        .service-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; }
+        @media(min-width: 576px) { .service-grid { grid-template-columns: repeat(4,1fr); } }
+        .service-item {
+            padding: 10px;
+            border-radius: 8px;
+            background-color: var(--surface-container-low, #eff4ff);
+        }
+        .service-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px; color: var(--text-muted, #94A3B8);
+        }
+        .service-status {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px; font-weight: 600;
+            display: flex; align-items: center; gap: 6px;
+            margin-top: 4px;
+        }
+        .service-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+        /* Toast */
+        .toast-success {
+            background-color: #ECFDF5;
+            border: 1px solid #A7F3D0;
+            border-radius: 12px; padding: 1rem 1.25rem;
+            display: flex; align-items: flex-start;
+            gap: 12px; margin-bottom: 1rem;
+        }
+
+        /* FAQ Accordion */
+        .faq-item {
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid transparent;
+            transition: border-color 0.15s;
+        }
+        .faq-item:hover { border-color: var(--border-subtle, #E2E8F0); }
+        .faq-toggle {
+            width: 100%; text-align: left;
+            padding: 10px 12px;
+            background-color: var(--surface-container-low, #eff4ff);
+            border: none;
+            display: flex; align-items: center; justify-content: space-between; gap: 8px;
+            font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+            color: var(--text-primary, #0F172A);
+            cursor: pointer;
+            transition: background-color 0.15s;
+        }
+        .faq-toggle:hover { background-color: var(--surface-container, #e5eeff); }
+        .faq-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px; font-weight: 700;
+            color: #0F766E;
+            background-color: rgba(15,118,110,0.1);
+            padding: 2px 6px; border-radius: 4px;
+            flex-shrink: 0;
+        }
+        .faq-icon {
+            font-size: 18px; color: var(--text-muted, #94A3B8);
+            transition: transform 0.2s; flex-shrink: 0;
+        }
+        .faq-icon.open { transform: rotate(180deg); }
+        .faq-body {
+            padding: 0 12px 12px;
+            background-color: var(--surface-container-low, #eff4ff);
+            font-family: 'Inter', sans-serif;
+            font-size: 12px; color: var(--text-secondary, #475569);
+            line-height: 1.6;
+            display: none;
+        }
+        .faq-body.show { display: block; }
+
+        /* On-call badge */
+        .on-call-badge {
+            background-color: var(--card-bg, #FFFFFF);
+            border: 1px solid var(--border-subtle, #E2E8F0);
+            border-radius: 10px; padding: 10px 14px;
+            display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+        }
+
+        /* Page header label */
+        .page-eyebrow {
+            display: flex; align-items: center; gap: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px; font-weight: 700;
+            color: #0F766E; letter-spacing: 0.06em; text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .page-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 28px; font-weight: 700;
+            letter-spacing: -0.025em;
+            color: var(--text-primary, #0F172A);
+            line-height: 1.2;
+        }
+        .page-subtitle {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px; color: var(--text-secondary, #475569);
+            margin-top: 4px; max-width: 600px;
+        }
+
+        /* Mono text */
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* File pills */
+        .file-pill {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 10px; border-radius: 6px;
+            background-color: rgba(15,118,110,0.08);
+            border: 1px solid rgba(15,118,110,0.2);
+            font-family: 'JetBrains Mono', monospace; font-size: 11px;
+            color: var(--text-primary, #0F172A);
+        }
+
+        @media (max-width: 767px) {
+            .urgency-grid { grid-template-columns: repeat(2,1fr); }
+            .page-title { font-size: 22px; }
+        }
+    </style>
 </head>
 <body>
 
-    <!-- SIDEBAR & NAVBAR -->
+    <!-- SIDEBAR & NAVBAR (unchanged) -->
     {% include 'sidebar.html' %}
     {% include 'navbar.html' %}
 
-    <div class="container-fluid px-4 pb-5 pt-4">
-        
-        <!-- PESAN FLASH (Soft Minimalist SaaS Style) -->
+    <div class="container-fluid px-4 pb-5 pt-4 support-page-wrap">
+
+        <!-- FLASH MESSAGES -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show border py-3 px-4 mb-4 shadow-xs d-flex align-items-center" role="alert" style="background-color: var(--bg-surface); color: var(--text-main); border-radius: 10px; border-color: var(--border-color) !important; font-size: 0.9rem;">
-                        <span class="fw-medium">{{ message }}</span>
-                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="toast-success mb-3" id="flashToast" {% if category == 'danger' %}style="background-color: #FEF2F2; border-color: #FECACA;"{% endif %}>
+                    <span class="material-symbols-outlined" style="color: {% if category == 'danger' %}#DC2626{% else %}#059669{% endif %}; font-size: 22px; flex-shrink:0;">
+                        {% if category == 'danger' %}error{% else %}check_circle{% endif %}
+                    </span>
+                    <div style="flex:1;">
+                        <span style="font-family:'Inter',sans-serif; font-size:13px; font-weight:600; color: var(--text-primary);">{{ message }}</span>
                     </div>
+                    <button onclick="this.closest('.toast-success').remove()" style="border:none;background:none;cursor:pointer;color:var(--text-muted);padding:0;">
+                        <span class="material-symbols-outlined" style="font-size:18px;">close</span>
+                    </button>
+                </div>
                 {% endfor %}
             {% endif %}
         {% endwith %}
 
-        <!-- HEADER SECTION -->
-        <div class="mb-4">
-            <h4 class="fw-bold mb-1" style="color: var(--text-main); letter-spacing: -0.02em;">{{ _('Help & Support Center') }}</h4>
-            <p class="text-muted small mb-0">{{ _('Send in any technical issue or bug report straight to the engineering team.') }}</p>
-        </div>
-
-        <!-- CONTENT GRID (Centered Professional Card Layout) -->
-        <div class="row justify-content-center">
-            <div class="col-lg-8 col-xl-7">
-                <div class="card border-0 shadow-sm p-4 p-md-5" style="background-color: var(--bg-surface); border-radius: 16px; border: 1px solid var(--border-color) !important;">
-                    
-                    <!-- Card Header dengan Ikon & SLA Info -->
-                    <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom" style="border-color: var(--border-color) !important;">
-                        <div class="p-3 rounded-3 d-flex align-items-center justify-content-center" style="background-color: var(--accent-soft); color: var(--accent);">
-                            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <h5 class="fw-bold mb-1" style="color: var(--text-main);">{{ _('Developer Support Ticket') }}</h5>
-                            <p class="text-muted small mb-0">{{ _('Our team usually gets back to you within 1 business day.') }}</p>
-                        </div>
-                    </div>
-
-                    <!-- Form Input Pesan -->
-                    <form action="{{ url_for('main.support') }}" method="POST">
-                        <div class="mb-4">
-                            <label class="form-label small fw-semibold text-muted mb-2">{{ _('Issue Message / Bug Report') }}</label>
-                            <textarea name="message" class="form-control py-3 px-3 shadow-none" rows="6" placeholder="{{ _('Describe the issue in detail (include task ID, error message, or steps to reproduce if you\'ve got them)...') }}" required style="border-radius: 10px; font-size: 0.95rem; resize: vertical; background-color: var(--input-bg); border-color: var(--border-color); color: var(--text-main);"></textarea>
-                            <div class="form-text text-muted mt-2" style="font-size: 0.75rem;">
-                                {{ _('Make sure the info you give is accurate so the tech team can investigate faster.') }}
-                            </div>
-                        </div>
-
-                        <!-- Footer Form: Status & Button -->
-                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 pt-2">
-                            <div class="d-flex align-items-center gap-2 text-muted small">
-                                <span class="d-inline-block rounded-circle bg-success" style="width: 8px; height: 8px;"></span>
-                                <span>{{ _('System Running Normally') }}</span>
-                            </div>
-                            <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold" style="border-radius: 8px; font-size: 0.9rem;">
-                                {{ _('Send Support Ticket') }}
-                            </button>
-                        </div>
-                    </form>
-
+        <!-- PAGE HEADER -->
+        <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3 mb-4">
+            <div>
+                <div class="page-eyebrow">
+                    <span>Support Operations Desk</span>
+                    <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background-color:#059669;"></span>
+                    <span style="color: var(--text-muted);">SLI-99.98%</span>
+                </div>
+                <h1 class="page-title">{{ _('Help & Support Center') }}</h1>
+                <p class="page-subtitle">{{ _('Send in any technical issue or bug report straight to the engineering team. Track ticket status real-time and access the APEX operational knowledge base.') }}</p>
+            </div>
+            <div class="on-call-badge align-self-start">
+                <span class="position-relative" style="display:flex; width:10px; height:10px;">
+                    <span style="position:absolute; width:100%; height:100%; border-radius:50%; background:#059669; opacity:0.7; animation: ping 1.5s infinite;"></span>
+                    <span style="position:relative; width:10px; height:10px; border-radius:50%; background:#059669;"></span>
+                </span>
+                <div>
+                    <div style="font-family:'Inter',sans-serif; font-size:11px; font-weight:700; color:var(--text-primary);">On-Call Tier 3</div>
+                    <div class="mono" style="font-size:11px; color:var(--text-muted);">Eng: @arif.fauzi (Active)</div>
                 </div>
             </div>
         </div>
 
+        <!-- KPI CARDS -->
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-md-4">
+                <div class="kpi-card">
+                    <div class="d-flex align-items-start justify-content-between">
+                        <div>
+                            <div class="kpi-label">{{ _('Active Ticket Status') }}</div>
+                            <div class="d-flex align-items-baseline gap-2 mt-1">
+                                <span class="kpi-value">1</span>
+                                <span style="font-family:'Inter',sans-serif; font-size:13px; font-weight:600; color:#D97706;">{{ _('Under Investigation') }}</span>
+                            </div>
+                        </div>
+                        <div class="kpi-icon" style="background-color:#FFFBEB; color:#D97706;">
+                            <span class="material-symbols-outlined" style="font-size:22px;">pending_actions</span>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between mt-3 pt-3" style="border-top:1px solid var(--border-subtle);">
+                        <span class="kpi-sub">12 {{ _('tickets resolved this month') }}</span>
+                        <span class="mono" style="font-size:11px; color:#059669; font-weight:600; display:flex; align-items:center; gap:2px;">
+                            <span class="material-symbols-outlined" style="font-size:13px;">arrow_upward</span>94.2%
+                        </span>
+                    </div>
+                    <div class="kpi-bar" style="background: linear-gradient(90deg, #D97706, #0D9488, #0F766E);"></div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="kpi-card">
+                    <div class="d-flex align-items-start justify-content-between">
+                        <div>
+                            <div class="kpi-label">{{ _('Engineering Response (MTTR)') }}</div>
+                            <div class="d-flex align-items-baseline gap-2 mt-1">
+                                <span class="kpi-value">&lt; 38</span>
+                                <span style="font-family:'Inter',sans-serif; font-size:13px; font-weight:500; color:var(--text-primary);">{{ _('Min') }}</span>
+                            </div>
+                        </div>
+                        <div class="kpi-icon" style="background-color:#F0F9FF; color:#0284C7;">
+                            <span class="material-symbols-outlined" style="font-size:22px;">timer</span>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between mt-3 pt-3" style="border-top:1px solid var(--border-subtle);">
+                        <span class="kpi-sub">SLA Target &lt; 60m</span>
+                        <span class="badge-pill badge-success" style="font-size:10px;">98.4% On Target</span>
+                    </div>
+                    <div class="kpi-bar" style="background-color:#0284C7;"></div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="kpi-card">
+                    <div class="d-flex align-items-start justify-content-between">
+                        <div>
+                            <div class="kpi-label">{{ _('Core System Integrity') }}</div>
+                            <div class="d-flex align-items-baseline gap-2 mt-1">
+                                <span class="kpi-value" style="color:#059669;">100%</span>
+                                <span style="font-family:'Inter',sans-serif; font-size:13px; color:var(--text-muted);">Operational</span>
+                            </div>
+                        </div>
+                        <div class="kpi-icon" style="background-color:#ECFDF5; color:#059669;">
+                            <span class="material-symbols-outlined" style="font-size:22px;">verified</span>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between mt-3 pt-3" style="border-top:1px solid var(--border-subtle);">
+                        <div class="d-flex align-items-center gap-2 kpi-sub">
+                            <span style="width:6px;height:6px;border-radius:50%;background:#059669;display:inline-block;"></span>
+                            Worker: QR, Sync, DB Active
+                        </div>
+                        <span class="kpi-sub">LATENCY 14ms</span>
+                    </div>
+                    <div class="kpi-bar" style="background-color:#059669;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION TABS -->
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
+            <div class="section-tabs-wrap">
+                <button class="section-tab active" id="tab-form" onclick="switchTab('form')">
+                    <span class="material-symbols-outlined" style="font-size:17px;">add_circle</span>
+                    <span>{{ _('Create Support Ticket') }}</span>
+                </button>
+                <button class="section-tab" id="tab-inbox" onclick="switchTab('inbox')">
+                    <span class="material-symbols-outlined" style="font-size:17px;">inbox</span>
+                    <span>{{ _('My Ticket Inbox') }}</span>
+                    <span class="tab-badge">1</span>
+                </button>
+                <button class="section-tab" id="tab-docs" onclick="switchTab('docs')">
+                    <span class="material-symbols-outlined" style="font-size:17px;">help_center</span>
+                    <span>{{ _('FAQ & Docs') }}</span>
+                </button>
+            </div>
+            <div class="d-none d-lg-flex align-items-center gap-2" style="font-family:'Inter',sans-serif; font-size:12px; color:var(--text-secondary);">
+                <span class="material-symbols-outlined" style="font-size:17px; color:#0F766E;">security</span>
+                <span>{{ _('ISO/IEC 27001 Encrypted Protocol') }}</span>
+            </div>
+        </div>
+
+        <!-- MAIN GRID -->
+        <div class="row g-4 align-items-start">
+
+            <!-- LEFT COLUMN -->
+            <div class="col-12 col-xl-7 d-flex flex-column gap-4">
+
+                <!-- SUCCESS TOAST (hidden by default) -->
+                <div class="toast-success d-none" id="toastSuccess">
+                    <span class="material-symbols-outlined" style="color:#059669; font-size:22px; flex-shrink:0;">check_circle</span>
+                    <div style="flex:1;">
+                        <div style="font-family:'Inter',sans-serif; font-size:13px; font-weight:700; color:#059669;">{{ _('Support Ticket Submitted!') }}</div>
+                        <div style="font-family:'Inter',sans-serif; font-size:12px; color:var(--text-secondary); margin-top:2px;">
+                            {{ _('Ticket') }} <span class="mono" style="font-weight:700; color:var(--text-primary);">#TKT-1043</span>
+                            {{ _('has been queued to Tier 2 engineer. First response estimated in < 30 min.') }}
+                        </div>
+                    </div>
+                    <button onclick="document.getElementById('toastSuccess').classList.add('d-none');" style="border:none;background:none;cursor:pointer;color:var(--text-muted);padding:0;">
+                        <span class="material-symbols-outlined" style="font-size:18px;">close</span>
+                    </button>
+                </div>
+
+                <!-- TICKET FORM PANEL -->
+                <div class="content-panel" id="section-form">
+                    <div class="panel-header">
+                        <div class="d-flex align-items-center gap-3">
+                            <div style="width:40px;height:40px;border-radius:10px;background:rgba(15,118,110,0.1);display:flex;align-items:center;justify-content:center;color:#0F766E;flex-shrink:0;">
+                                <span class="material-symbols-outlined" style="font-size:22px;">forum</span>
+                            </div>
+                            <div>
+                                <div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:var(--text-primary);">{{ _('Developer & Engineering Support Ticket') }}</div>
+                                <div style="font-family:'Inter',sans-serif;font-size:12px;color:var(--text-secondary);">{{ _('Tech team reviews tickets based on urgency queue.') }}</div>
+                            </div>
+                        </div>
+                        <span class="badge-pill badge-info d-none d-sm-inline-flex">
+                            <span class="material-symbols-outlined" style="font-size:13px;">bolt</span>
+                            24/7 SLA Priority
+                        </span>
+                    </div>
+
+                    <div class="panel-body">
+                        <form action="{{ url_for('main.support') }}" method="POST" class="support-form d-flex flex-column gap-3" id="supportTicketForm" onsubmit="handleFormSubmit(event)">
+
+                            <!-- Kategori & ID Referensi -->
+                            <div class="row g-3">
+                                <div class="col-12 col-sm-6">
+                                    <label class="form-label-custom">{{ _('Issue Category') }} <span style="color:#DC2626;">*</span></label>
+                                    <div class="select-wrap">
+                                        <select class="form-select-custom" name="category" required>
+                                            <option value="" disabled selected>{{ _('Select issue category...') }}</option>
+                                            <option value="qr-sync">{{ _('QR Code Sync & PDF Parsing Issue') }}</option>
+                                            <option value="task-status">{{ _('Failed Task Runner Status Update') }}</option>
+                                            <option value="rbac-auth">{{ _('Access Rights & RBAC Authorization') }}</option>
+                                            <option value="api-runner">{{ _('API Runner & Webhook Integration') }}</option>
+                                            <option value="data-loss">{{ _('Database / Log Integrity Anomaly') }}</option>
+                                            <option value="other">{{ _('Other Technical Question') }}</option>
+                                        </select>
+                                        <span class="material-symbols-outlined select-arrow">expand_more</span>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <label class="form-label-custom">{{ _('Related ID / System Module') }}</label>
+                                    <div class="input-icon-wrap">
+                                        <span class="material-symbols-outlined input-icon">tag</span>
+                                        <input type="text" class="form-control-custom" name="ref_id" placeholder="{{ _('e.g. #Task-767, logistics_0080') }}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tingkat Urgensi -->
+                            <div>
+                                <label class="form-label-custom">{{ _('Urgency Level / Incident Impact') }} <span style="color:#DC2626;">*</span></label>
+                                <div class="urgency-grid">
+                                    <div class="urgency-chip">
+                                        <input type="radio" name="urgency" id="urg-low" value="low">
+                                        <label for="urg-low">
+                                            <span class="chip-dot" style="background-color:#0284C7;"></span>
+                                            <span class="chip-title">{{ _('Low') }}</span>
+                                            <span class="chip-sub">{{ _('Question') }}</span>
+                                        </label>
+                                    </div>
+                                    <div class="urgency-chip">
+                                        <input type="radio" name="urgency" id="urg-medium" value="medium" checked>
+                                        <label for="urg-medium">
+                                            <span class="chip-dot" style="background-color:#0F766E;"></span>
+                                            <span class="chip-title" style="color:#0F766E;">{{ _('Medium') }}</span>
+                                            <span class="chip-sub">{{ _('Has Workaround') }}</span>
+                                        </label>
+                                    </div>
+                                    <div class="urgency-chip">
+                                        <input type="radio" name="urgency" id="urg-high" value="high">
+                                        <label for="urg-high">
+                                            <span class="chip-dot" style="background-color:#DC2626;"></span>
+                                            <span class="chip-title" style="color:#DC2626;">{{ _('High') }}</span>
+                                            <span class="chip-sub">{{ _('Process Blocked') }}</span>
+                                        </label>
+                                    </div>
+                                    <div class="urgency-chip">
+                                        <input type="radio" name="urgency" id="urg-blocker" value="blocker">
+                                        <label for="urg-blocker">
+                                            <span class="chip-dot" style="background-color:#fff;"></span>
+                                            <span class="chip-title">Blocker / P0</span>
+                                            <span class="chip-sub">{{ _('System Down') }}</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Deskripsi -->
+                            <div>
+                                <label class="form-label-custom" for="messageField">{{ _('Detail Description & Reproduction Steps') }} <span style="color:#DC2626;">*</span></label>
+                                <textarea class="form-control-custom" id="messageField" name="message" rows="5"
+                                    placeholder="{{ _('Describe the anomaly in detail, error message code, batch task ID, and include steps to reproduce the issue...') }}"
+                                    required></textarea>
+                                <div style="font-family:'Inter',sans-serif; font-size:11px; color:var(--text-muted); margin-top:4px;">
+                                    {{ _("Make sure not to include passwords, raw JWT tokens, or secret credentials in the report text.") }}
+                                </div>
+                            </div>
+
+                            <!-- File Upload -->
+                            <div>
+                                <label class="form-label-custom">{{ _('Log Attachment or Supporting Screenshot') }}</label>
+                                <div class="dropzone-area" onclick="document.getElementById('fileInput').click();" id="dropzone">
+                                    <input type="file" id="fileInput" multiple accept=".png,.jpg,.pdf,.log,.json" class="d-none" onchange="handleFileSelect(event)">
+                                    <div class="dropzone-icon">
+                                        <span class="material-symbols-outlined" style="font-size:22px;">cloud_upload</span>
+                                    </div>
+                                    <div style="font-family:'Inter',sans-serif; font-size:13px; color:var(--text-primary);">
+                                        <span style="color:#0F766E; font-weight:600; text-decoration:underline; text-decoration-color:rgba(15,118,110,0.4);">{{ _('Click to upload') }}</span>
+                                        {{ _('or drag file here') }}
+                                    </div>
+                                    <div class="mono" style="font-size:11px; color:var(--text-muted); margin-top:4px;">
+                                        {{ _('Supports .PNG, .JPG, .PDF, .LOG, or .JSON (Max 10MB)') }}
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-wrap gap-2 mt-2" id="fileList"></div>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 pt-3" style="border-top:1px solid var(--border-subtle);">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span style="width:8px;height:8px;border-radius:50%;background:#059669;display:inline-block;animation:ping 1.5s infinite;"></span>
+                                    <span style="font-family:'Inter',sans-serif; font-size:12px; color:var(--text-secondary);">{{ _('All Runner Services Operating Normally') }}</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-2 justify-content-end">
+                                    <button type="button" class="btn-ghost-custom" onclick="resetForm()">{{ _('Reset Form') }}</button>
+                                    <button type="submit" class="btn-primary-custom">
+                                        <span class="material-symbols-outlined" style="font-size:17px;">send</span>
+                                        {{ _('Send Support Ticket') }}
+                                    </button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+
+                <!-- SERVICE STATUS PANEL -->
+                <div class="content-panel">
+                    <div class="panel-header">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="material-symbols-outlined" style="color:#0F766E; font-size:20px;">monitor_heart</span>
+                            <span style="font-family:'Inter',sans-serif; font-size:13px; font-weight:700; color:var(--text-primary);">{{ _('APEX Service & Endpoint Status') }}</span>
+                        </div>
+                        <span class="mono" style="font-size:11px; color:var(--text-muted);">Updated 2m ago</span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="service-grid">
+                            <div class="service-item">
+                                <div class="service-name">QR Generator API</div>
+                                <div class="service-status">
+                                    <span class="service-dot" style="background:#059669;"></span>
+                                    <span style="color:#059669;">99.99% Online</span>
+                                </div>
+                            </div>
+                            <div class="service-item">
+                                <div class="service-name">Task Queue Worker</div>
+                                <div class="service-status">
+                                    <span class="service-dot" style="background:#059669;"></span>
+                                    <span style="color:#059669;">Healthy</span>
+                                </div>
+                            </div>
+                            <div class="service-item">
+                                <div class="service-name">Postgres DB Node</div>
+                                <div class="service-status">
+                                    <span class="service-dot" style="background:#059669;"></span>
+                                    <span style="color:#059669;">0ms Lag</span>
+                                </div>
+                            </div>
+                            <div class="service-item">
+                                <div class="service-name">PDF Parser Engine</div>
+                                <div class="service-status">
+                                    <span class="service-dot" style="background:#0D9488;"></span>
+                                    <span style="color:#0F766E;">Healthy Flow</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /LEFT COLUMN -->
+
+            <!-- RIGHT COLUMN -->
+            <div class="col-12 col-xl-5 d-flex flex-column gap-4">
+
+                <!-- TICKET INBOX PANEL -->
+                <div class="content-panel" id="section-inbox">
+                    <div class="panel-header">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="material-symbols-outlined" style="color:#0F766E; font-size:20px;">mark_email_unread</span>
+                            <span style="font-family:'Inter',sans-serif; font-size:13px; font-weight:700; color:var(--text-primary);">{{ _('Recent Tickets') }}</span>
+                        </div>
+                        <span class="mono" style="font-size:11px; padding:2px 8px; border-radius:6px; background:var(--surface-container-low); color:var(--text-secondary);">3 {{ _('Total Tickets') }}</span>
+                    </div>
+
+                    <!-- Ticket 1 – Active -->
+                    <div class="ticket-item">
+                        <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="ticket-id" style="color:#0F766E;">#TKT-1042</span>
+                                <span class="badge-pill badge-warning">
+                                    <span class="dot"></span>{{ _('Under Investigation') }}
+                                </span>
+                            </div>
+                            <span class="ticket-time">10 {{ _('min ago') }}</span>
+                        </div>
+                        <div class="ticket-title mb-1">{{ _('Failed PDF QR Multi-page Parsing on Task #logistics_0080') }}</div>
+                        <div class="ticket-desc mb-3">{{ _('Log shows worker error "Timeout 30000ms exceeded" while scanning page 4 of bundled invoice batch file...') }}</div>
+                        <div class="d-flex align-items-center justify-content-between pt-2" style="border-top:1px solid var(--surface-container-low);">
+                            <div class="d-flex align-items-center gap-2">
+                                <div style="width:22px;height:22px;border-radius:50%;background:#0F766E;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;">AF</div>
+                                <span style="font-size:12px;color:var(--text-secondary);font-family:'Inter',sans-serif;">Assigned: @arif.fauzi</span>
+                            </div>
+                            <a href="#" class="ticket-link">
+                                {{ _('Open Conversation') }}
+                                <span class="material-symbols-outlined" style="font-size:14px;">arrow_forward</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Ticket 2 – Resolved -->
+                    <div class="ticket-item" style="background-color: var(--card-bg);">
+                        <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="ticket-id" style="color:var(--text-secondary);">#TKT-0988</span>
+                                <span class="badge-pill badge-success">
+                                    <span class="dot"></span>{{ _('Resolved') }}
+                                </span>
+                            </div>
+                            <span class="ticket-time">{{ _('Yesterday') }}, 14:20</span>
+                        </div>
+                        <div class="ticket-title mb-1">{{ _('Password Reset & Re-Authorization of Field Operator #DEV-03') }}</div>
+                        <div class="ticket-desc mb-2">{{ _('Temporary credentials have been sent via OTP-protected channel.') }}</div>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span class="mono" style="font-size:11px; color:var(--text-muted);">{{ _('Resolution Duration: 18m') }}</span>
+                            <a href="#" class="ticket-link">{{ _('Archive Detail') }}</a>
+                        </div>
+                    </div>
+
+                    <!-- Ticket 3 – Resolved -->
+                    <div class="ticket-item">
+                        <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="ticket-id" style="color:var(--text-secondary);">#TKT-0912</span>
+                                <span class="badge-pill badge-success">
+                                    <span class="dot"></span>{{ _('Resolved') }}
+                                </span>
+                            </div>
+                            <span class="ticket-time">18 Okt 2026</span>
+                        </div>
+                        <div class="ticket-title mb-1">{{ _('Task ID Duplication During Automatic CSV Import') }}</div>
+                        <div class="ticket-desc mb-2">{{ _('Hotfix patch v2.4.1 has been deployed to production worker pool.') }}</div>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span class="mono" style="font-size:11px; color:var(--text-muted);">{{ _('Resolution Duration: 42m') }}</span>
+                            <a href="#" class="ticket-link">{{ _('Archive Detail') }}</a>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div style="padding:10px 1.25rem; background:var(--surface-container-low); border-top:1px solid var(--border-subtle); text-align:center;">
+                        <a href="{{ url_for('main.view_tickets') if session.get('role') == 'Developer' else '#' }}" class="ticket-link">
+                            {{ _('View All 24 Support Ticket History') }}
+                            <span class="material-symbols-outlined" style="font-size:14px;">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- FAQ PANEL -->
+                <div class="content-panel" id="section-docs">
+                    <div class="panel-header">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="material-symbols-outlined" style="color:#0F766E; font-size:20px;">menu_book</span>
+                            <span style="font-family:'Inter',sans-serif; font-size:13px; font-weight:700; color:var(--text-primary);">{{ _('Quick Guide & FAQ') }}</span>
+                        </div>
+                        <span class="mono" style="font-size:11px; color:var(--text-muted);">Docs v2.4</span>
+                    </div>
+                    <div class="panel-body d-flex flex-column gap-2" id="faqAccordion">
+
+                        <!-- FAQ 1 -->
+                        <div class="faq-item">
+                            <button class="faq-toggle" onclick="toggleFaq(this)" type="button">
+                                <span class="d-flex align-items-center gap-2">
+                                    <span class="faq-num">01.</span>
+                                    <span>{{ _('What is the escalation flow for an operational blocker ticket?') }}</span>
+                                </span>
+                                <span class="material-symbols-outlined faq-icon open">expand_more</span>
+                            </button>
+                            <div class="faq-body show">
+                                {{ _('Tickets with urgency level') }} <strong>Blocker / P0</strong> {{ _('automatically trigger the internal Slack incident pager and SMS to the On-Call Lead Engineer. First response SLA is under 15 minutes.') }}
+                            </div>
+                        </div>
+
+                        <!-- FAQ 2 -->
+                        <div class="faq-item">
+                            <button class="faq-toggle" onclick="toggleFaq(this)" type="button">
+                                <span class="d-flex align-items-center gap-2">
+                                    <span class="faq-num">02.</span>
+                                    <span>{{ _('Why is QR document sync showing "Pending" status?') }}</span>
+                                </span>
+                                <span class="material-symbols-outlined faq-icon">expand_more</span>
+                            </button>
+                            <div class="faq-body">
+                            {{ _('A "Pending Review" status occurs if the barcode OCR confidence level is below 92%%, or if the PDF file is password-encrypted. You can trigger a manual re-scan from the QR Management menu.') }}                            </div>
+                        </div>
+
+                        <!-- FAQ 3 -->
+                        <div class="faq-item">
+                            <button class="faq-toggle" onclick="toggleFaq(this)" type="button">
+                                <span class="d-flex align-items-center gap-2">
+                                    <span class="faq-num">03.</span>
+                                    <span>{{ _('How to revoke access rights of an inactive operator?') }}</span>
+                                </span>
+                                <span class="material-symbols-outlined faq-icon">expand_more</span>
+                            </button>
+                            <div class="faq-body">
+                                {{ _('Navigate to the User Management menu, select the relevant user account, then change the status toggle to "Suspended" or revoke the RBAC role to "Guest".') }}
+                            </div>
+                        </div>
+
+                        <!-- FAQ 4 -->
+                        <div class="faq-item">
+                            <button class="faq-toggle" onclick="toggleFaq(this)" type="button">
+                                <span class="d-flex align-items-center gap-2">
+                                    <span class="faq-num">04.</span>
+                                    <span>{{ _('Where can runner worker logs be downloaded for audit?') }}</span>
+                                </span>
+                                <span class="material-symbols-outlined faq-icon">expand_more</span>
+                            </button>
+                            <div class="faq-body">
+                                {{ _('System logs are stored in an encrypted Cloudwatch bucket. You can download a 24-hour snapshot from the Task Management tab > Export System Diagnostic Log.') }}
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="d-flex align-items-center justify-content-between pt-3" style="border-top:1px solid var(--border-subtle); margin-top:4px;">
+                            <a href="{{ url_for('main.faq') }}" class="ticket-link" style="font-size:11px;">
+                                {{ _('Open Full System Manual & Guide (8 Complete Chapters)') }}
+                                <span class="material-symbols-outlined" style="font-size:13px;">arrow_outward</span>
+                            </a>
+                            <span class="mono" style="font-size:10px; color:var(--text-muted);">APEX v2.4-stable</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /RIGHT COLUMN -->
+
+        </div><!-- /MAIN GRID -->
     </div>
-    
+
     {% include 'login_modal.html' %}
 
     <!-- Bootstrap JS & App Script -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='script.js') }}?v=2"></script>
+
+    <style>
+        @keyframes ping {
+            0% { transform: scale(1); opacity: 0.75; }
+            75%, 100% { transform: scale(2); opacity: 0; }
+        }
+    </style>
+
+    <script>
+        /* ── Tab switcher ── */
+        function switchTab(name) {
+            ['form','inbox','docs'].forEach(t => {
+                const btn = document.getElementById('tab-' + t);
+                if (btn) btn.classList.remove('active');
+            });
+            const active = document.getElementById('tab-' + name);
+            if (active) active.classList.add('active');
+
+            const targets = { form: 'section-form', inbox: 'section-inbox', docs: 'section-docs' };
+            const el = document.getElementById(targets[name]);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        /* ── FAQ Accordion ── */
+        function toggleFaq(button) {
+            const body = button.nextElementSibling;
+            const icon = button.querySelector('.faq-icon');
+            const isOpen = body.classList.contains('show');
+
+            // Close all
+            document.querySelectorAll('#faqAccordion .faq-body').forEach(b => b.classList.remove('show'));
+            document.querySelectorAll('#faqAccordion .faq-icon').forEach(i => i.classList.remove('open'));
+
+            if (!isOpen) {
+                body.classList.add('show');
+                icon.classList.add('open');
+            }
+        }
+
+        /* ── File select handler ── */
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            const list = document.getElementById('fileList');
+            if (!files || files.length === 0) return;
+            list.innerHTML = '';
+            Array.from(files).forEach(file => {
+                const pill = document.createElement('div');
+                pill.className = 'file-pill';
+                pill.innerHTML = `
+                    <span class="material-symbols-outlined" style="font-size:13px;color:#0F766E;">description</span>
+                    <span style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${file.name}</span>
+                    <span style="color:var(--text-muted);">(${(file.size/1024).toFixed(0)}KB)</span>
+                `;
+                list.appendChild(pill);
+            });
+        }
+
+        /* ── Drag & Drop ── */
+        const dropzone = document.getElementById('dropzone');
+        if (dropzone) {
+            dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.style.borderColor='#0F766E'; });
+            dropzone.addEventListener('dragleave', () => { dropzone.style.borderColor=''; });
+            dropzone.addEventListener('drop', e => {
+                e.preventDefault();
+                dropzone.style.borderColor='';
+                const fileInput = document.getElementById('fileInput');
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelect({ target: fileInput });
+            });
+        }
+
+        /* ── Form submit (show inline toast for JS-only, real submit goes to Flask) ── */
+        function handleFormSubmit(e) {
+            // Let the real form POST happen; show toast only if you want client-side feedback
+            // For now, we allow the default POST to Flask (no e.preventDefault())
+        }
+
+        /* ── Reset form ── */
+        function resetForm() {
+            document.getElementById('supportTicketForm').reset();
+            const list = document.getElementById('fileList');
+            if (list) { list.innerHTML = ''; }
+            document.getElementById('toastSuccess').classList.add('d-none');
+        }
+    </script>
 </body>
 </html>

@@ -21,13 +21,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
+<body class="has-app-sidebar">
 
     <!-- SIDEBAR & NAVBAR -->
     {% include 'sidebar.html' %}
     {% include 'navbar.html' %}
 
-    <div class="container-fluid px-4 pb-5 pt-4">
+    <div class="container-fluid px-4 pb-5 pt-4 qc-console">
         
         <!-- PESAN FLASH -->
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -47,67 +47,118 @@
                 <h4 class="fw-bold mb-1" style="color: var(--text-main); letter-spacing: -0.02em;">{{ _('User Management') }}</h4>
                 <p class="text-muted small mb-0">{{ _('Manage accounts, system access, and user permissions all in one place.') }}</p>
             </div>
-            <button class="btn btn-primary btn-sm px-3 py-2 fw-semibold" data-bs-toggle="modal" data-bs-target="#addUserModal" style="border-radius: 8px;">
-                + {{ _('Add New Account') }}
+            <button class="btn btn-tm-primary btn-sm px-3 py-2 fw-semibold d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#addUserModal" style="border-radius: 8px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+                {{ _('Tambah Akun Baru') }}
             </button>
         </div>
 
         <!-- TABEL USER -->
-        <div class="card border-0 shadow-xs" style="background-color: var(--bg-surface); border-radius: 12px; border: 1px solid var(--border-color) !important; overflow: hidden;">
+        <div class="card border-0 shadow-xs mb-3" style="background-color: var(--bg-surface); border-radius: 12px; border: 1px solid var(--border-color) !important; overflow: hidden;">
             <div class="table-responsive">
                 <table class="table align-middle mb-0" style="color: var(--text-main); font-size: 0.9rem;">
                     <thead style="background-color: var(--bg-body); border-bottom: 1px solid var(--border-color);">
                         <tr>
                             <th class="py-3 px-4 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ _('No') }}</th>
-                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ _('Username') }}</th>
-                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ _('Full Name') }}</th>
+                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ _('Pengguna') }}</th>
+                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ _('Nama Lengkap') }}</th>
                             <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ _('Email') }}</th>
-                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ _('Role / Access Level') }}</th>
-                            <th class="py-3 text-end px-4 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ _('Actions') }}</th>
+                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ _('Role / Hak Akses') }}</th>
+                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ _('Status') }}</th>
+                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ _('Terakhir Aktif') }}</th>
+                            <th class="py-3 text-end px-4 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ _('Aksi') }}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for u in users %}
                         <tr style="border-bottom: 1px solid var(--border-color);">
                             <td class="px-4 text-muted fw-medium">{{ loop.index }}</td>
-                            <td class="fw-semibold text-main">{{ u.username }}</td>
+                            <td class="fw-semibold text-main">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span>{{ u.username }}</span>
+                                    {% if u.id == session.get('user_id') %}
+                                    <span class="badge rounded-pill fw-bold" style="font-size: 10px; background-color: #0F766E; color: #ffffff; padding: 0.25em 0.6em;">CURRENT</span>
+                                    {% endif %}
+                                </div>
+                            </td>
                             <td class="text-muted">{{ u.nama_lengkap or '-' }}</td>
                             <td class="text-muted">{{ u.email or '-' }}</td>
                             <td>
                                 <form action="{{ url_for('main.update_user_role', user_id=u.id) }}" method="POST" class="d-flex align-items-center gap-2">
-                                    <select name="new_role" class="form-select form-select-sm bg-light border-0 py-1 px-2" style="width: 150px; font-size: 0.85rem; border-radius: 6px;">
+                                    <select name="new_role" class="form-select form-select-sm bg-light border-0 py-1 px-2" style="width: 140px; font-size: 0.85rem; border-radius: 6px;">
                                         <option value="Developer" {% if u.role == 'Developer' %}selected{% endif %}>{{ _('Developer') }}</option>
                                         <option value="Supervisor" {% if u.role == 'Supervisor' %}selected{% endif %}>{{ _('Supervisor') }}</option>
                                         <option value="Quality Control" {% if u.role == 'Quality Control' %}selected{% endif %}>{{ _('Quality Control') }}</option>
                                         <option value="Public" {% if u.role == 'Public' %}selected{% endif %}>{{ _('Public') }}</option>
                                     </select>
-                                    <button type="submit" class="btn btn-dark btn-sm py-1 px-3 fw-medium" style="font-size: 0.75rem; border-radius: 6px;">{{ _('Update') }}</button>
+                                    <button type="submit" class="btn btn-tm-primary btn-sm py-1 px-2.5 fw-medium" style="font-size: 0.75rem; border-radius: 6px;">{{ _('Update') }}</button>
                                 </form>
                             </td>
-                            <td class="text-end px-4">
-                                <button type="button" class="btn btn-outline-secondary btn-sm px-3 py-1 me-1" style="font-size: 0.8rem; border-radius: 6px;"
-                                        data-bs-toggle="modal" data-bs-target="#resetPasswordModal"
-                                        data-user-id="{{ u.id }}" data-username="{{ u.username }}">
-                                    {{ _('Reset Password') }}
-                                </button>
-                                {% if u.id != session.get('user_id') %}
-                                <form action="{{ url_for('main.delete_user', user_id=u.id) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ _('Are you sure you want to delete this account?') }}');">
-                                    <button type="submit" class="btn btn-outline-danger btn-sm px-3 py-1" style="font-size: 0.8rem; border-radius: 6px;">{{ _('Delete') }}</button>
-                                </form>
+                            <td>
+                                {% if u.status == 'Review' %}
+                                <span class="badge rounded-pill d-inline-flex align-items-center gap-1 px-2.5 py-1" style="font-size: 0.75rem; font-weight: 600; background-color: #FFFBEB; color: #B45309; border: 1px solid #FDE68A;">
+                                    <span style="width: 6px; height: 6px; border-radius: 50%; background-color: #D97706;"></span> Review
+                                </span>
                                 {% else %}
-                                <span class="small text-muted fst-italic px-2">{{ _('Your account') }}</span>
+                                <span class="badge rounded-pill d-inline-flex align-items-center gap-1 px-2.5 py-1" style="font-size: 0.75rem; font-weight: 600; background-color: #ECFDF5; color: #059669; border: 1px solid #A7F3D0;">
+                                    <span style="width: 6px; height: 6px; border-radius: 50%; background-color: #059669;"></span> Aktif
+                                </span>
                                 {% endif %}
+                            </td>
+                            <td class="text-muted small" style="font-size: 0.82rem;">
+                                {% if u.last_active %}
+                                    {{ u.last_active.strftime('%Y-%m-%d %H:%M:%S') }}
+                                {% else %}
+                                    Baru saja
+                                {% endif %}
+                            </td>
+                            <td class="text-end px-4">
+                                <div class="d-flex align-items-center justify-content-end gap-2">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm px-2.5 py-1" style="font-size: 0.78rem; border-radius: 6px;"
+                                            data-bs-toggle="modal" data-bs-target="#resetPasswordModal"
+                                            data-user-id="{{ u.id }}" data-username="{{ u.username }}">
+                                        {{ _('Reset Password') }}
+                                    </button>
+                                    {% if u.id != session.get('user_id') %}
+                                    <form action="{{ url_for('main.delete_user', user_id=u.id) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ _('Are you sure you want to delete this account?') }}');">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm px-2 py-1" style="font-size: 0.78rem; border-radius: 6px;">{{ _('Delete') }}</button>
+                                    </form>
+                                    {% else %}
+                                    <span class="small text-muted fst-italic px-1" style="font-size: 0.75rem;">{{ _('Akun Anda') }}</span>
+                                    {% endif %}
+                                </div>
                             </td>
                         </tr>
                         {% else %}
                         <tr>
-                            <td colspan="6" class="text-center py-5 text-muted">{{ _('No user data in the system yet.') }}</td>
+                            <td colspan="8" class="text-center py-5 text-muted">{{ _('No user data in the system yet.') }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
+
+        <!-- FOOTER PAGINATION & INFO SESUAI REFERENSI -->
+        <div class="d-flex justify-content-between align-items-center px-2 py-2 flex-wrap gap-3">
+            <span class="text-muted" style="font-size: 0.85rem; font-family: monospace;">
+                Menampilkan data 1 - {{ users|length }} dari total {{ users|length }} entitas akun sistem
+            </span>
+            <nav aria-label="Page navigation">
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item disabled">
+                        <a class="page-link border-0 bg-transparent text-muted" href="#" aria-label="Previous">&lt;</a>
+                    </li>
+                    <li class="page-item active">
+                        <a class="page-link border-0 text-white fw-bold" href="#" style="background-color: #0F766E; border-radius: 6px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;">1</a>
+                    </li>
+                    <li class="page-item disabled">
+                        <a class="page-link border-0 bg-transparent text-muted" href="#" aria-label="Next">&gt;</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
     </div>
 
     <!-- MODAL TAMBAH AKUN -->
@@ -150,7 +201,7 @@
                         </div>
 
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-primary py-2 fw-semibold" style="border-radius: 6px; font-size: 0.9rem;">{{ _('Save Account') }}</button>
+                            <button type="submit" class="btn btn-tm-primary py-2 fw-semibold" style="border-radius: 6px; font-size: 0.9rem;">{{ _('Save Account') }}</button>
                         </div>
                     </form>
 
@@ -159,7 +210,7 @@
         </div>
     </div>
 
-    <!-- MODAL RESET PASSWORD (shared -- dipakai buat semua baris user) -->
+    <!-- MODAL RESET PASSWORD -->
     <div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
             <div class="modal-content border-0 shadow" style="background-color: var(--bg-surface); border-radius: 12px;">
@@ -178,7 +229,7 @@
                             <div class="form-text text-muted mt-1" style="font-size: 0.75rem;">{{ _('At least 6 characters.') }}</div>
                         </div>
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-primary py-2 fw-semibold" style="border-radius: 6px; font-size: 0.9rem;">{{ _('Save New Password') }}</button>
+                            <button type="submit" class="btn btn-tm-primary py-2 fw-semibold" style="border-radius: 6px; font-size: 0.9rem;">{{ _('Save New Password') }}</button>
                         </div>
                     </form>
 
@@ -191,7 +242,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='script.js') }}?v=2"></script>
 
-    <!-- Isi modal Reset Password sesuai baris user yang tombolnya diklik -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const resetModal = document.getElementById('resetPasswordModal');

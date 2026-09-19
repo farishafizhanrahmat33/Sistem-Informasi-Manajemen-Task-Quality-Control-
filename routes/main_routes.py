@@ -158,6 +158,14 @@ def login():
         session['user_id'] = user.id
         session['role'] = user.role
         session['username'] = user.username
+        
+        # --- UBAH BAGIAN INI ---
+        # Menyesuaikan waktu UTC ke WIB (UTC + 7 jam)
+        user.status = 'Aktif'
+        user.last_active = datetime.utcnow() + timedelta(hours=7)
+        db.session.commit()
+        # ---------------------
+
         return jsonify({
             "status": "success",
             "message": _("You're in! Logged in as %(role)s.", role=user.role)
@@ -171,8 +179,15 @@ def login():
 # F-02: Mengakhiri Sesi (Logout)
 @main_bp.route('/logout')
 def logout():
+    user_id = session.get('user_id')
+    if user_id:
+        user = db.session.get(UserModel, user_id)
+        if user:
+            user.status = 'Offline'
+            db.session.commit()
+
     session.clear()
-    return redirect(url_for('main.root')) # <-- AMAN: Tidak akan error 500 lagi
+    return redirect(url_for('main.root'))
 
 # F-24 & F-25: Detail & Edit Profil
 @main_bp.route('/profile')

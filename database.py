@@ -11,9 +11,6 @@ db = SQLAlchemy()
 class UserModel(db.Model):
     __tablename__ = 'users'
 
-    # Physical column is "id_users" per the ERD; the Python attribute stays
-    # "id" so the rest of the code (user.id, session['user_id']...) doesn't
-    # need to change everywhere.
     id = db.Column('id_users', db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False, index=True)
     password = db.Column(db.String(255), nullable=False)
@@ -22,11 +19,11 @@ class UserModel(db.Model):
     nama_lengkap = db.Column(db.String(100), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # NOT on the ERD -- kept so the existing "Edit Profile > upload photo"
-    # feature keeps working. Drop this column (and the matching bits in
-    # main_routes.py / profile.html) if you actually want to match the
-    # diagram 1:1 and retire that feature.
     foto_profil = db.Column(db.String(255), default='default.png')
+
+    # --- TAMBAHAN UNTUK OPSI 2 (LOGIN/LOGOUT TRACKING) ---
+    status = db.Column(db.String(20), default='Offline')  # Menyimpan status ('Aktif' atau 'Offline')
+    last_active = db.Column(db.DateTime, nullable=True)     # Menyimpan waktu terakhir login/aktivitas sesi
 
     tickets = db.relationship("SupportTicket", back_populates="user", cascade="all, delete")
     tasks_uploaded = db.relationship("TaskModel", back_populates="uploader")

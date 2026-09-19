@@ -1,96 +1,149 @@
 /* ==========================================================================
-   0. FONT — Space Grotesk (Headline) dipakai bareng Inter (Body), sesuai
-   design system referensi. Diimpor di sini (bukan tiap file HTML) supaya
-   otomatis berlaku ke SEMUA halaman yang memuat style.css ini.
+   STYLE.CSS — QA PLATFORM (OBSIDIAN PINE / EMERALD)
+   Versi: Terstruktur & RWD-Ready
+   Kategori:
+     0.  Font & Import
+     1.  Variabel Warna & Tema
+     2.  Global & Tipografi
+     3.  Komponen: Tombol
+     4.  Komponen: Navbar & Header
+     5.  Komponen: Tabs & Segmented Controls
+     6.  Komponen: Cards & Badges
+     7.  Komponen: Modals & Detail Panels
+     8.  Komponen: Forms
+     9.  Komponen: Dropdown
+    10.  Komponen: Sidebar & Offcanvas
+    11.  Komponen: Tabel & Utilitas
+    12.  Halaman: Dashboard
+    13.  Halaman: Task Management
+    14.  Halaman: QR Management
+    15.  Halaman: User Management
+    16.  Halaman: Ticket Support & Layanan Pelanggan
+    17.  Halaman: FAQ & Panduan
+    18.  Halaman: Pengaturan Profil
+    19.  Halaman: Login
+    20.  Dark Mode Overrides (Dashboard & Global)
+    21.  Responsive — Mobile & Tablet (RWD)
+   ========================================================================== */
+
+
+/* ==========================================================================
+   0. FONT & IMPORT
    ========================================================================== */
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap');
 
+
 /* ==========================================================================
-   1. VARIABEL WARNA & TEMA — QA PLATFORM (OBSIDIAN PINE / EMERALD)
-   Primary  #10B981 (Emerald)  — aksi utama, state aktif, fokus
-   Secondary#009688 (Teal)     — badge/aksen sekunder (dipakai di seksi 12)
-   Tertiary #009669 (Green)    — status sukses/varian aksen (dipakai di seksi 12)
-   Neutral  skala #000000→#FFFFFF — shell gelap & teks
+   1. VARIABEL WARNA & TEMA
    ========================================================================== */
 :root {
     --font-headline: 'Space Grotesk', 'Inter', sans-serif;
     --font-body: 'Inter', sans-serif;
 
-    --accent: #10B981; /* Primary — Emerald cerah (DESIGN.md referensi) */
-    --primary: #10B981;
-    --primary-hover: #059669;
-    --shell-bg: #09201F;
-    --shell-surface: #0E2A29;
-    --shell-border: #163836;
-    --shell-text-primary: #F1F5F9;
-    --shell-text-muted: #648A86;
+    --accent:         #10B981;
+    --primary:        #10B981;
+    --primary-hover:  #059669;
+    --shell-bg:            #09201F;
+    --shell-surface:       #0E2A29;
+    --shell-border:        #163836;
+    --shell-text-primary:  #F1F5F9;
+    --shell-text-muted:    #648A86;
 }
 
-/* TEMA TERANG (LIGHT THEME) — Operational Canvas (DESIGN.md) */
+/* Tema Terang */
 [data-theme="light"] {
-    --bg-body: #F8FAFC;          /* canvas-bg */
-    --bg-surface: #FFFFFF;       /* card-bg */
-    --text-main: #0F172A;        /* text-primary */
-    --text-muted: #64748B;       /* text-secondary */
-    --border-color: #E2E8F0;     /* border-subtle */
-    --accent-soft: rgba(16, 185, 129, 0.12);
-    --dark-soft: rgba(15, 23, 42, 0.04);
-    --modal-bg: #FFFFFF;
-    --input-bg: #FFFFFF;
-    /* Diubah ke nuansa Ungu Elegan untuk Light Mode */
-    --badge-sent-bg: rgba(139, 92, 246, 0.12);
+    --bg-body:      #F8FAFC;
+    --bg-surface:   #FFFFFF;
+    --text-main:    #0F172A;
+    --text-muted:   #64748B;
+    --border-color: #E2E8F0;
+    --accent-soft:  rgba(16, 185, 129, 0.12);
+    --dark-soft:    rgba(15, 23, 42, 0.04);
+    --modal-bg:     #FFFFFF;
+    --input-bg:     #FFFFFF;
+    --badge-sent-bg:   rgba(139, 92, 246, 0.12);
     --badge-sent-text: #7C3AED;
     --btn-close-filter: none;
 }
 
-/* TEMA GELAP (DARK THEME) — varian pine-tinted dari shell Obsidian Pine */
+/* Tema Gelap */
 [data-theme="dark"] {
-    --bg-body: #0A1615;
-    --bg-surface: #0F201E;
-    --text-main: #F1F5F9;
-    --text-muted: #8FA6A3;
+    --bg-body:      #0A1615;
+    --bg-surface:   #0F201E;
+    --text-main:    #F1F5F9;
+    --text-muted:   #8FA6A3;
     --border-color: #1C3532;
-    --accent-soft: rgba(110, 231, 183, 0.16);
-    --dark-soft: rgba(255, 255, 255, 0.06);
-    --modal-bg: #0F201E;
-    --input-bg: #10201E;
-    /* Diubah ke nuansa Ungu Terang untuk Dark Mode */
-    --badge-sent-bg: rgba(167, 139, 250, 0.15);
+    --accent-soft:  rgba(110, 231, 183, 0.16);
+    --dark-soft:    rgba(255, 255, 255, 0.06);
+    --modal-bg:     #0F201E;
+    --input-bg:     #10201E;
+    --badge-sent-bg:   rgba(167, 139, 250, 0.15);
     --badge-sent-text: #A78BFA;
     --btn-close-filter: invert(1) grayscale(100%) brightness(200%);
 }
 
 
 /* ==========================================================================
-   2. TIPOGRAFI, GLOBAL STYLING & SCROLLBAR
+   2. GLOBAL, TIPOGRAFI & SCROLLBAR
    ========================================================================== */
-body { 
-    font-family: var(--font-body); 
-    background-color: var(--bg-body); 
+html, body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-body);
+    font-family: var(--font-body);
     color: var(--text-main);
     -webkit-font-smoothing: antialiased;
-    letter-spacing: -0.01em; 
+    letter-spacing: -0.01em;
     transition: background-color 0.3s ease, color 0.3s ease;
+    /* Pastikan tidak ada overflow horizontal di mobile */
+    overflow-x: hidden;
 }
 
-/* Headline font — berlaku otomatis di semua halaman (dashboard, task,
-   QR management, user management, support, FAQ, profile, dst.) karena
-   semua judul halaman/kartu/modal pakai tag h1–h6. */
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-headline);
     letter-spacing: -0.02em;
 }
 
-::-webkit-scrollbar { width: 6px; height: 6px; } 
-::-webkit-scrollbar-track { background: var(--bg-body); }
-::-webkit-scrollbar-thumb { background: #27272A; border-radius: 4px; }
+/* Scrollbar Global */
+::-webkit-scrollbar         { width: 6px; height: 6px; }
+::-webkit-scrollbar-track   { background: var(--bg-body); }
+::-webkit-scrollbar-thumb   { background: #27272A; border-radius: 4px; }
+
+/* Utilitas */
+.text-muted    { color: var(--text-muted) !important; }
+.cursor-pointer { cursor: pointer; }
+.hover-bg:hover { background-color: rgba(255, 255, 255, 0.04); }
+[data-theme="light"] .hover-bg:hover { background-color: rgba(0, 0, 0, 0.03); }
+
+/* Animasi */
+@keyframes spin {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.spinning { animation: spin 0.8s linear infinite; }
+
+@keyframes tm-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.45; transform: scale(0.75); }
+}
+
+/* Safe Area (iPhone notch & home indicator) */
+@supports (padding: max(0px)) {
+    body {
+        padding-left:  max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+    }
+    #scrollToTopBtn {
+        bottom: max(1rem, env(safe-area-inset-bottom)) !important;
+    }
+}
 
 
 /* ==========================================================================
-   3. KOMPONEN TOMBOL (BUTTONS)
+   3. KOMPONEN: TOMBOL
    ========================================================================== */
 .btn {
-    border-radius: 8px; 
+    border-radius: 8px;
     font-weight: 500;
     padding: 0.5rem 1.25rem;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -101,52 +154,100 @@ h1, h2, h3, h4, h5, h6 {
 }
 .btn-sm { padding: 0.4rem 1rem; font-size: 0.85rem; }
 
-.btn-primary { background-color: var(--accent) !important; border-color: var(--accent) !important; color: #052e1e !important; font-weight: 600; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2); }
-.btn-primary:hover { background-color: var(--primary-hover) !important; border-color: var(--primary-hover) !important; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3); }
+.btn-primary {
+    background-color: var(--accent) !important;
+    border-color: var(--accent) !important;
+    color: #052e1e !important;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+.btn-primary:hover {
+    background-color: var(--primary-hover) !important;
+    border-color: var(--primary-hover) !important;
+    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
+}
 
-.btn-outline-primary { color: var(--accent) !important; border-color: var(--accent) !important; }
-.btn-outline-primary:hover { background-color: var(--accent) !important; color: #111113 !important; }
+.btn-outline-primary {
+    color: var(--accent) !important;
+    border-color: var(--accent) !important;
+}
+.btn-outline-primary:hover {
+    background-color: var(--accent) !important;
+    color: #111113 !important;
+}
 
-.btn-dark { background-color: #27272A !important; border-color: #27272A !important; color: #FAFAFA !important; }
-.btn-dark:hover { background-color: var(--accent) !important; border-color: var(--accent) !important; color: #111113 !important; }
+.btn-dark {
+    background-color: #27272A !important;
+    border-color: #27272A !important;
+    color: #FAFAFA !important;
+}
+.btn-dark:hover {
+    background-color: var(--accent) !important;
+    border-color: var(--accent) !important;
+    color: #111113 !important;
+}
 
-.btn-outline-secondary { color: var(--text-main) !important; border-color: var(--border-color) !important; background-color: var(--bg-surface); }
-.btn-outline-secondary:hover { background-color: var(--dark-soft) !important; color: var(--accent) !important; border-color: var(--accent) !important; }
-
-
-/* ==========================================================================
-   4. NAVBAR & HEADER
-   ========================================================================== */
-.navbar-custom {
+.btn-outline-secondary {
+    color: var(--text-main) !important;
+    border-color: var(--border-color) !important;
     background-color: var(--bg-surface);
-    border-bottom: 1px solid var(--border-color);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03); 
-    backdrop-filter: blur(10px); 
+}
+.btn-outline-secondary:hover {
+    background-color: var(--dark-soft) !important;
+    color: var(--accent) !important;
+    border-color: var(--accent) !important;
+}
+
+/* Tombol close modal di dark mode */
+[data-theme="dark"] .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%) !important;
+}
+
+/* Tombol scroll-to-top */
+#scrollToTopBtn {
+    width: 44px;
+    height: 44px;
 }
 
 
 /* ==========================================================================
-   5. TABS & SEGMENTED CONTROLS (Navigasi Kategori Tugas & Video)
+   4. KOMPONEN: NAVBAR & HEADER
    ========================================================================== */
+.navbar-custom {
+    background-color: var(--bg-surface);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    backdrop-filter: blur(10px);
+}
+
+
+/* ==========================================================================
+   5. KOMPONEN: TABS & SEGMENTED CONTROLS
+   ========================================================================== */
+
+/* Tab Kustom (Segmented) */
 .custom-tabs-container {
     background-color: var(--border-color);
     padding: 4px;
-    border-radius: 10px; 
+    border-radius: 10px;
     display: inline-flex;
     flex-wrap: wrap;
     gap: 2px;
     margin-bottom: 2rem;
+    max-width: 100%;
+    overflow-x: auto;
 }
 .custom-tabs-container .nav-link {
     color: var(--text-muted);
     font-weight: 600;
     font-size: 0.85rem;
     padding: 0.5rem 1.25rem;
-    border-radius: 8px; 
+    border-radius: 8px;
     border: none;
     transition: all 0.2s ease;
     cursor: pointer;
     user-select: none;
+    white-space: nowrap;
 }
 .custom-tabs-container .nav-link:hover { color: var(--text-main); }
 .custom-tabs-container .nav-link.active-tab {
@@ -154,49 +255,120 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--accent) !important;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
-.tab-sent { margin-left: 8px; border-left: 2px solid var(--border-color); padding-left: 10px; }
+.tab-sent {
+    margin-left: 8px;
+    border-left: 2px solid var(--border-color);
+    padding-left: 10px;
+}
 
-/* Tab Video Viewer (Di dalam Modal Detail) */
+/* Tab Video Viewer */
 .custom-video-tabs { border-bottom: 1px solid var(--border-color); margin-bottom: 1rem; }
-.custom-video-tabs .nav-link { color: var(--text-muted); font-weight: 600; font-size: 0.85rem; padding: 0.6rem 1rem; border-radius: 0; border-bottom: 2px solid transparent; background: transparent !important; }
+.custom-video-tabs .nav-link {
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.6rem 1rem;
+    border-radius: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent !important;
+}
 .custom-video-tabs .nav-link:hover { color: var(--text-main); border-bottom: 2px solid var(--text-muted); }
 .custom-video-tabs .nav-link.active { color: var(--accent) !important; border-bottom: 2px solid var(--accent); }
 
 /* Enterprise Tabs (SaaS Style) */
-.enterprise-tabs-wrapper {
-    border-bottom: 1px solid var(--border-color); 
-}
+.enterprise-tabs-wrapper { border-bottom: 1px solid var(--border-color); }
 .enterprise-tabs {
-    -ms-overflow-style: none;  
-    scrollbar-width: none;     
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 .enterprise-tabs::-webkit-scrollbar { display: none; }
 .enterprise-tabs .filter-tab {
     background: transparent;
     border: none;
-    color: var(--text-muted); 
+    color: var(--text-muted);
     font-size: 0.85rem;
     font-weight: 500;
-    padding: 0.25rem 0.1rem 0.75rem 0.1rem; 
+    padding: 0.25rem 0.1rem 0.75rem 0.1rem;
     border-bottom: 2px solid transparent;
-    white-space: nowrap; 
+    white-space: nowrap;
     transition: all 0.2s ease;
     cursor: pointer;
 }
 .enterprise-tabs .filter-tab:hover { color: var(--text-main); }
 .enterprise-tabs .filter-tab.active {
     color: var(--text-main);
-    font-weight: 600; 
-    border-bottom: 2px solid var(--text-main); 
+    font-weight: 600;
+    border-bottom: 2px solid var(--text-main);
 }
 [data-theme="dark"] .enterprise-tabs .filter-tab.active {
-    border-bottom: 2px solid #ffffff; 
+    border-bottom: 2px solid #ffffff;
     color: #ffffff;
+}
+
+/* Tab Count Badge */
+.task-count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 7px;
+    padding: 0 6px;
+    min-width: 20px;
+    height: 18px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    background-color: rgba(0, 0, 0, 0.06);
+    color: #475569;
+}
+[data-theme="dark"] .task-count-badge {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+}
+
+/* Filter Tab States */
+.filter-tab { font-weight: 500; color: var(--text-muted, #6c757d); transition: all 0.2s ease; }
+.filter-tab.active {
+    font-weight: 700 !important;
+    color: var(--text-main, #111827) !important;
+}
+.filter-tab.active .task-count-badge {
+    background-color: rgba(13, 110, 253, 0.12) !important;
+    color: #00132e !important;
+    font-weight: 700;
+}
+[data-theme="dark"] .filter-tab.active { color: #f8fafc !important; }
+[data-theme="dark"] .filter-tab.active .task-count-badge {
+    background-color: rgba(59, 130, 246, 0.2) !important;
+    color: #60a5fa !important;
+}
+
+/* Dashboard Filter Tabs (Pill Style) */
+.dashboard-filter-tab {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    transition: all 0.2s;
+}
+.dashboard-filter-tab:hover,
+.dashboard-filter-tab.active {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+.dashboard-filter-tab.active { background-color: #10B981 !important; color: white !important; font-weight: 600 !important; }
+[data-theme="dark"] .dashboard-filter-tab.active {
+    box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.4) !important;
 }
 
 
 /* ==========================================================================
-   6. CARDS & BADGES (Tampilan Kartu Tugas & Label Status)
+   6. KOMPONEN: CARDS & BADGES
    ========================================================================== */
 .task-card, .card {
     background-color: var(--bg-surface) !important;
@@ -207,6 +379,25 @@ h1, h2, h3, h4, h5, h6 {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+}
+
+/* Enterprise Card */
+.enterprise-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    transition: all 0.25s ease;
+}
+
+/* Metric Clickable Card */
+.metric-card { text-decoration: none; display: block; }
+.metric-card .enterprise-card { transition: all 0.25s ease; }
+.metric-card:hover .enterprise-card {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    border-color: var(--primary) !important;
 }
 
 .badge-soft {
@@ -228,16 +419,21 @@ h1, h2, h3, h4, h5, h6 {
 
 
 /* ==========================================================================
-   7. MODALS & DETAIL PANELS
+   7. KOMPONEN: MODALS & DETAIL PANELS
    ========================================================================== */
-.modal-content { 
-    background-color: var(--bg-surface); 
-    color: var(--text-main); 
-    border-radius: 16px; 
-    border: 1px solid var(--border-color); 
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3); 
+.modal-content {
+    background-color: var(--bg-surface);
+    color: var(--text-main);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
 }
-.modal-header { border-bottom: 1px solid var(--border-color); background-color: var(--bg-surface); border-radius: 16px 16px 0 0; padding: 1.25rem 1.5rem; }
+.modal-header {
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--bg-surface);
+    border-radius: 16px 16px 0 0;
+    padding: 1.25rem 1.5rem;
+}
 .modal-body { background-color: var(--modal-bg); padding: 1.5rem; }
 
 .detail-panel {
@@ -245,58 +441,164 @@ h1, h2, h3, h4, h5, h6 {
     border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02); 
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
-.detail-label { 
-    font-size: 0.72rem; 
-    color: var(--text-muted); 
-    font-weight: 600; 
-    text-transform: uppercase; 
-    letter-spacing: 0.05em; 
-    margin-bottom: 6px; 
+.detail-label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
 }
-.detail-value { 
-    font-size: 0.95rem; 
-    color: var(--text-main); 
-    font-weight: 500; 
-    margin-bottom: 1.25rem; 
+.detail-value {
+    font-size: 0.95rem;
+    color: var(--text-main);
+    font-weight: 500;
+    margin-bottom: 1.25rem;
+}
+
+/* Kontainer Video */
+.video-container-wrapper {
+    position: relative;
+    overflow: hidden;
+    background-color: #000;
+    aspect-ratio: 16 / 9;
+    width: 100%;
+}
+.video-container-wrapper iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border: none;
 }
 
 
 /* ==========================================================================
-   8. FORMS (Input, Select, Textarea & Search Bar)
+   8. KOMPONEN: FORMS
    ========================================================================== */
-.form-control, .form-select { 
-    border-radius: 8px; 
-    border: 1px solid var(--border-color); 
-    font-size: 0.95rem; 
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    font-size: 0.95rem;
     padding: 0.55rem 0.85rem;
     background-color: var(--input-bg) !important;
     color: var(--text-main) !important;
     transition: all 0.2s;
 }
-.form-control:focus, .form-select:focus { 
-    border-color: var(--accent); 
-    box-shadow: 0 0 0 3px var(--accent-soft); 
+.form-control:focus, .form-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
 }
 .form-control::placeholder {
     color: var(--text-muted) !important;
     opacity: 0.8;
 }
-.search-pill { border-radius: 50px !important; padding-left: 2.75rem !important; }
-.search-icon { position: absolute; left: 1.15rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+.search-pill    { border-radius: 50px !important; padding-left: 2.75rem !important; }
+.search-icon    { position: absolute; left: 1.15rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+
+/* Premium Multi-Select Filter Drawer */
+.premium-filter-box {
+    background-color: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    height: 160px;
+    min-height: 160px;
+    max-height: 160px;
+    overflow-y: auto;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    position: relative;
+    padding-top: 0 !important;
+}
+.premium-filter-box::-webkit-scrollbar        { width: 5px; }
+.premium-filter-box::-webkit-scrollbar-track  { background: transparent; }
+.premium-filter-box::-webkit-scrollbar-thumb  { background-color: rgba(150,150,150,0.25); border-radius: 10px; }
+.premium-filter-box:hover::-webkit-scrollbar-thumb { background-color: rgba(150,150,150,0.4); }
+
+.premium-filter-option {
+    display: block;
+    margin: 0;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.15s ease;
+}
+.premium-filter-option:last-child { border-bottom: none; }
+.premium-filter-option:hover      { background-color: rgba(255, 255, 255, 0.03); }
+[data-theme="light"] .premium-filter-option:hover { background-color: rgba(0, 0, 0, 0.02); }
+
+.premium-filter-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+}
+.premium-filter-text {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 12px;
+    transition: all 0.2s ease;
+}
+.premium-filter-checkbox { display: none; }
+.premium-check-icon {
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    color: #F59E0B;
+    flex-shrink: 0;
+}
+.premium-filter-checkbox:checked + .premium-filter-content .premium-filter-text { color: var(--text-main); font-weight: 700; }
+.premium-filter-checkbox:checked + .premium-filter-content .premium-check-icon  { opacity: 1; transform: scale(1); }
+
+/* "Pilih Semua" Header Sticky */
+.select-all-option {
+    position: sticky !important;
+    top: 0 !important;
+    background-color: var(--bg-surface) !important;
+    z-index: 20 !important;
+    margin: 0 !important;
+    border-radius: 8px 8px 0 0 !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+.premium-filter-option.select-all-option:hover,
+.select-all-option:hover { background-color: var(--bg-surface) !important; }
+[data-theme="light"] .select-all-option:hover  { background-color: #F1F5F9 !important; }
+[data-theme="dark"]  .select-all-option:hover  { background-color: #132724 !important; }
+
+/* Search Filter Input */
+.search-filter-input { border-radius: 8px; border-color: var(--border-color); color: var(--text-main); }
+.search-filter-input:focus { box-shadow: none; border-color: #F59E0B; }
+
+/* Autocomplete Dropdown */
+.project-suggestion-item:hover {
+    background-color: var(--bs-tertiary-bg, rgba(100, 100, 100, 0.15)) !important;
+}
 
 
 /* ==========================================================================
-   9. DROPDOWN MENUS (Dropdown Tema, dll)
+   9. KOMPONEN: DROPDOWN
    ========================================================================== */
-.dropdown-menu { background-color: var(--bg-surface); border: 1px solid var(--border-color); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border-radius: 10px; padding: 0.5rem; }
-.dropdown-item { color: var(--text-main); font-size: 0.85rem; font-weight: 500; border-radius: 6px; padding: 0.4rem 0.8rem; }
+.dropdown-menu {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 0.5rem;
+}
+.dropdown-item {
+    color: var(--text-main);
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: 6px;
+    padding: 0.4rem 0.8rem;
+}
 .dropdown-item:hover { background-color: var(--dark-soft); color: var(--accent); }
 
 
 /* ==========================================================================
-   10. SIDEBAR & OFFCANVAS
+   10. KOMPONEN: SIDEBAR & OFFCANVAS
    ========================================================================== */
 .offcanvas {
     background-color: var(--bg-surface) !important;
@@ -306,59 +608,98 @@ h1, h2, h3, h4, h5, h6 {
     top: 0 !important;
     bottom: 0 !important;
     left: 0 !important;
-    width: 320px !important;
+    width: 280px !important;
     height: 100vh !important;
     border-right: 1px solid var(--border-color) !important;
-    visibility: hidden; 
+    visibility: hidden;
 }
 .offcanvas.show { visibility: visible; }
 
+/* Kontainer utama sidebar */
+.sidebar-drawer,
+.offcanvas-sidebar,
+.sidebar-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 100vh;
+    overflow: hidden;
+}
+
+/* Bagian scrollable (menu) */
+.sidebar-menu-scrollable {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 1rem;
+}
+.sidebar-menu-scrollable::-webkit-scrollbar       { width: 4px; }
+.sidebar-menu-scrollable::-webkit-scrollbar-thumb { background-color: rgba(150,150,150,0.2); border-radius: 4px; }
+
+/* Footer sticky sidebar */
+.sidebar-sticky-footer {
+    flex: 0 0 auto;
+    background-color: var(--bg-surface);
+    border-top: 1px solid var(--border-color);
+    z-index: 10;
+}
+
+/* Enterprise Sidebar */
 .enterprise-sidebar {
     background-color: var(--bg-surface);
     color: var(--text-main);
     width: 280px;
     border-right: 1px solid var(--border-color);
 }
+
+/* Judul brand di sidebar */
 .sidebar-brand-title {
     font-size: 0.8rem;
     letter-spacing: 0.15em;
     color: var(--text-muted);
 }
 
-/* Kategori Menu Sidebar (Judul Seksi) */
+/* Judul seksi sidebar */
 .sidebar-section-title {
-    color: #94a3b8 !important; 
-    font-size: 0.65rem !important; 
-    font-weight: 700 !important; 
-    letter-spacing: 0.12em !important; 
-    text-transform: uppercase !important; 
+    color: #94a3b8 !important;
+    font-size: 0.65rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.12em !important;
+    text-transform: uppercase !important;
     margin-bottom: 0.5rem !important;
-    user-select: none; 
-    pointer-events: none; 
+    user-select: none;
+    pointer-events: none;
 }
 [data-theme="dark"] .sidebar-section-title { color: #6b7280 !important; }
 
-/* Item Menu Sidebar */
+/* Item menu sidebar */
+/* Item menu sidebar agar selalu sejajar dan tidak bertumpuk */
 .sidebar-item {
     color: var(--text-main);
-    font-size: 0.875rem; 
+    font-size: 0.875rem;
     font-weight: 500;
     text-decoration: none;
-    padding: 0.5rem 1rem;
+    padding: 0.55rem 1rem;
     border-radius: 6px;
-    display: block; 
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-wrap: nowrap !important;
+    white-space: nowrap !important;
     transition: all 0.2s ease;
 }
-.sidebar-item:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-    color: var(--text-main);
-}
-[data-theme="dark"] .sidebar-item:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-    color: var(--text-main);
-}
 
-/* Tombol Aksi di Sidebar (Sign In / Sign Out) */
+/* Pastikan bagian ikon/simbol tidak ikut membesar atau turun */
+.sidebar-item span.material-symbols-outlined,
+.sidebar-item i {
+    flex-shrink: 0 !important;
+    width: 22px;
+    text-align: center;
+}
+.sidebar-item:hover               { background-color: rgba(0, 0, 0, 0.05); color: var(--text-main); }
+[data-theme="dark"] .sidebar-item:hover { background-color: rgba(255, 255, 255, 0.05); }
+
+/* Tombol aksi sidebar */
 .sidebar-btn-action {
     font-size: 0.85rem;
     border-radius: 6px;
@@ -370,1240 +711,213 @@ h1, h2, h3, h4, h5, h6 {
 .sidebar-btn-action:hover {
     background-color: #343a40 !important;
     border-color: #343a40 !important;
-    color: #ffffff !important;
 }
 
-/* Info Role & Pengaturan Lainnya di Sidebar */
-.role-text { font-size: 0.75rem; }
+/* Info role & tema di sidebar */
+.role-text  { font-size: 0.75rem; }
 .role-value { color: var(--text-main); }
 .theme-dropdown-btn {
     background-color: var(--bg-body);
-    color: var(--text-main) !important; /* Menyesuaikan warna teks dengan tema aktif */
+    color: var(--text-main) !important;
     border: 1px solid var(--border-color);
     font-size: 0.8rem;
     font-weight: 500;
     border-radius: 6px;
 }
+.theme-dropdown-btn:hover { background-color: var(--dark-soft); color: var(--accent); }
 
-.theme-dropdown-btn:hover {
-    background-color: var(--dark-soft);
-    color: var(--accent);
+/* Layout offset: sidebar persisten di layar lebar */
+@media (min-width: 1024px) {
+    body.has-app-sidebar { padding-left: 256px; }
 }
 
-
-/* ==========================================================================
-   11. OVERRIDES & UTILITIES TAMBAHAN
-   ========================================================================== */
-.text-muted { color: var(--text-muted) !important; }
-
-/* Penyesuaian tombol close (X) modal pada mode gelap */
-[data-theme="dark"] .btn-close {
-    filter: invert(1) grayscale(100%) brightness(200%) !important;
-}
-
-/* =========================================
-   FIX TABEL AGAR OTOMATIS MENGIKUTI TEMA
-   ========================================= */
-.table {
-    color: var(--text-main) !important;
-    background-color: transparent !important;
-}
-
-.table th, .table td {
-    background-color: transparent !important;
-    color: var(--text-main) !important;
-    border-color: var(--border-color) !important;
-}
-
-/* Efek hover baris tabel yang lembut pada mode gelap/terang */
-.table-hover tbody tr:hover {
-    background-color: var(--dark-soft) !important;
-    color: var(--text-main) !important;
-}
-
-/* ==========================================================================
-   12. RESPONSIVE — MOBILE & TABLET OPTIMIZATION
-   Semua kode di bawah ini HANYA menambah, tidak menimpa kode yang sudah ada.
-   ========================================================================== */
-
-/* --------------------------------------------------------------------------
-   12.1  LAYOUT UTAMA — konten tidak tertimpa sidebar offcanvas
-   -------------------------------------------------------------------------- */
-
-/* Padding konten di semua halaman agar tidak terlalu rapat di HP */
-@media (max-width: 767.98px) {
-    .container-fluid.px-4 {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   12.2  NAVBAR — lebih kompak di layar kecil
-   -------------------------------------------------------------------------- */
-@media (max-width: 575.98px) {
-    .navbar-custom {
-        padding: 0.6rem 1rem !important;
-    }
-    /* Sembunyikan subtitle panjang di HP kecil, judul utama tetap tampil */
-    .navbar-custom span[style*="letter-spacing"] {
-        display: none !important;
-    }
-    .navbar-custom .fw-bold.fs-6 {
-        font-size: 0.9rem !important;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   12.3  SIDEBAR — lebar offcanvas lebih proporsional di HP
-   -------------------------------------------------------------------------- */
-@media (max-width: 575.98px) {
-    .offcanvas-start {
-        width: 280px !important;
-    }
-    .enterprise-sidebar {
-        width: 280px !important;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   12.4  DASHBOARD — kartu metrik & chart
-   -------------------------------------------------------------------------- */
-
-/* Di HP kecil, 2 kartu metrik per baris */
-@media (max-width: 575.98px) {
-    .enterprise-card .fw-bold.fs-3 {
-        font-size: 1.5rem !important;
-    }
-    /* Chart tidak terlalu tinggi di HP */
-    #taskChart {
-        max-height: 200px !important;
-    }
-}
-
-/* Di tablet, pastikan tabel recent tasks bisa di-scroll horizontal */
-@media (max-width: 991.98px) {
-    .table-responsive {
-        -webkit-overflow-scrolling: touch;
-    }
-    /* Batasi lebar kolom task name agar tidak meluber */
-    .table-custom td:first-child {
-        max-width: 180px !important;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   12.5  TOOLBAR (Search + Tombol Aksi) — susun vertikal di HP
-   -------------------------------------------------------------------------- */
-@media (max-width: 575.98px) {
-    /* Toolbar pencarian & aksi jadi vertikal penuh */
-    .d-flex.align-items-center.flex-wrap.gap-3.mb-4 {
-        flex-direction: column !important;
-        align-items: stretch !important;
-    }
-    /* Tombol Impor/Hapus mengisi lebar penuh */
-    .d-flex.align-items-center.flex-wrap.gap-3.mb-4 > .d-flex.gap-2 {
-        flex-direction: column !important;
-    }
-    .d-flex.align-items-center.flex-wrap.gap-3.mb-4 > .d-flex.gap-2 .btn {
-        width: 100% !important;
-    }
-    /* Search bar full-width di HP */
-    .d-flex.align-items-center.flex-wrap.gap-3.mb-4 > div[style*="min-width"] {
-        min-width: 100% !important;
-        max-width: 100% !important;
-    }
-    /* Tombol sort/filter full-width di HP */
-    .d-flex.align-items-center.flex-wrap.gap-3.mb-4 > .btn.btn-dark.ms-auto {
-        margin-left: 0 !important;
-        width: 100% !important;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   12.6  ENTERPRISE TABS — scroll horizontal yang smooth di HP
-   -------------------------------------------------------------------------- */
-@media (max-width: 767.98px) {
-    .enterprise-tabs-wrapper {
-        margin-left: -1rem;
-        margin-right: -1rem;
-        padding-left: 1rem;
-        overflow: hidden;
-    }
-    .enterprise-tabs {
-        display: flex !important;
-        gap: 1.5rem !important;
-        padding-right: 1rem;
-        padding-bottom: 2px;
-    }
-    .enterprise-tabs .filter-tab {
-        font-size: 0.82rem !important;
-        white-space: nowrap !important;
-        flex-shrink: 0;
-        padding-bottom: 0.65rem !important;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   12.7  KARTU TASK — 1 kolom penuh di HP, 2 di tablet
-   -------------------------------------------------------------------------- */
-@media (max-width: 575.98px) {
-    /* Kartu task: 1 per baris di HP kecil */
-    .col-md-6.col-lg-4.mb-4.task-item {
-        width: 100% !important;
-        flex: 0 0 100% !important;
-        max-width: 100% !important;
-    }
-    /* Padding dalam kartu lebih compact */
-    .task-card .card-body {
-        padding: 0.85rem !important;
-    }
-    /* Font task ID sedikit lebih kecil */
-    .task-card .card-title {
-        font-size: 0.95rem !important;
-    }
-    /* Badge lebih compact */
-    .task-card .badge {
-        font-size: 0.68rem !important;
-    }
-}
-
-@media (min-width: 576px) and (max-width: 767.98px) {
-    /* Tablet kecil: tetap 2 kolom seperti col-md-6 */
-    .col-md-6.col-lg-4.mb-4.task-item {
-        width: 50% !important;
-        flex: 0 0 50% !important;
-        max-width: 50% !important;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   12.8  MODAL DETAIL TASK — kolom kiri/kanan susun vertikal di HP
-   -------------------------------------------------------------------------- */
-@media (max-width: 991.98px) {
-    /* Modal detail: gunakan hampir full width di tablet */
-    .modal-xl {
-        max-width: 95vw !important;
-    }
-    /* Col lg-5 dan lg-7 susun vertikal di bawah 992px */
-    .modal-body .col-lg-5,
-    .modal-body .col-lg-7 {
-        width: 100% !important;
-        flex: 0 0 100% !important;
-        max-width: 100% !important;
-    }
-    /* Panel kiri tidak perlu tinggi penuh saat vertikal */
-    .modal-body .col-lg-5 .detail-panel.h-100 {
-        height: auto !important;
-    }
-}
-
-@media (max-width: 575.98px) {
-    /* Modal lebih lebar di HP, hilangkan margin samping */
-    .modal-xl,
-    .modal-dialog {
-        margin: 0.5rem !important;
-        max-width: calc(100vw - 1rem) !important;
-    }
-    .modal-content {
-        border-radius: 12px !important;
-    }
-    /* Padding modal body lebih compact */
-    .modal-body {
-        padding: 1rem !important;
-    }
-    .modal-header {
-        padding: 1rem !important;
-    }
-    /* Kolom form dalam modal: 1 kolom penuh */
-    .modal-body .row.g-3 > [class*="col-sm-6"] {
-        width: 100% !important;
-        flex: 0 0 100% !important;
-        max-width: 100% !important;
-    }
-    /* Iframe media viewer tidak terlalu tinggi di HP */
-    .modal-body iframe {
-        height: 200px !important;
-        min-height: 200px !important;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   12.9  QR MANAGEMENT — grid dokumen lebih rapat di HP
-   -------------------------------------------------------------------------- */
-@media (max-width: 575.98px) {
-    /* Grid QR: 2 kolom di HP kecil (override col-6 sudah benar, ini untuk col-xl-2) */
-    .col-6.col-md-4.col-lg-3.col-xl-2 {
-        width: 50% !important;
-        flex: 0 0 50% !important;
-        max-width: 50% !important;
-    }
-    /* Thumbnail QR card lebih pendek di HP */
-    .card .d-flex.flex-column.justify-content-center[style*="height: 140px"] {
-        height: 110px !important;
-    }
-}
-
-/* Modal PDF viewer full-screen di HP */
-@media (max-width: 767.98px) {
-    #pdfViewerModal .modal-dialog {
-        margin: 0 !important;
-        max-width: 100vw !important;
-        height: 100vh !important;
-    }
-    #pdfViewerModal .modal-content {
-        height: 100vh !important;
-        border-radius: 0 !important;
-    }
-    #pdfViewerModal .modal-body {
-        height: calc(100vh - 60px) !important;
-    }
-    #pdfViewerModal iframe {
-        min-height: calc(100vh - 120px) !important;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   12.10  USER MANAGEMENT — tabel scroll horizontal di HP
-   -------------------------------------------------------------------------- */
-@media (max-width: 767.98px) {
-    /* Tabel user: sembunyikan kolom yang tidak terlalu penting di HP.
-       Dikecualikan dari .table-custom-clean (tabel Recent Activity di
-       Dashboard) karena tabel itu sengaja dibuat scroll horizontal agar
-       SEMUA kolom (termasuk Modified By & Status) tetap bisa diakses. */
-    .table:not(.table-custom-clean) th:nth-child(3),
-    .table:not(.table-custom-clean) td:nth-child(3),
-    .table:not(.table-custom-clean) th:nth-child(4),
-    .table:not(.table-custom-clean) td:nth-child(4) {
-        display: none !important;
-    }
-    /* Tabel selalu bisa di-scroll horizontal */
-    .card .table-responsive {
-        overflow-x: auto !important;
-    }
-    /* Select role lebih kecil di HP */
-    .table select.form-select-sm {
-        width: 120px !important;
-        font-size: 0.78rem !important;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   12.11  PROFILE PAGE — kartu profil full-width di HP
-   -------------------------------------------------------------------------- */
-@media (max-width: 767.98px) {
-    /* Foto profil sedikit lebih kecil di HP */
-    .rounded-circle[style*="width: 120px"] {
-        width: 90px !important;
-        height: 90px !important;
-        font-size: 2.5rem !important;
-    }
-    /* Judul profil lebih compact */
-    .card-body.p-5 {
-        padding: 1.5rem !important;
-    }
-    /* Tombol edit profil stack vertikal */
-    .card-body .btn + .btn {
-        margin-top: 0.5rem;
-        margin-left: 0 !important;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   12.12  FAQ & SUPPORT — padding lebih kecil di HP
-   -------------------------------------------------------------------------- */
-@media (max-width: 767.98px) {
-    /* Kartu FAQ tidak perlu padding besar */
-    .card.shadow-sm.border.p-4 {
-        padding: 1rem !important;
-    }
-    /* Form support textarea full width */
-    .card textarea {
-        font-size: 0.9rem !important;
-    }
-    /* Header support card stack vertikal */
-    .d-flex.align-items-center.gap-3.mb-4.pb-3 {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 0.75rem !important;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   12.13  SUPPORT TICKETS TABLE — compact di HP
-   -------------------------------------------------------------------------- */
-@media (max-width: 767.98px) {
-    /* Kolom waktu sembunyikan di HP.
-       Dikecualikan dari .table-custom-clean (tabel Recent Activity di
-       Dashboard) karena kolom terakhirnya (Status) harus tetap tampil
-       lewat scroll horizontal, bukan disembunyikan. */
-    .table:not(.table-custom-clean) th:last-child,
-    .table:not(.table-custom-clean) td:last-child {
-        display: none !important;
-    }
-    /* Pesan ticket: batasi tinggi agar tabel tidak terlalu panjang */
-    .table td[style*="white-space: pre-wrap"] {
-        max-width: 200px !important;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap !important;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   12.14  ACCORDION FAQ — teks lebih kecil di HP
-   -------------------------------------------------------------------------- */
-@media (max-width: 575.98px) {
-    .accordion-button {
-        font-size: 0.88rem !important;
-        padding: 0.85rem 0.75rem !important;
-    }
-    .accordion-body {
-        font-size: 0.83rem !important;
-        padding: 0.75rem !important;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   12.15  FILTER DRAWER (Offcanvas Filter) — full-width di HP kecil
-   -------------------------------------------------------------------------- */
-@media (max-width: 575.98px) {
-    #filterDrawer {
-        width: 100vw !important;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   12.16  TOMBOL SCROLL-TO-TOP — posisi lebih kecil di HP
-   -------------------------------------------------------------------------- */
-@media (max-width: 575.98px) {
-    #scrollToTopBtn {
-        width: 40px !important;
-        height: 40px !important;
-        margin: 0.75rem !important;
-        font-size: 0.9rem !important;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   12.17  LOGIN MODAL — full-width di HP
-   -------------------------------------------------------------------------- */
-@media (max-width: 575.98px) {
-    #loginModal .modal-dialog {
-        margin: 1rem !important;
-        max-width: calc(100vw - 2rem) !important;
-    }
-    #loginModal .modal-body {
-        padding: 1.25rem !important;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   12.18  DASHBOARD HEADER ENTERPRISE CARD — stack vertikal di tablet
-   -------------------------------------------------------------------------- */
-@media (max-width: 767.98px) {
-    /* Header overview card jadi 1 kolom */
-    .enterprise-card .row.align-items-center > [class*="col-lg"] {
-        width: 100% !important;
-        flex: 0 0 100% !important;
-        max-width: 100% !important;
-        text-align: left !important;
-    }
-    /* Tombol Database Synchronized pindah ke bawah teks */
-    .enterprise-card .text-lg-end {
-        text-align: left !important;
-        margin-top: 0.75rem !important;
-    }
-    /* Chart dan tabel recent activity susun vertikal */
-    .enterprise-card ~ .row > [class*="col-lg"] {
-        width: 100% !important;
-        flex: 0 0 100% !important;
-        max-width: 100% !important;
-    }
-}
-
-@media (max-width: 575.98px) {
-    /* Padding header dashboard lebih kecil */
-    .enterprise-card.p-4 {
-        padding: 1rem !important;
-    }
-    /* Judul dashboard lebih compact */
-    .enterprise-card h1.fs-4 {
-        font-size: 1.1rem !important;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   12.19  METRIC CARDS — 2 kolom di HP (override Bootstrap col-xl)
-   -------------------------------------------------------------------------- */
-@media (max-width: 575.98px) {
-    /* Paksa 2 kolom dari 5 metrik di HP kecil */
-    .col-xl.col-md-4.col-sm-6 {
-        width: 50% !important;
-        flex: 0 0 50% !important;
-        max-width: 50% !important;
-    }
-    /* Metrik ke-5 (Skipped) full-width */
-    .col-xl.col-md-6.col-sm-12 {
-        width: 100% !important;
-        flex: 0 0 100% !important;
-        max-width: 100% !important;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   12.20  USER MANAGEMENT — modal tambah akun full-width di HP
-   -------------------------------------------------------------------------- */
-@media (max-width: 575.98px) {
-    #addUserModal .modal-dialog {
-        margin: 0.75rem !important;
-        max-width: calc(100vw - 1.5rem) !important;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   12.21  GLOBAL TOUCH IMPROVEMENTS — UX lebih baik di layar sentuh
-   -------------------------------------------------------------------------- */
-
-/* Semua tombol dan link minimal 44px tingginya untuk kemudahan tap */
-@media (max-width: 767.98px) {
-    .btn {
-        min-height: 40px;
-    }
-    .btn-sm {
-        min-height: 36px;
-    }
-    /* Form control lebih besar untuk sentuhan */
-    .form-control,
-    .form-select {
-        min-height: 42px !important;
-        font-size: 1rem !important; /* Cegah iOS auto-zoom */
-    }
-    /* Pilih/select tidak terlalu kecil */
-    .form-select-sm {
-        min-height: 36px !important;
-        font-size: 0.9rem !important;
-    }
-    /* Accordion lebih mudah di-tap */
-    .accordion-button {
-        min-height: 52px;
-    }
-    /* Item dropdown sidebar lebih mudah di-tap */
-    .sidebar-item {
-        padding: 0.65rem 1rem !important;
-        min-height: 42px;
-        display: flex !important;
-        align-items: center;
-    }
-    /* Flash alert lebih compact */
-    .alert {
-        font-size: 0.88rem !important;
-        padding: 0.65rem 1rem !important;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   12.22  HEADING & FONT SIZE SCALING di HP
-   -------------------------------------------------------------------------- */
-@media (max-width: 575.98px) {
-    h3.fw-bold { font-size: 1.2rem !important; }
-    h4.fw-bold { font-size: 1.05rem !important; }
-    h5.fw-bold { font-size: 1rem !important; }
-    .small { font-size: 0.82rem !important; }
-}
-
-/* --------------------------------------------------------------------------
-   12.23  SAFE AREA — support iPhone notch & home indicator
-   -------------------------------------------------------------------------- */
-@supports (padding: max(0px)) {
-    body {
-        padding-left: max(0px, env(safe-area-inset-left));
-        padding-right: max(0px, env(safe-area-inset-right));
-    }
-    #scrollToTopBtn {
-        bottom: max(1rem, env(safe-area-inset-bottom)) !important;
-    }
-}
-
-
-/* Styling Custom Autocomplete Dropdown */
-.project-suggestion-item:hover {
-    background-color: var(--bs-tertiary-bg, rgba(100, 100, 100, 0.15)) !important;
-}
-
-.task-count-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: 7px;
-    padding: 0 6px;
-    min-width: 20px;
-    height: 18px;
-    font-size: 0.65rem;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-    /* Style Default (Light Mode) */
-    background-color: rgba(0, 0, 0, 0.06);
-    color: #475569;
-}
-
-/* Style Otomatis saat Dark Mode Aktif */
-[data-theme="dark"] .task-count-badge {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #cbd5e1;
-}
-
-/* --- TAMPILAN TAB SAAT TIDAK AKTIF (Default) --- */
-.filter-tab {
-    font-weight: 500;
-    color: var(--text-muted, #6c757d);
-    transition: all 0.2s ease;
-}
-
-/* --- TAMPILKAN LEBIH MENONJOL SAAT TAB TERPILIH (ACTIVE) --- */
-.filter-tab.active {
-    font-weight: 700 !important; /* Teks lebih tebal/bold */
-    color: var(--text-main, #111827) !important; /* Teks lebih pekat/kontras */
-}
-
-/* Penyesuaian Badge khusus di dalam Tab yang Sedang Aktif */
-.filter-tab.active .task-count-badge {
-    background-color: rgba(13, 110, 253, 0.12) !important; /* Sedikit sentuhan warna aksen/primer yang lembut */
-    color: #00132e !important; /* Angka ikut menonjol */
-    font-weight: 700;
-}
-
-/* Penyesuaian Khusus untuk Dark Mode pada Tab Aktif */
-[data-theme="dark"] .filter-tab.active {
-    color: #f8fafc !important; /* Putih terang agar sangat kontras */
-}
-
-[data-theme="dark"] .filter-tab.active .task-count-badge {
-    background-color: rgba(59, 130, 246, 0.2) !important;
-    color: #60a5fa !important; /* Biru terang yang elegan di dark mode */
-}
-
-.hover-bg:hover {
-    background-color: rgba(255, 255, 255, 0.04);
-}
-[data-theme="light"] .hover-bg:hover {
-    background-color: rgba(0, 0, 0, 0.03);
-}
-.cursor-pointer {
-    cursor: pointer;
-}
-
-/* ========================================= */
-/* PREMIUM MULTI-SELECT FILTER DRAWER STYLES */
-/* ========================================= */
-
+/* Offcanvas body untuk filter drawer */
 .offcanvas-body {
     display: flex;
     flex-direction: column;
     height: 100%;
 }
 
-.premium-filter-box {
-    background-color: var(--input-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    
-    /* MENGUBAH MAX-HEIGHT MENJADI TINGGI FIX (STABIL) */
-    height: 160px; /* Atur tinggi pas sesuai selera (misal 150px - 180px) */
-    min-height: 160px;
-    max-height: 160px;
-    
-    overflow-y: auto;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-    position: relative;
-}
-
-/* Kustomisasi Scrollbar untuk Box Filter */
-.premium-filter-box::-webkit-scrollbar { 
-    width: 5px; 
-}
-.premium-filter-box::-webkit-scrollbar-track { 
-    background: transparent; 
-}
-.premium-filter-box::-webkit-scrollbar-thumb { 
-    background-color: rgba(150, 150, 150, 0.25); 
-    border-radius: 10px; 
-}
-.premium-filter-box:hover::-webkit-scrollbar-thumb { 
-    background-color: rgba(150, 150, 150, 0.4); 
-}
-
-.premium-filter-option {
-    display: block;
-    margin: 0;
-    cursor: pointer;
-    border-bottom: 1px solid var(--border-color);
-    transition: background-color 0.15s ease;
-}
-
-.premium-filter-option:last-child { 
-    border-bottom: none; 
-}
-
-.premium-filter-option:hover { 
-    background-color: rgba(255, 255, 255, 0.03); 
-}
-
-[data-theme="light"] .premium-filter-option:hover { 
-    background-color: rgba(0, 0, 0, 0.02); 
-}
-
-.premium-filter-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 14px;
-}
-
-.premium-filter-text {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding-right: 12px;
-    transition: all 0.2s ease;
-}
-
-/* Sembunyikan Input Checkbox Bawaan */
-.premium-filter-checkbox { 
-    display: none; 
-}
-
-/* Animasi Ikon Centang (Default tersembunyi/mengecil) */
-.premium-check-icon {
-    opacity: 0;
-    transform: scale(0.5);
-    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    color: #F59E0B; 
-    flex-shrink: 0;
-}
-
-/* Efek Saat Baris Dipilih (Checked State) */
-.premium-filter-checkbox:checked + .premium-filter-content .premium-filter-text {
-    color: var(--text-main);
-    font-weight: 700;
-}
-.premium-filter-checkbox:checked + .premium-filter-content .premium-check-icon {
-    opacity: 1;
-    transform: scale(1);
-}
-
-/* 1. Menghilangkan ruang kosong (padding) atas bawaan class pt-1 pada container */
-.premium-filter-box {
-    padding-top: 0 !important;
-}
-
-/* 2. Styling "Pilih Semua" agar benar-benar menempel sebagai Header Statis */
-.select-all-option {
-    position: sticky !important;
-    top: 0 !important;
-    background-color: var(--bg-surface) !important;
-    z-index: 20 !important;
-    
-    /* Memaksa margin 0 */
-    margin: 0 !important;
-    
-    /* Membulatkan HANYA sudut atas (8px mengikuti kotak luar), sudut bawah siku/rata */
-    border-radius: 8px 8px 0 0 !important;
-    
-    /* Garis bawah tegas pembatas dengan daftar di bawahnya */
-    border-bottom: 1px solid var(--border-color) !important;
-}
-
-/* 3. Mencegah tembus pandang saat di-hover */
-.premium-filter-option.select-all-option:hover,
-.select-all-option:hover {
-    background-color: var(--bg-surface) !important; 
-}
-
-/* Efek hover untuk Light Mode */
-[data-theme="light"] .premium-filter-option.select-all-option:hover,
-[data-theme="light"] .select-all-option:hover {
-    background-color: #F1F5F9 !important; 
-}
-
-/* Efek hover untuk Dark Mode */
-[data-theme="dark"] .premium-filter-option.select-all-option:hover,
-[data-theme="dark"] .select-all-option:hover {
-    background-color: #132724 !important; 
-}
-
-/* Styling Search Input di dalam Filter */
-.search-filter-input {
-    border-radius: 8px;
-    border-color: var(--border-color);
-    color: var(--text-main);
-}
-.search-filter-input:focus {
-    box-shadow: none;
-    border-color: #F59E0B;
-}
-
-/* ========================================= */
-/* PENGATURAN SCROLL & LAYOUT SIDEBAR MOBILE */
-/* ========================================= */
-
-/* Pastikan kontainer utama sidebar menggunakan flexbox tinggi penuh */
-.sidebar-drawer, .offcanvas-sidebar, .sidebar-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    max-height: 100vh;
-    overflow: hidden; /* Mencegah seluruh sidebar ikut bergeser */
-}
-
-/* Bagian Tengah (Menu Operasional sampai Pengaturan Profil) - Bisa di-scroll */
-.sidebar-menu-scrollable {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch; /* Membuat scroll di HP/iOS menjadi sangat halus */
-    padding-bottom: 1rem;
-}
-
-/* Kustomisasi scrollbar tipis di sidebar */
-.sidebar-menu-scrollable::-webkit-scrollbar {
-    width: 4px;
-}
-.sidebar-menu-scrollable::-webkit-scrollbar-thumb {
-    background-color: rgba(150, 150, 150, 0.2);
-    border-radius: 4px;
-}
-
-/* Bagian Bawah (Dari pengaturan tema & bahasa) - Tetap/Fixed di bawah */
-.sidebar-sticky-footer {
-    flex: 0 0 auto;
-    background-color: var(--bg-surface, #1e1e1e);
-    border-top: 1px solid var(--border-color);
-    z-index: 10;
-}
-
-/* Pengaturan kontainer video Google Drive agar tombol kontrol bawah tidak terpotong di HP */
-.video-container-wrapper {
-    position: relative;
-    overflow: hidden;
-    background-color: #000;
-    aspect-ratio: 16 / 9;
-    width: 100%;
-}
-
-.video-container-wrapper iframe {
-    width: 100% !important;
-    height: 100% !important;
-    border: none;
-}
-
-/* Penyesuaian khusus tampilan Handphone agar tinggi kontainer cukup menampung kontrol bawah GDrive */
-@media (max-width: 768px) {
-    .video-container-wrapper {
-        height: 300px !important;
-        aspect-ratio: unset !important;
-    }
-}
-
-/* Styling Interaktif Dashboard */
-.metric-card {
-    text-decoration: none;
-    display: block;
-}
-.metric-card .enterprise-card {
-    transition: all 0.25s ease;
-}
-.metric-card:hover .enterprise-card {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-    border-color: var(--primary) !important;
-}
-.dashboard-filter-tab {
-    background: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-muted);
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 6px 12px;
-    border-radius: 9999px;
-    transition: all 0.2s;
-}
-.dashboard-filter-tab:hover, .dashboard-filter-tab.active {
-    background-color: var(--primary);
-    border-color: var(--primary);
-    color: #fff;
-}
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-.spinning {
-    animation: spin 0.8s linear infinite;
-}
-
-/* Styling Scroll untuk Tabel Aktivitas Terbaru agar Tidak Melar */
-.recent-activity-scroll {
-    max-height: 280px; /* Sesuaikan tinggi maksimal kotak tabel sesuai kebutuhan */
-    overflow-y: auto;
-    scrollbar-width: thin; /* Untuk browser Firefox */
-    scrollbar-color: var(--border-color) transparent;
-}
-
-/* Styling kustom scrollbar untuk Chrome/Edge/Safari */
-.recent-activity-scroll::-webkit-scrollbar {
-    width: 5px;
-}
-.recent-activity-scroll::-webkit-scrollbar-track {
-    background: transparent;
-}
-.recent-activity-scroll::-webkit-scrollbar-thumb {
-    background-color: var(--border-color);
-    border-radius: 4px;
-}
 
 /* ==========================================================================
-   DASHBOARD PAGE (dipindahkan dari dashboard.html)
+   11. KOMPONEN: TABEL & UTILITAS
    ========================================================================== */
-
-/* Gaya Dasar Halaman */
-html, body {
-    margin: 0;
-    padding: 0;
-    background-color: var(--bg-body, #f1f5f9);
-    font-family: 'Inter', sans-serif;
+.table {
+    color: var(--text-main) !important;
+    background-color: transparent !important;
+}
+.table th, .table td {
+    background-color: transparent !important;
+    color: var(--text-main) !important;
+    border-color: var(--border-color) !important;
+}
+.table-hover tbody tr:hover {
+    background-color: var(--dark-soft) !important;
+    color: var(--text-main) !important;
 }
 
-.dashboard-wrapper { display: flex; flex-direction: column; min-width: 0; gap: 16px; padding: 16px 24px; max-width: 1750px; margin: 0 auto; width: 100%; }
-.middle-row { height: auto; }
-.bento-panel.bottom-row { 
-    display: flex; 
-    flex-direction: column; 
-    min-width: 0; 
-}
-.middle-row .bento-panel { min-height: 350px; min-width: 0; }
-
-.bento-panel { background-color: var(--bg-surface, #ffffff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 8px; padding: 16px; box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.04); }
-
-.metric-command-card {
-    text-decoration: none; display: block; height: 84px; padding: 12px 16px; border-radius: 8px;
-    background-color: var(--bg-surface, #ffffff); border: 1px solid var(--border-color, #e2e8f0);
-    box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.04); transition: all 0.2s ease; position: relative; overflow: hidden; cursor: pointer;
-}
-.metric-command-card:hover { transform: translateY(-2px); border-color: var(--primary); }
-.metric-command-card.active { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15); }
-.metric-command-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3.5px; height: 100%; background: var(--indicator-color, #cbd5e1); }
-.ind-warning { --indicator-color: #D97706; } .ind-info { --indicator-color: #0284C7; } .ind-danger { --indicator-color: #DC2626; }
-.ind-success { --indicator-color: #059669; } .ind-secondary { --indicator-color: #64748B; } .ind-primary { --indicator-color: #10B981; }
-
-.proj-list-item {
-    display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; margin-bottom: 6px;
-    border-radius: 8px; background-color: var(--bg-body, #f8fafc); border: 1px solid var(--border-color);
-    cursor: pointer; transition: all 0.2s ease-in-out; color: var(--text-main);
-}
-.proj-list-item:hover { border-color: var(--primary); transform: translateX(2px); }
-.proj-list-item.active { background-color: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.4); color: var(--primary); }
-.proj-list-item .check-icon { opacity: 0; transform: scale(0.5); transition: all 0.2s ease; color: var(--primary); }
-.proj-list-item.active .check-icon { opacity: 1; transform: scale(1); }
-
-/* ==========================================================================
-   PERSISTENT OBSIDIAN SIDEBAR — LAYOUT OFFSET (lihat sidebar.html/navbar.html)
-   Sidebar sekarang fixed & selalu tampil di layar >=1024px (bukan offcanvas
-   lagi), jadi body butuh padding kiri supaya konten tidak ketiban sidebar.
-   Class .has-app-sidebar ditambahkan otomatis via JS di sidebar.html.
-   ========================================================================== */
-@media (min-width: 1024px) {
-    body.has-app-sidebar { padding-left: 256px; }
-}
-
-/* Kontainer Tabel & Scroll Fix (Dashboard) */
-.dashboard-wrapper .table-responsive {
+/* Tabel bersih kustom (dashboard recent activity) */
+.table-custom-clean {
     width: 100% !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    border-radius: 8px; 
-    border: 1px solid var(--border-color); 
-    background-color: var(--bg-surface, #ffffff);
-    max-height: 500px;
-}
-
-.dashboard-wrapper .table-responsive::-webkit-scrollbar { width: 5px; height: 5px; }
-.dashboard-wrapper .table-responsive::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 4px; }
-
-.table-custom-clean { 
-    width: 100% !important; 
-    min-width: 750px !important; 
+    min-width: 750px !important;
     margin-bottom: 0 !important;
 }
-
-.table-custom-clean th, 
-.table-custom-clean td { 
-    white-space: nowrap !important; /* Mencegah teks terlipat agar tabel melebar ke samping */
+.table-custom-clean th, .table-custom-clean td { white-space: nowrap !important; }
+.table-custom-clean th {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--bg-surface) !important;
+    padding: 10px 14px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
 }
-
-.table-custom-clean th { 
-    font-size: 0.65rem; 
-    text-transform: uppercase; 
-    letter-spacing: 0.05em; 
-    color: var(--text-muted); 
-    border-bottom: 1px solid var(--border-color); 
-    background-color: var(--bg-surface, #ffffff) !important; 
-    padding: 10px 14px; 
-    position: sticky; 
-    top: 0; 
-    z-index: 20; 
+.table-custom-clean td {
+    font-size: 0.78rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 10px 14px;
 }
-
-.table-custom-clean td { 
-    font-size: 0.78rem; 
-    border-bottom: 1px solid var(--border-color); 
-    color: var(--text-main); 
-    padding: 10px 14px; 
-}
-
 .table-custom-clean tr:last-child td { border-bottom: none; }
 
-/* Pengaturan khusus layar Laptop/Desktop */
+/* Layout fixed di desktop */
 @media (min-width: 992px) {
-    .table-custom-clean {
-        table-layout: fixed !important;
-        min-width: 100% !important;
-    }
-    .table-custom-clean th, .table-custom-clean td {
-        white-space: normal !important;
-    }
+    .table-custom-clean { table-layout: fixed !important; min-width: 100% !important; }
+    .table-custom-clean th, .table-custom-clean td { white-space: normal !important; }
     .table-custom-clean th:nth-child(1), .table-custom-clean td:nth-child(1) { width: 28%; }
     .table-custom-clean th:nth-child(2), .table-custom-clean td:nth-child(2) { width: 42%; }
     .table-custom-clean th:nth-child(3), .table-custom-clean td:nth-child(3) { width: 18%; }
     .table-custom-clean th:nth-child(4), .table-custom-clean td:nth-child(4) { width: 12%; text-align: right; }
 }
 
-/* ==========================================================================
-   FIX FINAL: MEMBUKA KUNCI SCROLL HORIZONTAL TABEL DASHBOARD DI HP
-   (Diletakkan di akhir file agar tetap menang atas aturan umum
-   .table-custom-clean di atas pada layar mobile.)
-   ========================================================================== */
-@media (max-width: 991.98px) {
-    /* Memastikan kontainer tabel di dashboard leluasa digeser secara horizontal */
-    .table-scroll_container, 
-    .table-scroll-container {
-        display: block !important;
-        width: 100% !important;
-        overflow-x: auto !important;
-        -webkit-overflow-scrolling: touch !important;
-    }
+/* Scroll container tabel */
+.recent-activity-scroll {
+    max-height: 280px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) transparent;
+}
+.recent-activity-scroll::-webkit-scrollbar       { width: 5px; }
+.recent-activity-scroll::-webkit-scrollbar-track  { background: transparent; }
+.recent-activity-scroll::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 4px; }
 
-    /* Memaksa tabel memiliki lebar minimum yang lebih panjang dari layar HP 
-       sehingga kolom Status terdorong ke kanan dan bisa di-scroll sampai ujung */
-    .table-scroll-container .table-custom-clean,
-    .table-custom-clean {
-        min-width: 850px !important;
-        width: max-content !important;
-        table-layout: auto !important;
-    }
+
+/* ==========================================================================
+   12. HALAMAN: DASHBOARD
+   ========================================================================== */
+.dashboard-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 16px;
+    padding: 16px 24px;
+    max-width: 1750px;
+    margin: 0 auto;
+    width: 100%;
+}
+.middle-row { height: auto; }
+.bento-panel.bottom-row { display: flex; flex-direction: column; min-width: 0; }
+.middle-row .bento-panel { min-height: 350px; min-width: 0; }
+
+.bento-panel {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
 }
 
-
-/* ==========================================================================
-   DASHBOARD.HTML — dipindahkan dari <style> inline dashboard.html
-   ========================================================================== */
-body { background-color: #F8FAFC !important; }
-
-/* Diubah: Tanpa outline/ring hijau, diganti efek elevasi lembut & background tipis */
-.metric-command-card.active { 
-    border-color: var(--border-color) !important; 
-    background-color: var(--dark-soft) !important; 
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06) !important; 
+/* Metric Command Cards */
+.metric-command-card {
+    text-decoration: none;
+    display: block;
+    height: 84px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+.metric-command-card:hover { transform: translateY(-2px); border-color: var(--primary); }
+.metric-command-card.active {
+    border-color: var(--border-color) !important;
+    background-color: var(--dark-soft) !important;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06) !important;
     transform: translateY(-2px);
 }
+.metric-command-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3.5px; height: 100%;
+    background: var(--indicator-color, #cbd5e1);
+}
 
-.dashboard-filter-tab.active { background-color: #10B981 !important; color: white !important; font-weight: 600 !important; }
-.proj-list-item.active { background-color: rgba(16, 185, 129, 0.1) !important; border-color: rgba(16, 185, 129, 0.3) !important; color: var(--text-main) !important; }
+/* Warna indikator kartu */
+.ind-warning   { --indicator-color: #D97706; }
+.ind-info      { --indicator-color: #0284C7; }
+.ind-danger    { --indicator-color: #DC2626; }
+.ind-success   { --indicator-color: #059669; }
+.ind-secondary { --indicator-color: #64748B; }
+.ind-primary   { --indicator-color: #10B981; }
+
+/* Project List Items */
+.proj-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    background-color: var(--bg-body);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    color: var(--text-main);
+}
+.proj-list-item:hover { border-color: var(--primary); transform: translateX(2px); }
+.proj-list-item.active {
+    background-color: rgba(16, 185, 129, 0.1) !important;
+    border-color: rgba(16, 185, 129, 0.3) !important;
+    color: var(--text-main) !important;
+}
+.proj-list-item .check-icon { opacity: 0; transform: scale(0.5); transition: all 0.2s ease; color: var(--primary); }
 .proj-list-item.active .check-icon { opacity: 1 !important; transform: scale(1) !important; color: #10B981 !important; }
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-.spinning { animation: spin 0.8s linear infinite; }
+
+/* Tabel Dashboard */
+.dashboard-wrapper .table-responsive {
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-surface);
+    max-height: 500px;
+}
+.dashboard-wrapper .table-responsive::-webkit-scrollbar       { width: 5px; height: 5px; }
+.dashboard-wrapper .table-responsive::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 4px; }
+
+/* Chart */
+#taskChart { max-height: 260px; }
+
 
 /* ==========================================================================
-   DARK MODE — DASHBOARD (Obsidian Pine, selaras dgn variabel :root di atas)
+   13. HALAMAN: TASK MANAGEMENT (QC Console)
    ========================================================================== */
 
-/* --- Lapisan permukaan (surface tiers) --- */
-[data-theme="dark"] body {
-    background-color: #0A1615 !important;
-    color: #F1F5F9 !important;
-}
-[data-theme="dark"] .bg-background {
-    background-color: #0A1615 !important;
-}
-[data-theme="dark"] .bg-white,
-[data-theme="dark"] .bg-surface-container-low {
-    background-color: #0F201E !important;
-    border-color: #1C3532 !important;
-}
-[data-theme="dark"] .bg-surface-container {
-    background-color: #132724 !important;
-    border-color: #1C3532 !important;
-}
-[data-theme="dark"] .bg-surface-container-high {
-    background-color: #16302C !important;
-    border-color: #23423E !important;
-}
-[data-theme="dark"] .bg-surface-container-highest {
-    background-color: #1C3D37 !important;
-    border-color: #23423E !important;
-}
-[data-theme="dark"] .bg-slate-50 {
-    background-color: #10201E !important;
-}
-[data-theme="dark"] thead.bg-surface-container-low {
-    background-color: #0D1C1A !important;
-}
-
-/* Kartu & panel: bayangan lembut khas dark-UI, bukan shadow terang bawaan light mode */
-[data-theme="dark"] .shadow-sm,
-[data-theme="dark"] .shadow-lg {
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.02) !important;
-}
-
-/* --- Border --- */
-[data-theme="dark"] .border-border-subtle,
-[data-theme="dark"] .border-subtle,
-[data-theme="dark"] .border-slate-100,
-[data-theme="dark"] .border-slate-300 {
-    border-color: #1C3532 !important;
-}
-
-/* --- Teks --- */
-[data-theme="dark"] .text-on-surface {
-    color: #F8FAFC !important;
-}
-[data-theme="dark"] .text-text-secondary,
-[data-theme="dark"] .text-text-muted,
-[data-theme="dark"] .text-slate-400 {
-    color: #8FA6A3 !important;
-}
-[data-theme="dark"] .text-slate-700 {
-    color: #CBD5E1 !important;
-}
-[data-theme="dark"] .table th {
-    color: #8FA6A3 !important;
-}
-[data-theme="dark"] .table td {
-    color: #F1F5F9 !important;
-}
-
-/* --- Input & form --- */
-[data-theme="dark"] input.bg-surface-container-low,
-[data-theme="dark"] input#projectSearchField,
-[data-theme="dark"] input#recentActivitySearch {
-    background-color: #10201E !important;
-    color: #F8FAFC !important;
-    border-color: #23423E !important;
-}
-[data-theme="dark"] input::placeholder {
-    color: #648A86 !important;
-    opacity: 1 !important;
-}
-
-/* --- Badge status: bg pastel terang diganti tint gelap tipis + teks cerah,
-   supaya nyatu dgn kartu gelap alih-alih jadi tempelan kotak putih --- */
-[data-theme="dark"] .bg-\[\#ECFDF5\],
-[data-theme="dark"] .bg-emerald-500\/10,
-[data-theme="dark"] .proj-list-item.active {
-    background-color: rgba(16, 185, 129, 0.12) !important;
-}
-[data-theme="dark"] .text-\[\#059669\],
-[data-theme="dark"] .text-emerald-600 {
-    color: #6EE7B7 !important;
-}
-[data-theme="dark"] .border-\[\#A7F3D0\],
-[data-theme="dark"] .border-emerald-300 {
-    border-color: rgba(16, 185, 129, 0.35) !important;
-}
-
-[data-theme="dark"] .bg-\[\#F0FDFA\] {
-    background-color: rgba(45, 212, 191, 0.12) !important;
-}
-[data-theme="dark"] .text-\[\#0F766E\],
-[data-theme="dark"] .text-teal-600,
-[data-theme="dark"] .text-primary-container {
-    color: #5EEAD4 !important;
-}
-[data-theme="dark"] .border-\[\#99F6E4\],
-[data-theme="dark"] .border-teal-400,
-[data-theme="dark"] .border-primary-container {
-    border-color: rgba(45, 212, 191, 0.35) !important;
-}
-[data-theme="dark"] .bg-primary-container {
-    background-color: #0F766E !important;
-}
-
-[data-theme="dark"] .bg-\[\#FFFBEB\],
-[data-theme="dark"] .bg-amber-50 {
-    background-color: rgba(245, 158, 11, 0.12) !important;
-}
-[data-theme="dark"] .text-\[\#B45309\],
-[data-theme="dark"] .text-amber-600,
-[data-theme="dark"] .text-amber-700 {
-    color: #FBBF24 !important;
-}
-[data-theme="dark"] .border-\[\#FDE68A\],
-[data-theme="dark"] .border-amber-200,
-[data-theme="dark"] .border-amber-300 {
-    border-color: rgba(245, 158, 11, 0.35) !important;
-}
-
-[data-theme="dark"] .bg-rose-50 {
-    background-color: rgba(244, 63, 94, 0.12) !important;
-}
-[data-theme="dark"] .text-rose-700 {
-    color: #FB7185 !important;
-}
-[data-theme="dark"] .border-rose-200,
-[data-theme="dark"] .border-rose-300 {
-    border-color: rgba(244, 63, 94, 0.35) !important;
-}
-
-[data-theme="dark"] .bg-sky-50 {
-    background-color: rgba(14, 165, 233, 0.12) !important;
-}
-[data-theme="dark"] .text-sky-700 {
-    color: #38BDF8 !important;
-}
-[data-theme="dark"] .border-sky-200,
-[data-theme="dark"] .border-sky-300 {
-    border-color: rgba(56, 189, 248, 0.35) !important;
-}
-
-/* Badge netral (mis. "Skipped") */
-[data-theme="dark"] .bg-slate-100 {
-    background-color: rgba(148, 163, 184, 0.12) !important;
-}
-
-/* --- Tombol filter/tab aktif tetap solid (kontras cukup di kedua tema) --- */
-[data-theme="dark"] .dashboard-filter-tab.active {
-    box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.4) !important;
-}
-
-/* ==========================================================================
-   13. HALAMAN MANAJEMEN TASK (index.html) — QA CONSOLE / TEAL RESTYLE
-   Semua rule di section ini di-scope ke wrapper ".qc-console" supaya HANYA
-   memengaruhi tampilan halaman Manajemen Task, tanpa mengubah var(--accent)
-   global / tampilan halaman lain (Dashboard, Manajemen QR, dst). Palet
-   warna mengikuti DESIGN.md (Obsidian Pine Control — Teal #0F766E) yang
-   sudah dipakai di sidebar & navbar.
-   ========================================================================== */
-/* ==========================================================================
-   13. HALAMAN MANAJEMEN TASK (index.html) — QA CONSOLE / TEAL RESTYLE
-   ========================================================================== */
+/* Variabel Warna QC Console */
 .qc-console {
-    --tm-primary: #0F766E;
+    --tm-primary:       #0F766E;
     --tm-primary-hover: #0D9488;
-    --tm-primary-soft: rgba(15, 118, 110, 0.08);
-    --tm-primary-ring: rgba(15, 118, 110, 0.35);
+    --tm-primary-soft:  rgba(15, 118, 110, 0.08);
+    --tm-primary-ring:  rgba(15, 118, 110, 0.35);
     --tm-success: #059669; --tm-success-bg: #ECFDF5; --tm-success-border: #A7F3D0;
     --tm-warning: #D97706; --tm-warning-bg: #FFFBEB; --tm-warning-border: #FDE68A;
     --tm-danger:  #DC2626; --tm-danger-bg:  #FEF2F2; --tm-danger-border:  #FECACA;
@@ -1618,7 +932,7 @@ body { background-color: #F8FAFC !important; }
     --tm-info:    #38BDF8; --tm-info-bg:    rgba(14, 165, 233, 0.14); --tm-info-border:    rgba(56, 189, 248, 0.35);
 }
 
-/* --- Header halaman: judul, badge Live Sync & subjudul --- */
+/* Header Task Management */
 .qc-console .tm-title-row { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
 .qc-console .tm-title {
     font-family: var(--font-headline);
@@ -1643,10 +957,6 @@ body { background-color: #F8FAFC !important; }
     background-color: var(--tm-info);
     animation: tm-pulse 1.6s ease-in-out infinite;
 }
-@keyframes tm-pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.45; transform: scale(0.75); }
-}
 .qc-console .tm-subtitle {
     color: var(--text-muted);
     font-size: 0.85rem;
@@ -1654,7 +964,7 @@ body { background-color: #F8FAFC !important; }
     max-width: 640px;
 }
 
-/* --- Toolbar: search & tombol aksi --- */
+/* Toolbar Task Management */
 .qc-console .tm-toolbar-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; }
 .qc-console .tm-search-wrap { min-width: 220px; flex: 1 1 240px; max-width: 340px; }
 .qc-console .search-pill {
@@ -1668,6 +978,7 @@ body { background-color: #F8FAFC !important; }
     box-shadow: 0 0 0 3px var(--tm-primary-soft) !important;
 }
 
+/* Tombol QC Console */
 .qc-console .btn-tm-primary {
     background-color: var(--tm-primary) !important;
     border-color: var(--tm-primary) !important;
@@ -1678,7 +989,6 @@ body { background-color: #F8FAFC !important; }
 .qc-console .btn-tm-primary:hover {
     background-color: var(--tm-primary-hover) !important;
     border-color: var(--tm-primary-hover) !important;
-    color: #fff !important;
 }
 .qc-console .btn-tm-outline {
     background-color: var(--bg-surface) !important;
@@ -1690,7 +1000,6 @@ body { background-color: #F8FAFC !important; }
 .qc-console .btn-tm-outline:hover {
     background-color: var(--tm-primary-soft) !important;
     border-color: var(--tm-primary-ring) !important;
-    color: var(--tm-primary) !important;
 }
 .qc-console .btn-tm-danger-outline {
     background-color: var(--bg-surface) !important;
@@ -1701,17 +1010,17 @@ body { background-color: #F8FAFC !important; }
 .qc-console .btn-tm-danger-outline:hover {
     background-color: var(--tm-danger-bg) !important;
     border-color: var(--tm-danger-border) !important;
-    color: var(--tm-danger) !important;
 }
 .qc-console #activeFilterBadge { background-color: var(--tm-primary) !important; }
 
-/* --- Tabs status (Semua Data / Need Sample / dst.) --- */
+/* Tabs Status QC Console */
 .qc-console .enterprise-tabs-wrapper {
     border-bottom: none;
     background-color: var(--dark-soft);
     border: 1px solid var(--border-color);
     border-radius: 10px;
     padding: 4px;
+    overflow-x: auto;
 }
 .qc-console .enterprise-tabs { gap: 4px !important; }
 .qc-console .enterprise-tabs .filter-tab {
@@ -1719,85 +1028,60 @@ body { background-color: #F8FAFC !important; }
     padding: 0.45rem 0.75rem !important;
     border-radius: 7px;
     border-bottom: 2px solid transparent !important;
-    color: var(--text-muted) !important; /* Warna teks abu-abu saat belum diklik */
+    color: var(--text-muted) !important;
     font-weight: 500;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
-.qc-console .enterprise-tabs .filter-tab:hover { 
-    color: var(--text-main) !important; 
-    background-color: var(--bg-surface); 
+.qc-console .enterprise-tabs .filter-tab:hover {
+    color: var(--text-main) !important;
+    background-color: var(--bg-surface);
 }
-
-/* Status Aktif Umum (Teks Hitam di Light Mode, Putih di Dark Mode) */
 .qc-console .enterprise-tabs .filter-tab.active {
-    color: #000000 !important; 
+    color: #000000 !important;
     font-weight: 700 !important;
     background-color: var(--bg-surface) !important;
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
 }
+[data-theme="dark"] .qc-console .enterprise-tabs .filter-tab.active { color: #FFFFFF !important; }
 
-[data-theme="dark"] .qc-console .enterprise-tabs .filter-tab.active {
-    color: #FFFFFF !important;
-}
-
-/* ==========================================================================
-   GARIS BAWAH (UNDERLINE) TAB AKTIF SESUAI STATUS
-   ========================================================================== */
-.qc-console .enterprise-tabs .filter-tab.active[data-status="All"] { border-bottom-color: var(--tm-primary) !important; }
-.qc-console .enterprise-tabs .filter-tab.active[data-status="Need Sample"] { border-bottom-color: var(--tm-warning) !important; }
-.qc-console .enterprise-tabs .filter-tab.active[data-status="Sample Done"] { border-bottom-color: var(--tm-info) !important; }
-.qc-console .enterprise-tabs .filter-tab.active[data-status="Revision"] { border-bottom-color: var(--tm-danger) !important; }
-.qc-console .enterprise-tabs .filter-tab.active[data-status="Ready"] { border-bottom-color: var(--tm-success) !important; }
-.qc-console .enterprise-tabs .filter-tab.active[data-status="Skipped"] { border-bottom-color: #64748B !important; }
+/* Garis bawah tab aktif sesuai status */
+.qc-console .enterprise-tabs .filter-tab.active[data-status="All"]          { border-bottom-color: var(--tm-primary) !important; }
+.qc-console .enterprise-tabs .filter-tab.active[data-status="Need Sample"]  { border-bottom-color: var(--tm-warning) !important; }
+.qc-console .enterprise-tabs .filter-tab.active[data-status="Sample Done"]  { border-bottom-color: var(--tm-info) !important; }
+.qc-console .enterprise-tabs .filter-tab.active[data-status="Revision"]     { border-bottom-color: var(--tm-danger) !important; }
+.qc-console .enterprise-tabs .filter-tab.active[data-status="Ready"]        { border-bottom-color: var(--tm-success) !important; }
+.qc-console .enterprise-tabs .filter-tab.active[data-status="Skipped"]      { border-bottom-color: #64748B !important; }
 .qc-console .enterprise-tabs .filter-tab.active[data-status="Sent to Team"] { border-bottom-color: #7C3AED !important; }
 
-/* Garis bawah khusus Dark Mode */
-[data-theme="dark"] .qc-console .enterprise-tabs .filter-tab.active[data-status="Need Sample"] { border-bottom-color: #FBBF24 !important; }
-[data-theme="dark"] .qc-console .enterprise-tabs .filter-tab.active[data-status="Sample Done"] { border-bottom-color: #38BDF8 !important; }
-[data-theme="dark"] .qc-console .enterprise-tabs .filter-tab.active[data-status="Revision"] { border-bottom-color: #FCA5A5 !important; }
-[data-theme="dark"] .qc-console .enterprise-tabs .filter-tab.active[data-status="Ready"] { border-bottom-color: #6EE7B7 !important; }
-[data-theme="dark"] .qc-console .enterprise-tabs .filter-tab.active[data-status="Skipped"] { border-bottom-color: #94A3B8 !important; }
+[data-theme="dark"] .qc-console .enterprise-tabs .filter-tab.active[data-status="Need Sample"]  { border-bottom-color: #FBBF24 !important; }
+[data-theme="dark"] .qc-console .enterprise-tabs .filter-tab.active[data-status="Sample Done"]  { border-bottom-color: #38BDF8 !important; }
+[data-theme="dark"] .qc-console .enterprise-tabs .filter-tab.active[data-status="Revision"]     { border-bottom-color: #FCA5A5 !important; }
+[data-theme="dark"] .qc-console .enterprise-tabs .filter-tab.active[data-status="Ready"]        { border-bottom-color: #6EE7B7 !important; }
+[data-theme="dark"] .qc-console .enterprise-tabs .filter-tab.active[data-status="Skipped"]      { border-bottom-color: #94A3B8 !important; }
 [data-theme="dark"] .qc-console .enterprise-tabs .filter-tab.active[data-status="Sent to Team"] { border-bottom-color: #A78BFA !important; }
 
-/* ==========================================================================
-   WARNA ANGKA (BADGE) SAAT BELUM DIKLIK (DEFAULT / PUDAR)
-   ========================================================================== */
-.qc-console .task-count-badge {
-    border-radius: 9999px;
-    background-color: var(--tm-neutral-bg);
-    color: var(--tm-neutral);
-    font-family: var(--font-body);
-}
-.qc-console .filter-tab[data-status="All"] .task-count-badge { background-color: var(--tm-primary-soft); color: var(--tm-primary); border: 1px solid var(--tm-primary-ring); }
-.qc-console .filter-tab[data-status="Need Sample"] .task-count-badge { background-color: var(--tm-warning-bg); color: var(--tm-warning); border: 1px solid var(--tm-warning-border); }
-.qc-console .filter-tab[data-status="Sample Done"] .task-count-badge { background-color: var(--tm-info-bg); color: var(--tm-info); border: 1px solid var(--tm-info-border); }
-.qc-console .filter-tab[data-status="Revision"] .task-count-badge { background-color: var(--tm-danger-bg); color: var(--tm-danger); border: 1px solid var(--tm-danger-border); }
-.qc-console .filter-tab[data-status="Ready"] .task-count-badge { background-color: var(--tm-success-bg); color: var(--tm-success); border: 1px solid var(--tm-success-border); }
-.qc-console .filter-tab[data-status="Skipped"] .task-count-badge { background-color: var(--dark-soft); color: var(--text-muted); border: 1px solid var(--border-color); }
-.qc-console .filter-tab[data-status="Sent to Team"] .task-count-badge { 
-    background-color: rgba(139, 92, 246, 0.12) !important; 
-    color: #7C3AED !important; 
-    border: 1px solid rgba(139, 92, 246, 0.3) !important; 
-}
+/* Badge count default (non-aktif) */
+.qc-console .task-count-badge { border-radius: 9999px; background-color: var(--tm-neutral-bg); color: var(--tm-neutral); font-family: var(--font-body); }
+.qc-console .filter-tab[data-status="All"]          .task-count-badge { background-color: var(--tm-primary-soft); color: var(--tm-primary); border: 1px solid var(--tm-primary-ring); }
+.qc-console .filter-tab[data-status="Need Sample"]  .task-count-badge { background-color: var(--tm-warning-bg); color: var(--tm-warning); border: 1px solid var(--tm-warning-border); }
+.qc-console .filter-tab[data-status="Sample Done"]  .task-count-badge { background-color: var(--tm-info-bg); color: var(--tm-info); border: 1px solid var(--tm-info-border); }
+.qc-console .filter-tab[data-status="Revision"]     .task-count-badge { background-color: var(--tm-danger-bg); color: var(--tm-danger); border: 1px solid var(--tm-danger-border); }
+.qc-console .filter-tab[data-status="Ready"]        .task-count-badge { background-color: var(--tm-success-bg); color: var(--tm-success); border: 1px solid var(--tm-success-border); }
+.qc-console .filter-tab[data-status="Skipped"]      .task-count-badge { background-color: var(--dark-soft); color: var(--text-muted); border: 1px solid var(--border-color); }
+.qc-console .filter-tab[data-status="Sent to Team"] .task-count-badge { background-color: rgba(139, 92, 246, 0.12) !important; color: #7C3AED !important; border: 1px solid rgba(139, 92, 246, 0.3) !important; }
 
-/* ==========================================================================
-   WARNA ANGKA (BADGE) SAAT DIKLIK (ACTIVE / SOLID PEKAT TEKS PUTIH)
-   ========================================================================== */
-.qc-console .filter-tab.active[data-status="All"] .task-count-badge { background-color: var(--tm-primary) !important; color: #ffffff !important; border-color: var(--tm-primary) !important; }
-.qc-console .filter-tab.active[data-status="Need Sample"] .task-count-badge { background-color: var(--tm-warning) !important; color: #ffffff !important; border-color: var(--tm-warning) !important; }
-.qc-console .filter-tab.active[data-status="Sample Done"] .task-count-badge { background-color: var(--tm-info) !important; color: #ffffff !important; border-color: var(--tm-info) !important; }
-.qc-console .filter-tab.active[data-status="Revision"] .task-count-badge { background-color: var(--tm-danger) !important; color: #ffffff !important; border-color: var(--tm-danger) !important; }
-.qc-console .filter-tab.active[data-status="Ready"] .task-count-badge { background-color: var(--tm-success) !important; color: #ffffff !important; border-color: var(--tm-success) !important; }
-.qc-console .filter-tab.active[data-status="Skipped"] .task-count-badge { background-color: #64748B !important; color: #ffffff !important; border-color: #64748B !important; }
-.qc-console .filter-tab.active[data-status="Sent to Team"] .task-count-badge { 
-    background-color: #7C3AED !important; 
-    color: #ffffff !important; 
-    border-color: #7C3AED !important; 
-}
-
-/* Penyesuaian khusus Dark Mode pada badge aktif */
+/* Badge count saat tab aktif */
+.qc-console .filter-tab.active[data-status="All"]          .task-count-badge { background-color: var(--tm-primary) !important; color: #ffffff !important; border-color: var(--tm-primary) !important; }
+.qc-console .filter-tab.active[data-status="Need Sample"]  .task-count-badge { background-color: var(--tm-warning) !important; color: #ffffff !important; border-color: var(--tm-warning) !important; }
+.qc-console .filter-tab.active[data-status="Sample Done"]  .task-count-badge { background-color: var(--tm-info) !important; color: #ffffff !important; border-color: var(--tm-info) !important; }
+.qc-console .filter-tab.active[data-status="Revision"]     .task-count-badge { background-color: var(--tm-danger) !important; color: #ffffff !important; border-color: var(--tm-danger) !important; }
+.qc-console .filter-tab.active[data-status="Ready"]        .task-count-badge { background-color: var(--tm-success) !important; color: #ffffff !important; border-color: var(--tm-success) !important; }
+.qc-console .filter-tab.active[data-status="Skipped"]      .task-count-badge { background-color: #64748B !important; color: #ffffff !important; border-color: #64748B !important; }
+.qc-console .filter-tab.active[data-status="Sent to Team"] .task-count-badge { background-color: #7C3AED !important; color: #ffffff !important; border-color: #7C3AED !important; }
 [data-theme="dark"] .qc-console .filter-tab.active .task-count-badge { color: #0A1615 !important; font-weight: 800 !important; }
 
-/* --- Kartu Tugas --- */
+/* Kartu Tugas */
 .qc-console .task-card { border-radius: 10px !important; }
 .qc-console .task-card:hover { border-color: var(--tm-primary-ring) !important; box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.08) !important; }
 .qc-console .tm-id-chip {
@@ -1819,27 +1103,23 @@ body { background-color: #F8FAFC !important; }
     border: 1px solid transparent;
 }
 .qc-console .badge.tm-status-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background-color: currentColor; flex-shrink: 0; }
-.qc-console .badge.tm-status-badge.bg-success { background-color: var(--tm-success-bg) !important; color: var(--tm-success) !important; border-color: var(--tm-success-border) !important; }
-.qc-console .badge.tm-status-badge.bg-info { background-color: var(--tm-info-bg) !important; color: var(--tm-info) !important; border-color: var(--tm-info-border) !important; }
-.qc-console .badge.tm-status-badge.bg-danger { background-color: var(--tm-danger-bg) !important; color: var(--tm-danger) !important; border-color: var(--tm-danger-border) !important; }
+.qc-console .badge.tm-status-badge.bg-success  { background-color: var(--tm-success-bg) !important; color: var(--tm-success) !important; border-color: var(--tm-success-border) !important; }
+.qc-console .badge.tm-status-badge.bg-info     { background-color: var(--tm-info-bg) !important; color: var(--tm-info) !important; border-color: var(--tm-info-border) !important; }
+.qc-console .badge.tm-status-badge.bg-danger   { background-color: var(--tm-danger-bg) !important; color: var(--tm-danger) !important; border-color: var(--tm-danger-border) !important; }
 .qc-console .badge.tm-status-badge.bg-secondary { background-color: var(--tm-neutral-bg) !important; color: var(--tm-neutral) !important; border-color: var(--border-color) !important; }
 .qc-console .badge.tm-status-badge.badge-accent { background-color: var(--tm-warning-bg) !important; color: var(--tm-warning) !important; border-color: var(--tm-warning-border) !important; }
 
 .qc-console .tm-tag {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.68rem;
-    font-weight: 500;
+    font-size: 0.68rem; font-weight: 500;
     background-color: var(--dark-soft) !important;
     color: var(--text-muted) !important;
     border: none !important;
     border-radius: 5px;
     padding: 3px 8px;
     max-width: 170px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: inline-block;
-    vertical-align: middle;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    display: inline-block; vertical-align: middle;
 }
 .qc-console .tm-desc-clamp {
     display: -webkit-box;
@@ -1851,10 +1131,8 @@ body { background-color: #F8FAFC !important; }
 }
 .qc-console .tm-chip {
     border-radius: 6px;
-    font-size: 0.62rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
+    font-size: 0.62rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.03em;
     padding: 0.25em 0.5em;
     border: 1px solid transparent;
     white-space: nowrap;
@@ -1863,41 +1141,42 @@ body { background-color: #F8FAFC !important; }
     background: transparent !important;
     border: none !important;
     color: var(--tm-primary) !important;
-    font-weight: 600;
-    font-size: 0.85rem;
+    font-weight: 600; font-size: 0.85rem;
     padding: 0 !important;
     display: inline-flex; align-items: center; gap: 4px;
-    width: auto !important;
-    flex-shrink: 0;
+    width: auto !important; flex-shrink: 0;
 }
 .qc-console .tm-detail-link:hover { color: var(--tm-primary-hover) !important; }
+
 .qc-console .task-card .card-footer-row {
     display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
-    margin-top: auto; padding-top: 0.65rem; border-top: 1px solid var(--border-color);
+    margin-top: auto; padding-top: 0.65rem;
+    border-top: 1px solid var(--border-color);
 }
 
-/* --- Filter drawer: aksen teal (menggantikan amber default) --- */
-.qc-console .premium-check-icon { color: var(--tm-primary); }
+/* Filter drawer — aksen teal */
+.qc-console .premium-check-icon       { color: var(--tm-primary); }
 .qc-console .search-filter-input:focus { border-color: var(--tm-primary) !important; box-shadow: 0 0 0 3px var(--tm-primary-soft) !important; }
-.qc-console .form-select:focus, .qc-console .form-control:focus {
+.qc-console .form-select:focus,
+.qc-console .form-control:focus {
     border-color: var(--tm-primary) !important;
     box-shadow: 0 0 0 3px var(--tm-primary-soft) !important;
 }
 
-/* ==========================================================================
-   QR MANAGEMENT REDESIGN (Obsidian Emerald / Jakarta Precision)
-   ========================================================================== */
 
-/* Typography & Layout Scoping */
+/* ==========================================================================
+   14. HALAMAN: QR MANAGEMENT
+   ========================================================================== */
 .qr-app-wrapper {
     font-family: 'Plus Jakarta Sans', 'Inter', var(--font-body);
 }
 
-.tracking-tight { letter-spacing: -0.02em; }
-.tracking-wider { letter-spacing: 0.05em; }
-.leading-tight { line-height: 1.25; }
+/* Utilitas tipografi QR */
+.tracking-tight  { letter-spacing: -0.02em; }
+.tracking-wider  { letter-spacing: 0.05em; }
+.leading-tight   { line-height: 1.25; }
 
-/* Enhanced Button Styles to match code_3.html */
+/* Tombol Brand QR */
 .btn-brand-primary {
     background-color: var(--accent);
     color: #ffffff !important;
@@ -1912,7 +1191,6 @@ body { background-color: #F8FAFC !important; }
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
 }
-
 .btn-outline-slate {
     background-color: var(--bg-surface);
     color: var(--text-main) !important;
@@ -1921,15 +1199,10 @@ body { background-color: #F8FAFC !important; }
     font-weight: 600;
     transition: all 0.2s ease-in-out;
 }
-.btn-outline-slate:hover {
-    background-color: var(--dark-soft);
-    border-color: var(--border-color);
-}
+.btn-outline-slate:hover { background-color: var(--dark-soft); }
 
-/* Redesigned Cards */
-.qr-card {
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
+/* Kartu QR */
+.qr-card { transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
 .qr-card:hover {
     border-color: rgba(16, 185, 129, 0.3) !important;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08) !important;
@@ -1939,25 +1212,511 @@ body { background-color: #F8FAFC !important; }
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(16, 185, 129, 0.15) !important;
 }
 
-/* Soft Hover for Danger Button inside Card */
-.hover-bg-danger:hover {
-    background-color: rgba(239, 68, 68, 0.1);
-}
+/* Tombol hapus di kartu QR */
+.hover-bg-danger:hover { background-color: rgba(239, 68, 68, 0.1); }
 
-/* Adjust Chips Container (Filter active indicators) */
+/* Chips filter aktif QR */
 #activeFiltersIndicator .badge {
     background-color: var(--bg-surface) !important;
     color: var(--text-main) !important;
     border: 1px solid var(--border-color);
-    font-size: 0.7rem !important;
-    font-weight: 500 !important;
+    font-size: 0.7rem !important; font-weight: 500 !important;
     border-radius: 8px !important;
     padding: 0.35rem 0.6rem !important;
     box-shadow: 0 1px 2px rgba(0,0,0,0.02);
 }
-#activeFiltersIndicator .badge button {
-    color: var(--text-muted);
+#activeFiltersIndicator .badge button       { color: var(--text-muted); }
+#activeFiltersIndicator .badge button:hover { color: var(--text-main); }
+
+
+/* ==========================================================================
+   15. HALAMAN: USER MANAGEMENT
+   ========================================================================== */
+/* Styling tambahan untuk tabel dan form user management ditangani
+   oleh aturan tabel global (seksi 11) dan responsive (seksi 21). */
+
+
+/* ==========================================================================
+   16. HALAMAN: TICKET SUPPORT & LAYANAN PELANGGAN
+   ========================================================================== */
+/* Styling kartu dan form ditangani oleh komponen global.
+   Aturan spesifik ada di seksi responsive (seksi 21). */
+
+
+/* ==========================================================================
+   17. HALAMAN: FAQ & PANDUAN
+   ========================================================================== */
+/* Accordion FAQ menggunakan Bootstrap default + overrides di seksi responsive. */
+
+
+/* ==========================================================================
+   18. HALAMAN: PENGATURAN PROFIL
+   ========================================================================== */
+/* Styling umum profil menggunakan kartu global.
+   Aturan spesifik ada di seksi responsive (seksi 21). */
+
+
+/* ==========================================================================
+   19. HALAMAN: LOGIN
+   ========================================================================== */
+/* Styling modal login ditangani di seksi responsive (seksi 21). */
+
+
+/* ==========================================================================
+   20. DARK MODE OVERRIDES — DASHBOARD & GLOBAL
+   ========================================================================== */
+
+/* Lapisan permukaan */
+[data-theme="dark"] body { background-color: #0A1615 !important; color: #F1F5F9 !important; }
+[data-theme="dark"] .bg-background                  { background-color: #0A1615 !important; }
+[data-theme="dark"] .bg-white,
+[data-theme="dark"] .bg-surface-container-low       { background-color: #0F201E !important; border-color: #1C3532 !important; }
+[data-theme="dark"] .bg-surface-container           { background-color: #132724 !important; border-color: #1C3532 !important; }
+[data-theme="dark"] .bg-surface-container-high      { background-color: #16302C !important; border-color: #23423E !important; }
+[data-theme="dark"] .bg-surface-container-highest   { background-color: #1C3D37 !important; border-color: #23423E !important; }
+[data-theme="dark"] .bg-slate-50                    { background-color: #10201E !important; }
+[data-theme="dark"] thead.bg-surface-container-low  { background-color: #0D1C1A !important; }
+
+/* Shadow dark mode */
+[data-theme="dark"] .shadow-sm,
+[data-theme="dark"] .shadow-lg {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.02) !important;
 }
-#activeFiltersIndicator .badge button:hover {
-    color: var(--text-main);
+
+/* Border dark mode */
+[data-theme="dark"] .border-border-subtle,
+[data-theme="dark"] .border-subtle,
+[data-theme="dark"] .border-slate-100,
+[data-theme="dark"] .border-slate-300    { border-color: #1C3532 !important; }
+
+/* Teks dark mode */
+[data-theme="dark"] .text-on-surface    { color: #F8FAFC !important; }
+[data-theme="dark"] .text-text-secondary,
+[data-theme="dark"] .text-text-muted,
+[data-theme="dark"] .text-slate-400     { color: #8FA6A3 !important; }
+[data-theme="dark"] .text-slate-700     { color: #CBD5E1 !important; }
+[data-theme="dark"] .table th           { color: #8FA6A3 !important; }
+[data-theme="dark"] .table td           { color: #F1F5F9 !important; }
+
+/* Input dark mode */
+[data-theme="dark"] input.bg-surface-container-low,
+[data-theme="dark"] input#projectSearchField,
+[data-theme="dark"] input#recentActivitySearch {
+    background-color: #10201E !important;
+    color: #F8FAFC !important;
+    border-color: #23423E !important;
+}
+[data-theme="dark"] input::placeholder { color: #648A86 !important; opacity: 1 !important; }
+
+/* Badge status dark mode (pastel → tint gelap) */
+[data-theme="dark"] .bg-\[\#ECFDF5\],
+[data-theme="dark"] .bg-emerald-500\/10,
+[data-theme="dark"] .proj-list-item.active { background-color: rgba(16, 185, 129, 0.12) !important; }
+[data-theme="dark"] .text-\[\#059669\],
+[data-theme="dark"] .text-emerald-600      { color: #6EE7B7 !important; }
+[data-theme="dark"] .border-\[\#A7F3D0\],
+[data-theme="dark"] .border-emerald-300    { border-color: rgba(16, 185, 129, 0.35) !important; }
+
+[data-theme="dark"] .bg-\[\#F0FDFA\]      { background-color: rgba(45, 212, 191, 0.12) !important; }
+[data-theme="dark"] .text-\[\#0F766E\],
+[data-theme="dark"] .text-teal-600,
+[data-theme="dark"] .text-primary-container { color: #5EEAD4 !important; }
+[data-theme="dark"] .border-\[\#99F6E4\],
+[data-theme="dark"] .border-teal-400,
+[data-theme="dark"] .border-primary-container { border-color: rgba(45, 212, 191, 0.35) !important; }
+[data-theme="dark"] .bg-primary-container  { background-color: #0F766E !important; }
+
+[data-theme="dark"] .bg-\[\#FFFBEB\],
+[data-theme="dark"] .bg-amber-50           { background-color: rgba(245, 158, 11, 0.12) !important; }
+[data-theme="dark"] .text-\[\#B45309\],
+[data-theme="dark"] .text-amber-600,
+[data-theme="dark"] .text-amber-700        { color: #FBBF24 !important; }
+[data-theme="dark"] .border-\[\#FDE68A\],
+[data-theme="dark"] .border-amber-200,
+[data-theme="dark"] .border-amber-300      { border-color: rgba(245, 158, 11, 0.35) !important; }
+
+[data-theme="dark"] .bg-rose-50            { background-color: rgba(244, 63, 94, 0.12) !important; }
+[data-theme="dark"] .text-rose-700         { color: #FB7185 !important; }
+[data-theme="dark"] .border-rose-200,
+[data-theme="dark"] .border-rose-300       { border-color: rgba(244, 63, 94, 0.35) !important; }
+
+[data-theme="dark"] .bg-sky-50             { background-color: rgba(14, 165, 233, 0.12) !important; }
+[data-theme="dark"] .text-sky-700          { color: #38BDF8 !important; }
+[data-theme="dark"] .border-sky-200,
+[data-theme="dark"] .border-sky-300        { border-color: rgba(56, 189, 248, 0.35) !important; }
+
+[data-theme="dark"] .bg-slate-100          { background-color: rgba(148, 163, 184, 0.12) !important; }
+
+
+/* ==========================================================================
+   21. RESPONSIVE — MOBILE & TABLET (RWD)
+   Urutan: Global → Navbar → Sidebar → Dashboard → Task → QR →
+           User Mgmt → Ticket/Layanan → FAQ → Profil → Login → Touch
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   21.1  LAYOUT GLOBAL — Cegah overflow & padding konten
+   -------------------------------------------------------------------------- */
+@media (max-width: 767.98px) {
+    /* Konten tidak terlalu rapat di HP */
+    .container-fluid,
+    .container-fluid.px-4 {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    /* Item sidebar mudah di-tap dan aman di iOS */
+    .sidebar-item {
+        padding: 0.65rem 1rem !important;
+        min-height: 42px;
+        display: flex !important;
+        align-items: center;
+        gap: 10px !important;
+        flex-wrap: nowrap !important;
+    }
+
+    .sidebar-sticky-footer {
+        padding: 0.75rem !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   21.2  NAVBAR — lebih kompak di layar kecil
+   -------------------------------------------------------------------------- */
+@media (max-width: 575.98px) {
+    .navbar-custom { padding: 0.6rem 1rem !important; }
+    .navbar-custom span[style*="letter-spacing"] { display: none !important; }
+    .navbar-custom .fw-bold.fs-6 { font-size: 0.9rem !important; }
+}
+
+/* --------------------------------------------------------------------------
+   21.3  SIDEBAR & OFFCANVAS — proporsional di HP
+   -------------------------------------------------------------------------- */
+@media (max-width: 575.98px) {
+    .offcanvas-start    { width: 280px !important; }
+    .enterprise-sidebar { width: 280px !important; }
+    #filterDrawer       { width: 100vw !important; }
+}
+
+/* --------------------------------------------------------------------------
+   21.4  DASHBOARD — kartu metrik, chart, tabel
+   -------------------------------------------------------------------------- */
+@media (max-width: 767.98px) {
+    /* Header enterprise card jadi 1 kolom */
+    .enterprise-card .row.align-items-center > [class*="col-lg"] {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        text-align: left !important;
+    }
+    .enterprise-card .text-lg-end {
+        text-align: left !important;
+        margin-top: 0.75rem !important;
+    }
+    /* Chart dan tabel susun vertikal */
+    .enterprise-card ~ .row > [class*="col-lg"] {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+    /* Tabel scroll horizontal di tablet */
+    .table-responsive { -webkit-overflow-scrolling: touch; }
+    .table-custom td:first-child { max-width: 180px !important; }
+}
+
+@media (max-width: 575.98px) {
+    /* Padding header dashboard lebih kecil */
+    .enterprise-card.p-4 { padding: 1rem !important; }
+    .enterprise-card h1.fs-4 { font-size: 1.1rem !important; }
+    /* Angka metrik lebih compact */
+    .enterprise-card .fw-bold.fs-3 { font-size: 1.5rem !important; }
+    /* Chart tidak terlalu tinggi */
+    #taskChart { max-height: 200px !important; }
+    /* 2 kartu metrik per baris di HP */
+    .col-xl.col-md-4.col-sm-6 { width: 50% !important; flex: 0 0 50% !important; max-width: 50% !important; }
+    .col-xl.col-md-6.col-sm-12 { width: 100% !important; flex: 0 0 100% !important; max-width: 100% !important; }
+    /* Dashboard wrapper padding */
+    .dashboard-wrapper { padding: 12px 16px; }
+}
+
+/* Fix scroll horizontal tabel dashboard di HP */
+@media (max-width: 991.98px) {
+    .table-scroll_container,
+    .table-scroll-container {
+        display: block !important;
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    .table-scroll-container .table-custom-clean,
+    .table-custom-clean {
+        min-width: 850px !important;
+        width: max-content !important;
+        table-layout: auto !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   21.5  TOOLBAR — search + tombol aksi susun vertikal di HP
+   -------------------------------------------------------------------------- */
+@media (max-width: 575.98px) {
+    .d-flex.align-items-center.flex-wrap.gap-3.mb-4 {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+    .d-flex.align-items-center.flex-wrap.gap-3.mb-4 > .d-flex.gap-2 {
+        flex-direction: column !important;
+    }
+    .d-flex.align-items-center.flex-wrap.gap-3.mb-4 > .d-flex.gap-2 .btn { width: 100% !important; }
+    .d-flex.align-items-center.flex-wrap.gap-3.mb-4 > div[style*="min-width"] {
+        min-width: 100% !important;
+        max-width: 100% !important;
+    }
+    .d-flex.align-items-center.flex-wrap.gap-3.mb-4 > .btn.btn-dark.ms-auto {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   21.6  TASK MANAGEMENT — tabs, kartu, modal
+   -------------------------------------------------------------------------- */
+
+/* Tabs scroll halus di HP */
+@media (max-width: 767.98px) {
+    .enterprise-tabs-wrapper {
+        margin-left: -1rem;
+        margin-right: -1rem;
+        padding-left: 1rem;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+    .enterprise-tabs {
+        display: flex !important;
+        gap: 1.5rem !important;
+        padding-right: 1rem;
+        padding-bottom: 2px;
+    }
+    .enterprise-tabs .filter-tab {
+        font-size: 0.82rem !important;
+        white-space: nowrap !important;
+        flex-shrink: 0;
+        padding-bottom: 0.65rem !important;
+    }
+    /* Kartu task 2 kolom di tablet */
+    .col-md-6.col-lg-4.mb-4.task-item {
+        width: 50% !important;
+        flex: 0 0 50% !important;
+        max-width: 50% !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    /* Kartu task 1 kolom di HP */
+    .col-md-6.col-lg-4.mb-4.task-item {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+    .task-card .card-body  { padding: 0.85rem !important; }
+    .task-card .card-title { font-size: 0.95rem !important; }
+    .task-card .badge      { font-size: 0.68rem !important; }
+}
+
+/* Modal detail task */
+@media (max-width: 991.98px) {
+    .modal-xl { max-width: 95vw !important; }
+    .modal-body .col-lg-5,
+    .modal-body .col-lg-7 {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+    .modal-body .col-lg-5 .detail-panel.h-100 { height: auto !important; }
+}
+
+@media (max-width: 575.98px) {
+    .modal-xl,
+    .modal-dialog {
+        margin: 0.5rem !important;
+        max-width: calc(100vw - 1rem) !important;
+    }
+    .modal-content { border-radius: 12px !important; }
+    .modal-body    { padding: 1rem !important; }
+    .modal-header  { padding: 1rem !important; }
+    .modal-body .row.g-3 > [class*="col-sm-6"] {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+    .modal-body iframe { height: 200px !important; min-height: 200px !important; }
+}
+
+/* --------------------------------------------------------------------------
+   21.7  QR MANAGEMENT — grid & modal PDF viewer
+   -------------------------------------------------------------------------- */
+@media (max-width: 575.98px) {
+    /* Grid QR: 2 kolom di HP */
+    .col-6.col-md-4.col-lg-3.col-xl-2 {
+        width: 50% !important;
+        flex: 0 0 50% !important;
+        max-width: 50% !important;
+    }
+    /* Thumbnail lebih pendek di HP */
+    .card .d-flex.flex-column.justify-content-center[style*="height: 140px"] {
+        height: 110px !important;
+    }
+}
+
+/* Modal PDF full-screen di HP */
+@media (max-width: 767.98px) {
+    #pdfViewerModal .modal-dialog {
+        margin: 0 !important;
+        max-width: 100vw !important;
+        height: 100vh !important;
+    }
+    #pdfViewerModal .modal-content {
+        height: 100vh !important;
+        border-radius: 0 !important;
+    }
+    #pdfViewerModal .modal-body  { height: calc(100vh - 60px) !important; }
+    #pdfViewerModal iframe { min-height: calc(100vh - 120px) !important; }
+}
+
+/* Video container di HP */
+@media (max-width: 767.98px) {
+    .video-container-wrapper {
+        height: 300px !important;
+        aspect-ratio: unset !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   21.8  USER MANAGEMENT — tabel & modal tambah akun
+   -------------------------------------------------------------------------- */
+@media (max-width: 767.98px) {
+    /* Sembunyikan kolom kurang penting (kecuali tabel recent activity) */
+    .table:not(.table-custom-clean) th:nth-child(3),
+    .table:not(.table-custom-clean) td:nth-child(3),
+    .table:not(.table-custom-clean) th:nth-child(4),
+    .table:not(.table-custom-clean) td:nth-child(4) { display: none !important; }
+
+    .card .table-responsive { overflow-x: auto !important; }
+    .table select.form-select-sm { width: 120px !important; font-size: 0.78rem !important; }
+}
+
+@media (max-width: 575.98px) {
+    #addUserModal .modal-dialog {
+        margin: 0.75rem !important;
+        max-width: calc(100vw - 1.5rem) !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   21.9  TICKET SUPPORT — tabel & pesan
+   -------------------------------------------------------------------------- */
+@media (max-width: 767.98px) {
+    /* Sembunyikan kolom waktu (kecuali tabel recent activity) */
+    .table:not(.table-custom-clean) th:last-child,
+    .table:not(.table-custom-clean) td:last-child { display: none !important; }
+    /* Batasi lebar pesan agar tabel tidak terlalu panjang */
+    .table td[style*="white-space: pre-wrap"] {
+        max-width: 200px !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   21.10  LAYANAN PELANGGAN & FAQ — padding, header, accordion
+   -------------------------------------------------------------------------- */
+@media (max-width: 767.98px) {
+    .card.shadow-sm.border.p-4 { padding: 1rem !important; }
+    .card textarea { font-size: 0.9rem !important; }
+    /* Header support card stack vertikal */
+    .d-flex.align-items-center.gap-3.mb-4.pb-3 {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.75rem !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    /* Accordion FAQ */
+    .accordion-button { font-size: 0.88rem !important; padding: 0.85rem 0.75rem !important; }
+    .accordion-body   { font-size: 0.83rem !important; padding: 0.75rem !important; }
+}
+
+/* --------------------------------------------------------------------------
+   21.11  PROFIL — foto & padding kartu
+   -------------------------------------------------------------------------- */
+@media (max-width: 767.98px) {
+    .rounded-circle[style*="width: 120px"] {
+        width: 90px !important;
+        height: 90px !important;
+        font-size: 2.5rem !important;
+    }
+    .card-body.p-5 { padding: 1.5rem !important; }
+    /* Tombol edit profil stack vertikal */
+    .card-body .btn + .btn {
+        margin-top: 0.5rem;
+        margin-left: 0 !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   21.12  LOGIN — modal full-width di HP
+   -------------------------------------------------------------------------- */
+@media (max-width: 575.98px) {
+    #loginModal .modal-dialog {
+        margin: 1rem !important;
+        max-width: calc(100vw - 2rem) !important;
+    }
+    #loginModal .modal-body { padding: 1.25rem !important; }
+}
+
+/* --------------------------------------------------------------------------
+   21.13  HEADING — skala font di HP
+   -------------------------------------------------------------------------- */
+@media (max-width: 575.98px) {
+    h3.fw-bold { font-size: 1.2rem !important; }
+    h4.fw-bold { font-size: 1.05rem !important; }
+    h5.fw-bold { font-size: 1rem !important; }
+    .small      { font-size: 0.82rem !important; }
+}
+
+/* --------------------------------------------------------------------------
+   21.14  TOUCH — UX lebih baik di layar sentuh
+   -------------------------------------------------------------------------- */
+@media (max-width: 767.98px) {
+    /* Minimal 40px tinggi untuk kemudahan tap */
+    .btn    { min-height: 40px; }
+    .btn-sm { min-height: 36px; }
+
+    /* Form control lebih besar — cegah iOS auto-zoom */
+    .form-control,
+    .form-select     { min-height: 42px !important; font-size: 1rem !important; }
+    .form-select-sm  { min-height: 36px !important; font-size: 0.9rem !important; }
+
+    /* Accordion mudah di-tap */
+    .accordion-button { min-height: 52px; }
+
+    /* Item sidebar mudah di-tap */
+    .sidebar-item {
+        padding: 0.65rem 1rem !important;
+        min-height: 42px;
+        display: flex !important;
+        align-items: center;
+    }
+
+    /* Alert compact */
+    .alert { font-size: 0.88rem !important; padding: 0.65rem 1rem !important; }
+
+    /* Tombol scroll-to-top */
+    #scrollToTopBtn {
+        width: 40px !important;
+        height: 40px !important;
+        margin: 0.75rem !important;
+        font-size: 0.9rem !important;
+    }
 }

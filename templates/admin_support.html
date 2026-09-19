@@ -14,72 +14,541 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ _('Support Tickets - QA System') }}</title>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        /* ── Admin Support Page ── */
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* Page eyebrow */
+        .page-eyebrow {
+            display: flex; align-items: center; gap: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px; font-weight: 700;
+            color: #0F766E; letter-spacing: 0.06em; text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .page-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 26px; font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text-primary, #0F172A);
+            line-height: 1.2;
+        }
+        .page-subtitle {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px; color: var(--text-secondary, #475569);
+            margin-top: 4px;
+        }
+
+        /* KPI Cards */
+        .kpi-card {
+            background-color: var(--card-bg, #FFFFFF);
+            border: 1px solid var(--border-subtle, #E2E8F0);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            position: relative; overflow: hidden;
+            box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+        }
+        .kpi-card .kpi-bar {
+            position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+        }
+        .kpi-value {
+            font-family: 'Inter', sans-serif;
+            font-size: 28px; font-weight: 700;
+            letter-spacing: -0.025em;
+            color: var(--text-primary, #0F172A);
+            line-height: 1;
+        }
+        .kpi-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px; font-weight: 600;
+            letter-spacing: 0.05em; text-transform: uppercase;
+            color: var(--text-muted, #94A3B8);
+            margin-bottom: 6px;
+        }
+        .kpi-icon {
+            width: 38px; height: 38px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* Content panel */
+        .content-panel {
+            background-color: var(--card-bg, #FFFFFF);
+            border: 1px solid var(--border-subtle, #E2E8F0);
+            border-radius: 12px;
+            box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+            overflow: hidden;
+        }
+        .panel-header {
+            padding: 0.875rem 1.25rem;
+            border-bottom: 1px solid var(--border-subtle, #E2E8F0);
+            display: flex; align-items: center; justify-content: space-between;
+            background-color: var(--card-bg, #FFFFFF);
+        }
+
+        /* Status badges */
+        .badge-pill {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 10px; border-radius: 9999px;
+            font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+            border: 1px solid transparent;
+            white-space: nowrap;
+        }
+        .badge-pill .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+        .badge-open    { color: #92400E; background:#FFFBEB; border-color:#FDE68A; }
+        .badge-open .dot { background:#D97706; }
+        .badge-resolved { color: #065F46; background:#ECFDF5; border-color:#A7F3D0; }
+        .badge-resolved .dot { background:#059669; }
+
+        /* Table overrides */
+        .tickets-table { width: 100%; border-collapse: collapse; }
+        .tickets-table thead tr {
+            background-color: var(--surface-container-low, #eff4ff);
+            border-bottom: 1px solid var(--border-subtle, #E2E8F0);
+        }
+        .tickets-table thead th {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px; font-weight: 600;
+            letter-spacing: 0.04em; text-transform: uppercase;
+            color: var(--text-muted, #94A3B8);
+            padding: 10px 16px;
+            white-space: nowrap;
+        }
+        .tickets-table tbody tr {
+            border-bottom: 1px solid var(--border-subtle, #E2E8F0);
+            transition: background-color 0.1s;
+        }
+        .tickets-table tbody tr:last-child { border-bottom: none; }
+        .tickets-table tbody tr:hover { background-color: rgba(248,250,252,0.7); }
+        .tickets-table td {
+            padding: 14px 16px;
+            vertical-align: top;
+        }
+        .ticket-no {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px; font-weight: 600;
+            color: var(--text-muted, #94A3B8);
+            white-space: nowrap;
+        }
+        .ticket-id-cell {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px; font-weight: 700;
+            color: #0F766E;
+            white-space: nowrap;
+        }
+        .ticket-sender {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px; color: var(--text-secondary, #475569);
+            margin-top: 2px;
+        }
+        .ticket-message {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px; color: var(--text-primary, #0F172A);
+            line-height: 1.55;
+            white-space: pre-wrap; word-break: break-word;
+            max-width: 460px;
+        }
+        .ticket-time {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px; color: var(--text-muted, #94A3B8);
+            white-space: nowrap;
+        }
+
+        /* Action buttons */
+        .btn-resolve {
+            display: inline-flex; align-items: center; gap: 5px;
+            height: 30px; padding: 0 12px;
+            border-radius: 6px; border: none;
+            font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+            cursor: pointer; transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .btn-resolve-open {
+            background-color: #0F766E; color: #fff;
+        }
+        .btn-resolve-open:hover { background-color: #115E59; }
+        .btn-resolve-done {
+            background-color: var(--surface-container-low, #eff4ff);
+            color: var(--text-secondary, #475569);
+            border: 1px solid var(--border-subtle, #E2E8F0) !important;
+        }
+        .btn-resolve-done:hover {
+            background-color: var(--surface-container, #e5eeff);
+            color: var(--text-primary, #0F172A);
+        }
+
+        /* Search & filter bar */
+        .toolbar-wrap {
+            display: flex; align-items: center; gap: 10px;
+            flex-wrap: wrap;
+        }
+        .search-input-wrap { position: relative; }
+        .search-input-wrap .search-icon {
+            position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+            font-size: 17px; color: var(--text-muted, #94A3B8); pointer-events: none;
+        }
+        .search-input {
+            height: 34px; padding: 0 12px 0 34px;
+            border: 1px solid var(--border-strong, #CBD5E1);
+            border-radius: 8px;
+            background-color: var(--card-bg, #FFFFFF);
+            color: var(--text-primary, #0F172A);
+            font-family: 'Inter', sans-serif; font-size: 13px;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            width: 220px;
+        }
+        .search-input:focus {
+            border-color: #0F766E;
+            box-shadow: 0 0 0 2px rgba(15,118,110,0.14);
+        }
+        .search-input::placeholder { color: var(--text-muted, #94A3B8); }
+        .filter-select {
+            height: 34px; padding: 0 28px 0 10px;
+            border: 1px solid var(--border-strong, #CBD5E1);
+            border-radius: 8px;
+            background-color: var(--card-bg, #FFFFFF);
+            color: var(--text-primary, #0F172A);
+            font-family: 'Inter', sans-serif; font-size: 13px;
+            outline: none; appearance: none; cursor: pointer;
+            transition: border-color 0.15s;
+        }
+        .filter-select:focus { border-color: #0F766E; }
+        .select-wrap-sm { position: relative; }
+        .select-wrap-sm .select-arrow {
+            position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+            font-size: 17px; color: var(--text-muted, #94A3B8); pointer-events: none;
+        }
+
+        /* Empty state */
+        .empty-state {
+            padding: 3rem 1rem; text-align: center;
+        }
+        .empty-icon {
+            width: 52px; height: 52px; border-radius: 50%;
+            background-color: var(--surface-container-low, #eff4ff);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 12px; color: var(--text-muted, #94A3B8);
+        }
+
+        /* Pagination */
+        .pager-btn {
+            height: 30px; min-width: 30px; padding: 0 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border-subtle, #E2E8F0);
+            background-color: var(--card-bg, #FFFFFF);
+            color: var(--text-secondary, #475569);
+            font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
+            display: inline-flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.1s;
+        }
+        .pager-btn:hover { background-color: var(--surface-container-low); color: var(--text-primary); }
+        .pager-btn.active { background-color: #0F766E; color: #fff; border-color: #0F766E; }
+
+        @keyframes ping {
+            0% { transform: scale(1); opacity: 0.75; }
+            75%, 100% { transform: scale(2); opacity: 0; }
+        }
+
+        /* Responsive table scroll */
+        .table-scroll { overflow-x: auto; }
+    </style>
 </head>
 <body>
 
     {% include 'sidebar.html' %}
-
     {% include 'navbar.html' %}
 
-    <div class="container-fluid px-4 pb-5 mt-4">
-        <div class="mb-4">
-            <h3 class="fw-bold mb-1" style="color: var(--text-main);">{{ _('Support Tickets Inbox') }}</h3>
-            <p class="small text-muted mb-0">{{ _('List of complaints or issues sent in by users through the help center.') }}</p>
+    <div class="container-fluid px-4 pb-5 pt-4">
+
+        <!-- FLASH MESSAGES -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="d-flex align-items-center gap-3 p-3 mb-3 rounded-3"
+                     style="background-color:{% if category == 'danger' %}#FEF2F2{% elif category == 'success' %}#ECFDF5{% else %}#F0F9FF{% endif %};
+                            border:1px solid {% if category == 'danger' %}#FECACA{% elif category == 'success' %}#A7F3D0{% else %}#BAE6FD{% endif %};
+                            font-family:'Inter',sans-serif; font-size:13px; color:var(--text-primary);">
+                    <span class="material-symbols-outlined" style="font-size:20px;color:{% if category == 'danger' %}#DC2626{% elif category == 'success' %}#059669{% else %}#0284C7{% endif %};">
+                        {% if category == 'danger' %}error{% elif category == 'success' %}check_circle{% else %}info{% endif %}
+                    </span>
+                    <span style="flex:1; font-weight:500;">{{ message }}</span>
+                    <button onclick="this.parentElement.remove()" style="border:none;background:none;cursor:pointer;color:var(--text-muted);padding:0;">
+                        <span class="material-symbols-outlined" style="font-size:17px;">close</span>
+                    </button>
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- PAGE HEADER -->
+        <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3 mb-4">
+            <div>
+                <div class="page-eyebrow">
+                    <span>Developer Console</span>
+                    <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#059669;"></span>
+                    <span style="color:var(--text-muted);">Ticket Operations</span>
+                </div>
+                <h1 class="page-title">{{ _('Support Tickets Inbox') }}</h1>
+                <p class="page-subtitle">{{ _('List of complaints or issues sent in by users through the help center.') }}</p>
+            </div>
+            <!-- Live indicator -->
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card-bg);border:1px solid var(--border-subtle);border-radius:10px;box-shadow:0 1px 2px rgba(15,23,42,0.04);">
+                <span style="position:relative;display:flex;width:10px;height:10px;">
+                    <span style="position:absolute;width:100%;height:100%;border-radius:50%;background:#059669;opacity:0.7;animation:ping 1.5s infinite;"></span>
+                    <span style="position:relative;width:10px;height:10px;border-radius:50%;background:#059669;"></span>
+                </span>
+                <div>
+                    <div style="font-family:'Inter',sans-serif;font-size:11px;font-weight:700;color:var(--text-primary);">Developer Access</div>
+                    <div class="mono" style="font-size:10px;color:var(--text-muted);">F-30 Ticket Management</div>
+                </div>
+            </div>
         </div>
 
-        <div class="card shadow-sm border" style="background-color: var(--bg-surface); border-color: var(--border-color) !important;">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0" style="color: var(--text-main);">
-                    <thead style="background-color: var(--border-color);">
+        <!-- KPI CARDS -->
+        <div class="row g-3 mb-4">
+            {% set total = tickets|length %}
+            {% set open_count = tickets|selectattr('status','equalto','Open')|list|length %}
+            {% set resolved_count = tickets|selectattr('status','equalto','Resolved')|list|length %}
+
+            <div class="col-6 col-md-3">
+                <div class="kpi-card">
+                    <div class="d-flex align-items-start justify-content-between">
+                        <div>
+                            <div class="kpi-label">{{ _('Total Tickets') }}</div>
+                            <div class="kpi-value">{{ total }}</div>
+                        </div>
+                        <div class="kpi-icon" style="background:#F0F9FF;color:#0284C7;">
+                            <span class="material-symbols-outlined" style="font-size:21px;">confirmation_number</span>
+                        </div>
+                    </div>
+                    <div class="kpi-bar" style="background:#0284C7;"></div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="kpi-card">
+                    <div class="d-flex align-items-start justify-content-between">
+                        <div>
+                            <div class="kpi-label">{{ _('Open') }}</div>
+                            <div class="kpi-value" style="color:#D97706;">{{ open_count }}</div>
+                        </div>
+                        <div class="kpi-icon" style="background:#FFFBEB;color:#D97706;">
+                            <span class="material-symbols-outlined" style="font-size:21px;">pending_actions</span>
+                        </div>
+                    </div>
+                    <div class="kpi-bar" style="background:#D97706;"></div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="kpi-card">
+                    <div class="d-flex align-items-start justify-content-between">
+                        <div>
+                            <div class="kpi-label">{{ _('Resolved') }}</div>
+                            <div class="kpi-value" style="color:#059669;">{{ resolved_count }}</div>
+                        </div>
+                        <div class="kpi-icon" style="background:#ECFDF5;color:#059669;">
+                            <span class="material-symbols-outlined" style="font-size:21px;">task_alt</span>
+                        </div>
+                    </div>
+                    <div class="kpi-bar" style="background:#059669;"></div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="kpi-card">
+                    <div class="d-flex align-items-start justify-content-between">
+                        <div>
+                            <div class="kpi-label">{{ _('Resolution Rate') }}</div>
+                            <div class="kpi-value" style="color:#0F766E;">
+                                {% if total > 0 %}{{ ((resolved_count / total) * 100)|round|int }}%{% else %}—{% endif %}
+                            </div>
+                        </div>
+                        <div class="kpi-icon" style="background:#ECFDF5;color:#0F766E;">
+                            <span class="material-symbols-outlined" style="font-size:21px;">analytics</span>
+                        </div>
+                    </div>
+                    <div class="kpi-bar" style="background:linear-gradient(90deg,#0F766E,#0D9488);"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN TABLE PANEL -->
+        <div class="content-panel">
+            <!-- Panel Header + Toolbar -->
+            <div class="panel-header flex-wrap gap-3">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined" style="color:#0F766E;font-size:20px;">inbox</span>
+                    <span style="font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:var(--text-primary);">{{ _('All Tickets') }}</span>
+                    <span class="mono" style="font-size:11px;padding:2px 8px;border-radius:6px;background:var(--surface-container-low);color:var(--text-secondary);">
+                        {{ total }} {{ _('entries') }}
+                    </span>
+                </div>
+                <div class="toolbar-wrap">
+                    <!-- Search -->
+                    <div class="search-input-wrap">
+                        <span class="material-symbols-outlined search-icon">search</span>
+                        <input type="text" class="search-input" id="ticketSearch"
+                               placeholder="{{ _('Search by user or message...') }}"
+                               oninput="filterTickets()">
+                    </div>
+                    <!-- Status filter -->
+                    <div class="select-wrap-sm">
+                        <select class="filter-select" id="statusFilter" onchange="filterTickets()">
+                            <option value="all">{{ _('All Status') }}</option>
+                            <option value="Open">{{ _('Open') }}</option>
+                            <option value="Resolved">{{ _('Resolved') }}</option>
+                        </select>
+                        <span class="material-symbols-outlined select-arrow">expand_more</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-scroll">
+                <table class="tickets-table" id="ticketsTable">
+                    <thead>
                         <tr>
-                            <th class="py-3 px-4">{{ _('No') }}</th>
-                            <th class="py-3">{{ _('ID / Sender') }}</th>
-                            <th class="py-3">{{ _('Issue Message') }}</th>
-                            <th class="py-3">{{ _('Status') }}</th>
-                            <th class="py-3">{{ _('Time Sent') }}</th>
-                            <th class="py-3 text-end px-4">{{ _('Action') }}</th>
+                            <th style="width:48px;">#</th>
+                            <th>{{ _('Sender') }}</th>
+                            <th>{{ _('Issue Message') }}</th>
+                            <th style="width:120px;">{{ _('Status') }}</th>
+                            <th style="width:150px;">{{ _('Time Sent') }}</th>
+                            <th style="width:130px; text-align:right; padding-right:20px;">{{ _('Action') }}</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="ticketsBody">
                         {% for t in tickets %}
-                        <tr>
-                            <td class="px-4">{{ loop.index }}</td>
-                            <td class="fw-semibold">{{ _('User #%(username)s', username=t.username) }}</td>
-                            <td style="white-space: pre-wrap; word-break: break-word;">{{ t.message }}</td>
+                        <tr data-status="{{ t.status }}" data-search="{{ t.username|lower }} {{ t.message|lower }}">
+                            <td>
+                                <span class="ticket-no">{{ '%03d'|format(loop.index) }}</span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div style="width:30px;height:30px;border-radius:50%;background:rgba(15,118,110,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                        <span class="material-symbols-outlined" style="font-size:16px;color:#0F766E;">person</span>
+                                    </div>
+                                    <div>
+                                        <div class="ticket-id-cell">{{ t.username }}</div>
+                                        <div class="ticket-sender">{{ _('User Account') }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="ticket-message">{{ t.message }}</div>
+                            </td>
                             <td>
                                 {% if t.status == 'Resolved' %}
-                                    <span class="badge bg-success bg-opacity-10 text-success px-2 py-1">{{ _('Resolved') }}</span>
+                                    <span class="badge-pill badge-resolved">
+                                        <span class="dot"></span>{{ _('Resolved') }}
+                                    </span>
                                 {% else %}
-                                    <span class="badge bg-warning bg-opacity-10 text-warning px-2 py-1">{{ _('Open') }}</span>
+                                    <span class="badge-pill badge-open">
+                                        <span class="dot"></span>{{ _('Open') }}
+                                    </span>
                                 {% endif %}
                             </td>
-                            <td class="text-muted small">{{ t.created_at.strftime('%d-%m-%Y %H:%M:%S') }}</td>
-                            <td class="text-end px-4">
+                            <td>
+                                <div class="ticket-time">{{ t.created_at.strftime('%d %b %Y') }}</div>
+                                <div class="ticket-time" style="margin-top:2px;">{{ t.created_at.strftime('%H:%M:%S') }}</div>
+                            </td>
+                            <td style="text-align:right; padding-right:16px;">
                                 <form action="{{ url_for('main.toggle_ticket_status', ticket_id=t.id) }}" method="POST" class="d-inline">
-                                    <button type="submit" class="btn btn-outline-secondary btn-sm py-1 px-2" style="font-size: 0.75rem;">
-                                        {% if t.status == 'Resolved' %}{{ _('Reopen') }}{% else %}{{ _('Mark Resolved') }}{% endif %}
+                                    <button type="submit" class="btn-resolve {% if t.status == 'Resolved' %}btn-resolve-done{% else %}btn-resolve-open{% endif %}">
+                                        <span class="material-symbols-outlined" style="font-size:14px;">
+                                            {% if t.status == 'Resolved' %}refresh{% else %}check_circle{% endif %}
+                                        </span>
+                                        {% if t.status == 'Resolved' %}{{ _('Reopen') }}{% else %}{{ _('Resolve') }}{% endif %}
                                     </button>
                                 </form>
                             </td>
                         </tr>
                         {% else %}
-                        <tr>
-                            <td colspan="6" class="text-center py-4 text-muted">{{ _('No issue messages yet.') }}</td>
+                        <tr id="emptyRow">
+                            <td colspan="6">
+                                <div class="empty-state">
+                                    <div class="empty-icon">
+                                        <span class="material-symbols-outlined" style="font-size:26px;">inbox</span>
+                                    </div>
+                                    <div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">{{ _('No Tickets Yet') }}</div>
+                                    <div style="font-family:'Inter',sans-serif;font-size:12px;color:var(--text-muted);">{{ _('No issue messages yet.') }}</div>
+                                </div>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
+
+                <!-- No results from filter -->
+                <div class="empty-state d-none" id="noResults">
+                    <div class="empty-icon">
+                        <span class="material-symbols-outlined" style="font-size:26px;">search_off</span>
+                    </div>
+                    <div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">{{ _('No Matching Tickets') }}</div>
+                    <div style="font-family:'Inter',sans-serif;font-size:12px;color:var(--text-muted);">{{ _('Try adjusting your search or filter.') }}</div>
+                </div>
+            </div>
+
+            <!-- Table Footer -->
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 px-4 py-3"
+                 style="border-top:1px solid var(--border-subtle);">
+                <span class="mono" style="font-size:11px;color:var(--text-muted);" id="resultCount">
+                    {{ _('Showing') }} {{ total }} {{ _('of') }} {{ total }} {{ _('tickets') }}
+                </span>
+                <div class="d-flex align-items-center gap-2">
+                    <span style="font-family:'Inter',sans-serif;font-size:11px;color:var(--text-muted);">{{ _('Last update:') }}</span>
+                    <span class="mono" style="font-size:11px;color:var(--text-secondary);" id="lastUpdate"></span>
+                </div>
             </div>
         </div>
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='script.js') }}?v=2"></script>
+
+    <script>
+        /* ── Live timestamp ── */
+        (function() {
+            const el = document.getElementById('lastUpdate');
+            if (!el) return;
+            const now = new Date();
+            el.textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) +
+                             ' · ' + now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+        })();
+
+        /* ── Search & filter ── */
+        function filterTickets() {
+            const q = document.getElementById('ticketSearch').value.toLowerCase().trim();
+            const status = document.getElementById('statusFilter').value;
+            const rows = document.querySelectorAll('#ticketsBody tr[data-status]');
+            const noResults = document.getElementById('noResults');
+            const resultCount = document.getElementById('resultCount');
+
+            let visible = 0;
+            rows.forEach(row => {
+                const matchSearch = !q || row.dataset.search.includes(q);
+                const matchStatus = status === 'all' || row.dataset.status === status;
+                const show = matchSearch && matchStatus;
+                row.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+
+            const total = rows.length;
+            if (resultCount) {
+                resultCount.textContent = `Showing ${visible} of ${total} tickets`;
+            }
+
+            if (noResults) {
+                noResults.classList.toggle('d-none', visible > 0 || total === 0);
+            }
+        }
+    </script>
 </body>
 </html>
