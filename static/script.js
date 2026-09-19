@@ -703,6 +703,36 @@ function filterAndSortCards() {
     cards.forEach(card => container.appendChild(card));
 }
 
+// --- FITUR PENCARIAN GLOBAL QR MANAGEMENT ---
+document.addEventListener("DOMContentLoaded", () => {
+    const globalQrSearchInput = document.getElementById('globalQrSearchInput');
+    if (globalQrSearchInput) {
+        globalQrSearchInput.addEventListener('input', function() {
+            const keyword = this.value.toLowerCase().trim();
+            const qrItems = document.querySelectorAll('.qr-item');
+            let visibleCount = 0;
+
+            qrItems.forEach(item => {
+                const name = (item.getAttribute('data-name') || '').toLowerCase();
+                const source = (item.getAttribute('data-source') || '').toLowerCase();
+                
+                if (name.includes(keyword) || source.includes(keyword)) {
+                    item.style.display = '';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Tampilkan pesan kosong jika tidak ada kartu yang cocok
+            const emptyMessage = document.getElementById('noQrFoundMessage');
+            if (emptyMessage) {
+                emptyMessage.style.display = (visibleCount === 0 && keyword !== '') ? 'block' : 'none';
+            }
+        });
+    }
+});
+
 // -- FILTER & SORT QR MANAGEMENT (Drawer) --
 function toggleSelectAllSource(selectAllCb) {
     const listContainer = document.getElementById('source-list');

@@ -466,3 +466,15 @@ def edit_qr(qr_id):
         flash(_("Document not found."), 'danger')
 
     return redirect(url_for('qr.qr_codes_page'))
+
+@qr_bp.route('/delete_qr_source', methods=['POST'])
+def delete_qr_source():
+    source_code = request.form.get('source_code')
+    if source_code:
+        QRCodeModel.query.filter_by(source_document=source_code).delete()
+        db.session.commit()
+        flash(f'Berhasil menghapus seluruh scene dalam environment code: {source_code}', 'success')
+    else:
+        flash('Environment code tidak valid!', 'danger')
+    
+    return redirect(url_for('qr.qr_codes_page'))
