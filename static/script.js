@@ -148,15 +148,11 @@ function initTabs() {
 }
 
 function resetAndFilter() {
-    const projectEl = document.getElementById('projectFilter');
-    const packageEl = document.getElementById('packageFilter');
     const searchEl = document.getElementById('searchInput');
     const sortFieldEl = document.getElementById('sortField');
     const sortOrderEl = document.getElementById('sortOrder');
 
     navigateWithFilters({
-        project: projectEl ? projectEl.value : 'All',
-        package: packageEl ? packageEl.value : 'All',
         q: searchEl ? searchEl.value.trim() : '',
         sort_by: sortFieldEl ? sortFieldEl.value : 'updated',
         sort_order: sortOrderEl ? sortOrderEl.value : 'desc',
@@ -237,6 +233,22 @@ document.addEventListener("DOMContentLoaded", () => {
     initTabs();
     initTaskDisplay();
     setInterval(autoUpdateTasks, 5000);
+
+    // TAMBAHKAN KODE INI UNTUK MENANGANI PENCARIAN UTAMA (#searchInput)
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                navigateWithFilters({ q: this.value.trim() });
+            }
+        });
+        searchInput.addEventListener('input', function(e) {
+            if (this.value.trim() === '') {
+                navigateWithFilters({ q: '' });
+            }
+        });
+    }
 });
 
 document.addEventListener('hidden.bs.modal', function () {
@@ -337,36 +349,130 @@ function handleSearchKeydown(event, input, listId) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    const searchBoxConfigs = [
-        { selector: '#project-list-search', listId: 'project-list' },
-        { selector: '#package-list-search', listId: 'package-list' },
-    ];
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('userSearchInput');
+    const roleItems = document.querySelectorAll('.role-filter-item');
+    const statusItems = document.querySelectorAll('.status-filter-item');
+    const selectedRoleLabel = document.getElementById('selectedRoleLabel');
+    const selectedStatusLabel = document.getElementById('selectedStatusLabel');
+    const resetBtn = document.getElementById('resetFiltersBtn');
+    const userRows = document.querySelectorAll('.user-row');
+    const footerPaginationInfo = document.getElementById('footerPaginationInfo');
+    const refreshBtn = document.getElementById('refreshUsersBtn');
+    const refreshIcon = document.getElementById('refreshIcon');
 
-    searchBoxConfigs.forEach(({ selector, listId }) => {
-        const input = document.querySelector(selector);
-        if (!input) return;
+    if (userRows.length > 0 || searchInput) {
+        let currentRole = 'All';
+        let currentStatus = 'All';
+        let currentSearch = '';
+        const totalUsersCount = userRows.length;
 
-        input.addEventListener('input', function () {
-            handleSearchInput(input, listId);
-        });
+        function filterUsers() {
+            let visibleCount = 0;
 
-        input.addEventListener('keydown', function (event) {
-            handleSearchKeydown(event, input, listId);
-        });
-    });
+            userRows.forEach(row => {
+                const username = row.getAttribute('data-username') || '';
+                const fullname = row.getAttribute('data-fullname') || '';
+                const email = row.getAttribute('data-email') || '';
+                const role = row.getAttribute('data-role') || '';
+                const status = row.getAttribute('data-status') || '';
 
-    const mainSearchInput = document.getElementById('searchInput');
-    if (mainSearchInput) {
-        mainSearchInput.addEventListener('input', function () {
-            handleMainSearchInput(mainSearchInput);
-        });
+                const matchesSearch = currentSearch === '' || 
+                    username.includes(currentSearch) || 
+                    fullname.includes(currentSearch) || 
+                    email.includes(currentSearch);
 
-        mainSearchInput.addEventListener('keydown', function (event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                resetAndFilter();
+                const matchesRole = currentRole === 'All' || role === currentRole;
+                const matchesStatus = currentStatus === 'All' || status === currentStatus;
+
+                if (matchesSearch && matchesRole && matchesStatus) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Update teks informasi di footer tabel
+            if (footerPaginationInfo) {
+                footerPaginationInfo.textContent = `Menampilkan ${visibleCount} dari total ${totalUsersCount} entitas akun sistem`;
             }
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                currentSearch = e.target.value.toLowerCase().trim();
+                filterUsers();
+            });
+        }
+
+        roleItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                roleItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                currentRole = this.getAttribute('data-role');
+                selectedRoleLabel.textContent = this.textContent.trim();
+                filterUsers();
+            });
+        });
+
+        statusItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                statusItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                currentStatus = this.getAttribute('data-status');
+                selectedStatusLabel.textContent = this.textContent.trim();
+                filterUsers();
+            });
+        });
+
+        if (resetBtn) {
+            resetBtn.addEventListener('click', function() {
+                if (searchInput) searchInput.value = '';
+                currentSearch = '';
+                currentRole = 'All';
+                selectedRoleLabel.textContent = 'Semua Role';
+                roleItems.forEach(i => {
+                    if (i.getAttribute('data-role') === 'All') i.classList.add('active');
+                    else i.classList.remove('active');
+                });
+                currentStatus = 'All';
+                selectedStatusLabel.textContent = 'Semua Status';
+                statusItems.forEach(i => {
+                    if (i.getAttribute('data-status') === 'All') i.classList.add('active');
+                    else i.classList.remove('active');
+                });
+                filterUsers();
+            });
+        }
+        
+        if (refreshBtn) {
+        refreshBtn.addEventListener('click', function() {
+            if (refreshIcon) {
+                refreshIcon.classList.add('spinning');
+            }
+            setTimeout(function() {
+                location.reload();
+            }, 400);
+        });
+    }
+
+        filterUsers();
+    }
+
+    // Modal reset password handler
+    const resetModal = document.getElementById('resetPasswordModal');
+    if (resetModal) {
+        resetModal.addEventListener('show.bs.modal', function(event) {
+            const btn = event.relatedTarget;
+            const userId = btn.getAttribute('data-user-id');
+            const username = btn.getAttribute('data-username');
+            const form = document.getElementById('resetPasswordForm');
+            form.action = '/admin/users/reset_password/' + userId;
+            form.reset();
+            document.getElementById('resetPasswordUsername').textContent = username;
         });
     }
 });
@@ -1799,3 +1905,150 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('userSearchInput');
+    const roleItems = document.querySelectorAll('.role-filter-item');
+    const statusItems = document.querySelectorAll('.status-filter-item');
+    const selectedRoleLabel = document.getElementById('selectedRoleLabel');
+    const selectedStatusLabel = document.getElementById('selectedStatusLabel');
+    const resetBtn = document.getElementById('resetFiltersBtn');
+    const userRows = document.querySelectorAll('.user-row');
+    const footerPaginationInfo = document.getElementById('footerPaginationInfo');
+
+    if (userRows.length > 0 || searchInput) {
+        let currentRole = 'All';
+        let currentStatus = 'All';
+        let currentSearch = '';
+        const totalUsersCount = userRows.length;
+
+        function filterUsers() {
+            let visibleCount = 0;
+
+            userRows.forEach(row => {
+                const username = (row.getAttribute('data-username') || '').toLowerCase();
+                const fullname = (row.getAttribute('data-fullname') || '').toLowerCase();
+                const email = (row.getAttribute('data-email') || '').toLowerCase();
+                const role = (row.getAttribute('data-role') || '').trim();
+                const status = (row.getAttribute('data-status') || '').trim();
+
+                // Cek pencarian teks
+                const matchesSearch = currentSearch === '' || 
+                    username.includes(currentSearch) || 
+                    fullname.includes(currentSearch) || 
+                    email.includes(currentSearch);
+
+                // Cek filter role (gunakan perbandingan lowercase agar aman)
+                const matchesRole = currentRole === 'All' || role.toLowerCase() === currentRole.toLowerCase();
+
+                // Cek filter status
+                const matchesStatus = currentStatus === 'All' || status.toLowerCase() === currentStatus.toLowerCase();
+
+                if (matchesSearch && matchesRole && matchesStatus) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Update teks informasi di footer tabel
+            if (footerPaginationInfo) {
+                footerPaginationInfo.textContent = `Menampilkan ${visibleCount} dari total ${totalUsersCount} entitas akun sistem`;
+            }
+        }
+
+        // Event listener pencarian teks
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                currentSearch = e.target.value.toLowerCase().trim();
+                filterUsers();
+            });
+        }
+
+        // Event listener klik pilihan Role
+        roleItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                roleItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+
+                currentRole = this.getAttribute('data-role');
+                selectedRoleLabel.textContent = this.textContent.trim();
+                filterUsers();
+            });
+        });
+
+        // Event listener klik pilihan Status
+        statusItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                statusItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+
+                currentStatus = this.getAttribute('data-status');
+                selectedStatusLabel.textContent = this.textContent.trim();
+                filterUsers();
+            });
+        });
+
+        // Tombol Reset Filter
+        if (resetBtn) {
+            resetBtn.addEventListener('click', function() {
+                if (searchInput) searchInput.value = '';
+                currentSearch = '';
+                
+                currentRole = 'All';
+                selectedRoleLabel.textContent = 'Semua Role';
+                roleItems.forEach(i => {
+                    if (i.getAttribute('data-role') === 'All') i.classList.add('active');
+                    else i.classList.remove('active');
+                });
+
+                currentStatus = 'All';
+                selectedStatusLabel.textContent = 'Semua Status';
+                statusItems.forEach(i => {
+                    if (i.getAttribute('data-status') === 'All') i.classList.add('active');
+                    else i.classList.remove('active');
+                });
+
+                filterUsers();
+            });
+        }
+
+        // Jalankan sekali saat halaman dimuat
+        filterUsers();
+    }
+
+    // Modal reset password handler
+    const resetModal = document.getElementById('resetPasswordModal');
+    if (resetModal) {
+        resetModal.addEventListener('show.bs.modal', function(event) {
+            const btn = event.relatedTarget;
+            const userId = btn.getAttribute('data-user-id');
+            const username = btn.getAttribute('data-username');
+            const form = document.getElementById('resetPasswordForm');
+            form.action = '/admin/users/reset_password/' + userId;
+            form.reset();
+            document.getElementById('resetPasswordUsername').textContent = username;
+        });
+    }
+});
+
+function updateSortOrderIcon(selectEl) {
+    const iconWrap = document.getElementById('sortOrderIconWrap');
+    if (!iconWrap) return;
+
+    // Menjaga posisi ikon agak ke kanan bawah
+    iconWrap.style.top = '53%';
+    iconWrap.style.right = '10px';
+    iconWrap.style.transform = 'translateY(-50%)';
+
+    if (selectEl.value === 'desc') {
+        // Ikon Menurun (Arrow Down)
+        iconWrap.innerHTML = `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h9M4 12h7M4 18h5M18 6v12M15 15l3 3 3-3"></path></svg>`;
+    } else {
+        // Ikon Menaik (Arrow Up)
+        iconWrap.innerHTML = `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h9M4 12h7M4 18h5M18 18V6M15 9l3-3 3 3"></path></svg>`;
+    }
+}

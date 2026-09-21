@@ -53,26 +53,138 @@
             </button>
         </div>
 
-        <!-- TABEL USER -->
+        <!-- KPI METRICS CARDS (2 KARTU UTAMA) -->
+        <div class="row g-3 mb-4">
+            <!-- Card 1: Total Pengguna Terdaftar -->
+            <div class="col-12 col-md-6">
+                <div class="card border-0 shadow-xs p-3" style="background-color: var(--bg-surface); border-radius: 12px; border: 1px solid var(--border-color) !important;">
+                    <div class="d-flex align-items-start justify-content-between mb-2">
+                        <div>
+                            <div class="text-muted fw-semibold" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ _('Total Pengguna Terdaftar') }}</div>
+                            <div class="d-flex align-items-baseline gap-2 mt-1">
+                                <span class="fw-bold" style="font-size: 28px; color: var(--text-main); letter-spacing: -0.02em;">{{ stats.total }}</span>
+                            </div>
+                        </div>
+                        <div class="p-2 rounded-3 d-flex align-items-center justify-content-center" style="background-color: rgba(16, 185, 129, 0.1); color: #10B981;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 text-muted pt-2 flex-wrap" style="font-size: 0.78rem; border-top: 1px solid var(--border-color);">
+                        <span class="text-success fw-semibold"><span>{{ stats.active }}</span> Aktif</span>
+                        <span>•</span>
+                        <span><span>{{ stats.offline }}</span> Offline</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Distribusi Peran QC -->
+            <div class="col-12 col-md-6">
+                <div class="card border-0 shadow-xs p-3" style="background-color: var(--bg-surface); border-radius: 12px; border: 1px solid var(--border-color) !important;">
+                    <div class="d-flex align-items-start justify-content-between mb-2">
+                        <div>
+                            <div class="text-muted fw-semibold" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ _('Distribusi Peran QC') }}</div>
+                            <div class="d-flex align-items-baseline gap-2 mt-1">
+                                <span class="fw-bold" style="font-size: 28px; color: var(--text-main); letter-spacing: -0.02em;">{{ stats.roles|length }} Role Utama</span>
+                            </div>
+                        </div>
+                        <div class="p-2 rounded-3 d-flex align-items-center justify-content-center" style="background-color: rgba(14, 165, 233, 0.1); color: #0EA5E9;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 text-muted pt-2 text-truncate" style="font-size: 0.78rem; border-top: 1px solid var(--border-color); white-space: nowrap; overflow: hidden;">
+                        {% for role, count in stats.roles.items() %}
+                        <span>{{ role }} ({{ count }})</span>{% if not loop.last %}<span>•</span>{% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEARCH & FILTER TOOLBAR (DENGAN INFO & REFRESH DI ATAS) -->
+        <div class="card border-0 shadow-xs mb-3 p-2" style="background-color: var(--bg-surface); border-radius: 12px; border: 1px solid var(--border-color) !important; overflow: visible !important;">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 px-2 py-1" style="overflow: visible !important;">
+                
+                <!-- Kiri: Input Pencarian & Dropdown Filter -->
+                <div class="d-flex align-items-center gap-2 flex-wrap flex-grow-1">
+                    <!-- Kotak Pencarian -->
+                    <div class="position-relative flex-grow-1" style="min-width: 250px; max-width: 360px;">
+                        <span class="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted d-flex align-items-center">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </span>
+                        <input type="text" id="userSearchInput" class="form-control form-control-sm bg-light border-0 ps-5 py-2" placeholder="{{ _('Cari username, nama lengkap, atau email...') }}" style="border-radius: 8px; font-size: 0.88rem;">
+                    </div>
+
+                    <!-- Dropdown Filter Role -->
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-light border-0 dropdown-toggle px-3 py-2 text-secondary fw-medium d-flex align-items-center gap-2" type="button" id="roleDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 8px; background-color: var(--dark-soft); font-size: 0.88rem;">
+                            <span id="selectedRoleLabel">{{ _('Semua Role') }}</span>
+                        </button>
+                        <ul class="dropdown-menu shadow-sm border-0 py-2" aria-labelledby="roleDropdownBtn" style="font-size: 0.88rem; border-radius: 10px; z-index: 1050;">
+                            <li><a class="dropdown-item py-1.5 px-3 role-filter-item active" href="#" data-role="All">{{ _('Semua Role') }}</a></li>
+                            <li><a class="dropdown-item py-1.5 px-3 role-filter-item" href="#" data-role="Developer">{{ _('Developer') }}</a></li>
+                            <li><a class="dropdown-item py-1.5 px-3 role-filter-item" href="#" data-role="Supervisor">{{ _('Supervisor') }}</a></li>
+                            <li><a class="dropdown-item py-1.5 px-3 role-filter-item" href="#" data-role="Quality Control">{{ _('Quality Control') }}</a></li>
+                            <li><a class="dropdown-item py-1.5 px-3 role-filter-item" href="#" data-role="Public">{{ _('Public') }}</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Dropdown Filter Status -->
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-light border-0 dropdown-toggle px-3 py-2 text-secondary fw-medium d-flex align-items-center gap-2" type="button" id="statusDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 8px; background-color: var(--dark-soft); font-size: 0.88rem;">
+                            <span id="selectedStatusLabel">{{ _('Semua Status') }}</span>
+                        </button>
+                        <ul class="dropdown-menu shadow-sm border-0 py-2" aria-labelledby="statusDropdownBtn" style="font-size: 0.88rem; border-radius: 10px; z-index: 1050;">
+                            <li><a class="dropdown-item py-1.5 px-3 status-filter-item active" href="#" data-status="All">{{ _('Semua Status') }}</a></li>
+                            <li><a class="dropdown-item py-1.5 px-3 status-filter-item" href="#" data-status="Aktif">{{ _('Aktif') }}</a></li>
+                            <li><a class="dropdown-item py-1.5 px-3 status-filter-item" href="#" data-status="Offline">{{ _('Offline') }}</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Kanan: Info Jumlah & Tombol Refresh -->
+                <div class="d-flex align-items-center gap-3 ms-auto text-muted" style="font-size: 0.85rem;">
+                    <span id="userCountInfo" class="fw-medium font-monospace" style="font-size: 0.82rem;">Menampilkan total {{ users|length }} entitas akun sistem</span>
+                    
+                    <!-- Tombol Refresh dengan ID -->
+                    <button type="button" id="refreshUsersBtn" class="btn btn-sm btn-light border-0 p-1.5 text-muted hover-bg" title="{{ _('Refresh Data') }}" style="border-radius: 6px; background-color: var(--dark-soft);">
+                        <svg id="refreshIcon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                        </svg>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- TABEL USER DENGAN VERTICAL SCROLL & FOOTER MENYATU -->
         <div class="card border-0 shadow-xs mb-3" style="background-color: var(--bg-surface); border-radius: 12px; border: 1px solid var(--border-color) !important; overflow: hidden;">
-            <div class="table-responsive">
+            
+            <!-- Pembungkus tabel dengan batas tinggi & scroll -->
+            <div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
                 <table class="table align-middle mb-0" style="color: var(--text-main); font-size: 0.9rem;">
-                    <thead style="background-color: var(--bg-body); border-bottom: 1px solid var(--border-color);">
+                    <thead style="background-color: var(--bg-body); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 10;">
                         <tr>
-                            <th class="py-3 px-4 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ _('No') }}</th>
-                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ _('Pengguna') }}</th>
-                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ _('Nama Lengkap') }}</th>
-                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ _('Email') }}</th>
-                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ _('Role / Hak Akses') }}</th>
-                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ _('Status') }}</th>
-                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ _('Terakhir Aktif') }}</th>
-                            <th class="py-3 text-end px-4 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ _('Aksi') }}</th>
+                            <th class="py-3 px-4 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; background-color: var(--bg-surface);">{{ _('No') }}</th>
+                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; background-color: var(--bg-surface);">{{ _('Pengguna') }}</th>
+                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; background-color: var(--bg-surface);">{{ _('Nama Lengkap') }}</th>
+                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; background-color: var(--bg-surface);">{{ _('Email') }}</th>
+                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; background-color: var(--bg-surface);">{{ _('Role / Hak Akses') }}</th>
+                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; background-color: var(--bg-surface);">{{ _('Status') }}</th>
+                            <th class="py-3 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; background-color: var(--bg-surface);">{{ _('Terakhir Aktif') }}</th>
+                            <th class="py-3 text-end px-4 text-muted fw-semibold" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; background-color: var(--bg-surface);">{{ _('Aksi') }}</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="userTableBody">
                         {% for u in users %}
-                        <tr style="border-bottom: 1px solid var(--border-color);">
-                            <td class="px-4 text-muted fw-medium">{{ loop.index }}</td>
+                        <tr class="user-row" 
+                            data-username="{{ u.username|lower }}" 
+                            data-fullname="{{ (u.nama_lengkap or '')|lower }}" 
+                            data-email="{{ (u.email or '')|lower }}" 
+                            data-role="{{ u.role }}" 
+                            data-status="{{ u.status or 'Aktif' }}"
+                            style="border-bottom: 1px solid var(--border-color);">
+                            <td class="px-4 text-muted fw-medium row-number">{{ loop.index }}</td>
                             <td class="fw-semibold text-main">
                                 <div class="d-flex align-items-center gap-2">
                                     <span>{{ u.username }}</span>
@@ -85,7 +197,7 @@
                             <td class="text-muted">{{ u.email or '-' }}</td>
                             <td>
                                 <form action="{{ url_for('main.update_user_role', user_id=u.id) }}" method="POST" class="d-flex align-items-center gap-2">
-                                    <select name="new_role" class="form-select form-select-sm bg-light border-0 py-1 px-2" style="width: 140px; font-size: 0.85rem; border-radius: 6px;">
+                                    <select name="new_role" class="form-select form-select-sm bg-light border-0 py-1 px-2 role-select-elem" style="width: 140px; font-size: 0.85rem; border-radius: 6px;">
                                         <option value="Developer" {% if u.role == 'Developer' %}selected{% endif %}>{{ _('Developer') }}</option>
                                         <option value="Supervisor" {% if u.role == 'Supervisor' %}selected{% endif %}>{{ _('Supervisor') }}</option>
                                         <option value="Quality Control" {% if u.role == 'Quality Control' %}selected{% endif %}>{{ _('Quality Control') }}</option>
@@ -95,13 +207,13 @@
                                 </form>
                             </td>
                             <td>
-                                {% if u.status == 'Review' %}
-                                <span class="badge rounded-pill d-inline-flex align-items-center gap-1 px-2.5 py-1" style="font-size: 0.75rem; font-weight: 600; background-color: #FFFBEB; color: #B45309; border: 1px solid #FDE68A;">
-                                    <span style="width: 6px; height: 6px; border-radius: 50%; background-color: #D97706;"></span> Review
+                                {% if u.status == 'Aktif' %}
+                                <span class="badge rounded-pill d-inline-flex align-items-center gap-1 px-2.5 py-1 status-badge-elem" data-status-val="Aktif" style="font-size: 0.75rem; font-weight: 600; background-color: #ECFDF5; color: #059669; border: 1px solid #A7F3D0;">
+                                    <span style="width: 6px; height: 6px; border-radius: 50%; background-color: #059669;"></span> Aktif
                                 </span>
                                 {% else %}
-                                <span class="badge rounded-pill d-inline-flex align-items-center gap-1 px-2.5 py-1" style="font-size: 0.75rem; font-weight: 600; background-color: #ECFDF5; color: #059669; border: 1px solid #A7F3D0;">
-                                    <span style="width: 6px; height: 6px; border-radius: 50%; background-color: #059669;"></span> Aktif
+                                <span class="badge rounded-pill d-inline-flex align-items-center gap-1 px-2.5 py-1 status-badge-elem" data-status-val="Offline" style="font-size: 0.75rem; font-weight: 600; background-color: #F1F5F9; color: #64748B; border: 1px solid #CBD5E1;">
+                                    <span style="width: 6px; height: 6px; border-radius: 50%; background-color: #94A3B8;"></span> Offline
                                 </span>
                                 {% endif %}
                             </td>
@@ -130,33 +242,20 @@
                             </td>
                         </tr>
                         {% else %}
-                        <tr>
+                        <tr id="noUserFoundRow">
                             <td colspan="8" class="text-center py-5 text-muted">{{ _('No user data in the system yet.') }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-        </div>
 
-        <!-- FOOTER PAGINATION & INFO SESUAI REFERENSI -->
-        <div class="d-flex justify-content-between align-items-center px-2 py-2 flex-wrap gap-3">
-            <span class="text-muted" style="font-size: 0.85rem; font-family: monospace;">
-                Menampilkan data 1 - {{ users|length }} dari total {{ users|length }} entitas akun sistem
-            </span>
-            <nav aria-label="Page navigation">
-                <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item disabled">
-                        <a class="page-link border-0 bg-transparent text-muted" href="#" aria-label="Previous">&lt;</a>
-                    </li>
-                    <li class="page-item active">
-                        <a class="page-link border-0 text-white fw-bold" href="#" style="background-color: #0F766E; border-radius: 6px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;">1</a>
-                    </li>
-                    <li class="page-item disabled">
-                        <a class="page-link border-0 bg-transparent text-muted" href="#" aria-label="Next">&gt;</a>
-                    </li>
-                </ul>
-            </nav>
+            <!-- FOOTER INFORMASI MENYATU DI BAWAH TABEL -->
+            <div class="px-4 py-3" style="background-color: var(--bg-surface); border-top: 1px solid var(--border-color);">
+                <span id="footerPaginationInfo" class="text-muted" style="font-size: 0.85rem; font-family: monospace;">
+                    Menampilkan total {{ users|length }} entitas akun sistem
+                </span>
+            </div>
         </div>
 
     </div>
@@ -240,25 +339,7 @@
 
     <!-- Bootstrap JS & App Script -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='script.js') }}?v=2"></script>
+    <script src="{{ url_for('static', filename='script.js') }}?v=3"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const resetModal = document.getElementById('resetPasswordModal');
-            if (!resetModal) return;
-
-            resetModal.addEventListener('show.bs.modal', function(event) {
-                const btn = event.relatedTarget;
-                const userId = btn.getAttribute('data-user-id');
-                const username = btn.getAttribute('data-username');
-
-                const form = document.getElementById('resetPasswordForm');
-                form.action = '/admin/users/reset_password/' + userId;
-                form.reset();
-
-                document.getElementById('resetPasswordUsername').textContent = username;
-            });
-        });
-    </script>
 </body>
 </html>

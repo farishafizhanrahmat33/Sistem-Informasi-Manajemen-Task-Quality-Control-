@@ -75,91 +75,126 @@
             </div>
         </div>
 
-        <!-- MODAL UNGGAH PDF -->
-    {% if role in ['Developer', 'Quality Control'] %}
-    <div class="modal fade" id="uploadQrModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" style="max-width: 560px;">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden; background-color: #ffffff; color: #1e293b;">
+    <!-- MODAL IMPORT PROJECT DATA -->
+        {% if role in ['Developer', 'Quality Control'] %}
+        <div class="modal fade" id="uploadModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" style="max-width: 36rem;">
+                <!-- Tambahkan kelas position-relative pada modal-content -->
+                <div class="modal-content border-0 shadow-lg position-relative" style="border-radius: 16px; overflow: hidden; background-color: var(--bg-surface);">
+                    
+                    <!-- Top Accent Highlight (Posisi absolut menempel di paling atas tanpa celah) -->
+                    <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background-color: var(--accent); z-index: 10;"></div>
 
-                <!-- Header -->
-                <div class="modal-header px-4 py-3 d-flex align-items-start justify-content-between border-bottom" style="border-color: #f1f5f9 !important;">
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="d-flex align-items-center justify-content-center flex-shrink-0 shadow-sm" style="width: 40px; height: 40px; border-radius: 12px; background-color: #f0fdfa; border: 1px solid rgba(20, 184, 166, 0.7); color: #0f766e;">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                        </div>
-                        <div>
-                            <h3 class="fw-bold mb-1" style="font-size: 1.125rem; color: #0f172a; letter-spacing: -0.025em;">{{ _('Upload Dokumen QR') }}</h3>
-                            <p class="mb-0 text-muted" style="font-size: 0.75rem; line-height: 1.5; max-width: 380px;">
-                                {{ _('Upload satu file PDF dan otomatis akan dipecah jadi halaman-halaman terpisah, tiap halaman dinamai dari Scene atau Environment Code-nya.') }}
-                            </p>
-                        </div>
-                    </div>
-                    <button type="button" class="btn-close shadow-none m-0" data-bs-dismiss="modal" aria-label="Close" style="font-size: 0.75rem;"></button>
-                </div>
-
-                <form id="qrUploadForm" action="{{ url_for('qr.upload_qr') }}" method="POST" enctype="multipart/form-data">
-                    <div class="modal-body px-4 py-4">
-
-                        <!-- Dropzone + File List -->
-                        <div class="d-flex flex-column gap-3">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <label class="fw-semibold mb-0" style="font-size: 0.75rem; color: #334155;">{{ _('PDF Document File(s)') }}</label>
-                                <span class="text-muted" style="font-size: 11px;">{{ _('Multi-page PDF') }}</span>
+                    <!-- Modal Header (Diberi sedikit margin-top agar tidak menabrak garis hijau) -->
+                    <div class="px-4 pt-4 pb-3 d-flex align-items-start justify-content-between border-bottom mt-1" style="border-color: var(--border-color) !important;">
+                        <div class="d-flex align-items-center gap-3">
+                            <!-- Icon Badge -->
+                            <div class="d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px; border-radius: 10px; background-color: var(--accent-soft); border: 1px solid rgba(16, 185, 129, 0.25); color: var(--accent);">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                </svg>
                             </div>
-
-                            <!-- Dropzone -->
-                            <div id="qrDropzone" class="p-4 text-center mt-1" style="border: 2px dashed #99f6e4; border-radius: 0.75rem; background-color: rgba(240, 253, 250, 0.4); cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#14b8a6'; this.style.backgroundColor='rgba(240, 253, 250, 0.7)';" onmouseout="this.style.borderColor='#99f6e4'; this.style.backgroundColor='rgba(240, 253, 250, 0.4)';">
-                                <div class="mx-auto rounded-circle shadow-sm d-flex align-items-center justify-content-center mb-3" style="width: 48px; height: 48px; background-color: #fff; border: 1px solid #ccfbf1; color: #0f766e;">
-                                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            <div>
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <h5 class="mb-0 fw-bold" style="color: var(--text-main); font-size: 1.1rem; letter-spacing: -0.01em;">{{ _('Import Data Proyek Baru') }}</h5>
                                 </div>
-                                <p class="fw-medium mb-1" style="font-size: 0.75rem; color: #334155;">
-                                    {{ _('Tarik dan lepas file PDF di sini, atau') }}
-                                    <span class="fw-semibold text-decoration-underline" style="color: #0f766e; text-underline-offset: 2px;">{{ _('Pilih File') }}</span>
-                                </p>
-                                <p class="text-muted mb-0" style="font-size: 11px;">{{ _('Anda dapat memilih lebih dari satu file PDF sekaligus') }}</p>
-                            </div>
-                            
-                            <!-- Input file asli -->
-                            <input type="file" id="qrFileInput" name="qr_file" class="d-none" accept=".pdf" multiple>
-
-                            <!-- List file yang sudah dipilih -->
-                            <div id="qrFileList" class="d-flex flex-column gap-2 mt-2" style="max-height: 220px; overflow-y: auto; padding-right: 4px;"></div>
-                            
-                            <p id="qrEmptyDropzoneHint" class="text-muted mt-1 mb-0" style="font-size: 11px;">{{ _('Belum ada file yang dipilih.') }}</p>
-
-                            <!-- Progress bar upload -->
-                            <div id="qrUploadProgressWrap" class="d-none mt-2">
-                                <div class="d-flex align-items-center justify-content-between mb-1">
-                                    <span class="fw-medium text-muted" style="font-size: 11px;">{{ _('Mengunggah...') }}</span>
-                                    <span id="qrUploadProgressText" class="fw-medium text-muted" style="font-size: 11px;">0 / 0</span>
-                                </div>
-                                <div class="progress" style="height: 8px; border-radius: 10px; background-color: #f1f5f9;">
-                                    <div id="qrUploadProgressBar" class="progress-bar transition-all" role="progressbar" style="width: 0%; background-color: #0f766e;"></div>
-                                </div>
+                                <p class="mb-0" style="font-size: 0.8rem; color: var(--text-muted);">{{ _('Unggah data proyek (.xlsx / .csv) untuk sinkronisasi otomatis daftar tugas.') }}</p>
                             </div>
                         </div>
-
+                        <button type="button" class="btn-close shadow-none mt-1" data-bs-dismiss="modal" aria-label="Close" style="filter: var(--btn-close-filter, none);"></button>
                     </div>
 
-                    <!-- Footer -->
-                    <div class="modal-footer px-4 py-3 d-flex align-items-center justify-content-between flex-wrap gap-2" style="background-color: #f8fafc; border-top: 1px solid #f1f5f9;">
-                        <div class="d-flex align-items-center gap-2 text-muted" style="font-size: 11px;">
-                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #0f766e;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                            <span>{{ _('Internal APEX QA batch encryption validated') }}</span>
+                    <!-- Modal Form Body -->
+                    <form action="{{ url_for('task.upload_file') }}" method="POST" enctype="multipart/form-data" class="p-4">
+                        
+                        <!-- Field 1: File Upload -->
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <label class="mb-0 fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.03em; color: var(--text-muted);">{{ _('Pilih Berkas (.xlsx, .csv)') }}</label>
+                            </div>
+                            
+                            <div class="position-relative">
+                                <!-- Custom Designed File Input Pill Box -->
+                                <div class="d-flex align-items-center justify-content-between w-100 rounded-3 p-2 transition-all" style="background-color: var(--input-bg); border: 1px solid var(--border-color); cursor: pointer;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border-color)'">
+                                    <div class="d-flex align-items-center gap-3 overflow-hidden">
+                                        <!-- Sinkronisasi ID dengan script_2.js -->
+                                        <label for="file-upload" class="mb-0 d-flex align-items-center gap-2 rounded-2 fw-medium shadow-sm transition-all flex-shrink-0" style="cursor: pointer; background-color: var(--bg-surface); border: 1px solid var(--border-color); color: var(--text-main); padding: 4px 12px; font-size: 0.75rem;" onmouseover="this.style.backgroundColor='var(--dark-soft)'" onmouseout="this.style.backgroundColor='var(--bg-surface)'">
+                                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--accent);">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                            </svg>
+                                            <span>Pilih Berkas</span>
+                                        </label>
+                                        <input id="file-upload" type="file" name="file" accept=".xlsx, .csv" class="d-none" required>
+                                        <span id="file-name-display" class="text-truncate" style="font-size: 0.75rem; color: var(--text-muted);">Belum ada berkas dipilih</span>
+                                    </div>
+                                    <div class="pe-2 text-muted">
+                                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                
+                                <!-- Tip Banner -->
+                                <div class="mt-2 d-flex align-items-start gap-2 p-2 rounded-3" style="background-color: var(--accent-soft); border: 1px solid rgba(16, 185, 129, 0.2); color: var(--text-main); font-size: 0.7rem;">
+                                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20" style="color: var(--accent); flex-shrink: 0; margin-top: 1.5px;">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>Struktur kolom header: <code class="fw-semibold" style="font-family: 'JetBrains Mono', monospace; color: var(--accent); background-color: var(--dark-soft); padding: 1px 4px; border-radius: 4px; font-size: 10px;">package_name, task_id, task_name ... </code></span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="d-flex align-items-center gap-2">
-                            <button type="button" class="btn btn-light border fw-semibold shadow-none" style="font-size: 0.75rem; color: #475569;" data-bs-dismiss="modal">{{ _('Batal') }}</button>
-                            <button type="submit" id="qrUploadSubmitBtn" class="btn fw-semibold shadow-sm d-flex align-items-center gap-2" style="font-size: 0.75rem; background-color: #0f766e; color: white; border: none;" onmouseover="this.style.backgroundColor='#0d645e'" onmouseout="this.style.backgroundColor='#0f766e'">
-                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                                {{ _('Mulai Upload & Parsing') }}
+
+                        <!-- Field 2: Project Name -->
+                        <div class="mb-4">
+                            <label class="mb-2 fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.03em; color: var(--text-muted);">{{ _('Nama Projek (Project Name)') }}</label>
+                            <div class="position-relative">
+                                <input type="text" name="project_name" class="form-control shadow-none w-100" placeholder="{{ _('Ketik nama proyek baru...') }}" required style="background-color: var(--input-bg) !important; border: 1px solid var(--border-color) !important; color: var(--text-main) !important; font-size: 0.85rem; border-radius: 8px; height: 38px; padding-right: 36px;">
+                                <div class="position-absolute" style="right: 12px; top: 10px; color: var(--text-muted); pointer-events: none;">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            
+                            <!-- Suggestion Quick-Pick Pills -->
+                            <div class="mt-2 d-flex flex-wrap align-items-center gap-2">
+                                <span style="font-size: 0.7rem; color: var(--text-muted);">Riwayat:</span>
+                                {% for p in projects[:3] %}
+                                <button type="button" class="btn btn-sm border-0" style="padding: 2px 8px; border-radius: 6px; font-size: 0.7rem; background-color: var(--dark-soft); color: var(--text-main); transition: all 0.2s;" onmouseover="this.style.backgroundColor='var(--accent-soft)'; this.style.color='var(--accent)';" onmouseout="this.style.backgroundColor='var(--dark-soft)'; this.style.color='var(--text-main)';" onclick="document.querySelector('input[name=\'project_name\']').value='{{ p }}'">
+                                    {{ p }}
+                                </button>
+                                {% else %}
+                                <span style="font-size: 0.7rem; color: var(--text-muted);">Belum ada</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Field 3: Overwrite Notice Box -->
+                        <div class="rounded-3 p-3 d-flex align-items-start gap-3 mb-4" style="background-color: var(--input-bg); border: 1px solid var(--border-color);">
+                            <!-- Atribut 'checked' telah dihapus di bawah ini -->
+                            <input class="form-check-input mt-1 flex-shrink-0 shadow-none" type="checkbox" name="overwrite_project" value="1" id="import-overwrite-checkbox" style="width: 16px; height: 16px; border-color: var(--border-color); cursor: pointer;">
+                            <label class="form-check-label mb-0 leading-relaxed" for="import-overwrite-checkbox" style="font-size: 0.75rem; color: var(--text-main); cursor: pointer;">
+                                {{ _('Perbarui proyek otomatis jika nama proyek sama dengan yang sudah terdaftar di basis data.') }}
+                            </label>
+                        </div>
+
+                        <!-- Modal Actions Footer -->
+                        <div class="d-flex align-items-center justify-content-end gap-2 pt-2">
+                            <button type="button" class="btn btn-sm border shadow-none" data-bs-dismiss="modal" style="height: 38px; padding: 0 16px; border-radius: 8px; font-weight: 500; font-size: 0.8rem; background-color: var(--bg-surface); color: var(--text-main); border-color: var(--border-color) !important;" onmouseover="this.style.backgroundColor='rgba(0,0,0,0.03)'" onmouseout="this.style.backgroundColor='var(--bg-surface)'">
+                                {{ _('Batal') }}
+                            </button>
+                            <button type="submit" class="btn btn-sm d-flex align-items-center gap-2 shadow-sm shadow-none" style="height: 38px; padding: 0 20px; border-radius: 8px; font-weight: 600; font-size: 0.8rem; background-color: var(--accent); color: #ffffff; border: none; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='var(--primary-hover)'" onmouseout="this.style.backgroundColor='var(--accent)'">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                                </svg>
+                                <span>{{ _('Mulai Sinkronisasi') }}</span>
                             </button>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-    {% endif %}
+        {% endif %}
 
         <!-- 2. MODAL HAPUS PROYEK -->
         {% if role in ['Developer', 'Quality Control'] %}
@@ -384,264 +419,266 @@
         <!-- ========================================================================= -->
         <!-- MODAL DETAIL TASK (DIPINDAHKAN KE SINI AGAR TIDAK TERTUMPUK OLEH ROW/GRID) -->
         <!-- ========================================================================= -->
-        {% for t in tasks %}
-        <div class="modal fade" id="modal-{{ t.id }}" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-                <div class="modal-content shadow-lg">
-                    <div class="modal-header d-flex align-items-center">
-                        <div>
-                            <span class="badge badge-soft mb-2 d-inline-block">{{ t.project_name }}</span>
-                            <h5 class="modal-title fw-bold" style="letter-spacing: -0.5px; color: var(--text-main);">{{ _('Task:') }} {{ t.task_id }}</h5>
+        <div id="taskModalsWrapper">
+            {% for t in tasks %}
+            <div class="modal fade" id="modal-{{ t.id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content shadow-lg">
+                        <div class="modal-header d-flex align-items-center">
+                            <div>
+                                <span class="badge badge-soft mb-2 d-inline-block">{{ t.project_name }}</span>
+                                <h5 class="modal-title fw-bold" style="letter-spacing: -0.5px; color: var(--text-main);">{{ _('Task:') }} {{ t.task_id }}</h5>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row g-4">
-                            
-                            <!-- KIRI: SEMUA KOLOM DARI DATA ASLI -->
-                            <div class="col-lg-5">
-                                <div class="detail-panel h-100">
-                                    <h6 class="fw-bold mb-4" style="color: var(--text-main);">{{ _('Raw Data Attributes') }}</h6>
+                        <div class="modal-body">
+                            <div class="row g-4">
+                                
+                                <!-- KIRI: SEMUA KOLOM DARI DATA ASLI -->
+                                <div class="col-lg-5">
+                                    <div class="detail-panel h-100">
+                                        <h6 class="fw-bold mb-4" style="color: var(--text-main);">{{ _('Raw Data Attributes') }}</h6>
 
-                                    <div class="detail-label">{{ _('Project Name') }}</div>
-                                    <div class="detail-value fw-semibold text-primary">{{ t.project_name }}</div>
+                                        <div class="detail-label">{{ _('Project Name') }}</div>
+                                        <div class="detail-value fw-semibold text-primary">{{ t.project_name }}</div>
 
-                                    <div class="detail-label">{{ _('Task ID') }}</div>
-                                    <div class="detail-value fw-bold">{{ t.task_id }}</div>
+                                        <div class="detail-label">{{ _('Task ID') }}</div>
+                                        <div class="detail-value fw-bold">{{ t.task_id }}</div>
 
-                                    <div class="detail-label">{{ _('Task Name') }}</div>
-                                    <div class="detail-value">{{ t.task_name or '-' }}</div>
+                                        <div class="detail-label">{{ _('Task Name') }}</div>
+                                        <div class="detail-value">{{ t.task_name or '-' }}</div>
 
-                                    <div class="detail-label">{{ _('Package Name') }}</div>
-                                    <div class="detail-value"><span class="badge badge-soft border">{{ t.package_name or '-' }}</span></div>
+                                        <div class="detail-label">{{ _('Package Name') }}</div>
+                                        <div class="detail-value"><span class="badge badge-soft border">{{ t.package_name or '-' }}</span></div>
 
-                                    <div class="detail-label">{{ _('Description') }}</div>
-                                    <div class="detail-value lh-base" style="color: var(--text-muted);">{{ t.description or '-' }}</div>
+                                        <div class="detail-label">{{ _('Description') }}</div>
+                                        <div class="detail-value lh-base" style="color: var(--text-muted);">{{ t.description or '-' }}</div>
 
-                                    <div class="detail-label">{{ _('SOP') }}</div>
-                                    <div class="detail-value">{{ t.sop or '-' }}</div>
+                                        <div class="detail-label">{{ _('SOP') }}</div>
+                                        <div class="detail-value">{{ t.sop or '-' }}</div>
 
-                                    <div class="detail-label">{{ _('Task Goal') }}</div>
-                                    <div class="detail-value">{{ t.task_goal or '-' }}</div>
+                                        <div class="detail-label">{{ _('Task Goal') }}</div>
+                                        <div class="detail-value">{{ t.task_goal or '-' }}</div>
 
-                                    <div class="detail-label">{{ _('Initialize / Initial Status') }}</div>
-                                    <div class="detail-value">{{ t.initialize_status or '-' }}</div>
+                                        <div class="detail-label">{{ _('Initialize / Initial Status') }}</div>
+                                        <div class="detail-value">{{ t.initialize_status or '-' }}</div>
 
-                                    <div class="detail-label">{{ _('Generalization Direction') }}</div>
-                                    <div class="detail-value">{{ t.generalization_direction or '-' }}</div>
+                                        <div class="detail-label">{{ _('Generalization Direction') }}</div>
+                                        <div class="detail-value">{{ t.generalization_direction or '-' }}</div>
 
-                                    <div class="detail-label">{{ _('Task Type') }}</div>
-                                    <div class="detail-value">{{ t.task_type or '-' }}</div>
+                                        <div class="detail-label">{{ _('Task Type') }}</div>
+                                        <div class="detail-value">{{ t.task_type or '-' }}</div>
 
-                                    <div class="detail-label">{{ _('Num') }}</div>
-                                    <div class="detail-value">{{ t.num_val or '-' }}</div>
+                                        <div class="detail-label">{{ _('Num') }}</div>
+                                        <div class="detail-value">{{ t.num_val or '-' }}</div>
 
-                                    <div class="detail-label">{{ _('Label') }}</div>
-                                    <div class="detail-value">{{ t.label or '-' }}</div>
+                                        <div class="detail-label">{{ _('Label') }}</div>
+                                        <div class="detail-value">{{ t.label or '-' }}</div>
 
-                                    <div class="detail-label">{{ _('Extraction Target (Pullable Num)') }}</div>
-                                    <div class="detail-value fs-5 fw-bold" style="color: var(--accent);">
-                                        {{ t.pullable_num }}
-                                        {% if t.pullable_num < 250 %}
-                                            <span class="badge ms-1 bg-danger" style="font-size: 0.65rem;">{{ _('Critical') }}</span>
-                                        {% elif t.pullable_num < 500 %}
-                                            <span class="badge ms-1 bg-warning text-dark" style="font-size: 0.65rem;">{{ _('Low') }}</span>
+                                        <div class="detail-label">{{ _('Extraction Target (Pullable Num)') }}</div>
+                                        <div class="detail-value fs-5 fw-bold" style="color: var(--accent);">
+                                            {{ t.pullable_num }}
+                                            {% if t.pullable_num < 250 %}
+                                                <span class="badge ms-1 bg-danger" style="font-size: 0.65rem;">{{ _('Critical') }}</span>
+                                            {% elif t.pullable_num < 500 %}
+                                                <span class="badge ms-1 bg-warning text-dark" style="font-size: 0.65rem;">{{ _('Low') }}</span>
+                                            {% else %}
+                                                <span class="badge ms-1 bg-success" style="font-size: 0.65rem;">{{ _('Safe') }}</span>
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="detail-label">{{ _('Environment Type') }}</div>
+                                        <div class="detail-value">{{ t.environment_type or '-' }}</div>
+
+                                        <div class="detail-label">{{ _('Source Template ID') }}</div>
+                                        <div class="detail-value">{{ t.source_template_id or '-' }}</div>
+
+                                        <div class="detail-label">{{ _('Target Num / Task') }}</div>
+                                        <div class="detail-value">{{ t.target_num_task or '-' }}</div>
+
+                                        <div class="detail-label">{{ _('Env Summary') }}</div>
+                                        <div class="detail-value">{{ t.env_summary or '-' }}</div>
+
+                                        <div class="detail-label">{{ _('Original Excel Status') }}</div>
+                                        <div class="detail-value">{{ t.excel_status or '-' }}</div>
+
+                                        <div class="detail-label">{{ _('Uploaded By') }}</div>
+                                        <div class="detail-value mb-0">{{ t.uploaded_by or _('System') }}</div>
+                                    </div>
+                                </div>
+
+                                <!-- KANAN: STATUS & AKSI -->
+                                <div class="col-lg-7">
+                                    {% if role in ['Developer', 'Quality Control', 'Supervisor'] %}
+                                    <form action="/toggle_send/{{ t.id }}" method="POST" class="mb-4">
+                                        {% if t.sent_by_leader %}
+                                            <button type="submit" class="btn btn-outline-secondary w-100 py-2">{{ _('Pull Back from Production Team') }}</button>
                                         {% else %}
-                                            <span class="badge ms-1 bg-success" style="font-size: 0.65rem;">{{ _('Safe') }}</span>
+                                            <button type="submit" class="btn btn-primary w-100 py-2">{{ _('Send Task to Production Team') }}</button>
+                                        {% endif %}
+                                    </form>
+                                    {% endif %}
+
+                                    <!-- TINJAUAN MEDIA (2 VIDEO) -->
+                                    <div class="detail-panel mb-4 p-0 overflow-hidden">
+                                        <div class="p-3 border-bottom" style="background-color: var(--input-bg);">
+                                            <div class="detail-label mb-0">{{ _('Extraction Media Review') }}</div>
+                                        </div>
+                                        <div class="p-3">
+                                            <ul class="nav custom-video-tabs mb-3" id="video-tabs-{{ t.id }}" role="tablist">
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link active" id="link1-tab-{{ t.id }}" data-bs-toggle="tab" data-bs-target="#link1-{{ t.id }}" type="button" role="tab">{{ _('Sample 1') }}</button>
+                                                </li>
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link" id="link2-tab-{{ t.id }}" data-bs-toggle="tab" data-bs-target="#link2-{{ t.id }}" type="button" role="tab">{{ _('Sample 2') }}</button>
+                                                </li>
+                                            </ul>
+                                            <div class="tab-content" id="video-tabs-content-{{ t.id }}">
+                                                <!-- KONTEN MEDIA UTAMA (SAMPEL 1) -->
+                                                <div class="tab-pane fade show active" id="link1-{{ t.id }}" role="tabpanel">
+                                                    {% if t.link_sample %}
+                                                        {% if 'drive.google.com' in t.link_sample %}
+                                                            <!-- Sampel 1 -->
+                                                            <div id="video-wrapper-{{ t.id }}-1" class="rounded-3 overflow-hidden border shadow-sm mb-2 position-relative bg-black video-container-wrapper" style="aspect-ratio: 1 / 1; width: 100%; border-color: var(--border-color) !important;">
+                                                                
+                                                                <!-- Tombol Keluar Fullscreen dengan Teks & Ikon -->
+                                                                <button type="button" onclick="exitVideoFullscreen('video-wrapper-{{ t.id }}-1')" class="btn btn-sm position-absolute top-0 end-0 m-3 shadow exit-fs-btn d-none align-items-center gap-2 px-3 py-2 rounded-pill" style="z-index: 9999; background: rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.3); color: white; font-size: 0.8rem; font-weight: 600; backdrop-filter: blur(4px);">
+                                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                                                    {{ _('Exit Fullscreen') }}
+                                                                </button>
+                                                                <iframe src="{{ t.link_sample.split('/view')[0].replace('/file/d/', '/file/d/').replace('/view', '') + '/preview' }}" class="position-absolute top-0 start-0 border-0 w-100 h-100" allow="autoplay" allowfullscreen></iframe>
+                                                            </div>
+
+                                                            <!-- Tombol Fullscreen & New Tab -->
+                                                            <div class="d-flex justify-content-between align-items-center mt-1 px-1">
+                                                                <button type="button" onclick="toggleVideoFullscreen('video-wrapper-{{ t.id }}-1')" class="btn btn-sm btn-link text-decoration-none d-inline-flex align-items-center gap-1 p-0 shadow-none" style="color: var(--text-main); font-size: 0.75rem; font-weight: 600;">
+                                                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                                                                    {{ _('Fullscreen') }}
+                                                                </button>
+                                                                <a href="{{ t.link_sample }}" target="_blank" class="text-decoration-none d-inline-flex align-items-center gap-1 px-2 py-1 rounded" style="color: #3b82f6; font-size: 0.75rem; font-weight: 600; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(59, 130, 246, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                                                                    {{ _('Open Video in New Tab') }}
+                                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                                                </a>
+                                                            </div>
+                                                        {% else %}
+                                                            <a href="{{ t.link_sample }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 py-2 shadow-none" style="border-radius: 8px;">{{ _('Visit Main External Link ↗') }}</a>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <div class="text-center py-5 small rounded-3" style="background-color: var(--input-bg); border: 1px dashed var(--border-color); color: var(--text-muted);">{{ _('No main media attached yet.') }}</div>
+                                                    {% endif %}
+                                                </div>
+
+                                                <!-- KONTEN MEDIA ALTERNATIF (SAMPEL 2) -->
+                                                <div class="tab-pane fade" id="link2-{{ t.id }}" role="tabpanel">
+                                                    {% if t.link_sample_2 %}
+                                                        {% if 'drive.google.com' in t.link_sample_2 %}
+                                                            <!-- Sampel 2 -->
+                                                            <div id="video-wrapper-{{ t.id }}-1" class="rounded-3 overflow-hidden border shadow-sm mb-2 position-relative bg-black video-container-wrapper" style="aspect-ratio: 16 / 10; width: 240%; border-color: var(--border-color) !important;">
+                                                                
+                                                                <!-- Tombol Keluar Fullscreen dengan Teks & Ikon -->
+                                                                <button type="button" onclick="exitVideoFullscreen('video-wrapper-{{ t.id }}-2')" class="btn btn-sm position-absolute top-0 end-0 m-3 shadow exit-fs-btn d-none align-items-center gap-2 px-3 py-2 rounded-pill" style="z-index: 9999; background: rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.3); color: white; font-size: 0.8rem; font-weight: 600; backdrop-filter: blur(4px);">
+                                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                                                    {{ _('Exit Fullscreen') }}
+                                                                </button>
+                                                                <iframe src="{{ t.link_sample_2.split('/view')[0].replace('/file/d/', '/file/d/').replace('/view', '') + '/preview' }}" class="position-absolute top-0 start-0 border-0" style="width: 100%; height: 100%; transform: scale(0.8) translateY(-5px); transform-origin: center;" allow="autoplay" allowfullscreen></iframe>
+                                                            </div>
+
+                                                            <!-- Tombol Fullscreen & New Tab -->
+                                                            <div class="d-flex justify-content-between align-items-center mt-1 px-1">
+                                                                <button type="button" onclick="toggleVideoFullscreen('video-wrapper-{{ t.id }}-2')" class="btn btn-sm btn-link text-decoration-none d-inline-flex align-items-center gap-1 p-0 shadow-none" style="color: var(--text-main); font-size: 0.75rem; font-weight: 600;">
+                                                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                                                                    {{ _('Fullscreen') }}
+                                                                </button>
+                                                                <a href="{{ t.link_sample_2 }}" target="_blank" class="text-decoration-none d-inline-flex align-items-center gap-1 px-2 py-1 rounded" style="color: #3b82f6; font-size: 0.75rem; font-weight: 600; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(59, 130, 246, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                                                                    {{ _('Open Video in New Tab') }}
+                                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                                                </a>
+                                                            </div>
+                                                        {% else %}
+                                                            <a href="{{ t.link_sample_2 }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 py-2 shadow-none" style="border-radius: 8px;">{{ _('Visit Alternate External Link ↗') }}</a>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <div class="text-center py-5 small rounded-3" style="background-color: var(--input-bg); border: 1px dashed var(--border-color); color: var(--text-muted);">{{ _('No alternate media attached yet.') }}</div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> 
+
+                                    <!-- FORMULIR EVALUASI QC -->
+                                    <div class="detail-panel">
+                                        <h6 class="fw-bold mb-4" style="color: var(--text-main);">{{ _('Evaluation & Operations Form') }}</h6>
+                                        {% if role in ['Developer', 'Quality Control'] %}
+                                            <form action="/toggle_skip/{{ t.id }}" method="POST" class="mb-4">
+                                                <button type="submit" class="btn {% if t.can_buy_item %}btn-outline-danger{% else %}btn-outline-secondary{% endif %} btn-sm w-100">{% if t.can_buy_item %}{{ _('Mark as Skipped') }}{% else %}{{ _('Restore Task Status (Unskip)') }}{% endif %}</button>
+                                            </form>
+
+                                            <form action="/update/{{ t.id }}" method="POST">
+                                                <div class="mb-3">
+                                                    <label class="form-label detail-label">{{ _('Case Name') }}</label>
+                                                    <input type="text" name="case_name" class="form-control" value="{{ t.case_name or '' }}">
+                                                </div>
+                                                <div class="row g-3 mb-3">
+                                                    <div class="col-sm-6">
+                                                            <label class="form-label detail-label">{{ _('Main Media Link') }}</label>
+                                                        <input type="text" name="link_sample" class="form-control" value="{{ t.link_sample or '' }}" placeholder="{{ _('Enter the main reference URL...') }}">
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <label class="form-label detail-label">{{ _('Alternate Media Link') }}</label>
+                                                        <input type="text" name="link_sample_2" class="form-control" value="{{ t.link_sample_2 or '' }}" placeholder="{{ _('Enter the backup reference URL...') }}">
+                                                    </div>
+                                                </div>
+                                                <div class="row g-3 mb-4">
+                                                    <div class="col-sm-6">
+                                                        <label class="form-label detail-label">{{ _('Inspector Evaluation Result') }}</label>
+                                                        <select name="inspector_result" class="form-select fw-medium">
+                                                            <!-- Jika t.inspector_result kosong ATAU bernilai 'Need Sample', jadikan ini yang terpilih -->
+                                                            <option value="Need Sample" {% if not t.inspector_result or t.inspector_result == 'Need Sample' %}selected{% endif %}>{{ _('Need Sample') }}</option>
+                                                            <option value="Sample Done" {% if t.inspector_result == 'Passed' %}selected{% endif %}>{{ _('Waiting Inspect') }}</option>
+                                                            <option value="Passed" {% if t.inspector_result == 'Passed' %}selected{% endif %}>{{ _('Approved (Passed)') }}</option>
+                                                            <option value="Failed" {% if t.inspector_result == 'Failed' %}selected{% endif %}>{{ _('Rejected (Failed)') }}</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <label class="form-label detail-label">{{ _('Operational Status') }}</label>
+                                                        <select name="operational_status" class="form-select fw-medium">
+                                                            <option value="Active" {% if t.operational_status == 'Active' %}selected{% endif %}>{{ _('Running (Active)') }}</option>
+                                                            <option value="Offline" {% if t.operational_status == 'Offline' %}selected{% endif %}>{{ _('Offline') }}</option>
+                                                            <option value="Hold" {% if t.operational_status == 'Hold' %}selected{% endif %}>{{ _('On Hold') }}</option>
+                                                            <option value="Complete" {% if t.operational_status == 'Complete' %}selected{% endif %}>{{ _('Complete') }}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-4">
+                                                    <label class="form-label detail-label">{{ _('Inspection Notes') }}</label>
+                                                    <textarea name="notes" class="form-control lh-base" rows="3" placeholder="{{ _('Write down findings or special instructions...') }}">{{ t.notes or '' }}</textarea>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary w-100 py-2">{{ _('Save Update') }}</button>
+                                            </form>
+
+                                        {% else %}
+                                            <!-- READ ONLY UNTUK LEADER/PUBLIC -->
+                                            <div class="row mb-4">
+                                                <div class="col-6">
+                                                    <div class="detail-label">{{ _('Case Name') }}</div>
+                                                    <div class="detail-value mb-0">{{ t.case_name or '-' }}</div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="detail-label">{{ _('Operational Status') }}</div>
+                                                    <div class="detail-value mb-0">{{ _(t.operational_status) }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="detail-label">{{ _('Internal Inspector Decision') }}</div>
+                                            <div class="detail-value mb-4">
+                                                {% if t.inspector_result == 'Passed' %}<span class="badge" style="background-color: #10B981; color: white; padding: 0.5em 1em;">{{ _('Approved (Passed)') }}</span>
+                                                {% elif t.inspector_result == 'Failed' %}<span class="badge" style="background-color: #EF4444; color: white; padding: 0.5em 1em;">{{ _('Failed Testing (Failed)') }}</span>
+                                                {% else %}<span class="badge badge-soft border py-2 px-3">{{ _('Still Under Review') }}</span>{% endif %}
+                                            </div>
+                                            
+                                            <div class="detail-label pt-4 border-top">{{ _('Inspection Notes (Quality Team)') }}</div>
+                                            <div class="p-3 rounded lh-base" style="background-color: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-muted); white-space: pre-wrap;">{{ t.notes or _('The evaluation team has not left any notes for this task yet.') }}</div>
                                         {% endif %}
                                     </div>
-
-                                    <div class="detail-label">{{ _('Environment Type') }}</div>
-                                    <div class="detail-value">{{ t.environment_type or '-' }}</div>
-
-                                    <div class="detail-label">{{ _('Source Template ID') }}</div>
-                                    <div class="detail-value">{{ t.source_template_id or '-' }}</div>
-
-                                    <div class="detail-label">{{ _('Target Num / Task') }}</div>
-                                    <div class="detail-value">{{ t.target_num_task or '-' }}</div>
-
-                                    <div class="detail-label">{{ _('Env Summary') }}</div>
-                                    <div class="detail-value">{{ t.env_summary or '-' }}</div>
-
-                                    <div class="detail-label">{{ _('Original Excel Status') }}</div>
-                                    <div class="detail-value">{{ t.excel_status or '-' }}</div>
-
-                                    <div class="detail-label">{{ _('Uploaded By') }}</div>
-                                    <div class="detail-value mb-0">{{ t.uploaded_by or _('System') }}</div>
-                                </div>
-                            </div>
-
-                            <!-- KANAN: STATUS & AKSI -->
-                            <div class="col-lg-7">
-                                {% if role in ['Developer', 'Quality Control', 'Supervisor'] %}
-                                <form action="/toggle_send/{{ t.id }}" method="POST" class="mb-4">
-                                    {% if t.sent_by_leader %}
-                                        <button type="submit" class="btn btn-outline-secondary w-100 py-2">{{ _('Pull Back from Production Team') }}</button>
-                                    {% else %}
-                                        <button type="submit" class="btn btn-primary w-100 py-2">{{ _('Send Task to Production Team') }}</button>
-                                    {% endif %}
-                                </form>
-                                {% endif %}
-
-                                <!-- TINJAUAN MEDIA (2 VIDEO) -->
-                                <div class="detail-panel mb-4 p-0 overflow-hidden">
-                                    <div class="p-3 border-bottom" style="background-color: var(--input-bg);">
-                                        <div class="detail-label mb-0">{{ _('Extraction Media Review') }}</div>
-                                    </div>
-                                    <div class="p-3">
-                                        <ul class="nav custom-video-tabs mb-3" id="video-tabs-{{ t.id }}" role="tablist">
-                                            <li class="nav-item" role="presentation">
-                                                <button class="nav-link active" id="link1-tab-{{ t.id }}" data-bs-toggle="tab" data-bs-target="#link1-{{ t.id }}" type="button" role="tab">{{ _('Sample 1') }}</button>
-                                            </li>
-                                            <li class="nav-item" role="presentation">
-                                                <button class="nav-link" id="link2-tab-{{ t.id }}" data-bs-toggle="tab" data-bs-target="#link2-{{ t.id }}" type="button" role="tab">{{ _('Sample 2') }}</button>
-                                            </li>
-                                        </ul>
-                                        <div class="tab-content" id="video-tabs-content-{{ t.id }}">
-                                            <!-- KONTEN MEDIA UTAMA (SAMPEL 1) -->
-                                            <div class="tab-pane fade show active" id="link1-{{ t.id }}" role="tabpanel">
-                                                {% if t.link_sample %}
-                                                    {% if 'drive.google.com' in t.link_sample %}
-                                                        <!-- Sampel 1 -->
-                                                        <div id="video-wrapper-{{ t.id }}-1" class="rounded-3 overflow-hidden border shadow-sm mb-2 position-relative bg-black video-container-wrapper" style="aspect-ratio: 1 / 1; width: 100%; border-color: var(--border-color) !important;">
-                                                            
-                                                            <!-- Tombol Keluar Fullscreen dengan Teks & Ikon -->
-                                                            <button type="button" onclick="exitVideoFullscreen('video-wrapper-{{ t.id }}-1')" class="btn btn-sm position-absolute top-0 end-0 m-3 shadow exit-fs-btn d-none align-items-center gap-2 px-3 py-2 rounded-pill" style="z-index: 9999; background: rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.3); color: white; font-size: 0.8rem; font-weight: 600; backdrop-filter: blur(4px);">
-                                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                                                                {{ _('Exit Fullscreen') }}
-                                                            </button>
-                                                            <iframe src="{{ t.link_sample.split('/view')[0].replace('/file/d/', '/file/d/').replace('/view', '') + '/preview' }}" class="position-absolute top-0 start-0 border-0 w-100 h-100" allow="autoplay" allowfullscreen></iframe>
-                                                        </div>
-
-                                                        <!-- Tombol Fullscreen & New Tab -->
-                                                        <div class="d-flex justify-content-between align-items-center mt-1 px-1">
-                                                            <button type="button" onclick="toggleVideoFullscreen('video-wrapper-{{ t.id }}-1')" class="btn btn-sm btn-link text-decoration-none d-inline-flex align-items-center gap-1 p-0 shadow-none" style="color: var(--text-main); font-size: 0.75rem; font-weight: 600;">
-                                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-                                                                {{ _('Fullscreen') }}
-                                                            </button>
-                                                            <a href="{{ t.link_sample }}" target="_blank" class="text-decoration-none d-inline-flex align-items-center gap-1 px-2 py-1 rounded" style="color: #3b82f6; font-size: 0.75rem; font-weight: 600; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(59, 130, 246, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
-                                                                {{ _('Open Video in New Tab') }}
-                                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                                                            </a>
-                                                        </div>
-                                                    {% else %}
-                                                        <a href="{{ t.link_sample }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 py-2 shadow-none" style="border-radius: 8px;">{{ _('Visit Main External Link ↗') }}</a>
-                                                    {% endif %}
-                                                {% else %}
-                                                    <div class="text-center py-5 small rounded-3" style="background-color: var(--input-bg); border: 1px dashed var(--border-color); color: var(--text-muted);">{{ _('No main media attached yet.') }}</div>
-                                                {% endif %}
-                                            </div>
-
-                                            <!-- KONTEN MEDIA ALTERNATIF (SAMPEL 2) -->
-                                            <div class="tab-pane fade" id="link2-{{ t.id }}" role="tabpanel">
-                                                {% if t.link_sample_2 %}
-                                                    {% if 'drive.google.com' in t.link_sample_2 %}
-                                                        <!-- Sampel 2 -->
-                                                        <div id="video-wrapper-{{ t.id }}-1" class="rounded-3 overflow-hidden border shadow-sm mb-2 position-relative bg-black video-container-wrapper" style="aspect-ratio: 16 / 10; width: 240%; border-color: var(--border-color) !important;">
-                                                            
-                                                            <!-- Tombol Keluar Fullscreen dengan Teks & Ikon -->
-                                                            <button type="button" onclick="exitVideoFullscreen('video-wrapper-{{ t.id }}-2')" class="btn btn-sm position-absolute top-0 end-0 m-3 shadow exit-fs-btn d-none align-items-center gap-2 px-3 py-2 rounded-pill" style="z-index: 9999; background: rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.3); color: white; font-size: 0.8rem; font-weight: 600; backdrop-filter: blur(4px);">
-                                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                                                                {{ _('Exit Fullscreen') }}
-                                                            </button>
-                                                            <iframe src="{{ t.link_sample_2.split('/view')[0].replace('/file/d/', '/file/d/').replace('/view', '') + '/preview' }}" class="position-absolute top-0 start-0 border-0" style="width: 100%; height: 100%; transform: scale(0.8) translateY(-5px); transform-origin: center;" allow="autoplay" allowfullscreen></iframe>
-                                                        </div>
-
-                                                        <!-- Tombol Fullscreen & New Tab -->
-                                                        <div class="d-flex justify-content-between align-items-center mt-1 px-1">
-                                                            <button type="button" onclick="toggleVideoFullscreen('video-wrapper-{{ t.id }}-2')" class="btn btn-sm btn-link text-decoration-none d-inline-flex align-items-center gap-1 p-0 shadow-none" style="color: var(--text-main); font-size: 0.75rem; font-weight: 600;">
-                                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-                                                                {{ _('Fullscreen') }}
-                                                            </button>
-                                                            <a href="{{ t.link_sample_2 }}" target="_blank" class="text-decoration-none d-inline-flex align-items-center gap-1 px-2 py-1 rounded" style="color: #3b82f6; font-size: 0.75rem; font-weight: 600; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(59, 130, 246, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
-                                                                {{ _('Open Video in New Tab') }}
-                                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                                                            </a>
-                                                        </div>
-                                                    {% else %}
-                                                        <a href="{{ t.link_sample_2 }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 py-2 shadow-none" style="border-radius: 8px;">{{ _('Visit Alternate External Link ↗') }}</a>
-                                                    {% endif %}
-                                                {% else %}
-                                                    <div class="text-center py-5 small rounded-3" style="background-color: var(--input-bg); border: 1px dashed var(--border-color); color: var(--text-muted);">{{ _('No alternate media attached yet.') }}</div>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> 
-
-                                <!-- FORMULIR EVALUASI QC -->
-                                <div class="detail-panel">
-                                    <h6 class="fw-bold mb-4" style="color: var(--text-main);">{{ _('Evaluation & Operations Form') }}</h6>
-                                    {% if role in ['Developer', 'Quality Control'] %}
-                                        <form action="/toggle_skip/{{ t.id }}" method="POST" class="mb-4">
-                                            <button type="submit" class="btn {% if t.can_buy_item %}btn-outline-danger{% else %}btn-outline-secondary{% endif %} btn-sm w-100">{% if t.can_buy_item %}{{ _('Mark as Skipped') }}{% else %}{{ _('Restore Task Status (Unskip)') }}{% endif %}</button>
-                                        </form>
-
-                                        <form action="/update/{{ t.id }}" method="POST">
-                                            <div class="mb-3">
-                                                <label class="form-label detail-label">{{ _('Case Name') }}</label>
-                                                <input type="text" name="case_name" class="form-control" value="{{ t.case_name or '' }}">
-                                            </div>
-                                            <div class="row g-3 mb-3">
-                                                <div class="col-sm-6">
-                                                        <label class="form-label detail-label">{{ _('Main Media Link') }}</label>
-                                                    <input type="text" name="link_sample" class="form-control" value="{{ t.link_sample or '' }}" placeholder="{{ _('Enter the main reference URL...') }}">
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <label class="form-label detail-label">{{ _('Alternate Media Link') }}</label>
-                                                    <input type="text" name="link_sample_2" class="form-control" value="{{ t.link_sample_2 or '' }}" placeholder="{{ _('Enter the backup reference URL...') }}">
-                                                </div>
-                                            </div>
-                                            <div class="row g-3 mb-4">
-                                                <div class="col-sm-6">
-                                                    <label class="form-label detail-label">{{ _('Inspector Evaluation Result') }}</label>
-                                                    <select name="inspector_result" class="form-select fw-medium">
-                                                        <!-- Jika t.inspector_result kosong ATAU bernilai 'Need Sample', jadikan ini yang terpilih -->
-                                                        <option value="Need Sample" {% if not t.inspector_result or t.inspector_result == 'Need Sample' %}selected{% endif %}>{{ _('Need Sample') }}</option>
-                                                        <option value="Sample Done" {% if t.inspector_result == 'Passed' %}selected{% endif %}>{{ _('Waiting Inspect') }}</option>
-                                                        <option value="Passed" {% if t.inspector_result == 'Passed' %}selected{% endif %}>{{ _('Approved (Passed)') }}</option>
-                                                        <option value="Failed" {% if t.inspector_result == 'Failed' %}selected{% endif %}>{{ _('Rejected (Failed)') }}</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <label class="form-label detail-label">{{ _('Operational Status') }}</label>
-                                                    <select name="operational_status" class="form-select fw-medium">
-                                                        <option value="Active" {% if t.operational_status == 'Active' %}selected{% endif %}>{{ _('Running (Active)') }}</option>
-                                                        <option value="Offline" {% if t.operational_status == 'Offline' %}selected{% endif %}>{{ _('Offline') }}</option>
-                                                        <option value="Hold" {% if t.operational_status == 'Hold' %}selected{% endif %}>{{ _('On Hold') }}</option>
-                                                        <option value="Complete" {% if t.operational_status == 'Complete' %}selected{% endif %}>{{ _('Complete') }}</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="mb-4">
-                                                <label class="form-label detail-label">{{ _('Inspection Notes') }}</label>
-                                                <textarea name="notes" class="form-control lh-base" rows="3" placeholder="{{ _('Write down findings or special instructions...') }}">{{ t.notes or '' }}</textarea>
-                                            </div>
-                                            <button type="submit" class="btn btn-primary w-100 py-2">{{ _('Save Update') }}</button>
-                                        </form>
-
-                                    {% else %}
-                                        <!-- READ ONLY UNTUK LEADER/PUBLIC -->
-                                        <div class="row mb-4">
-                                            <div class="col-6">
-                                                <div class="detail-label">{{ _('Case Name') }}</div>
-                                                <div class="detail-value mb-0">{{ t.case_name or '-' }}</div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="detail-label">{{ _('Operational Status') }}</div>
-                                                <div class="detail-value mb-0">{{ _(t.operational_status) }}</div>
-                                            </div>
-                                        </div>
-                                        <div class="detail-label">{{ _('Internal Inspector Decision') }}</div>
-                                        <div class="detail-value mb-4">
-                                            {% if t.inspector_result == 'Passed' %}<span class="badge" style="background-color: #10B981; color: white; padding: 0.5em 1em;">{{ _('Approved (Passed)') }}</span>
-                                            {% elif t.inspector_result == 'Failed' %}<span class="badge" style="background-color: #EF4444; color: white; padding: 0.5em 1em;">{{ _('Failed Testing (Failed)') }}</span>
-                                            {% else %}<span class="badge badge-soft border py-2 px-3">{{ _('Still Under Review') }}</span>{% endif %}
-                                        </div>
-                                        
-                                        <div class="detail-label pt-4 border-top">{{ _('Inspection Notes (Quality Team)') }}</div>
-                                        <div class="p-3 rounded lh-base" style="background-color: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-muted); white-space: pre-wrap;">{{ t.notes or _('The evaluation team has not left any notes for this task yet.') }}</div>
-                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -649,6 +686,7 @@
                 </div>
             </div>
         </div>
+
         {% endfor %} <!-- LOOP KEDUA (KHUSUS MODAL) DITUTUP DI SINI -->
             <div class="col-12" id="emptyFilterMessage" style="display: none;">
                 <div class="detail-panel text-center py-5 small fw-medium mt-2 d-flex flex-column align-items-center" style="color: var(--text-muted);">
@@ -815,7 +853,8 @@
                 <div class="d-flex flex-column gap-2">
                     <!-- Dropdown Sort Field -->
                     <div class="position-relative">
-                        <select id="sortField" class="form-select shadow-none w-100 fw-medium" style="font-size: 0.75rem; color: #1e293b; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 0.625rem 2rem 0.625rem 0.75rem; appearance: none; cursor: pointer;" onmouseover="this.style.borderColor='#cbd5e1'" onmouseout="this.style.borderColor='#e2e8f0'">
+                        <!-- Tambahkan background-image: none; di bagian style -->
+                        <select id="sortField" class="form-select shadow-none w-100 fw-medium" style="font-size: 0.75rem; color: #1e293b; background-color: #ffffff; background-image: none; border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 0.625rem 2rem 0.625rem 0.75rem; appearance: none; cursor: pointer;" onmouseover="this.style.borderColor='#cbd5e1'" onmouseout="this.style.borderColor='#e2e8f0'">
                             <option value="updated" {% if sort_by == 'updated' %}selected{% endif %}>{{ _('Pembaruan Terakhir (Latest Update)') }}</option>
                             <option value="task-id" {% if sort_by == 'task-id' %}selected{% endif %}>{{ _('Task ID') }}</option>
                             <option value="pullable" {% if sort_by == 'pullable' %}selected{% endif %}>{{ _('Target Pullable') }}</option>
@@ -827,12 +866,22 @@
                     </div>
                     <!-- Dropdown Sort Order -->
                     <div class="position-relative">
-                        <select id="sortOrder" class="form-select shadow-none w-100 fw-medium" style="font-size: 0.75rem; color: #1e293b; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 0.625rem 2rem 0.625rem 0.75rem; appearance: none; cursor: pointer;" onmouseover="this.style.borderColor='#cbd5e1'" onmouseout="this.style.borderColor='#e2e8f0'">
+                        <select id="sortOrder" class="form-select shadow-none w-100 fw-medium" style="font-size: 0.75rem; color: #1e293b; background-color: #ffffff; background-image: none; border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 0.625rem 2rem 0.625rem 0.75rem; appearance: none; cursor: pointer;" onchange="updateSortOrderIcon(this)" onmouseover="this.style.borderColor='#cbd5e1'" onmouseout="this.style.borderColor='#e2e8f0'">
                             <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>{{ _('Menurun (Terbaru ke Terlama)') }}</option>
                             <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>{{ _('Menaik (Terlama ke Terbaru)') }}</option>
                         </select>
-                        <div class="position-absolute top-50 translate-middle-y" style="right: 12px; pointer-events: none; color: #94a3b8;">
-                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path></svg>
+                        <div id="sortOrderIconWrap" class="position-absolute" style="top: 53%; right: 10px; transform: translateY(-50%); pointer-events: none; color: #94a3b8;">
+                            {% if sort_order == 'desc' %}
+                                <!-- Ikon Menurun (Arrow Down - Rapi & Terpisah) -->
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h9M4 12h7M4 18h5M18 6v12M15 15l3 3 3-3"></path>
+                                </svg>
+                            {% else %}
+                                <!-- Ikon Menaik (Arrow Up - Rapi & Terpisah) -->
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h9M4 12h7M4 18h5M18 18V6M15 9l3-3 3 3"></path>
+                                </svg>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -853,7 +902,7 @@
                     <div class="position-absolute top-50 translate-middle-y" style="left: 10px; color: #94a3b8; pointer-events: none;">
                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
-                    <input type="text" id="project-list-search" class="form-control shadow-none search-filter-input" placeholder="{{ _('Cari nama project...') }}" style="font-size: 0.75rem; padding: 0.375rem 0.75rem 0.375rem 2rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; background-color: #f8fafc; color: #334155;">
+                    <input type="text" id="project-list-search" class="form-control shadow-none search-filter-input" placeholder="{{ _('Cari nama project...') }}" oninput="searchFilterList(this, 'project-list')" style="font-size: 0.75rem; padding: 0.375rem 0.75rem 0.375rem 2rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; background-color: #f8fafc; color: #334155;">
                 </div>
 
                 <!-- List -->
@@ -895,7 +944,7 @@
                     <div class="position-absolute top-50 translate-middle-y" style="left: 10px; color: #94a3b8; pointer-events: none;">
                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
-                    <input type="text" id="package-list-search" class="form-control shadow-none search-filter-input" placeholder="{{ _('Cari nama paket...') }}" style="font-size: 0.75rem; padding: 0.375rem 0.75rem 0.375rem 2rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; background-color: #f8fafc; color: #334155;">
+                    <input type="text" id="package-list-search" class="form-control shadow-none search-filter-input" placeholder="{{ _('Cari nama paket...') }}" oninput="searchFilterList(this, 'package-list')" style="font-size: 0.75rem; padding: 0.375rem 0.75rem 0.375rem 2rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; background-color: #f8fafc; color: #334155;">
                 </div>
 
                 <!-- List -->

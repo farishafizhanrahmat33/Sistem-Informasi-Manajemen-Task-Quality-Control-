@@ -317,7 +317,26 @@ def user_management():
         return redirect(url_for('main.dashboard'))
 
     users = db.session.query(UserModel).all()
-    return render_template('user_management.html', users=users)
+    
+    # Statistik disederhanakan (Aktif & Offline)
+    total_users = len(users)
+    active_users = sum(1 for u in users if getattr(u, 'status', '') == 'Aktif')
+    offline_users = sum(1 for u in users if getattr(u, 'status', '') != 'Aktif') # Default Offline / baru dibuat
+    
+    # Hitung distribusi role
+    role_counts = {}
+    for u in users:
+        r = u.role or 'Public'
+        role_counts[r] = role_counts.get(r, 0) + 1
+
+    stats = {
+        'total': total_users,
+        'active': active_users,
+        'offline': offline_users,
+        'roles': role_counts
+    }
+
+    return render_template('user_management.html', users=users, stats=stats)
 
 @main_bp.route('/admin/users/add', methods=['POST'])
 def add_user():
@@ -342,7 +361,8 @@ def add_user():
             password=hashed_password,
             role=role,
             nama_lengkap=nama_lengkap,
-            email=email
+            email=email,
+            status='Offline'  # <- Tambahkan ini agar status awalnya Offline
         )
         db.session.add(new_user)
         db.session.commit()
