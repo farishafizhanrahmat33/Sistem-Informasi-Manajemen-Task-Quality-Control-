@@ -462,18 +462,57 @@ document.addEventListener('DOMContentLoaded', function() {
         filterUsers();
     }
 
-    // Modal reset password handler
+    // Modal reset password handler (Redesign Apex QA)
     const resetModal = document.getElementById('resetPasswordModal');
     if (resetModal) {
         resetModal.addEventListener('show.bs.modal', function(event) {
             const btn = event.relatedTarget;
             const userId = btn.getAttribute('data-user-id');
-            const username = btn.getAttribute('data-username');
+            const username = btn.getAttribute('data-username') || 'Unknown';
+            const fullname = btn.getAttribute('data-fullname') || '-';
+            
+            // Update Form Action
             const form = document.getElementById('resetPasswordForm');
             form.action = '/admin/users/reset_password/' + userId;
             form.reset();
+            
+            // Populasikan Data Profil
             document.getElementById('resetPasswordUsername').textContent = username;
+            document.getElementById('resetPasswordFullname').textContent = fullname;
+            
+            // Buat Inisial Dinamis
+            let initials = "U";
+            if (fullname && fullname !== '-') {
+                const parts = fullname.trim().split(' ');
+                initials = parts.length > 1 ? parts[0][0] + parts[1][0] : parts[0][0];
+            } else if (username) {
+                initials = username.substring(0, 2);
+            }
+            document.getElementById('resetPasswordInitials').textContent = initials.toUpperCase();
         });
+    }
+
+    // Validasi Konfirmasi Kata Sandi saat disubmit
+    const resetPassForm = document.getElementById('resetPasswordForm');
+    if (resetPassForm) {
+        resetPassForm.addEventListener('submit', function(e) {
+            const newPass = document.getElementById('new_password').value;
+            const confPass = document.getElementById('confirm_password').value;
+            if (newPass !== confPass) {
+                e.preventDefault();
+                alert("Konfirmasi kata sandi tidak cocok. Silakan periksa kembali.");
+            }
+        });
+    }
+
+    // Utilitas untuk melihat (Show/Hide) Kata Sandi Sementara
+    function togglePasswordVisibility(inputId, btn) {
+        const input = document.getElementById(inputId);
+        if (input.type === "password" || input.type === "text") {
+            input.type = input.type === "password" ? "text" : "password";
+            // Toggle opacity icon sebagai indikator visual
+            btn.style.opacity = input.type === "password" ? "0.6" : "1";
+        }
     }
 });
 

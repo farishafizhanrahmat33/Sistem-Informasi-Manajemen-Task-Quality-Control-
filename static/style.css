@@ -1789,3 +1789,106 @@ h1, h2, h3, h4, h5, h6 {
         }
     }
 }
+
+/* ==========================================================================
+   22. APEX REDESIGN: MODAL & USER MANAGEMENT
+   ========================================================================== */
+
+/* Struktur Modal Apex */
+.modal-content-apex {
+    border: 1px solid var(--border-color);
+    border-radius: 16px !important;
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
+    overflow: hidden;
+    background-color: var(--bg-surface);
+}
+.modal-accent-teal {
+    height: 6px;
+    width: 100%;
+    background: linear-gradient(to right, #0F766E, #0D9488, #14B8A6);
+}
+.modal-accent-amber {
+    height: 6px;
+    width: 100%;
+    background-color: #F59E0B;
+}
+
+/* Badge Icon Modal */
+.modal-icon-badge {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid;
+    flex-shrink: 0;
+}
+
+/* Form Input dengan Icon Float */
+.input-icon-wrapper {
+    position: relative;
+}
+.input-icon-wrapper .icon-left {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+    z-index: 4;
+}
+.form-control-apex {
+    padding-left: 2.75rem !important; /* Ruang untuk icon kiri */
+    border-radius: 12px !important;
+    border: 1px solid var(--border-color) !important;
+    background-color: var(--input-bg) !important;
+    padding-top: 0.6rem !important;
+    padding-bottom: 0.6rem !important;
+    font-size: 0.85rem !important;
+    color: var(--text-main) !important;
+}
+.form-control-apex:focus, .form-select-apex:focus {
+    border-color: var(--tm-primary) !important;
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15) !important;
+    background-color: var(--bg-surface) !important;
+}
+.form-select-apex {
+    border-radius: 12px !important;
+    border: 1px solid var(--border-color) !important;
+    background-color: var(--input-bg) !important;
+}
+
+/* Checkbox Interaktif (User Management) */
+.custom-checkbox-panel {
+    transition: all 0.2s ease;
+    background-color: var(--bg-surface);
+    border-color: var(--border-color);
+}
+.custom-checkbox-panel:hover {
+    background-color: var(--bg-body);
+}
+.custom-checkbox-panel input:checked + div .text-main {
+    color: var(--tm-primary) !important;
+}
+
+/* Warna Kustom (Soft & Primary) */
+.bg-teal-soft { background-color: rgba(15, 118, 110, 0.08) !important; }
+.text-teal-primary { color: #0F766E !important; }
+.border-teal-subtle { border-color: rgba(15, 118, 110, 0.2) !important; }
+.text-teal-dark { color: #042F2E !important; }
+
+.bg-amber-soft { background-color: rgba(245, 158, 11, 0.1) !important; }
+.text-amber-primary { color: #D97706 !important; }
+.border-amber-subtle { border-color: rgba(245, 158, 11, 0.2) !important; }
+
+.bg-emerald-soft { background-color: rgba(16, 185, 129, 0.1) !important; }
+.text-emerald-primary { color: #059669 !important; }
+.border-emerald-subtle { border-color: rgba(16, 185, 129, 0.2) !important; }
+
+/* Dukungan Dark Mode (Opsional namun disarankan) */
+[data-theme="dark"] .bg-teal-soft { background-color: rgba(45, 212, 191, 0.12) !important; }
+[data-theme="dark"] .text-teal-primary { color: #5EEAD4 !important; }
+[data-theme="dark"] .text-teal-dark { color: #99F6E4 !important; }
+[data-theme="dark"] .border-teal-subtle { border-color: rgba(45, 212, 191, 0.3) !important; }
+[data-theme="dark"] .custom-checkbox-panel:hover { background-color: rgba(255,255,255,0.03); }
