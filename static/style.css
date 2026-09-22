@@ -1,29 +1,57 @@
 /* ==========================================================================
    STYLE.CSS — QA PLATFORM (OBSIDIAN PINE / EMERALD)
    Versi: Terstruktur & RWD-Ready
-   Kategori:
-     0.  Font & Import
-     1.  Variabel Warna & Tema
-     2.  Global & Tipografi
-     3.  Komponen: Tombol
-     4.  Komponen: Navbar & Header
-     5.  Komponen: Tabs & Segmented Controls
-     6.  Komponen: Cards & Badges
-     7.  Komponen: Modals & Detail Panels
-     8.  Komponen: Forms
-     9.  Komponen: Dropdown
-    10.  Komponen: Sidebar & Offcanvas
-    11.  Komponen: Tabel & Utilitas
-    12.  Halaman: Dashboard
-    13.  Halaman: Task Management
-    14.  Halaman: QR Management
-    15.  Halaman: User Management
-    16.  Halaman: Ticket Support & Layanan Pelanggan
-    17.  Halaman: FAQ & Panduan
-    18.  Halaman: Pengaturan Profil
-    19.  Halaman: Login
-    20.  Dark Mode Overrides (Dashboard & Global)
-    21.  Responsive — Mobile & Tablet (RWD)
+
+   STRUKTUR FILE INI DIBAGI JADI 2 BAGIAN BESAR:
+
+   ==> FONDASI (dipakai di desktop & mobile, sebelum bagian 1)
+       0.  Font & Import
+       1.  Variabel Warna & Tema
+       2.  Global & Tipografi
+
+   ==> BAGIAN 1: TAMPILAN DESKTOP / WEBSITE (baseline, tanpa media query)
+       3.  Komponen: Tombol
+       4.  Komponen: Navbar & Header
+       5.  Komponen: Tabs & Segmented Controls
+       6.  Komponen: Cards & Badges
+       7.  Komponen: Modals & Detail Panels
+       8.  Komponen: Forms
+       9.  Komponen: Dropdown
+      10.  Komponen: Sidebar & Offcanvas
+      11.  Komponen: Tabel & Utilitas
+      -- per halaman --
+      12.  Halaman: Dashboard
+      13.  Halaman: Task Management
+      14.  Halaman: QR Management
+      15.  Halaman: User Management
+      16.  Halaman: Ticket Support & Layanan Pelanggan
+      17.  Halaman: FAQ & Panduan
+      18.  Halaman: Pengaturan Profil
+      19.  Halaman: Login
+      20.  Dark Mode Overrides (berlaku di desktop & mobile)
+
+   ==> BAGIAN 2: TAMPILAN MOBILE / HANDPHONE (override lewat @media)
+      21.  Responsive — Mobile & Tablet, dipecah per halaman:
+           21.1  Layout Global
+           21.2  Navbar
+           21.3  Sidebar & Offcanvas
+           21.4  Halaman: Dashboard
+           21.5  Toolbar (search + tombol aksi)
+           21.6  Halaman: Task Management
+           21.7  Halaman: QR Management
+           21.8  Halaman: User Management
+           21.9  Halaman: Ticket Support
+           21.10 Halaman: Layanan Pelanggan & FAQ
+           21.11 Halaman: Pengaturan Profil
+           21.12 Halaman: Login
+           21.13 Heading (skala font)
+           21.14 Touch UX (target tap, form, dll)
+
+   CATATAN: Bagian 1 (Desktop) adalah gaya BASE/default -- tetap aktif di
+   semua ukuran layar kecuali di-override. Bagian 2 (Mobile) isinya CUMA
+   override lewat @media (max-width: ...), jadi urutannya di file ini
+   SENGAJA diletakkan setelah Bagian 1 supaya override-nya menang sesuai
+   urutan CSS. Jangan pindahkan Bagian 2 ke atas Bagian 1.
    ========================================================================== */
 
 
@@ -138,6 +166,12 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
+
+/* ##########################################################################
+   #  BAGIAN 1 — TAMPILAN DESKTOP / WEBSITE                                 #
+   #  (baseline tanpa media query; berlaku di semua layar kecuali          #
+   #  di-override oleh BAGIAN 2 di bawah)                                   #
+   ########################################################################## */
 
 /* ==========================================================================
    3. KOMPONEN: TOMBOL
@@ -610,6 +644,7 @@ h1, h2, h3, h4, h5, h6 {
     left: 0 !important;
     width: 280px !important;
     height: 100vh !important;
+    height: 100dvh !important; /* <--- TAMBAHKAN BARIS INI */
     border-right: 1px solid var(--border-color) !important;
     visibility: hidden;
 }
@@ -623,6 +658,7 @@ h1, h2, h3, h4, h5, h6 {
     flex-direction: column;
     height: 100%;
     max-height: 100vh;
+    max-height: 100dvh; /* <--- TAMBAHKAN BARIS INI */
     overflow: hidden;
 }
 
@@ -1348,6 +1384,13 @@ h1, h2, h3, h4, h5, h6 {
 [data-theme="dark"] .bg-slate-100          { background-color: rgba(148, 163, 184, 0.12) !important; }
 
 
+/* ##########################################################################
+   #  BAGIAN 2 — TAMPILAN MOBILE / HANDPHONE                                #
+   #  (semua aturan di bawah ini cuma aktif lewat @media, jadi cuma        #
+   #  nge-override sebagian style di BAGIAN 1 -- bukan gaya berdiri        #
+   #  sendiri. Dipecah per halaman, sub-nomor 21.1 - 21.14.)                #
+   ########################################################################## */
+
 /* ==========================================================================
    21. RESPONSIVE — MOBILE & TABLET (RWD)
    Urutan: Global → Navbar → Sidebar → Dashboard → Task → QR →
@@ -1718,5 +1761,31 @@ h1, h2, h3, h4, h5, h6 {
         height: 40px !important;
         margin: 0.75rem !important;
         font-size: 0.9rem !important;
+    }
+}
+
+@media (max-width: 1023.98px) {
+    #appSidebar {
+        /* Memaksa tinggi pas dengan layar dinamis iPhone tanpa terpotong */
+        height: 100vh !important;
+        height: 100dvh !important;
+        box-shadow: 5px 0 25px rgba(0, 0, 0, 0.4);
+        transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
+        z-index: 1050 !important;
+    }
+
+    /* Animasi geser mulus */
+    #appSidebar:not(.tw-translate-x-0) {
+        transform: translateX(-100%) !important;
+    }
+    #appSidebar.tw-translate-x-0 {
+        transform: translateX(0) !important;
+    }
+
+    /* Mengatasi garis bawah (Home Indicator) iPhone agar footer tidak menempel terlalu bawah */
+    @supports (padding-bottom: env(safe-area-inset-bottom)) {
+        #appSidebar .tw-flex-shrink-0.tw-p-2 {
+            padding-bottom: max(0.75rem, env(safe-area-inset-bottom)) !important;
+        }
     }
 }
