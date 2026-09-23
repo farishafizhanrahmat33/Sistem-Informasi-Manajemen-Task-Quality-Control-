@@ -19,8 +19,7 @@
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">    
     <!-- Bootstrap 5.3.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Hubungkan ke file CSS Eksternal -->
@@ -41,7 +40,8 @@
         <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
             <div>
                 <div class="tm-title-row">
-                    <h1 class="tm-title">{{ _('Manajemen Task') }}</h1>
+                    <!-- Gunakan .title-main -->
+                    <h1 class="title-main fs-3 mb-0 text-on-surface">{{ _('Manajemen Task') }}</h1>
                 </div>
             </div>
 
@@ -96,9 +96,11 @@
                             </div>
                             <div>
                                 <div class="d-flex align-items-center gap-2 mb-1">
-                                    <h5 class="mb-0 fw-bold" style="color: var(--text-main); font-size: 1.1rem; letter-spacing: -0.01em;">{{ _('Import Data Proyek Baru') }}</h5>
+                                    <!-- Gunakan .title-sub -->
+                                    <h5 class="title-sub mb-0" style="font-size: 1.1rem;">{{ _('Import Data Proyek Baru') }}</h5>
                                 </div>
-                                <p class="mb-0" style="font-size: 0.8rem; color: var(--text-muted);">{{ _('Unggah data proyek (.xlsx / .csv) untuk sinkronisasi otomatis daftar tugas.') }}</p>
+                                <!-- Gunakan .desc-text -->
+                                <p class="desc-text mb-0" style="font-size: 0.8rem;">{{ _('Unggah data proyek (.xlsx / .csv) untuk sinkronisasi otomatis daftar tugas.') }}</p>
                             </div>
                         </div>
                         <button type="button" class="btn-close shadow-none mt-1" data-bs-dismiss="modal" aria-label="Close" style="filter: var(--btn-close-filter, none);"></button>
@@ -216,10 +218,12 @@
                             </div>
                             <div>
                                 <div class="d-flex align-items-center gap-2 mb-1">
-                                    <h5 class="mb-0 fw-bold" style="color: var(--text-main); font-size: 1.1rem; letter-spacing: -0.01em;">{{ _('Hapus Proyek Secara Permanen') }}</h5>
+                                    <!-- Gunakan .title-sub -->
+                                    <h5 class="title-sub mb-0" style="font-size: 1.1rem;">{{ _('Hapus Proyek Secara Permanen') }}</h5>
                                     <span class="badge" style="font-size: 0.65rem; padding: 3px 6px; border-radius: 9999px; background-color: rgba(239, 68, 68, 0.12); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.25); letter-spacing: 1px;">DANGER ZONE</span>
                                 </div>
-                                <p class="mb-0" style="font-size: 0.8rem; color: var(--text-muted);">{{ _('Pilih proyek lama yang ingin dihapus permanen dari sistem.') }}</p>
+                                <!-- Gunakan .desc-text -->
+                                <p class="desc-text mb-0" style="font-size: 0.8rem;">{{ _('Pilih proyek lama yang ingin dihapus permanen dari sistem.') }}</p>
                             </div>
                         </div>
                         <button type="button" class="btn-close shadow-none mt-1" data-bs-dismiss="modal" aria-label="Close" style="filter: var(--btn-close-filter, none);"></button>
@@ -427,7 +431,8 @@
                         <div class="modal-header d-flex align-items-center">
                             <div>
                                 <span class="badge badge-soft mb-2 d-inline-block">{{ t.project_name }}</span>
-                                <h5 class="modal-title fw-bold" style="letter-spacing: -0.5px; color: var(--text-main);">{{ _('Task:') }} {{ t.task_id }}</h5>
+                                <!-- Gunakan .title-sub -->
+                                <h5 class="modal-title title-sub mb-0" style="font-size: 1.15rem;">{{ _('Task:') }} {{ t.task_id }}</h5>
                             </div>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
@@ -835,8 +840,10 @@
                     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
                 </div>
                 <div>
-                    <h3 class="mb-0 fw-bold" style="font-size: 0.875rem; color: #0f172a; line-height: 1.25;">{{ _('Filter & Urutkan') }}</h3>
-                    <p class="mb-0" style="font-size: 11px; color: #94a3b8;">{{ _('Atur parameter tampilan task') }}</p>
+                    <!-- Gunakan .title-sub -->
+                    <h3 class="title-sub mb-0" style="font-size: 1rem;">{{ _('Filter & Urutkan') }}</h3>
+                    <!-- Gunakan .desc-text -->
+                    <p class="desc-text mb-0" style="font-size: 0.75rem;">{{ _('Atur parameter tampilan task') }}</p>
                 </div>
             </div>
             <button type="button" class="btn-close shadow-none m-0 p-2" data-bs-dismiss="offcanvas" aria-label="Close" style="font-size: 0.75rem; color: #94a3b8; opacity: 0.6;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'"></button>

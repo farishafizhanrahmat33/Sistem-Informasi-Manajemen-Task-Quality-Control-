@@ -17,7 +17,8 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tambahkan Plus Jakarta Sans ke dalam link ini -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 
     <!-- BOOTSTRAP -->
@@ -124,10 +125,11 @@
                         "space-md": "1rem"
                     },
                     "fontFamily": {
+                        "heading": ["Plus Jakarta Sans", "sans-serif"], /* <-- TAMBAHAN BARU */
                         "code-sm": ["JetBrains Mono"],
                         "body-md": ["Inter"],
-                        "headline-xl": ["Inter"],
-                        "headline-sm": ["Inter"],
+                        "headline-xl": ["Plus Jakarta Sans", "sans-serif"], /* <-- UBAH JADI INI */
+                        "headline-sm": ["Plus Jakarta Sans", "sans-serif"], /* <-- UBAH JADI INI */
                         "body-lg": ["Inter"],
                         "label-md": ["Inter"],
                         "body-sm": ["Inter"],
@@ -154,16 +156,16 @@
             
             <!-- HEADER DASHBOARD (Bersih tanpa breadcrumbs ganda) -->
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2">
-                <div class="flex flex-col gap-1">
-                    <!-- Judul Utama -->
-                    <h1 class="text-[26px] sm:text-[30px] text-on-surface tracking-tight font-bold">
+                <div class="flex flex-col gap-1.5">
+                    <!-- Gunakan .title-main -->
+                    <h1 class="title-main text-[28px] sm:text-[32px] text-on-surface">
                         Dashboard Monitoring Task
                     </h1>
                     
-                    <!-- Deskripsi & Badge Status -->
-                    <div class="flex flex-wrap items-center gap-3 mt-1.5">
-                        <p class="font-body-md text-text-secondary">
-                            Ringkasan progres pergerakan task dan kesiapan lini produksi secara real-time.
+                    <!-- Gunakan .desc-text -->
+                    <div class="flex flex-wrap items-center gap-3">
+                        <p class="desc-text text-[14px] sm:text-[15px] max-w-3xl">
+                            Ringkasan progres pergerakan task dan kesiapan lini produksi secara <span class="text-primary-container font-bold">real-time</span>.
                         </p>
                     </div>
                 </div>
@@ -332,10 +334,11 @@
                 
                 <!-- KIRI: Daftar Proyek -->
                 <div class="xl:col-span-4 rounded-xl bg-white border border-border-subtle p-4 shadow-sm flex flex-col h-[420px]">
-                    <div class="flex items-center justify-between pb-2">
-                        <div class="flex items-center gap-2">
-                            <span class="material-symbols-outlined text-[20px] text-primary-container">domain</span>
-                            <h2 class="text-[15px] text-on-surface font-semibold">Active Projects</h2>
+                    <div class="flex items-center justify-between pb-3">
+                        <div class="flex items-center gap-2.5">
+                            <span class="material-symbols-outlined text-[22px] text-primary-container">domain</span>
+                            <!-- Gunakan .title-sub -->
+                            <h2 class="title-sub text-[17px] text-on-surface">Active Projects</h2>
                         </div>
                     </div>
                     
@@ -372,12 +375,14 @@
                 <!-- KANAN: QC Bar Chart dengan Header Custom -->
                 <div class="xl:col-span-8 rounded-xl bg-white border border-border-subtle p-5 sm:p-6 shadow-sm flex flex-col h-[420px]">
                     <div class="flex flex-col sm:flex-row sm:items-start justify-between pb-4 gap-2">
-                        <div class="flex flex-col">
-                            <div class="flex items-center gap-2">
-                                <span class="material-symbols-outlined text-[20px] text-primary-container">bar_chart</span>
-                                <h2 class="text-[16px] text-on-surface font-bold">QC Distribution Overview</h2>
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-center gap-2.5">
+                                <span class="material-symbols-outlined text-[22px] text-primary-container">bar_chart</span>
+                                <!-- Gunakan .title-sub -->
+                                <h2 class="title-sub text-[17px] text-on-surface">QC Distribution Overview</h2>
                             </div>
-                            <p class="font-body-sm text-text-secondary mt-1">{{ _('Komparasi sebaran status task per tahapan alur verifikasi') }}</p>
+                            <!-- Gunakan .desc-text -->
+                            <p class="desc-text text-[13px]">{{ _('Komparasi sebaran status task per tahapan alur verifikasi') }}</p>
                         </div>
                         <div class="flex items-center gap-4 mt-2 sm:mt-0">
                             <div class="flex items-center gap-1.5 text-[12px] font-semibold text-text-secondary">
@@ -399,12 +404,14 @@
             <div class="rounded-xl bg-white border border-border-subtle shadow-sm flex flex-col overflow-hidden">
                 <div class="p-4 sm:p-6 bg-white border-b border-border-subtle">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <span class="material-symbols-outlined text-[20px] text-primary-container">fact_check</span>
-                                <h2 class="text-[15px] text-on-surface font-bold">{{ _('Recent Task Activity') }}</h2>
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-center gap-2.5">
+                                <span class="material-symbols-outlined text-[22px] text-primary-container">fact_check</span>
+                                <!-- Gunakan .title-sub -->
+                                <h2 class="title-sub text-[17px] text-on-surface">{{ _('Recent Task Activity') }}</h2>
                             </div>
-                            <p class="font-body-sm text-text-secondary mt-0.5">{{ _('Aktivitas pencatatan dan audit eksekusi verifikasi terkini') }}</p>
+                            <!-- Gunakan .desc-text -->
+                            <p class="desc-text text-[13px]">{{ _('Aktivitas pencatatan dan audit eksekusi verifikasi terkini') }}</p>
                         </div>
                     </div>
 
