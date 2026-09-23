@@ -82,22 +82,29 @@ def task_list():
             ))
         return q
 
-    def get_count_for_status(status_val):
-        q = apply_filters(base_query)
-        if status_val != 'All':
-            if status_val == 'Sent to Team':
-                q = q.filter_by(sent_by_leader=True)
-            else:
-                q = q.filter_by(sent_by_leader=False, qc_category=status_val)
-        return q.count()
+    # --- OPTIMASI: HITUNG SEMUA STATUS SEKALIGUS DALAM 1 QUERY ---
+    from sqlalchemy import func, case
 
-    count_all = get_count_for_status('All')
-    count_need_sample = get_count_for_status('Need Sample')
-    count_sample_done = get_count_for_status('Sample Done')
-    count_revision = get_count_for_status('Revision')
-    count_ready = get_count_for_status('Ready')
-    count_skipped = get_count_for_status('Skipped')
-    count_sent = get_count_for_status('Sent to Team')
+    filtered_base = apply_filters(base_query)
+
+    counts_row = filtered_base.with_entities(
+        func.count(TaskModel.id),
+        func.sum(case((db.and_(TaskModel.sent_by_leader == False, TaskModel.qc_category == 'Need Sample'), 1), else_=0)),
+        func.sum(case((db.and_(TaskModel.sent_by_leader == False, TaskModel.qc_category == 'Sample Done'), 1), else_=0)),
+        func.sum(case((db.and_(TaskModel.sent_by_leader == False, TaskModel.qc_category == 'Revision'), 1), else_=0)),
+        func.sum(case((db.and_(TaskModel.sent_by_leader == False, TaskModel.qc_category == 'Ready'), 1), else_=0)),
+        func.sum(case((db.and_(TaskModel.sent_by_leader == False, TaskModel.qc_category == 'Skipped'), 1), else_=0)),
+        func.sum(case((TaskModel.sent_by_leader == True, 1), else_=0))
+    ).first()
+
+    count_all = counts_row[0] or 0
+    count_need_sample = counts_row[1] or 0
+    count_sample_done = counts_row[2] or 0
+    count_revision = counts_row[3] or 0
+    count_ready = counts_row[4] or 0
+    count_skipped = counts_row[5] or 0
+    count_sent = counts_row[6] or 0
+    # -----------------------------------------------------------
 
     main_query = apply_filters(base_query)
     if selected_status != 'All':

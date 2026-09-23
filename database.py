@@ -53,7 +53,7 @@ class TaskModel(db.Model):
 
     id = db.Column('id_qc_system', db.Integer, primary_key=True, autoincrement=True)
     project_name = db.Column(db.String, nullable=False, index=True)
-    package_name = db.Column(db.String)
+    package_name = db.Column(db.String, index=True)
     task_id = db.Column(db.String, nullable=False)
     task_name = db.Column(db.String)
     description = db.Column(db.Text)

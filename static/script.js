@@ -225,7 +225,8 @@ async function syncDataNow() {
 }
 
 async function autoUpdateTasks() {
-    if (!document.getElementById('taskContainer') || document.querySelector('.modal.show') || document.body.classList.contains('modal-open')) return;
+    // Tambahkan document.hidden agar server tidak disibukkan saat tab browser sedang tidak aktif/ditinggal
+    if (document.hidden || !document.getElementById('taskContainer') || document.querySelector('.modal.show') || document.body.classList.contains('modal-open')) return;
     syncDataNow();
 }
 
@@ -2091,3 +2092,32 @@ function updateSortOrderIcon(selectEl) {
         iconWrap.innerHTML = `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h9M4 12h7M4 18h5M18 18V6M15 9l3-3 3 3"></path></svg>`;
     }
 }
+
+/* ==========================================================================
+   LAZY-LOADING IFRAME MODAL DETAIL TASK
+   ========================================================================== */
+document.addEventListener('DOMContentLoaded', function() {
+    // Targetkan semua modal yang ada di dalam wrapper task
+    const taskModals = document.querySelectorAll('#taskModalsWrapper .modal');
+    
+    taskModals.forEach(modal => {
+        // Saat modal dibuka, ambil URL dari data-src dan masukkan ke src iframe
+        modal.addEventListener('show.bs.modal', function () {
+            const iframes = this.querySelectorAll('.lazy-iframe');
+            iframes.forEach(iframe => {
+                const realSrc = iframe.getAttribute('data-src');
+                if (realSrc && iframe.src.includes('about:blank')) {
+                    iframe.src = realSrc;
+                }
+            });
+        });
+
+        // Saat modal ditutup, kosongkan kembali src iframe untuk melegakan RAM
+        modal.addEventListener('hidden.bs.modal', function () {
+            const iframes = this.querySelectorAll('.lazy-iframe');
+            iframes.forEach(iframe => {
+                iframe.src = "about:blank";
+            });
+        });
+    });
+});
