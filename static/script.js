@@ -1457,7 +1457,6 @@ function initChart() {
             datasets: [{
                 label: 'Volume Saat Ini',
                 data: getFilteredChartData(),
-                // Menggunakan fungsi dinamis agar gradient otomatis menyesuaikan ukuran area chart
                 backgroundColor: function(context) {
                     const chart = context.chart;
                     const { ctx, chartArea } = chart;
@@ -1470,7 +1469,6 @@ function initChart() {
             }]
         },
         plugins: [{
-            // Plugin Kustom 1: Menampilkan angka putih di dalam batang bagian atas
             id: 'customLabelsOnTop',
             afterDatasetsDraw(chart) {
                 const { ctx, data } = chart;
@@ -1488,11 +1486,9 @@ function initChart() {
                 });
             }
         }, {
-            // Plugin Kustom 2: Garis bawah (underline) berwarna di tiap label sumbu X
             id: 'customXAxisUnderlines',
             afterDraw(chart) {
                 const { ctx, chartArea: { bottom }, scales: { x } } = chart;
-                // Ubah elemen terakhir ke warna ungu (#7C3AED)
                 const colors = ['#f59e0b', '#0ea5e9', '#ef4444', '#10b981', '#64748b', '#7C3AED'];
                 ctx.save();
                 x.ticks.forEach((tick, index) => {
@@ -1509,7 +1505,7 @@ function initChart() {
         }],
         options: {
             responsive: true, 
-            maintainAspectRatio: false,
+            maintainAspectRatio: false, // Wajib false agar mengikuti div parent di HTML
             animation: { duration: 800, easing: 'easeOutQuart' },
             plugins: { legend: { display: false }, tooltip: { enabled: true } },
             layout: { padding: { bottom: 35 } }, 
@@ -1519,7 +1515,9 @@ function initChart() {
                     ticks: { 
                         font: { family: 'Inter', size: 11, weight: '600' }, 
                         color: '#64748b',
-                        padding: 6 
+                        padding: 6,
+                        maxRotation: 0, // Pastikan rotasi 0 agar label lurus
+                        minRotation: 0
                     },
                     border: { display: false }
                 },
