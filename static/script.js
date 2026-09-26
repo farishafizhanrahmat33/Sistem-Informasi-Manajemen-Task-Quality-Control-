@@ -123,6 +123,13 @@ async function navigateWithFilters(overrides) {
             currentPagination.innerHTML = newPagination.innerHTML;
         }
 
+        // 8. PERBARUI AREA MODAL POP-UP TASK
+        const currentModals = document.getElementById('taskModalsWrapper');
+        const newModals = doc.getElementById('taskModalsWrapper');
+        if (currentModals && newModals) {
+            currentModals.innerHTML = newModals.innerHTML;
+        }
+
     } catch (error) {
         // Fallback: Jika internet bermasalah/error, kembali gunakan cara lawas (refresh)
         window.location.href = newUrl;
@@ -217,6 +224,13 @@ async function syncDataNow() {
         if (newTabMenu && currentTabMenu && newTabMenu.innerHTML !== currentTabMenu.innerHTML) {
             currentTabMenu.innerHTML = newTabMenu.innerHTML;
             initTabs(); // Panggil fungsi ini lagi agar tab baru tetap bisa diklik
+        }
+
+        // 3. UPDATE AREA MODAL TASK (AGAR SINKRON DENGAN KARTU TERBARU)
+        const newModals = doc.getElementById('taskModalsWrapper');
+        const currentModals = document.getElementById('taskModalsWrapper');
+        if (newModals && currentModals && newModals.innerHTML !== currentModals.innerHTML) {
+            currentModals.innerHTML = newModals.innerHTML;
         }
         
     } catch (e) { 
@@ -2092,30 +2106,115 @@ function updateSortOrderIcon(selectEl) {
 }
 
 /* ==========================================================================
-   LAZY-LOADING IFRAME MODAL DETAIL TASK
+   LAZY-LOADING IFRAME MODAL DETAIL TASK (Diperbarui)
    ========================================================================== */
-document.addEventListener('DOMContentLoaded', function() {
-    // Targetkan semua modal yang ada di dalam wrapper task
-    const taskModals = document.querySelectorAll('#taskModalsWrapper .modal');
-    
-    taskModals.forEach(modal => {
-        // Saat modal dibuka, ambil URL dari data-src dan masukkan ke src iframe
-        modal.addEventListener('show.bs.modal', function () {
-            const iframes = this.querySelectorAll('.lazy-iframe');
-            iframes.forEach(iframe => {
-                const realSrc = iframe.getAttribute('data-src');
-                if (realSrc && iframe.src.includes('about:blank')) {
-                    iframe.src = realSrc;
-                }
-            });
+document.addEventListener('show.bs.modal', function (event) {
+    // Hanya picu jika yang dibuka adalah modal tugas
+    if (event.target.closest('#taskModalsWrapper')) {
+        const iframes = event.target.querySelectorAll('.lazy-iframe');
+        iframes.forEach(iframe => {
+            const realSrc = iframe.getAttribute('data-src');
+            if (realSrc && iframe.src.includes('about:blank')) {
+                iframe.src = realSrc;
+            }
         });
-
-        // Saat modal ditutup, kosongkan kembali src iframe untuk melegakan RAM
-        modal.addEventListener('hidden.bs.modal', function () {
-            const iframes = this.querySelectorAll('.lazy-iframe');
-            iframes.forEach(iframe => {
-                iframe.src = "about:blank";
-            });
-        });
-    });
+    }
 });
+
+document.addEventListener('hidden.bs.modal', function (event) {
+    // Kosongkan kembali iframe saat ditutup agar RAM lega
+    if (event.target.closest('#taskModalsWrapper')) {
+        const iframes = event.target.querySelectorAll('.lazy-iframe');
+        iframes.forEach(iframe => {
+            iframe.src = "about:blank";
+        });
+    }
+});
+
+function selectProject(projectName, event) {
+    event.preventDefault();
+    
+    // Masukkan nilai proyek ke input tersembunyi
+    document.getElementById('selectedProjectInput').value = projectName;
+    
+    // Ubah teks pada tombol utama agar menampilkan nama proyek yang dipilih
+    const labelEl = document.getElementById('dropdownProjectLabel');
+    labelEl.textContent = projectName;
+    labelEl.style.color = 'var(--text-main)';
+    
+    // Tutup menu dropdown secara otomatis
+    const dropdownToggle = document.getElementById('dropdownProjectBtn');
+    const dropdown = bootstrap.Dropdown.getInstance(dropdownToggle) || new bootstrap.Dropdown(dropdownToggle);
+    dropdown.hide();
+}
+
+// Fungsi untuk memunculkan Modal Konfirmasi
+function confirmDeleteProject() {
+    const selectedProject = document.getElementById('selectedProjectInput').value;
+    
+    // Validasi jika user belum memilih proyek
+    if (!selectedProject) {
+        alert("Silakan pilih target proyek terlebih dahulu!");
+        return;
+    }
+
+    // Masukkan nama proyek ke dalam teks peringatan di Modal Konfirmasi
+    document.getElementById('confirmProjectName').textContent = selectedProject;
+
+    // Sembunyikan modal Hapus Proyek (Modal Utama)
+    const firstModalEl = document.getElementById('deleteProjectModal');
+    const firstModal = bootstrap.Modal.getInstance(firstModalEl) || new bootstrap.Modal(firstModalEl);
+    firstModal.hide();
+
+    // Munculkan Modal Konfirmasi Profesional
+    const confirmModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+    confirmModal.show();
+}
+
+// Fungsi eksekusi setelah user klik "Ya, Hapus"
+function executeDeleteProject(btn) {
+    // Ubah tombol jadi mode loading agar UX-nya mulus
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Memproses...';
+    btn.style.opacity = '0.8';
+    btn.style.pointerEvents = 'none';
+
+    // Submit form yang ada di modal pertama
+    document.getElementById('deleteProjectForm').submit();
+}
+
+function selectSortField(value, text, event) {
+    event.preventDefault();
+    document.getElementById('sortField').value = value;
+    document.getElementById('dropdownSortFieldLabel').textContent = text;
+}
+
+// ==========================================================================
+// FUNGSI DROPDOWN FILTER & SORT (CUSTOM BOOTSTRAP)
+// ==========================================================================
+
+function selectSortField(value, text, event) {
+    event.preventDefault();
+    document.getElementById('sortField').value = value;
+    document.getElementById('dropdownSortFieldLabel').textContent = text;
+}
+
+function selectSortOrder(value, text, orderType, event) {
+    event.preventDefault(); // Ini mencegah halaman ter-refresh otomatis!
+    
+    // Simpan nilai ke input tersembunyi
+    document.getElementById('sortOrder').value = value;
+    
+    // Siapkan ikon panah
+    const descSvg = `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h9M4 12h7M4 18h5M18 6v12M15 15l3 3 3-3"></path></svg>`;
+    const ascSvg = `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h9M4 12h7M4 18h5M18 18V6M15 9l3-3 3 3"></path></svg>`;
+    
+    const activeIcon = orderType === 'asc' ? ascSvg : descSvg;
+    
+    // Perbarui TAMPILAN VISUAL pada tombol (hanya ganti teks & ikon, data belum dikirim)
+    document.getElementById('dropdownSortOrderLabel').innerHTML = `
+        <span class="d-inline-flex align-items-center text-muted">
+            ${activeIcon}
+        </span>
+        <span>${text}</span>
+    `;
+}

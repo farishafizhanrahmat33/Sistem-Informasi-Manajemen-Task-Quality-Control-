@@ -652,8 +652,13 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 500;
     border-radius: 6px;
     padding: 0.4rem 0.8rem;
+    transition: all 0.15s ease-in-out; /* Tambahan agar transisi halus */
 }
-.dropdown-item:hover { background-color: var(--dark-soft); color: var(--accent); }
+/* Tambahkan !important agar hover CSS ini menang melawan Bootstrap */
+.dropdown-item:hover { 
+    background-color: var(--dark-soft) !important; 
+    color: var(--accent) !important; 
+}
 
 
 /* ==========================================================================
