@@ -94,6 +94,11 @@ async function navigateWithFilters(overrides) {
         // 3. Ambil data HTML halaman baru di latar belakang secara diam-diam
         const response = await fetch(newUrl);
         const htmlText = await response.text();
+
+        // batalkan proses pergantian HTML agar modal tidak lenyap di tengah jalan.
+        if (document.body.classList.contains('modal-open') || document.querySelector('.modal-backdrop') || document.querySelector('.modal.show')) {
+            return; 
+        }
         
         // 4. Ubah teks HTML yang didapat menjadi elemen yang bisa dibaca JS
         const parser = new DOMParser();
@@ -201,14 +206,27 @@ function renderLoadMoreButton(totalItems) {
 }
 
 async function syncDataNow() {
+    // Cek pertama: Jangan mulai menarik data jika modal sedang terbuka
+    if (window.isModalActive) return; 
+
     try {
         const response = await fetch(window.location.href);
         const htmlText = await response.text();
+        
+        // 🛑 CEK GANDA (SANGAT PENTING) 🛑
+        // Karena fetch butuh waktu, bisa saja user mengklik tombol modal 
+        // persis saat sistem sedang loading (menunggu response).
+        if (window.isModalActive || document.querySelector('.modal-backdrop')) {
+            console.log("Penimpaan dibatalkan untuk melindungi modal yang terbuka.");
+            return; // Batalkan eksekusi penimpaan HTML!
+        }
+
         const parser = new DOMParser();
         const doc = parser.parseFromString(htmlText, 'text/html');
         
         // 1. UPDATE DAFTAR KARTU TASK
         const newContainer = doc.getElementById('taskContainer');
+        // ... (lanjutkan dengan sisa kode asli Anda) ...
         const currentContainer = document.getElementById('taskContainer');
         
         if (newContainer && currentContainer && newContainer.innerHTML !== currentContainer.innerHTML) {
@@ -239,8 +257,7 @@ async function syncDataNow() {
 }
 
 async function autoUpdateTasks() {
-    // Tambahkan document.hidden agar server tidak disibukkan saat tab browser sedang tidak aktif/ditinggal
-    if (document.hidden || !document.getElementById('taskContainer') || document.querySelector('.modal.show') || document.body.classList.contains('modal-open')) return;
+    if (document.hidden || !document.getElementById('taskContainer') || window.isModalActive || document.querySelector('.modal-backdrop')) return;
     syncDataNow();
 }
 
@@ -2108,6 +2125,8 @@ function updateSortOrderIcon(selectEl) {
 /* ==========================================================================
    LAZY-LOADING IFRAME MODAL DETAIL TASK (Diperbarui)
    ========================================================================== */
+window.isModalActive = false; // 🔒 GEMBOK GLOBAL
+
 document.addEventListener('show.bs.modal', function (event) {
     // Hanya picu jika yang dibuka adalah modal tugas
     if (event.target.closest('#taskModalsWrapper')) {

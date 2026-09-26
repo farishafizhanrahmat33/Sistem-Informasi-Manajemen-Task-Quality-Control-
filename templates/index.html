@@ -716,16 +716,10 @@
                     </div>
                 </div>
             </div>
-        </div>
+            
         {% endfor %} <!-- LOOP KEDUA (KHUSUS MODAL) DITUTUP DI SINI -->
         </div> <!-- PENUTUP DIV taskModalsWrapper -->
-            <div class="col-12" id="emptyFilterMessage" style="display: none;">
-                <div class="detail-panel text-center py-5 small fw-medium mt-2 d-flex flex-column align-items-center" style="color: var(--text-muted);">
-                    {{ _("Your sort criteria didn't turn up any results.") }}
-                </div>
-            </div>
-        </div>
-        
+
        <!-- BUNGKUS DENGAN ID paginationWrapper AGAR BISA DI-REFRESH OLEH JS -->
         <div id="paginationWrapper">
             {% if pagination and pagination.pages > 1 %}
