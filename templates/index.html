@@ -40,8 +40,10 @@
         <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
             <div>
                 <div class="tm-title-row">
-                    <!-- Gunakan .title-main -->
-                    <h1 class="title-main fs-3 mb-0 text-on-surface">{{ _('Manajemen Task') }}</h1>
+                    <!-- Menggunakan clamp agar ukurannya otomatis berskala mulus dari 28px ke 32px persis seperti di Dashboard -->
+                    <h1 class="title-main text-on-surface mb-0" style="font-size: clamp(28px, 2.5vw, 32px); font-weight: 600;">
+                        {{ _('Manajemen Task') }}
+                    </h1>
                 </div>
             </div>
 
@@ -59,19 +61,23 @@
                 </button>
                 {% endif %}
 
-                <div class="position-relative tm-search-wrap">
-                    <svg width="16" height="16" fill="currentColor" class="search-icon" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
-                    <input type="text" id="searchInput" class="form-control form-control-sm search-pill border-0 shadow-sm" placeholder="{{ _('Search Task ID, Spec, or Description...') }}" value="{{ search_query }}">
+                <!-- Bungkus Input Pencarian & Tombol Filter agar selalu berdampingan -->
+                <div class="d-flex align-items-center gap-2 flex-grow-1 justify-content-end">
+                    <div class="position-relative tm-search-wrap">
+                        <svg width="16" height="16" fill="currentColor" class="search-icon" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
+                        <input type="text" id="searchInput" class="form-control form-control-sm search-pill border-0 shadow-sm" placeholder="{{ _('Search Task ID, Spec, or Description...') }}" value="{{ search_query }}">
+                    </div>
+
+                    <button class="btn btn-tm-outline btn-sm d-flex align-items-center gap-2 flex-shrink-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterDrawer">
+                        <!-- Ikon Filter SVG -->
+                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
+                        </svg>
+                        {{ _('Filter & Sort') }}
+                        <span id="activeFilterBadge" class="badge bg-primary rounded-circle d-none ms-1" style="font-size: 0.6rem;">!</span>
+                    </button>
                 </div>
 
-                <button class="btn btn-tm-outline btn-sm d-flex align-items-center gap-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterDrawer">
-                    <!-- Ikon Filter SVG -->
-                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
-                    </svg>
-                    {{ _('Filter & Sort') }}
-                    <span id="activeFilterBadge" class="badge bg-primary rounded-circle d-none ms-1" style="font-size: 0.6rem;">!</span>
-                </button>
             </div>
         </div>
 
@@ -775,7 +781,7 @@
                                 <li class="page-item">
                                     <a class="page-link page-btn-custom d-flex align-items-center justify-content-center shadow-none" 
                                     href="{{ url_for(request.endpoint, page=page_num, **current_args) }}"
-                                    style="{% if page_num == pagination.page %}background-color: #0F766E; border-color: #0F766E; color: #ffffff; font-weight: 700; pointer-events: none; box-shadow: 0 2px 4px rgba(15, 118, 110, 0.3);{% else %}background-color: transparent; color: var(--text-main); border: 1px solid transparent;{% endif %} border-radius: 6px; font-size: 0.85rem; height: 32px; min-width: 32px;">
+                                    style="{% if page_num == pagination.page %}background-color: var(--accent); border-color: var(--accent); color: #ffffff; font-weight: 700; pointer-events: none; box-shadow: 0 2px 4px rgba(15, 118, 110, 0.3);{% else %}background-color: transparent; color: var(--text-main); border: 1px solid transparent;{% endif %} border-radius: 6px; font-size: 0.85rem; height: 32px; min-width: 32px;">
                                         {{ page_num }}
                                     </a>
                                 </li>
@@ -827,16 +833,16 @@
     <!-- 4. MODAL LOGIN POP-UP -->
     {% include 'login_modal.html' %}
     <!-- DRAWER FILTER & SORT -->
-        <div class="offcanvas offcanvas-end border-start-0" tabindex="-1" id="filterDrawer" style="width: 384px; box-shadow: -10px 0 25px rgba(0,0,0,0.1); background-color: #ffffff;">
+        <div class="offcanvas offcanvas-end border-start-0" tabindex="-1" id="filterDrawer" style="width: 384px; box-shadow: -10px 0 25px rgba(0,0,0,0.1); background-color: var(--bg-surface);">
             <style>
                 /* Custom CSS khusus elemen di dalam drawer ini untuk menyamai desain tanpa ubah style.css global */
                 #filterDrawer .form-check-input:checked {
-                    background-color: #059669;
-                    border-color: #059669;
+                    background-color: var(--accent);
+                    border-color: var(--accent);
                 }
                 #filterDrawer .form-check-input:focus {
-                    box-shadow: 0 0 0 0.2rem rgba(5, 150, 105, 0.25);
-                    border-color: #059669;
+                    box-shadow: 0 0 0 0.2rem var(--accent-soft);
+                    border-color: var(--accent);
                 }
                 #filterDrawer ::-webkit-scrollbar {
                     width: 6px;
@@ -845,18 +851,18 @@
                     background: transparent;
                 }
                 #filterDrawer ::-webkit-scrollbar-thumb {
-                    background: #cbd5e1;
+                    background: var(--border-color);
                     border-radius: 10px;
                 }
                 #filterDrawer ::-webkit-scrollbar-thumb:hover {
-                    background: #94a3b8;
+                    background: var(--text-muted);
                 }
             </style>
 
             <!-- Drawer Header -->
-            <div class="offcanvas-header d-flex align-items-center justify-content-between px-4" style="height: 64px; border-bottom: 1px solid #e2e8f0; background-color: #ffffff;">
+            <div class="offcanvas-header d-flex align-items-center justify-content-between px-4" style="height: 64px; border-bottom: 1px solid var(--border-color); background-color: var(--bg-surface);">
                 <div class="d-flex align-items-center gap-3">
-                    <div class="d-flex align-items-center justify-content-center rounded-2" style="width: 32px; height: 32px; background-color: #ecfdf5; color: #059669;">
+                    <div class="d-flex align-items-center justify-content-center rounded-2" style="width: 32px; height: 32px; background-color: var(--accent-soft); color: var(--accent);">
                         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
                     </div>
                     <div>
@@ -866,11 +872,11 @@
                         <p class="desc-text mb-0" style="font-size: 0.75rem;">{{ _('Atur parameter tampilan task') }}</p>
                     </div>
                 </div>
-                <button type="button" class="btn-close shadow-none m-0 p-2" data-bs-dismiss="offcanvas" aria-label="Close" style="font-size: 0.75rem; color: #94a3b8; opacity: 0.6;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'"></button>
+                <button type="button" class="btn-close shadow-none m-0 p-2" data-bs-dismiss="offcanvas" aria-label="Close" style="font-size: 0.75rem; color: var(--text-muted); opacity: 0.6; filter: var(--btn-close-filter, none);" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'"></button>
             </div>
 
             <!-- Drawer Body -->
-            <div class="offcanvas-body p-4 d-flex flex-column gap-4" style="overflow-y: auto; background-color: #ffffff;">
+            <div class="offcanvas-body p-4 d-flex flex-column gap-4" style="overflow-y: auto; background-color: var(--bg-surface);">
                 
                 <!-- SECTION 1: URUTKAN BERDASARKAN -->
                 <section class="d-flex flex-column gap-3">
@@ -947,7 +953,7 @@
                 </section>
 
                 <!-- Divider -->
-                <hr style="border-color: #e2e8f0; opacity: 1; margin: 0;">
+                <hr style="border-color: var(--border-color); opacity: 1; margin: 0;">
 
                 <!-- SECTION 2: FILTER BERDASARKAN PROYEK -->
                 <section class="d-flex flex-column gap-3">
@@ -989,42 +995,42 @@
                 </section>
 
                 <!-- Divider -->
-                <hr style="border-color: #e2e8f0; opacity: 1; margin: 0;">
+                <hr style="border-color: var(--border-color); opacity: 1; margin: 0;">
 
                 <!-- SECTION 3: FILTER BERDASARKAN PAKET -->
                 <section class="d-flex flex-column gap-3 mb-2">
                     <div class="d-flex align-items-center justify-content-between">
-                        <span class="fw-bold text-uppercase" style="font-size: 11px; color: #64748b; letter-spacing: 0.05em;">{{ _('Filter Berdasarkan Paket') }}</span>
-                        <button type="button" class="btn btn-link p-0 text-decoration-none fw-semibold" style="font-size: 11px; color: #059669;" onclick="document.querySelector('#selectAllPackage').click()">{{ _('Pilih Semua') }}</button>
+                        <span class="fw-bold text-uppercase" style="font-size: 11px; color: var(--text-muted); letter-spacing: 0.05em;">{{ _('Filter Berdasarkan Paket') }}</span>
+                        <button type="button" class="btn btn-link p-0 text-decoration-none fw-semibold" style="font-size: 11px; color: var(--accent);" onclick="document.querySelector('#selectAllPackage').click()">{{ _('Pilih Semua') }}</button>
                     </div>
                     
                     <!-- Search -->
                     <div class="position-relative">
-                        <div class="position-absolute top-50 translate-middle-y" style="left: 10px; color: #94a3b8; pointer-events: none;">
+                        <div class="position-absolute top-50 translate-middle-y" style="left: 10px; color: var(--text-muted); pointer-events: none;">
                             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
-                        <input type="text" id="package-list-search" class="form-control shadow-none search-filter-input" placeholder="{{ _('Cari nama paket...') }}" oninput="searchFilterList(this, 'package-list')" style="font-size: 0.75rem; padding: 0.375rem 0.75rem 0.375rem 2rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; background-color: #f8fafc; color: #334155;">
+                        <input type="text" id="package-list-search" class="form-control shadow-none search-filter-input" placeholder="{{ _('Cari nama paket...') }}" oninput="searchFilterList(this, 'package-list')" style="font-size: 0.75rem; padding: 0.375rem 0.75rem 0.375rem 2rem; border-radius: 0.5rem; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main);">
                     </div>
 
                     <!-- List -->
                     <div class="d-flex flex-column gap-1 pt-1 premium-filter-box" id="package-list" style="max-height: 220px; overflow-y: auto;">
                         <!-- Select All Checkbox -->
-                        <label class="d-flex align-items-center justify-content-between p-2 rounded item-option select-all-option" style="cursor: pointer; border: 1px solid transparent; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'; this.style.borderColor='#f1f5f9';" onmouseout="this.style.backgroundColor='transparent'; this.style.borderColor='transparent';">
+                        <label class="d-flex align-items-center justify-content-between p-2 rounded item-option select-all-option" style="cursor: pointer; border: 1px solid transparent; transition: all 0.2s;" onmouseover="this.style.backgroundColor='var(--dark-soft)';" onmouseout="this.style.backgroundColor='transparent';">
                             <div class="d-flex align-items-center gap-2 overflow-hidden">
-                                <input type="checkbox" id="selectAllPackage" name="package" value="All" class="form-check-input mt-0 select-all-cb shadow-none flex-shrink-0" onchange="toggleSelectAll(this, 'package-list')" {% if not selected_packages or 'All' in selected_packages %}checked{% endif %} style="width: 16px; height: 16px; border-color: #cbd5e1; cursor: pointer;">
-                                <span class="fw-semibold text-truncate" style="font-size: 0.75rem; color: #0f172a;">{{ _('Pilih Semua Paket') }}</span>
+                                <input type="checkbox" id="selectAllPackage" name="package" value="All" class="form-check-input mt-0 select-all-cb shadow-none flex-shrink-0" onchange="toggleSelectAll(this, 'package-list')" {% if not selected_packages or 'All' in selected_packages %}checked{% endif %} style="width: 16px; height: 16px; border-color: var(--border-color); cursor: pointer;">
+                                <span class="fw-semibold text-truncate" style="font-size: 0.75rem; color: var(--text-main);">{{ _('Pilih Semua Paket') }}</span>
                             </div>
                         </label>
                         
                         <!-- Package Items -->
                         {% for pkg in packages %}
-                        <label class="d-flex align-items-center justify-content-between p-2 rounded item-option" style="cursor: pointer; border: 1px solid transparent; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f8fafc'; this.style.borderColor='#f1f5f9';" onmouseout="this.style.backgroundColor='transparent'; this.style.borderColor='transparent';">
+                        <label class="d-flex align-items-center justify-content-between p-2 rounded item-option" style="cursor: pointer; border: 1px solid transparent; transition: all 0.2s;" onmouseover="this.style.backgroundColor='var(--dark-soft)';" onmouseout="this.style.backgroundColor='transparent';">
                             <div class="d-flex align-items-center gap-2 overflow-hidden me-2">
-                                <input type="checkbox" name="package" value="{{ pkg }}" class="form-check-input mt-0 item-cb shadow-none flex-shrink-0" onchange="checkIndividualState('package-list')" {% if (not selected_packages) or ('All' in selected_packages) or (pkg in selected_packages) %}checked{% endif %} style="width: 16px; height: 16px; border-color: #cbd5e1; cursor: pointer;">
-                                <span class="text-truncate item-text" title="{{ pkg }}" style="font-size: 0.75rem; color: #334155;">{{ pkg }}</span>
+                                <input type="checkbox" name="package" value="{{ pkg }}" class="form-check-input mt-0 item-cb shadow-none flex-shrink-0" onchange="checkIndividualState('package-list')" {% if (not selected_packages) or ('All' in selected_packages) or (pkg in selected_packages) %}checked{% endif %} style="width: 16px; height: 16px; border-color: var(--border-color); cursor: pointer;">
+                                <span class="text-truncate item-text" title="{{ pkg }}" style="font-size: 0.75rem; color: var(--text-main);">{{ pkg }}</span>
                             </div>
                             <!-- Badge Total Package -->
-                            <span class="badge rounded-pill bg-light text-muted border flex-shrink-0" style="font-size: 9px; font-family: 'JetBrains Mono', monospace;">{{ package_counts.get(pkg, 0) }}</span>
+                            <span class="badge rounded-pill border flex-shrink-0" style="font-size: 9px; font-family: 'JetBrains Mono', monospace; background-color: var(--dark-soft) !important; color: var(--text-muted) !important; border-color: var(--border-color) !important;">{{ package_counts.get(pkg, 0) }}</span>
                         </label>
                         {% endfor %}
                     </div>
@@ -1032,13 +1038,13 @@
             </div>
 
             <!-- Drawer Sticky Footer -->
-            <div class="p-4 d-flex align-items-center gap-3" style="border-top: 1px solid #e2e8f0; background-color: rgba(248, 250, 252, 0.8); backdrop-filter: blur(4px);">
+            <div class="p-4 d-flex align-items-center gap-3" style="border-top: 1px solid var(--border-color); background-color: var(--bg-surface); backdrop-filter: blur(4px);">
                 <!-- Tombol Reset kembali ke root list -->
-                <a href="{{ url_for('task.task_list') }}" class="btn flex-grow-1 shadow-none text-decoration-none text-center" style="font-size: 0.75rem; font-weight: 600; color: #334155; background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 0.5rem; padding: 0.625rem 1rem;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='#ffffff'">
+                <a href="{{ url_for('task.task_list') }}" class="btn flex-grow-1 shadow-none text-decoration-none text-center" style="font-size: 0.75rem; font-weight: 600; color: var(--text-main); background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 0.625rem 1rem;" onmouseover="this.style.backgroundColor='var(--dark-soft)'" onmouseout="this.style.backgroundColor='var(--bg-surface)'">
                     {{ _('Reset Filter') }}
                 </a>
                 <!-- Tombol Terapkan JS Logic -->
-                <button type="button" class="btn flex-grow-1 d-flex align-items-center justify-content-center gap-2 shadow-sm" style="font-size: 0.75rem; font-weight: 600; color: #ffffff; background-color: #059669; border: none; border-radius: 0.5rem; padding: 0.625rem 1rem; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#047857'" onmouseout="this.style.backgroundColor='#059669'" data-bs-dismiss="offcanvas" onclick="applyDrawerFilters()">
+                <button type="button" class="btn flex-grow-1 d-flex align-items-center justify-content-center gap-2 shadow-sm" style="font-size: 0.75rem; font-weight: 600; color: #ffffff; background-color: var(--accent); border: none; border-radius: 0.5rem; padding: 0.625rem 1rem; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='var(--primary-hover)'" onmouseout="this.style.backgroundColor='var(--accent)'" data-bs-dismiss="offcanvas" onclick="applyDrawerFilters()">
                     <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                     {{ _('Terapkan Filter') }}
                 </button>

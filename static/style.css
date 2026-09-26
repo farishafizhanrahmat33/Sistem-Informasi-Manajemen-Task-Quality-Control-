@@ -58,18 +58,19 @@
 /* ==========================================================================
    0. FONT & IMPORT
    ========================================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap');
 
 /* ==========================================================================
    1. VARIABEL WARNA & TEMA
    ========================================================================== */
 :root {
-    --font-headline: 'Plus Jakarta Sans', sans-serif; /* <-- Ubah baris ini */
-    --font-body: 'Inter', sans-serif;
+    --font-headline: 'Figtree', sans-serif;
+    --font-body: 'Figtree', sans-serif;
 
-    --accent:         #10B981;
-    --primary:        #10B981;
-    --primary-hover:  #059669;
+    /* Primary: Deep Pine Teal — sesuai DESIGN.md (#0F766E / #0D9488) */
+    --accent:         #0F766E;
+    --primary:        #0F766E;
+    --primary-hover:  #0D9488;
     --shell-bg:            #09201F;
     --shell-surface:       #0E2A29;
     --shell-border:        #163836;
@@ -84,7 +85,7 @@
     --text-main:    #0F172A;
     --text-muted:   #64748B;
     --border-color: #E2E8F0;
-    --accent-soft:  rgba(16, 185, 129, 0.12);
+    --accent-soft:  rgba(15, 118, 110, 0.12);
     --dark-soft:    rgba(15, 23, 42, 0.04);
     --modal-bg:     #FFFFFF;
     --input-bg:     #FFFFFF;
@@ -100,7 +101,7 @@
     --text-main:    #F1F5F9;
     --text-muted:   #8FA6A3;
     --border-color: #1C3532;
-    --accent-soft:  rgba(110, 231, 183, 0.16);
+    --accent-soft:  rgba(128, 213, 203, 0.16);
     --dark-soft:    rgba(255, 255, 255, 0.06);
     --modal-bg:     #0F201E;
     --input-bg:     #10201E;
@@ -118,25 +119,42 @@ html, body {
     padding: 0;
     background-color: var(--bg-body);
     font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.6;
     color: var(--text-main);
     -webkit-font-smoothing: antialiased;
-    letter-spacing: -0.01em;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.005em;
     transition: background-color 0.3s ease, color 0.3s ease;
-    /* Pastikan tidak ada overflow horizontal di mobile */
     overflow-x: hidden;
 }
 
+/* Reset heading bawaan browser — semua diatur lewat sistem di bawah */
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-headline);
+    font-weight: 600;
+    line-height: 1.25;
     letter-spacing: -0.02em;
+    color: var(--text-main);
+    margin-top: 0;
+    margin-bottom: 0.25em;
 }
+
+/* Skala heading HTML native — konsisten di semua halaman */
+h1 { font-size: 2rem;    font-weight: 600; letter-spacing: -0.025em; line-height: 1.2; }
+h2 { font-size: 1.5rem;  font-weight: 600; letter-spacing: -0.02em;  line-height: 1.25; }
+h3 { font-size: 1.125rem; font-weight: 600; letter-spacing: -0.015em; line-height: 1.3; }
+h4 { font-size: 0.9375rem; font-weight: 600; letter-spacing: -0.01em;  line-height: 1.35; }
+h5 { font-size: 0.8125rem; font-weight: 600; letter-spacing: -0.005em; line-height: 1.4; }
+h6 { font-size: 0.75rem;  font-weight: 600; letter-spacing: 0em;      line-height: 1.4; }
 
 /* Scrollbar Global */
 ::-webkit-scrollbar         { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track   { background: var(--bg-body); }
 ::-webkit-scrollbar-thumb   { background: #27272A; border-radius: 4px; }
 
-/* Utilitas */
+/* Utilitas teks dasar */
 .text-muted    { color: var(--text-muted) !important; }
 .cursor-pointer { cursor: pointer; }
 .hover-bg:hover { background-color: rgba(255, 255, 255, 0.04); }
@@ -165,32 +183,180 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
+
 /* ==========================================================================
-   HIERARKI TIPOGRAFI PROFESIONAL (DASHBOARD)
+   SISTEM TIPOGRAFI TERPUSAT — berlaku di SEMUA halaman
+   Gunakan class ini, bukan styling inline atau fw-bold/fs-* Bootstrap.
+
+   Hierarki:
+     .page-title      → Judul halaman utama (H1 level)
+     .section-title   → Judul seksi / panel / card header (H2–H3 level)
+     .card-title      → Judul dalam card kecil / widget (H4 level)
+     .page-subtitle   → Sub-judul / deskripsi di bawah page-title
+     .section-desc    → Teks penjelasan di bawah section-title
+     .label-overline  → Label kategori kecil di atas judul (overline)
+     .body-text       → Paragraf konten utama
+     .body-text-sm    → Teks konten sekunder / keterangan
+     .meta-text       → Timestamp, ID, metadata kecil
+     .mono-text       → Nilai teknis: ID, kode, payload
    ========================================================================== */
-/* Judul Utama: Sangat tegas, tebal, jarak huruf rapat */
-.title-main {
+
+/* — Judul Halaman Utama (Page Title / H1 level) —
+   Dipakai: nama halaman di header area, judul dashboard, judul seksi besar.
+   Karakter: tegas, berat sedang, jarak huruf negatif kuat.                 */
+.page-title {
     font-family: var(--font-headline);
-    font-weight: 800;
+    font-size: 1.5rem;         /* 24px */
+    font-weight: 600;
+    line-height: 1.25;
     letter-spacing: -0.02em;
-    line-height: 1.2;
+    color: var(--text-main);
 }
 
-/* Sub Judul: Elegan, jarak huruf sedikit renggang agar mudah dibaca cepat */
-.title-sub {
-    font-family: var(--font-headline);
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    line-height: 1.3;
-}
-
-/* Deskripsi: Nyaman dibaca, baris renggang, tidak berebut fokus dengan judul */
-.desc-text {
+/* — Sub-judul Halaman (Page Subtitle) —
+   Dipakai: kalimat penjelasan tepat di bawah .page-title, max 1–2 baris.
+   Karakter: ringan, muted, line-height lebar untuk keterbacaan.            */
+.page-subtitle {
     font-family: var(--font-body);
-    font-weight: 500;
+    font-size: 0.875rem;       /* 14px */
+    font-weight: 400;
     line-height: 1.6;
+    letter-spacing: -0.005em;
     color: var(--text-muted);
 }
+
+/* — Judul Seksi / Panel (Section Title / H2–H3 level) —
+   Dipakai: header panel bento, judul grup tabel, judul kartu besar.
+   Karakter: lebih kecil dari page-title, tetap solid.                      */
+.section-title {
+    font-family: var(--font-headline);
+    font-size: 0.9375rem;      /* 15px */
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+    color: var(--text-main);
+}
+
+/* — Deskripsi Seksi (Section Description) —
+   Dipakai: 1–2 kalimat penjelasan di bawah .section-title.
+   Karakter: muted, compact.                                                 */
+.section-desc {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;      /* 13px */
+    font-weight: 400;
+    line-height: 1.55;
+    letter-spacing: 0em;
+    color: var(--text-muted);
+}
+
+/* — Judul Card / Widget (Card Title / H4 level) —
+   Dipakai: header di dalam card kecil, kolom kiri detail panel.
+   Karakter: compact, medium weight.                                         */
+.card-title-text {
+    font-family: var(--font-headline);
+    font-size: 0.8125rem;      /* 13px */
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    color: var(--text-main);
+}
+
+/* — Label Overline —
+   Dipakai: kategori kecil DI ATAS judul (mis. "RINGKASAN", "OVERVIEW").
+   Karakter: uppercase, tracked, sangat kecil — pendahulu visual.           */
+.label-overline {
+    font-family: var(--font-body);
+    font-size: 0.6875rem;      /* 11px */
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+/* — Teks Konten Utama (Body Text) —
+   Dipakai: paragraf, deskripsi task, isi accordion, isi modal.             */
+.body-text {
+    font-family: var(--font-body);
+    font-size: 0.875rem;       /* 14px */
+    font-weight: 400;
+    line-height: 1.65;
+    letter-spacing: -0.005em;
+    color: var(--text-main);
+}
+
+/* — Teks Konten Sekunder (Body Small) —
+   Dipakai: catatan, caption, keterangan gambar, label samping.             */
+.body-text-sm {
+    font-family: var(--font-body);
+    font-size: 0.75rem;        /* 12px */
+    font-weight: 400;
+    line-height: 1.55;
+    letter-spacing: 0.005em;
+    color: var(--text-muted);
+}
+
+/* — Teks Meta / Timestamp / ID Pendek (Meta Text) —
+   Dipakai: tanggal, jam, nama user kecil di baris tabel, footer kartu.    */
+.meta-text {
+    font-family: var(--font-body);
+    font-size: 0.6875rem;      /* 11px */
+    font-weight: 500;
+    line-height: 1.45;
+    letter-spacing: 0.01em;
+    color: var(--text-muted);
+}
+
+/* — Teks Monospace (Mono Text) —
+   Dipakai: ID task, kode QR, payload, nilai numerik teknis.                */
+.mono-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;        /* 12px */
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: 0em;
+    color: var(--text-main);
+}
+
+/* — Nilai Angka Besar (Metric Value) —
+   Dipakai: angka di kartu metrik dashboard (mis. "248", "91%").            */
+.metric-value {
+    font-family: var(--font-headline);
+    font-size: 1.75rem;        /* 28px */
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--text-main);
+}
+
+/* — Label Metrik (Metric Label) —
+   Dipakai: teks kecil di bawah angka metrik ("Total Tugas", "Selesai").   */
+.metric-label {
+    font-family: var(--font-body);
+    font-size: 0.75rem;        /* 12px */
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: 0.005em;
+    color: var(--text-muted);
+}
+
+/* Alias lama — backward-compat, jangan dihapus, arahkan ke sistem baru */
+.title-main  { font-family: var(--font-headline); font-size: 1.5rem;    font-weight: 600; letter-spacing: -0.02em;  line-height: 1.25; color: var(--text-main); }
+.title-sub   { font-family: var(--font-headline); font-size: 0.9375rem; font-weight: 600; letter-spacing: -0.015em; line-height: 1.3;  color: var(--text-main); }
+.desc-text   { font-family: var(--font-body);     font-size: 0.875rem;  font-weight: 400; letter-spacing: -0.005em; line-height: 1.6;  color: var(--text-muted); }
+
+/* Bootstrap fw-bold override — pastikan tidak lebih berat dari 600 */
+.fw-bold    { font-weight: 600 !important; }
+.fw-semibold { font-weight: 600 !important; }
+.fw-medium  { font-weight: 500 !important; }
+
+/* Netralisasi: Bootstrap fs-* → skala konsisten */
+.fs-1 { font-size: 1.5rem   !important; }
+.fs-2 { font-size: 1.25rem  !important; }
+.fs-3 { font-size: 1.125rem !important; }
+.fs-4 { font-size: 0.9375rem !important; }
+.fs-5 { font-size: 0.875rem !important; }
+.fs-6 { font-size: 0.8125rem !important; }
 
 /* ##########################################################################
    #  BAGIAN 1 — TAMPILAN DESKTOP / WEBSITE                                 #
@@ -202,7 +368,7 @@ h1, h2, h3, h4, h5, h6 {
    3. KOMPONEN: TOMBOL
    ========================================================================== */
 .btn {
-    border-radius: 8px;
+    border-radius: 4px;
     font-weight: 500;
     padding: 0.5rem 1.25rem;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -211,19 +377,19 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: center;
     gap: 0.5rem;
 }
-.btn-sm { padding: 0.4rem 1rem; font-size: 0.85rem; }
+.btn-sm { padding: 0.4rem 1rem; font-size: 0.875rem; }
 
 .btn-primary {
     background-color: var(--accent) !important;
     border-color: var(--accent) !important;
-    color: #052e1e !important;
+    color: #ffffff !important;
     font-weight: 600;
-    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+    box-shadow: 0 2px 4px rgba(15, 118, 110, 0.2);
 }
 .btn-primary:hover {
     background-color: var(--primary-hover) !important;
     border-color: var(--primary-hover) !important;
-    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 4px 6px rgba(15, 118, 110, 0.3);
 }
 
 .btn-outline-primary {
@@ -232,7 +398,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 .btn-outline-primary:hover {
     background-color: var(--accent) !important;
-    color: #111113 !important;
+    color: #ffffff !important;
 }
 
 .btn-dark {
@@ -243,7 +409,7 @@ h1, h2, h3, h4, h5, h6 {
 .btn-dark:hover {
     background-color: var(--accent) !important;
     border-color: var(--accent) !important;
-    color: #111113 !important;
+    color: #ffffff !important;
 }
 
 .btn-outline-secondary {
@@ -299,7 +465,7 @@ h1, h2, h3, h4, h5, h6 {
 .custom-tabs-container .nav-link {
     color: var(--text-muted);
     font-weight: 600;
-    font-size: 0.85rem;
+    font-size: 0.875rem;
     padding: 0.5rem 1.25rem;
     border-radius: 8px;
     border: none;
@@ -325,7 +491,7 @@ h1, h2, h3, h4, h5, h6 {
 .custom-video-tabs .nav-link {
     color: var(--text-muted);
     font-weight: 600;
-    font-size: 0.85rem;
+    font-size: 0.875rem;
     padding: 0.6rem 1rem;
     border-radius: 0;
     border-bottom: 2px solid transparent;
@@ -345,7 +511,7 @@ h1, h2, h3, h4, h5, h6 {
     background: transparent;
     border: none;
     color: var(--text-muted);
-    font-size: 0.85rem;
+    font-size: 0.875rem;
     font-weight: 500;
     padding: 0.25rem 0.1rem 0.75rem 0.1rem;
     border-bottom: 2px solid transparent;
@@ -389,13 +555,13 @@ h1, h2, h3, h4, h5, h6 {
 /* Filter Tab States */
 .filter-tab { font-weight: 500; color: var(--text-muted, #6c757d); transition: all 0.2s ease; }
 .filter-tab.active {
-    font-weight: 700 !important;
+    font-weight: 600 !important;
     color: var(--text-main, #111827) !important;
 }
 .filter-tab.active .task-count-badge {
     background-color: rgba(13, 110, 253, 0.12) !important;
     color: #00132e !important;
-    font-weight: 700;
+    font-weight: 600;
 }
 [data-theme="dark"] .filter-tab.active { color: #f8fafc !important; }
 [data-theme="dark"] .filter-tab.active .task-count-badge {
@@ -420,9 +586,9 @@ h1, h2, h3, h4, h5, h6 {
     border-color: var(--primary);
     color: #fff;
 }
-.dashboard-filter-tab.active { background-color: #10B981 !important; color: white !important; font-weight: 600 !important; }
+.dashboard-filter-tab.active { background-color: var(--primary) !important; color: white !important; font-weight: 600 !important; }
 [data-theme="dark"] .dashboard-filter-tab.active {
-    box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.4) !important;
+    box-shadow: 0 0 0 1px rgba(15, 118, 110, 0.4) !important;
 }
 
 
@@ -433,7 +599,7 @@ h1, h2, h3, h4, h5, h6 {
     background-color: var(--bg-surface) !important;
     color: var(--text-main) !important;
     border: 1px solid var(--border-color) !important;
-    border-radius: 12px;
+    border-radius: 6px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
@@ -444,7 +610,7 @@ h1, h2, h3, h4, h5, h6 {
 .enterprise-card {
     background-color: var(--bg-surface);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
+    border-radius: 6px;
     padding: 1.5rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     transition: all 0.25s ease;
@@ -470,7 +636,7 @@ h1, h2, h3, h4, h5, h6 {
 .badge-accent {
     background-color: var(--accent-soft);
     color: var(--accent);
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(15, 118, 110, 0.2);
     padding: 0.4em 0.8em;
     font-weight: 600;
     border-radius: 6px;
@@ -490,7 +656,7 @@ h1, h2, h3, h4, h5, h6 {
 .modal-header {
     border-bottom: 1px solid var(--border-color);
     background-color: var(--bg-surface);
-    border-radius: 16px 16px 0 0;
+    border-radius: 8px 8px 0 0;
     padding: 1.25rem 1.5rem;
 }
 .modal-body { background-color: var(--modal-bg); padding: 1.5rem; }
@@ -498,7 +664,7 @@ h1, h2, h3, h4, h5, h6 {
 .detail-panel {
     background-color: var(--bg-surface);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
+    border-radius: 6px;
     padding: 1.5rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
@@ -591,7 +757,7 @@ h1, h2, h3, h4, h5, h6 {
     padding: 10px 14px;
 }
 .premium-filter-text {
-    font-size: 0.85rem;
+    font-size: 0.875rem;
     color: var(--text-muted);
     font-weight: 500;
     white-space: nowrap;
@@ -608,7 +774,7 @@ h1, h2, h3, h4, h5, h6 {
     color: #F59E0B;
     flex-shrink: 0;
 }
-.premium-filter-checkbox:checked + .premium-filter-content .premium-filter-text { color: var(--text-main); font-weight: 700; }
+.premium-filter-checkbox:checked + .premium-filter-content .premium-filter-text { color: var(--text-main); font-weight: 600; }
 .premium-filter-checkbox:checked + .premium-filter-content .premium-check-icon  { opacity: 1; transform: scale(1); }
 
 /* "Pilih Semua" Header Sticky */
@@ -643,14 +809,14 @@ h1, h2, h3, h4, h5, h6 {
     background-color: var(--bg-surface);
     border: 1px solid var(--border-color);
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+    border-radius: 6px;
     padding: 0.5rem;
 }
 .dropdown-item {
     color: var(--text-main);
-    font-size: 0.85rem;
+    font-size: 0.875rem;
     font-weight: 500;
-    border-radius: 6px;
+    border-radius: 4px;
     padding: 0.4rem 0.8rem;
     transition: all 0.15s ease-in-out; /* Tambahan agar transisi halus */
 }
@@ -720,7 +886,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Judul brand di sidebar */
 .sidebar-brand-title {
-    font-size: 0.8rem;
+    font-size: 0.8125rem;
     letter-spacing: 0.15em;
     color: var(--text-muted);
 }
@@ -728,10 +894,11 @@ h1, h2, h3, h4, h5, h6 {
 /* Judul seksi sidebar */
 .sidebar-section-title {
     color: #94a3b8 !important;
-    font-size: 0.65rem !important;
-    font-weight: 700 !important;
-    letter-spacing: 0.12em !important;
+    font-size: 0.6875rem !important;   /* 11px — sama dengan .label-overline */
+    font-weight: 600 !important;
+    letter-spacing: 0.06em !important;
     text-transform: uppercase !important;
+    line-height: 1.4 !important;
     margin-bottom: 0.5rem !important;
     user-select: none;
     pointer-events: none;
@@ -746,7 +913,7 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 500;
     text-decoration: none;
     padding: 0.55rem 1rem;
-    border-radius: 6px;
+    border-radius: 4px;
     display: flex !important;
     align-items: center !important;
     gap: 12px !important;
@@ -767,7 +934,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Tombol aksi sidebar */
 .sidebar-btn-action {
-    font-size: 0.85rem;
+    font-size: 0.875rem;
     border-radius: 6px;
     color: #ffffff !important;
     background-color: #212529 !important;
@@ -786,7 +953,7 @@ h1, h2, h3, h4, h5, h6 {
     background-color: var(--bg-body);
     color: var(--text-main) !important;
     border: 1px solid var(--border-color);
-    font-size: 0.8rem;
+    font-size: 0.8125rem;
     font-weight: 500;
     border-radius: 6px;
 }
@@ -874,6 +1041,39 @@ h1, h2, h3, h4, h5, h6 {
 /* ==========================================================================
    12. HALAMAN: DASHBOARD
    ========================================================================== */
+
+/* Judul area panel & bento — seragam dengan sistem tipografi */
+.bento-panel .panel-title,
+.bento-panel > .d-flex .fw-bold,
+.bento-panel > .d-flex .fw-semibold {
+    font-family: var(--font-headline);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.3;
+    color: var(--text-main);
+}
+
+/* Angka metrik kartu command */
+.metric-command-card [class*="fw-bold"],
+.metric-command-card [class*="fw-semibold"] {
+    font-family: var(--font-headline);
+    font-size: 1.375rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1;
+}
+
+/* Label kecil di bawah angka metrik */
+.metric-command-card small,
+.metric-command-card .text-muted {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.005em;
+    line-height: 1.4;
+}
+
 .dashboard-wrapper {
     display: flex;
     flex-direction: column;
@@ -891,7 +1091,7 @@ h1, h2, h3, h4, h5, h6 {
 .bento-panel {
     background-color: var(--bg-surface);
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: 4px;
     padding: 16px;
     box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
 }
@@ -902,7 +1102,7 @@ h1, h2, h3, h4, h5, h6 {
     display: block;
     height: 84px;
     padding: 12px 16px;
-    border-radius: 8px;
+    border-radius: 4px;
     background-color: var(--bg-surface);
     border: 1px solid var(--border-color);
     box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
@@ -932,7 +1132,7 @@ h1, h2, h3, h4, h5, h6 {
 .ind-danger    { --indicator-color: #DC2626; }
 .ind-success   { --indicator-color: #059669; }
 .ind-secondary { --indicator-color: #64748B; }
-.ind-primary   { --indicator-color: #10B981; }
+.ind-primary   { --indicator-color: #0F766E; }
 
 /* Project List Items */
 .proj-list-item {
@@ -941,7 +1141,7 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: space-between;
     padding: 10px 14px;
     margin-bottom: 6px;
-    border-radius: 8px;
+    border-radius: 4px;
     background-color: var(--bg-body);
     border: 1px solid var(--border-color);
     cursor: pointer;
@@ -950,19 +1150,19 @@ h1, h2, h3, h4, h5, h6 {
 }
 .proj-list-item:hover { border-color: var(--primary); transform: translateX(2px); }
 .proj-list-item.active {
-    background-color: rgba(16, 185, 129, 0.1) !important;
-    border-color: rgba(16, 185, 129, 0.3) !important;
+    background-color: rgba(15, 118, 110, 0.1) !important;
+    border-color: rgba(15, 118, 110, 0.3) !important;
     color: var(--text-main) !important;
 }
 .proj-list-item .check-icon { opacity: 0; transform: scale(0.5); transition: all 0.2s ease; color: var(--primary); }
-.proj-list-item.active .check-icon { opacity: 1 !important; transform: scale(1) !important; color: #10B981 !important; }
+.proj-list-item.active .check-icon { opacity: 1 !important; transform: scale(1) !important; color: #0F766E !important; }
 
 /* Tabel Dashboard */
 .dashboard-wrapper .table-responsive {
     width: 100% !important;
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch !important;
-    border-radius: 8px;
+    border-radius: 4px;
     border: 1px solid var(--border-color);
     background-color: var(--bg-surface);
     max-height: 500px;
@@ -1002,9 +1202,10 @@ h1, h2, h3, h4, h5, h6 {
 .qc-console .tm-title-row { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
 .qc-console .tm-title {
     font-family: var(--font-headline);
-    font-weight: 700;
-    font-size: 1.5rem;
+    font-size: 1.5rem;         /* sama dengan .page-title */
+    font-weight: 600;
     letter-spacing: -0.02em;
+    line-height: 1.25;
     color: var(--text-main);
     margin: 0;
 }
@@ -1024,9 +1225,13 @@ h1, h2, h3, h4, h5, h6 {
     animation: tm-pulse 1.6s ease-in-out infinite;
 }
 .qc-console .tm-subtitle {
+    font-family: var(--font-body);
+    font-size: 0.875rem;       /* sama dengan .page-subtitle */
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: -0.005em;
     color: var(--text-muted);
-    font-size: 0.85rem;
-    margin: 0.3rem 0 0;
+    margin: 0.25rem 0 0;
     max-width: 640px;
 }
 
@@ -1105,7 +1310,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 .qc-console .enterprise-tabs .filter-tab.active {
     color: #000000 !important;
-    font-weight: 700 !important;
+    font-weight: 600 !important;
     background-color: var(--bg-surface) !important;
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
 }
@@ -1145,7 +1350,7 @@ h1, h2, h3, h4, h5, h6 {
 .qc-console .filter-tab.active[data-status="Ready"]        .task-count-badge { background-color: var(--tm-success) !important; color: #ffffff !important; border-color: var(--tm-success) !important; }
 .qc-console .filter-tab.active[data-status="Skipped"]      .task-count-badge { background-color: #64748B !important; color: #ffffff !important; border-color: #64748B !important; }
 .qc-console .filter-tab.active[data-status="Sent to Team"] .task-count-badge { background-color: #7C3AED !important; color: #ffffff !important; border-color: #7C3AED !important; }
-[data-theme="dark"] .qc-console .filter-tab.active .task-count-badge { color: #0A1615 !important; font-weight: 800 !important; }
+[data-theme="dark"] .qc-console .filter-tab.active .task-count-badge { color: #0A1615 !important; font-weight: 700 !important; }
 
 /* Kartu Tugas */
 .qc-console .task-card { border-radius: 10px !important; }
@@ -1158,11 +1363,11 @@ h1, h2, h3, h4, h5, h6 {
     border: 1px solid var(--border-color);
     color: var(--text-main);
 }
-.qc-console .tm-id-label { font-size: 0.7rem; color: var(--text-muted); }
+.qc-console .tm-id-label { font-size: 0.6875rem; color: var(--text-muted); }
 
 .qc-console .badge.tm-status-badge {
     border-radius: 9999px !important;
-    font-size: 0.7rem !important;
+    font-size: 0.6875rem !important;
     font-weight: 600 !important;
     padding: 0.3em 0.7em 0.3em 0.55em !important;
     display: inline-flex; align-items: center; gap: 5px;
@@ -1207,7 +1412,7 @@ h1, h2, h3, h4, h5, h6 {
     background: transparent !important;
     border: none !important;
     color: var(--tm-primary) !important;
-    font-weight: 600; font-size: 0.85rem;
+    font-weight: 600; font-size: 0.875rem;
     padding: 0 !important;
     display: inline-flex; align-items: center; gap: 4px;
     width: auto !important; flex-shrink: 0;
@@ -1234,7 +1439,7 @@ h1, h2, h3, h4, h5, h6 {
    14. HALAMAN: QR MANAGEMENT
    ========================================================================== */
 .qr-app-wrapper {
-    font-family: 'Plus Jakarta Sans', 'Inter', var(--font-body);
+    font-family: 'Inter', var(--font-body);
 }
 
 /* Utilitas tipografi QR */
@@ -1250,12 +1455,12 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: 12px;
     font-weight: 600;
     transition: all 0.2s ease-in-out;
-    box-shadow: 0 1px 2px rgba(16, 185, 129, 0.2);
+    box-shadow: 0 1px 2px rgba(15, 118, 110, 0.2);
 }
 .btn-brand-primary:hover {
     background-color: var(--primary-hover);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25);
 }
 .btn-outline-slate {
     background-color: var(--bg-surface);
@@ -1270,12 +1475,12 @@ h1, h2, h3, h4, h5, h6 {
 /* Kartu QR */
 .qr-card { transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
 .qr-card:hover {
-    border-color: rgba(16, 185, 129, 0.3) !important;
+    border-color: rgba(15, 118, 110, 0.3) !important;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08) !important;
     transform: translateY(-3px);
 }
 [data-theme="dark"] .qr-card:hover {
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(16, 185, 129, 0.15) !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(15, 118, 110, 0.15) !important;
 }
 
 /* Tombol hapus di kartu QR */
@@ -1286,7 +1491,7 @@ h1, h2, h3, h4, h5, h6 {
     background-color: var(--bg-surface) !important;
     color: var(--text-main) !important;
     border: 1px solid var(--border-color);
-    font-size: 0.7rem !important; font-weight: 500 !important;
+    font-size: 0.6875rem !important; font-weight: 500 !important;
     border-radius: 8px !important;
     padding: 0.35rem 0.6rem !important;
     box-shadow: 0 1px 2px rgba(0,0,0,0.02);
@@ -1377,7 +1582,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Badge status dark mode (pastel → tint gelap) */
 [data-theme="dark"] .bg-\[\#ECFDF5\],
 [data-theme="dark"] .bg-emerald-500\/10,
-[data-theme="dark"] .proj-list-item.active { background-color: rgba(16, 185, 129, 0.12) !important; }
+[data-theme="dark"] .proj-list-item.active { background-color: rgba(15, 118, 110, 0.12) !important; }
 [data-theme="dark"] .text-\[\#059669\],
 [data-theme="dark"] .text-emerald-600      { color: #6EE7B7 !important; }
 [data-theme="dark"] .border-\[\#A7F3D0\],
@@ -1749,13 +1954,40 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* --------------------------------------------------------------------------
-   21.13  HEADING — skala font di HP
+   21.13  HEADING & TIPOGRAFI — skala font di mobile
+   Semua font diperkecil proporsional agar tidak memakan ruang layar sempit.
    -------------------------------------------------------------------------- */
 @media (max-width: 575.98px) {
-    h3.fw-bold { font-size: 1.2rem !important; }
-    h4.fw-bold { font-size: 1.05rem !important; }
-    h5.fw-bold { font-size: 1rem !important; }
-    .small      { font-size: 0.82rem !important; }
+    /* Heading HTML native */
+    h1 { font-size: 1.5rem   !important; letter-spacing: -0.02em !important; }
+    h2 { font-size: 1.25rem  !important; letter-spacing: -0.018em !important; }
+    h3 { font-size: 1rem     !important; letter-spacing: -0.015em !important; }
+    h4 { font-size: 0.875rem !important; letter-spacing: -0.01em !important; }
+    h5 { font-size: 0.8125rem !important; }
+    h6 { font-size: 0.75rem  !important; }
+
+    /* Sistem class tipografi */
+    .page-title    { font-size: 1.25rem  !important; letter-spacing: -0.018em !important; }
+    .section-title { font-size: 0.875rem !important; letter-spacing: -0.012em !important; }
+    .card-title-text { font-size: 0.8125rem !important; }
+    .page-subtitle { font-size: 0.8125rem !important; }
+    .section-desc  { font-size: 0.75rem  !important; }
+    .metric-value  { font-size: 1.5rem   !important; letter-spacing: -0.025em !important; }
+    .body-text     { font-size: 0.8125rem !important; }
+    .body-text-sm  { font-size: 0.6875rem !important; }
+    .meta-text     { font-size: 0.625rem  !important; }
+
+    /* Bootstrap aliases */
+    .fs-1 { font-size: 1.25rem   !important; }
+    .fs-2 { font-size: 1.125rem  !important; }
+    .fs-3 { font-size: 1rem      !important; }
+    .fs-4 { font-size: 0.875rem  !important; }
+    .fs-5 { font-size: 0.8125rem !important; }
+    .fs-6 { font-size: 0.75rem   !important; }
+    .small { font-size: 0.75rem  !important; }
+
+    /* QC Console title di mobile */
+    .qc-console .tm-title { font-size: 1.25rem !important; }
 }
 
 /* --------------------------------------------------------------------------
@@ -1827,7 +2059,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Struktur Modal Apex */
 .modal-content-apex {
     border: 1px solid var(--border-color);
-    border-radius: 16px !important;
+    border-radius: 8px !important;
     box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
     overflow: hidden;
     background-color: var(--bg-surface);
@@ -1875,7 +2107,7 @@ h1, h2, h3, h4, h5, h6 {
     background-color: var(--input-bg) !important;
     padding-top: 0.6rem !important;
     padding-bottom: 0.6rem !important;
-    font-size: 0.85rem !important;
+    font-size: 0.875rem !important;
     color: var(--text-main) !important;
 }
 .form-control-apex:focus, .form-select-apex:focus {
