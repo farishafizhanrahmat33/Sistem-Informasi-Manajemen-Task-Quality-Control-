@@ -1484,7 +1484,7 @@ function initChart() {
     myQCChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Need Sample', 'Sample Done', 'Revision', 'Ready', 'Skipped', 'Production'],
+            labels: window.chartLabels || ['Butuh Sample', 'Sampel Selesai', 'Perbaikan', 'Siap', 'Dilewati', 'Produksi'],
             datasets: [{
                 label: 'Volume Saat Ini',
                 data: getFilteredChartData(),
