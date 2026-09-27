@@ -32,8 +32,13 @@
         
         <!-- HEADER SECTION -->
         <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-4 mb-4">
-            <div class="d-flex align-items-center gap-3">
-                <h2 class="fw-bold mb-0 tracking-tight" style="font-size: 1.5rem; color: var(--text-main);">{{ _('Manajemen QR') }}</h2>
+            <div>
+                <div class="tm-title-row">
+                    <!-- Menggunakan clamp agar ukurannya otomatis berskala mulus dari 28px ke 32px persis seperti Manajemen Task -->
+                    <h1 class="title-main text-on-surface mb-0" style="font-size: clamp(22px, 2.5vw, 24px); font-weight: 600;">
+                        {{ _('Manajemen QR') }}
+                    </h1>
+                </div>
             </div>
             
             <div class="d-flex flex-wrap align-items-center gap-2">
