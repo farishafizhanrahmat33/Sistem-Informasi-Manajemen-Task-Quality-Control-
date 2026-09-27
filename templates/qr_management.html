@@ -13,13 +13,13 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ _('QR Management') }} - QA System</title>
+    <title>{{ _('Manajemen QR') }} - QA System</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=2">
 </head>
 <body>
 
@@ -46,20 +46,20 @@
                 <!-- 1. Tombol Upload PDF -->
                 <button class="btn btn-tm-primary btn-sm d-flex align-items-center gap-2" type="button" data-bs-toggle="modal" data-bs-target="#uploadQrModal">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                    {{ _('Upload PDF File') }}
+                    {{ _('Unggah PDF File') }}
                 </button>
 
                 <!-- 2. Tombol Hapus Source -->
                 <button class="btn btn-tm-danger-outline btn-sm d-flex align-items-center gap-2" type="button" data-bs-toggle="modal" data-bs-target="#deleteSourceModal">
                     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                    {{ _('Hapus Environment Code') }}
+                    {{ _('Hapus Kode Lingkungan') }}
                 </button>
                 {% endif %}
 
                 <!-- 3. Kotak Pencarian Global -->
                 <div class="position-relative tm-search-wrap" style="min-width: 240px;">
                     <svg width="16" height="16" fill="currentColor" class="search-icon" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
-                    <input type="text" id="globalQrSearchInput" class="form-control form-control-sm search-pill border-0 shadow-sm" placeholder="{{ _('Cari nama scene atau environment code...') }}">
+                    <input type="text" id="globalQrSearchInput" class="form-control form-control-sm search-pill border-0 shadow-sm" placeholder="{{ _('Cari nama adegan atau kode lingkungan...') }}">
                 </div>
 
                 <!-- 4. Tombol Filter & Urutkan -->
@@ -78,7 +78,7 @@
             <span class="fw-bold text-uppercase tracking-wider" style="font-size: 0.65rem; color: var(--text-muted);">{{ _('FILTERS:') }}</span>
             <div id="filterChipsContainer" class="d-flex align-items-center gap-2 overflow-x-auto pb-1"></div>
             <button type="button" onclick="resetQrFilters()" class="btn btn-link text-decoration-none p-0 ms-2 text-danger fw-semibold d-inline-flex align-items-center gap-1" style="font-size: 0.75rem;">
-                ✕ {{ _('Clear') }}
+                ✕ {{ _('Hapus') }}
             </button>
         </div>
 
@@ -99,13 +99,6 @@
                              style="opacity: 0.9;"
                              onmouseover="this.style.transform='scale(1.05)'" 
                              onmouseout="this.style.transform='scale(1)'">
-                        
-                        <!-- Badge Overlay -->
-                        <div class="position-absolute top-0 start-0 m-3 d-flex flex-column gap-1 pointer-events-none">
-                            <span class="px-2 py-1 rounded shadow-sm" style="background: rgba(15, 23, 42, 0.75); color: #f8fafc; font-size: 0.65rem; font-weight: 600; backdrop-filter: blur(4px); font-family: 'JetBrains Mono', monospace;">
-                                {{ qr.name }}
-                            </span>
-                        </div>
                     </div>
                     
                     <!-- INFO BODY -->
@@ -113,13 +106,19 @@
                         <div>
                             {% if qr.source_document %}
                             <div class="d-flex align-items-center gap-2 mb-2">
-                                <span class="fw-bold" style="color: var(--text-muted); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em;">ENV CODE</span>
+                                <!-- Teks ENV CODE diganti ke Bahasa Indonesia sebagai base language -->
+                                <span class="fw-bold" style="color: var(--text-muted); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em;">{{ _('KODE LINGKUNGAN') }}</span>
                                 <span class="text-truncate fw-semibold px-2 py-0.5 rounded" style="background-color: var(--dark-soft); color: var(--text-main); font-size: 0.7rem; font-family: 'JetBrains Mono', monospace;">{{ qr.source_document }}</span>
                             </div>
                             {% endif %}
-                            <h3 class="fw-bold mb-1 text-truncate" style="color: var(--text-main); font-size: 1rem;" title="{{ qr.name }}">{{ qr.name }}</h3>
+                            
+                            <!-- Menggunakan filter replace untuk menerjemahkan kata "Scene" dari database -->
+                            <h3 class="fw-bold mb-1 text-truncate" style="color: var(--text-main); font-size: 1rem;" title="{{ qr.name | replace('Scene', _('Adegan')) }}">
+                                {{ qr.name | replace('Scene', _('Adegan')) }}
+                            </h3>
+                            
                             {% if qr.uploaded_by %}
-                            <p class="mb-0 text-truncate" style="color: var(--text-muted); font-size: 0.75rem;">{{ _('by') }} <span class="fw-medium">{{ qr.uploaded_by }}</span></p>
+                            <p class="mb-0 text-truncate" style="color: var(--text-muted); font-size: 0.75rem;">{{ _('oleh') }} <span class="fw-medium">{{ qr.uploaded_by }}</span></p>
                             {% endif %}
                         </div>
 
@@ -148,7 +147,7 @@
             {% else %}
             <div class="col-12">
                 <div class="text-center py-5 rounded-4 shadow-sm" style="background-color: var(--bg-surface); border: 1px dashed var(--border-color);">
-                    <p class="text-muted fw-medium mb-0" style="font-size: 0.9rem;">{{ _('No PDF documents uploaded to the system yet.') }}</p>
+                    <p class="text-muted fw-medium mb-0" style="font-size: 0.9rem;">{{ _('Belum ada dokumen PDF yang diunggah ke sistem.') }}</p>
                 </div>
             </div>
             {% endfor %}
@@ -157,7 +156,7 @@
         <!-- EMPTY STATE PESAN FILTER -->
         <div id="noQrFoundMessage" class="col-12 mt-4" style="display: none;">
             <div class="text-center py-5 rounded-4 shadow-sm" style="background-color: var(--bg-surface); border: 1px dashed var(--border-color);">
-                <p class="text-muted fw-medium mb-0" style="font-size: 0.9rem;">{{ _('No documents match your filter criteria.') }}</p>
+                <p class="text-muted fw-medium mb-0" style="font-size: 0.9rem;">{{ _('Tidak ada dokumen yang sesuai dengan kriteria filter Anda.') }}</p>
             </div>
         </div>
     </div>
@@ -171,13 +170,13 @@
                         <div class="d-flex align-items-center justify-content-center flex-shrink-0" style="width: 36px; height: 36px; border-radius: 10px; background-color: var(--accent-soft); color: var(--accent);">
                             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         </div>
-                        <h5 class="fw-bold mb-0 text-truncate" id="pdfFileName" style="color: var(--text-main); font-size: 1.1rem;">{{ _('Loading Document...') }}</h5>
+                        <h5 class="fw-bold mb-0 text-truncate" id="pdfFileName" style="color: var(--text-main); font-size: 1.1rem;">{{ _('Memuat Dokumen...') }}</h5>
                     </div>
                     
                     <div class="d-flex align-items-center gap-2 ms-auto flex-shrink-0">
                         <a href="#" id="btnPdfFullscreen" target="_blank" class="btn btn-sm btn-outline-slate py-1 px-3 d-flex align-items-center gap-2 fw-semibold" style="font-size: 0.75rem; border-radius: 8px;" title="{{ _('Open image in a new tab') }}">
                             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                            <span class="d-none d-sm-inline">{{ _('View Full') }}</span>
+                            <span class="d-none d-sm-inline">{{ _('Lihat Penuh') }}</span>
                         </a>
                         <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close" style="filter: var(--btn-close-filter, none);"></button>
                     </div>
@@ -202,9 +201,9 @@
                             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
                         </div>
                         <div>
-                            <h3 class="fw-bold mb-1" style="font-size: 1.125rem; color: #0f172a; letter-spacing: -0.025em;">{{ _('Upload Dokumen QR') }}</h3>
+                            <h3 class="fw-bold mb-1" style="font-size: 1.125rem; color: #0f172a; letter-spacing: -0.025em;">{{ _('Unggah Dokumen QR') }}</h3>
                             <p class="mb-0 text-muted" style="font-size: 0.75rem; line-height: 1.5; max-width: 380px;">
-                                {{ _('Upload satu file PDF dan otomatis akan dipecah jadi halaman-halaman terpisah, tiap halaman dinamai dari Scene atau Environment Code-nya.') }}
+                                {{ _('Unggah satu file PDF dan otomatis akan dipecah jadi halaman-halaman terpisah, tiap halaman dinamai dari Adegan atau Kode Lingkungan-nya.') }}
                             </p>
                         </div>
                     </div>
@@ -217,8 +216,8 @@
                         <!-- Dropzone + File List -->
                         <div class="d-flex flex-column gap-3">
                             <div class="d-flex align-items-center justify-content-between">
-                                <label class="fw-semibold mb-0" style="font-size: 0.75rem; color: #334155;">{{ _('PDF Document File(s)') }}</label>
-                                <span class="text-muted" style="font-size: 11px;">{{ _('Multi-page PDF') }}</span>
+                                <label class="fw-semibold mb-0" style="font-size: 0.75rem; color: #334155;">{{ _('Berkas Dokumen PDF') }}</label>
+                                <span class="text-muted" style="font-size: 11px;">{{ _('PDF multi-halaman') }}</span>
                             </div>
 
                             <!-- Dropzone -->
@@ -259,13 +258,12 @@
                     <div class="modal-footer px-4 py-3 d-flex align-items-center justify-content-between flex-wrap gap-2" style="background-color: #f8fafc; border-top: 1px solid #f1f5f9;">
                         <div class="d-flex align-items-center gap-2 text-muted" style="font-size: 11px;">
                             <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #0f766e;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                            <span>{{ _('Internal APEX QA batch encryption validated') }}</span>
                         </div>
                         <div class="d-flex align-items-center gap-2">
                             <button type="button" class="btn btn-light border fw-semibold shadow-none" style="font-size: 0.75rem; color: #475569;" data-bs-dismiss="modal">{{ _('Batal') }}</button>
                             <button type="submit" id="qrUploadSubmitBtn" class="btn fw-semibold shadow-sm d-flex align-items-center gap-2" style="font-size: 0.75rem; background-color: #0f766e; color: white; border: none;" onmouseover="this.style.backgroundColor='#0d645e'" onmouseout="this.style.backgroundColor='#0f766e'">
                                 <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                                {{ _('Mulai Upload & Parsing') }}
+                                {{ _('Mulai Unggah & Penguraian') }}
                             </button>
                         </div>
                     </div>
@@ -280,21 +278,21 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow">
                 <div class="modal-header border-bottom-0 pb-0">
-                    <h5 class="modal-title fw-bold text-danger d-flex align-items-center gap-2" id="deleteSourceModalLabel">
+                    <h5 class="modal-title fw-bold text-danger d-flex align-items-center gap-2 user-select-none" id="deleteSourceModalLabel" style="cursor: default;">
                         <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                        {{ _('Hapus Environment Code') }}
+                        {{ _('Hapus Kode Lingkungan') }}
                     </h5>
                     <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="{{ url_for('qr.delete_qr_source') }}" method="POST">
                     <div class="modal-body py-3">
                         <p class="small text-muted mb-3">
-                            {{ _('Pilih Environment Code yang ingin dihapus. Semua scene yang terikat dengan Environment Code ini akan terhapus secara permanen!') }}
+                            {{ _('Pilih Kode Lingkungan yang ingin dihapus. Semua adegan yang terikat dengan Kode Lingkungan ini akan terhapus secara permanen!') }}
                         </p>
                         <div class="mb-3">
-                            <label for="sourceSelect" class="form-label small fw-semibold text-muted">{{ _('Pilih Environment Code') }}</label>
+                            <label for="sourceSelect" class="form-label small fw-semibold text-muted">{{ _('Pilih Kode Lingkungan') }}</label>
                             <select name="source_code" id="sourceSelect" class="form-select form-select-sm shadow-none" required>
-                                <option value="" selected disabled>-- {{ _('Pilih Environment') }} --</option>
+                                <option value="" selected disabled>-- {{ _('Pilih Kode Lingkungan') }} --</option>
                                 {% set unique_sources = [] %}
                                 {% for qr in files %}{% if qr.source_document and qr.source_document not in unique_sources %}{% set _ = unique_sources.append(qr.source_document) %}{% endif %}{% endfor %}
                                 {% for src in unique_sources | sort %}
@@ -305,7 +303,7 @@
                     </div>
                     <div class="modal-footer border-top-0 pt-0">
                         <button type="button" class="btn btn-outline-secondary btn-sm px-3" data-bs-dismiss="modal">{{ _('Batal') }}</button>
-                        <button type="submit" class="btn btn-danger btn-sm px-3 fw-semibold">{{ _('Hapus Semua Scene') }}</button>
+                        <button type="submit" class="btn btn-danger btn-sm px-3 fw-semibold">{{ _('Hapus Semua Adegan') }}</button>
                     </div>
                 </form>
             </div>
@@ -382,15 +380,15 @@
                 <div class="dropdown">
                     <button class="btn form-select text-start d-flex align-items-center justify-content-between shadow-none w-100 fw-medium" type="button" id="dropdownSortFieldBtn" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.75rem; color: var(--text-main); background-color: var(--input-bg); border: 1px solid var(--border-color); border-radius: 0.5rem; height: 38px; padding: 0.5rem 0.75rem;">
                         <span id="dropdownSortFieldLabel">
-                            {{ _('Environment Code') }}
+                            {{ _('Kode Lingkungan') }}
                         </span>
                     </button>
                     <!-- Input hidden menangkap nilai value, berfungsi sama persis seperti select -->
                     <input type="hidden" id="sortField" value="source">
                     
                     <ul class="dropdown-menu w-100 shadow-lg border-0 p-1" style="background-color: var(--bg-surface); border: 1px solid var(--border-color) !important; border-radius: 8px; max-height: 200px; overflow-y: auto; z-index: 1056;">
-                        <li><button type="button" class="dropdown-item rounded-2 py-2 px-3 text-truncate project-dropdown-item" onclick='selectSortField("source", {{ _("Environment Code")|tojson }}, event)'>{{ _('Environment Code') }}</button></li>
-                        <li><button type="button" class="dropdown-item rounded-2 py-2 px-3 text-truncate project-dropdown-item" onclick='selectSortField("name", {{ _("Nama Scene")|tojson }}, event)'>{{ _('Nama Scene') }}</button></li>
+                        <li><button type="button" class="dropdown-item rounded-2 py-2 px-3 text-truncate project-dropdown-item" onclick='selectSortField("source", {{ _("Kode Lingkungan")|tojson }}, event)'>{{ _('Kode Lingkungan') }}</button></li>
+                        <li><button type="button" class="dropdown-item rounded-2 py-2 px-3 text-truncate project-dropdown-item" onclick='selectSortField("name", {{ _("Nama Adegan")|tojson }}, event)'>{{ _('Nama Adegan') }}</button></li>
                     </ul>
                 </div>
 
@@ -436,7 +434,7 @@
         <!-- SECTION 2: FILTER BERDASARKAN ENVIRONMENT CODE -->
         <section class="d-flex flex-column gap-3">
             <div class="d-flex align-items-center justify-content-between">
-                <span class="fw-bold text-uppercase" style="font-size: 11px; color: var(--text-muted); letter-spacing: 0.05em;">{{ _('Filter Berdasarkan Environment Code') }}</span>
+                <span class="fw-bold text-uppercase" style="font-size: 11px; color: var(--text-muted); letter-spacing: 0.05em;">{{ _('Filter Berdasarkan Kode Lingkungan') }}</span>
                 <button type="button" class="btn btn-link p-0 text-decoration-none fw-semibold" style="font-size: 11px; color: var(--accent);" onclick="document.querySelector('#selectAllSource').click()">{{ _('Pilih Semua') }}</button>
             </div>
 
@@ -445,7 +443,7 @@
                 <div class="position-absolute top-50 translate-middle-y" style="left: 10px; color: var(--text-muted); pointer-events: none;">
                     <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
-                <input type="text" id="source-list-search" class="form-control shadow-none search-filter-input" placeholder="{{ _('Cari environment code...') }}" style="font-size: 0.75rem; padding: 0.375rem 0.75rem 0.375rem 2rem; border-radius: 0.5rem; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main);">
+                <input type="text" id="source-list-search" class="form-control shadow-none search-filter-input" placeholder="{{ _('Cari kode lingkungan...') }}" style="font-size: 0.75rem; padding: 0.375rem 0.75rem 0.375rem 2rem; border-radius: 0.5rem; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main);">
             </div>
 
             <!-- List -->
@@ -453,7 +451,7 @@
                 <label class="d-flex align-items-center justify-content-between p-2 rounded item-option select-all-option" style="cursor: pointer; border: 1px solid transparent; transition: all 0.2s;" onmouseover="this.style.backgroundColor='var(--dark-soft)';" onmouseout="this.style.backgroundColor='transparent';">
                     <div class="d-flex align-items-center gap-2 overflow-hidden">
                         <input type="checkbox" id="selectAllSource" value="All" class="form-check-input mt-0 select-all-cb shadow-none flex-shrink-0" onchange="toggleSelectAllSource(this); updateQrDependentFilters();" checked style="width: 16px; height: 16px; border-color: var(--border-color); cursor: pointer;">
-                        <span class="fw-semibold text-truncate" style="font-size: 0.75rem; color: var(--text-main);">{{ _('Pilih Semua Environment Code') }}</span>
+                        <span class="fw-semibold text-truncate" style="font-size: 0.75rem; color: var(--text-main);">{{ _('Pilih Semua Kode Lingkungan') }}</span>
                     </div>
                 </label>
                 
@@ -477,7 +475,7 @@
         <!-- SECTION 3: FILTER BERDASARKAN SCENE -->
         <section class="d-flex flex-column gap-3 mb-2">
             <div class="d-flex align-items-center justify-content-between">
-                <span class="fw-bold text-uppercase" style="font-size: 11px; color: var(--text-muted); letter-spacing: 0.05em;">{{ _('Filter Berdasarkan Scene') }}</span>
+                <span class="fw-bold text-uppercase" style="font-size: 11px; color: var(--text-muted); letter-spacing: 0.05em;">{{ _('Filter Berdasarkan Adegan') }}</span>
                 <button type="button" class="btn btn-link p-0 text-decoration-none fw-semibold" style="font-size: 11px; color: var(--accent);" onclick="document.querySelector('#selectAllScene').click()">{{ _('Pilih Semua') }}</button>
             </div>
             
@@ -486,7 +484,7 @@
                 <div class="position-absolute top-50 translate-middle-y" style="left: 10px; color: var(--text-muted); pointer-events: none;">
                     <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
-                <input type="text" id="scene-list-search" class="form-control shadow-none search-filter-input" placeholder="{{ _('Cari nama scene...') }}" style="font-size: 0.75rem; padding: 0.375rem 0.75rem 0.375rem 2rem; border-radius: 0.5rem; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main);">
+                <input type="text" id="scene-list-search" class="form-control shadow-none search-filter-input" placeholder="{{ _('Cari nama adegan...') }}" style="font-size: 0.75rem; padding: 0.375rem 0.75rem 0.375rem 2rem; border-radius: 0.5rem; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main);">
             </div>
 
             <!-- List -->
@@ -494,7 +492,7 @@
                 <label class="d-flex align-items-center justify-content-between p-2 rounded item-option select-all-option" style="cursor: pointer; border: 1px solid transparent; transition: all 0.2s;" onmouseover="this.style.backgroundColor='var(--dark-soft)';" onmouseout="this.style.backgroundColor='transparent';">
                     <div class="d-flex align-items-center gap-2 overflow-hidden">
                         <input type="checkbox" id="selectAllScene" value="All" class="form-check-input mt-0 select-all-cb shadow-none flex-shrink-0" onchange="toggleSelectAllScene(this); updateQrDependentFilters();" checked style="width: 16px; height: 16px; border-color: var(--border-color); cursor: pointer;">
-                        <span class="fw-semibold text-truncate" style="font-size: 0.75rem; color: var(--text-main);">{{ _('Pilih Semua Scene') }}</span>
+                        <span class="fw-semibold text-truncate" style="font-size: 0.75rem; color: var(--text-main);">{{ _('Pilih Semua Adegan') }}</span>
                     </div>
                 </label>
                 

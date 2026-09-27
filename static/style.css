@@ -8,6 +8,7 @@
        0.  Font & Import
        1.  Variabel Warna & Tema
        2.  Global & Tipografi
+       3. UX & KURSOR GLOBAL (Mencegah kursor caret pada elemen UI)
 
    ==> BAGIAN 1: TAMPILAN DESKTOP / WEBSITE (baseline, tanpa media query)
        3.  Komponen: Tombol
@@ -183,6 +184,56 @@ h6 { font-size: 0.75rem;  font-weight: 600; letter-spacing: 0em;      line-heigh
     }
 }
 
+/* ==========================================================================
+   3. UX & KURSOR GLOBAL (Mencegah kursor caret pada elemen UI)
+   ========================================================================== */
+/* 1. Mencegah teks terblok (highlight biru) pada elemen pembungkus utama */
+.modal-content,
+.offcanvas,
+.card,
+.task-card,
+.qr-card,
+.bento-panel,
+.sidebar-container,
+.title-main,
+.title-sub,
+#activeFiltersIndicator {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* 2. Mengubah kursor teks (garis vertikal) menjadi panah standar pada judul dan teks bacaan */
+.modal-content h1, .modal-content h2, .modal-content h3, .modal-content h5, .modal-content p, .modal-content span,
+.offcanvas h1, .offcanvas h2, .offcanvas h3, .offcanvas h5, .offcanvas p, .offcanvas span,
+.card h1, .card h2, .card h3, .card h4, .card h5, .card p, .card span,
+.page-title, .section-title, .card-title-text, .page-subtitle, .section-desc,
+.title-main, .title-sub {
+    cursor: default;
+}
+
+/* 3. Memastikan area interaktif tetap menggunakan kursor jari (pointer) */
+.btn,
+.item-option,
+#qrDropzone,
+.dropdown-item,
+.form-check-input,
+.nav-link,
+.filter-tab,
+.proj-list-item,
+label {
+    cursor: pointer !important;
+}
+
+/* 4. Pengecualian wajib untuk Form Input agar bisa diketik dengan normal */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+textarea {
+    user-select: auto !important;
+    -webkit-user-select: auto !important;
+    cursor: text !important;
+}
 
 /* ==========================================================================
    SISTEM TIPOGRAFI TERPUSAT — berlaku di SEMUA halaman

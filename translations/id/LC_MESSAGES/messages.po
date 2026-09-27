@@ -259,3 +259,12 @@ msgstr "Status Saat Ini"
 #: templates/dashboard.html:511
 msgid "Tutup"
 msgstr "Tutup"
+
+msgid "KODE LINGKUNGAN"
+msgstr "KODE LINGKUNGAN"
+
+msgid "Adegan"
+msgstr "Adegan"
+
+msgid "Unggah satu file PDF dan otomatis akan dipecah jadi halaman-halaman terpisah, tiap halaman dinamai dari Adegan atau Kode Lingkungan-nya."
+msgstr "Unggah satu file PDF dan otomatis akan dipecah jadi halaman-halaman terpisah, tiap halaman dinamai dari Adegan atau Kode Lingkungan-nya."

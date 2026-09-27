@@ -813,3 +813,229 @@ msgstr "Next"
 #: templates/index.html
 msgid "Lompat ke Halaman"
 msgstr "Jump to Page"
+
+# =========================================================================
+# TABLE OF CONTENTS - QR_MANAGEMENT.HTML TRANSLATIONS:
+# 1. Header & Toolbar
+# 2. Grid Dokumen (Document Grid)
+# 3. Modal Penampil Dokumen (Document Viewer Modal)
+# 4. Modal Unggah PDF
+# 5. Modal Hapus Lingkungan Kode
+# 6. Drawer Filter & Urutkan
+# =========================================================================
+
+
+# -------------------------------------------------------------------------
+# 1. Header & Toolbar
+# -------------------------------------------------------------------------
+#: templates/qr_management.html
+msgid "Manajemen QR"
+msgstr "QR Management"
+
+#: templates/qr_management.html
+msgid "Unggah PDF File"
+msgstr "Upload PDF File"
+
+#: templates/qr_management.html
+msgid "Hapus Kode Lingkungan"
+msgstr "Delete Environment Code"
+
+#: templates/qr_management.html
+msgid "Cari nama adegan atau kode lingkungan..."
+msgstr "Search scene name or environment code..."
+
+#: templates/qr_management.html
+msgid "Filter & Urutkan"
+msgstr "Filter & Sort"
+
+#: templates/qr_management.html
+msgid "FILTERS:"
+msgstr "FILTERS:"
+
+#: templates/qr_management.html
+msgid "Hapus"
+msgstr "Clear"
+
+
+# -------------------------------------------------------------------------
+# 2. Grid Dokumen (Document Grid)
+# -------------------------------------------------------------------------
+#: templates/qr_management.html
+msgid "KODE LINGKUNGAN"
+msgstr "ENV CODE"
+
+#: templates/qr_management.html
+msgid "Adegan"
+msgstr "Scene"
+
+#: templates/qr_management.html
+msgid "oleh"
+msgstr "by"
+
+#: templates/qr_management.html
+msgid "Lihat Dokumen"
+msgstr "View Document"
+
+#: templates/qr_management.html
+msgid "Sure you want to delete this document for good?"
+msgstr "Sure you want to delete this document for good?"
+
+#: templates/qr_management.html
+msgid "Delete"
+msgstr "Delete"
+
+#: templates/qr_management.html
+msgid "Belum ada dokumen PDF yang diunggah ke sistem."
+msgstr "No PDF documents uploaded to the system yet."
+
+#: templates/qr_management.html
+msgid "Tidak ada dokumen yang sesuai dengan kriteria filter Anda."
+msgstr "No documents match your filter criteria."
+
+
+# -------------------------------------------------------------------------
+# 3. Modal Penampil Dokumen (Document Viewer Modal)
+# -------------------------------------------------------------------------
+#: templates/qr_management.html
+msgid "Memuat Dokumen..."
+msgstr "Loading Document..."
+
+#: templates/qr_management.html
+msgid "Open image in a new tab"
+msgstr "Open image in a new tab"
+
+#: templates/qr_management.html
+msgid "Lihat Penuh"
+msgstr "View Full"
+
+
+# -------------------------------------------------------------------------
+# 4. Modal Unggah PDF
+# -------------------------------------------------------------------------
+#: templates/qr_management.html
+msgid "Unggah Dokumen QR"
+msgstr "Upload QR Document"
+
+#: templates/qr_management.html
+msgid "Unggah satu file PDF dan otomatis akan dipecah jadi halaman-halaman terpisah, tiap halaman dinamai dari Adegan atau Kode Lingkungan-nya."
+msgstr "Upload a PDF file, and it will automatically be split into separate pages, with each page named according to its Scene or Environment Code."
+
+#: templates/qr_management.html
+msgid "Berkas Dokumen PDF"
+msgstr "PDF Document File(s)"
+
+#: templates/qr_management.html
+msgid "PDF multi-halaman"
+msgstr "Multi-page PDF"
+
+#: templates/qr_management.html
+msgid "Tarik dan lepas file PDF di sini, atau"
+msgstr "Drag and drop PDF files here, or"
+
+#: templates/qr_management.html
+msgid "Pilih File"
+msgstr "Choose File"
+
+#: templates/qr_management.html
+msgid "Anda dapat memilih lebih dari satu file PDF sekaligus"
+msgstr "You can select more than one PDF file at once"
+
+#: templates/qr_management.html
+msgid "Belum ada file yang dipilih."
+msgstr "No files selected yet."
+
+#: templates/qr_management.html
+msgid "Mengunggah..."
+msgstr "Uploading..."
+
+#: templates/qr_management.html
+msgid "Batal"
+msgstr "Cancel"
+
+#: templates/qr_management.html
+msgid "Mulai Unggah & Penguraian"
+msgstr "Start Upload & Parsing"
+
+
+# -------------------------------------------------------------------------
+# 5. Modal Hapus Lingkungan Kode
+# -------------------------------------------------------------------------
+#: templates/qr_management.html
+msgid "Pilih Kode Lingkungan yang ingin dihapus. Semua adegan yang terikat dengan Kode Lingkungan ini akan terhapus secara permanen!"
+msgstr "Select the Environment Code to delete. All scenes linked to this Environment Code will be permanently deleted!"
+
+#: templates/qr_management.html
+msgid "Pilih Kode Lingkungan"
+msgstr "Select Environment Code"
+
+#: templates/qr_management.html
+msgid "Pilih Lingkungan"
+msgstr "Select Environment"
+
+#: templates/qr_management.html
+msgid "Hapus Semua Adegan"
+msgstr "Delete All Scenes"
+
+
+# -------------------------------------------------------------------------
+# 6. Drawer Filter & Urutkan
+# -------------------------------------------------------------------------
+#: templates/qr_management.html
+msgid "Atur parameter tampilan QR"
+msgstr "Adjust QR display parameters"
+
+#: templates/qr_management.html
+msgid "Urutkan Berdasarkan"
+msgstr "Sort By"
+
+#: templates/qr_management.html
+msgid "Kode Lingkungan"
+msgstr "Environment Code"
+
+#: templates/qr_management.html
+msgid "Nama Adegan"
+msgstr "Scene Name"
+
+#: templates/qr_management.html
+msgid "Menaik (A-Z)"
+msgstr "Ascending (A-Z)"
+
+#: templates/qr_management.html
+msgid "Menurun (Z-A)"
+msgstr "Descending (Z-A)"
+
+#: templates/qr_management.html
+msgid "Filter Berdasarkan Kode Lingkungan"
+msgstr "Filter by Environment Code"
+
+#: templates/qr_management.html
+msgid "Pilih Semua"
+msgstr "Select All"
+
+#: templates/qr_management.html
+msgid "Cari kode lingkungan..."
+msgstr "Search environment code..."
+
+#: templates/qr_management.html
+msgid "Pilih Semua Kode Lingkungan"
+msgstr "Select All Environment Codes"
+
+#: templates/qr_management.html
+msgid "Filter Berdasarkan Adegan"
+msgstr "Filter by Scene"
+
+#: templates/qr_management.html
+msgid "Cari nama adegan..."
+msgstr "Search scene name..."
+
+#: templates/qr_management.html
+msgid "Pilih Semua Adegan"
+msgstr "Select All Scenes"
+
+#: templates/qr_management.html
+msgid "Reset Filter"
+msgstr "Reset Filter"
+
+#: templates/qr_management.html
+msgid "Terapkan Filter"
+msgstr "Apply Filter"
