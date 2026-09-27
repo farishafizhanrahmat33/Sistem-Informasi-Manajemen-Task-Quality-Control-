@@ -96,6 +96,10 @@ msgstr "Defect"
 msgid "Revisi sample"
 msgstr "Revisi sample"
 
+#: templates/index.html
+msgid "Manajemen Task"
+msgstr "Manajemen Task"
+
 #: templates/dashboard.html:261
 msgid "Lolos inspeksi"
 msgstr "Lolos inspeksi"

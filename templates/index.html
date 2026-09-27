@@ -53,11 +53,11 @@
                 {% if role in ['Developer', 'Quality Control'] %}
                 <button class="btn btn-tm-primary btn-sm d-flex align-items-center gap-2" type="button" data-bs-toggle="modal" data-bs-target="#uploadModal">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                    {{ _('Import Project Data') }}
+                    {{ _('Impor Data Proyek') }}
                 </button>
                 <button class="btn btn-tm-danger-outline btn-sm d-flex align-items-center gap-2" type="button" data-bs-toggle="modal" data-bs-target="#deleteProjectModal">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg>
-                    {{ _('Delete Project') }}
+                    {{ _('Hapus Proyek') }}
                 </button>
                 {% endif %}
 
@@ -65,7 +65,7 @@
                 <div class="d-flex align-items-center gap-2 flex-grow-1 justify-content-end">
                     <div class="position-relative tm-search-wrap">
                         <svg width="16" height="16" fill="currentColor" class="search-icon" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
-                        <input type="text" id="searchInput" class="form-control form-control-sm search-pill border-0 shadow-sm" placeholder="{{ _('Search Task ID, Spec, or Description...') }}" value="{{ search_query }}">
+                        <input type="text" id="searchInput" class="form-control form-control-sm search-pill border-0 shadow-sm" placeholder="{{ _('Cari Task ID, Task Name, Deskripsi...') }}" value="{{ search_query }}">
                     </div>
 
                     <button class="btn btn-tm-outline btn-sm d-flex align-items-center gap-2 flex-shrink-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterDrawer">
@@ -73,7 +73,7 @@
                         <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                             <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
                         </svg>
-                        {{ _('Filter & Sort') }}
+                        {{ _('Filter & Urutkan') }}
                         <span id="activeFilterBadge" class="badge bg-primary rounded-circle d-none ms-1" style="font-size: 0.6rem;">!</span>
                     </button>
                 </div>
@@ -314,14 +314,14 @@
         {% if role.lower() not in ['publik', 'public'] %}
         <div class="enterprise-tabs-wrapper mb-4">
             <div class="d-flex overflow-auto gap-4 enterprise-tabs" id="taskTabMenu">
-                <button class="filter-tab {% if selected_status == 'All' %}active{% endif %}" data-status="All">{{ _('All Data') }} <span class="task-count-badge">{{ count_all }}</span></button>
-                <button class="filter-tab {% if selected_status == 'Need Sample' %}active{% endif %}" data-status="Need Sample">{{ _('To Sample') }} <span class="task-count-badge">{{ count_need_sample }}</span></button>
+                <button class="filter-tab {% if selected_status == 'All' %}active{% endif %}" data-status="All">{{ _('Semua Data') }} <span class="task-count-badge">{{ count_all }}</span></button>
+                <button class="filter-tab {% if selected_status == 'Need Sample' %}active{% endif %}" data-status="Need Sample">{{ _('Butuh Sampel') }} <span class="task-count-badge">{{ count_need_sample }}</span></button>
                 <!-- Diubah dari Review Done menjadi Sample Done -->
-                <button class="filter-tab {% if selected_status == 'Sample Done' %}active{% endif %}" data-status="Sample Done">{{ _('Sample Done') }} <span class="task-count-badge">{{ count_sample_done }}</span></button>
-                <button class="filter-tab {% if selected_status == 'Revision' %}active{% endif %}" data-status="Revision">{{ _('Revision') }} <span class="task-count-badge">{{ count_revision }}</span></button>
-                <button class="filter-tab {% if selected_status == 'Ready' %}active{% endif %}" data-status="Ready">{{ _('Ready for Production') }} <span class="task-count-badge">{{ count_ready }}</span></button>
-                <button class="filter-tab {% if selected_status == 'Skipped' %}active{% endif %}" data-status="Skipped">{{ _('Skipped') }} <span class="task-count-badge">{{ count_skipped }}</span></button>
-                <button class="filter-tab {% if selected_status == 'Sent to Team' %}active{% endif %}" data-status="Sent to Team">{{ _('Submitted / Sent') }} <span class="task-count-badge">{{ count_sent }}</span></button>
+                <button class="filter-tab {% if selected_status == 'Sample Done' %}active{% endif %}" data-status="Sample Done">{{ _('Sampel Selesai') }} <span class="task-count-badge">{{ count_sample_done }}</span></button>
+                <button class="filter-tab {% if selected_status == 'Revision' %}active{% endif %}" data-status="Revision">{{ _('Perbaikan') }} <span class="task-count-badge">{{ count_revision }}</span></button>
+                <button class="filter-tab {% if selected_status == 'Ready' %}active{% endif %}" data-status="Ready">{{ _('Siap untuk Produksi') }} <span class="task-count-badge">{{ count_ready }}</span></button>
+                <button class="filter-tab {% if selected_status == 'Skipped' %}active{% endif %}" data-status="Skipped">{{ _('Dilewati') }} <span class="task-count-badge">{{ count_skipped }}</span></button>
+                <button class="filter-tab {% if selected_status == 'Sent to Team' %}active{% endif %}" data-status="Sent to Team">{{ _('Diserahkan / Dikirim') }} <span class="task-count-badge">{{ count_sent }}</span></button>
             </div>
         </div>
         {% endif %}
@@ -353,7 +353,7 @@
 
     <!-- Tombol Reset / Clear All Filters -->
     <a href="{{ url_for('task.task_list') }}?status={{ selected_status }}" class="btn btn-link btn-sm text-decoration-none p-0 ms-auto text-danger fw-semibold flex-shrink-0 ps-2" style="font-size: 0.75rem;">
-        ✕ {{ _('Clear') }}
+        ✕ {{ _('Hapus') }}
     </a>
 </div>
 {% endif %}
@@ -423,7 +423,7 @@
                         <!-- Footer: Target Pullable & View Details -->
                         <div class="card-footer-row">
                             <div class="d-flex align-items-center gap-2 flex-wrap">
-                                <span class="small" style="color: var(--text-muted);">{{ _('Target Pullable:') }}</span>
+                                <span class="small" style="color: var(--text-muted);">{{ _('Target yang Dapat Ditarik:') }}</span>
                                 <span class="small fw-semibold" style="color: var(--text-main);">{{ t.pullable_num }}</span>
                                 <!-- Indikator warna -->
                                 {% if t.pullable_num < 250 %}
@@ -436,7 +436,7 @@
                             </div>
                             <!-- PASTIKAN ADA type="button" DI SINI -->
                             <button type="button" class="btn btn-sm tm-detail-link" data-bs-toggle="modal" data-bs-target="#modal-{{ t.id }}">
-                                {{ _('View Details') }}
+                                {{ _('Lihat Detail') }}
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                             </button>
                         </div>
@@ -447,7 +447,7 @@
 
             <div class="col-12" id="emptyFilterMessage" style="display: none;">
                 <div class="detail-panel text-center py-5 small fw-medium mt-2 d-flex flex-column align-items-center" style="color: var(--text-muted);">
-                    {{ _("Your sort criteria didn't turn up any results.") }}
+                    {{ _("Kriteria pengurutan Anda tidak menghasilkan apa pun.") }}
                 </div>
             </div>
         </div> <!-- PENUTUP DIV ROW TASKCONTAINER -->
@@ -474,45 +474,45 @@
                                 <!-- KIRI: SEMUA KOLOM DARI DATA ASLI -->
                                 <div class="col-lg-5">
                                     <div class="detail-panel h-100">
-                                        <h6 class="fw-bold mb-4" style="color: var(--text-main);">{{ _('Raw Data Attributes') }}</h6>
+                                        <h6 class="fw-bold mb-4" style="color: var(--text-main);">{{ _('Rincian Task') }}</h6>
 
-                                        <div class="detail-label">{{ _('Project Name') }}</div>
+                                        <div class="detail-label">{{ _('Nama Proyek') }}</div>
                                         <div class="detail-value fw-semibold text-primary">{{ t.project_name }}</div>
 
-                                        <div class="detail-label">{{ _('Task ID') }}</div>
+                                        <div class="detail-label">{{ _('ID Task') }}</div>
                                         <div class="detail-value fw-bold">{{ t.task_id }}</div>
 
-                                        <div class="detail-label">{{ _('Task Name') }}</div>
+                                        <div class="detail-label">{{ _('Nama Task') }}</div>
                                         <div class="detail-value">{{ t.task_name or '-' }}</div>
 
-                                        <div class="detail-label">{{ _('Package Name') }}</div>
+                                        <div class="detail-label">{{ _('Nama Paket') }}</div>
                                         <div class="detail-value"><span class="badge badge-soft border">{{ t.package_name or '-' }}</span></div>
 
-                                        <div class="detail-label">{{ _('Description') }}</div>
+                                        <div class="detail-label">{{ _('Deskripsi') }}</div>
                                         <div class="detail-value lh-base" style="color: var(--text-muted);">{{ t.description or '-' }}</div>
 
                                         <div class="detail-label">{{ _('SOP') }}</div>
                                         <div class="detail-value">{{ t.sop or '-' }}</div>
 
-                                        <div class="detail-label">{{ _('Task Goal') }}</div>
+                                        <div class="detail-label">{{ _('Sasaran Task') }}</div>
                                         <div class="detail-value">{{ t.task_goal or '-' }}</div>
 
-                                        <div class="detail-label">{{ _('Initialize / Initial Status') }}</div>
+                                        <div class="detail-label">{{ _('Inisialisasi / Status Awal') }}</div>
                                         <div class="detail-value">{{ t.initialize_status or '-' }}</div>
 
-                                        <div class="detail-label">{{ _('Generalization Direction') }}</div>
+                                        <div class="detail-label">{{ _('Arah Generalisasi') }}</div>
                                         <div class="detail-value">{{ t.generalization_direction or '-' }}</div>
 
-                                        <div class="detail-label">{{ _('Task Type') }}</div>
+                                        <div class="detail-label">{{ _('Jenis Task') }}</div>
                                         <div class="detail-value">{{ t.task_type or '-' }}</div>
 
-                                        <div class="detail-label">{{ _('Num') }}</div>
+                                        <div class="detail-label">{{ _('Nomor') }}</div>
                                         <div class="detail-value">{{ t.num_val or '-' }}</div>
 
                                         <div class="detail-label">{{ _('Label') }}</div>
                                         <div class="detail-value">{{ t.label or '-' }}</div>
 
-                                        <div class="detail-label">{{ _('Extraction Target (Pullable Num)') }}</div>
+                                        <div class="detail-label">{{ _('Target Ekstraksi (Jumlah yang Dapat Ditarik)') }}</div>
                                         <div class="detail-value fs-5 fw-bold" style="color: var(--accent);">
                                             {{ t.pullable_num }}
                                             {% if t.pullable_num < 250 %}
@@ -524,22 +524,16 @@
                                             {% endif %}
                                         </div>
 
-                                        <div class="detail-label">{{ _('Environment Type') }}</div>
+                                        <div class="detail-label">{{ _('Jenis Environment') }}</div>
                                         <div class="detail-value">{{ t.environment_type or '-' }}</div>
 
-                                        <div class="detail-label">{{ _('Source Template ID') }}</div>
-                                        <div class="detail-value">{{ t.source_template_id or '-' }}</div>
-
-                                        <div class="detail-label">{{ _('Target Num / Task') }}</div>
+                                        <div class="detail-label">{{ _('Nomor Target / Tugas') }}</div>
                                         <div class="detail-value">{{ t.target_num_task or '-' }}</div>
 
-                                        <div class="detail-label">{{ _('Env Summary') }}</div>
+                                        <div class="detail-label">{{ _('Ringkasan Lingkungan') }}</div>
                                         <div class="detail-value">{{ t.env_summary or '-' }}</div>
 
-                                        <div class="detail-label">{{ _('Original Excel Status') }}</div>
-                                        <div class="detail-value">{{ t.excel_status or '-' }}</div>
-
-                                        <div class="detail-label">{{ _('Uploaded By') }}</div>
+                                        <div class="detail-label">{{ _('Diunggah Oleh') }}</div>
                                         <div class="detail-value mb-0">{{ t.uploaded_by or _('System') }}</div>
                                     </div>
                                 </div>
@@ -549,9 +543,9 @@
                                     {% if role in ['Developer', 'Quality Control', 'Supervisor'] %}
                                     <form action="/toggle_send/{{ t.id }}" method="POST" class="mb-4">
                                         {% if t.sent_by_leader %}
-                                            <button type="submit" class="btn btn-outline-secondary w-100 py-2">{{ _('Pull Back from Production Team') }}</button>
+                                            <button type="submit" class="btn btn-outline-secondary w-100 py-2">{{ _('Tarik Kembali dari Tim Produksi') }}</button>
                                         {% else %}
-                                            <button type="submit" class="btn btn-primary w-100 py-2">{{ _('Send Task to Production Team') }}</button>
+                                            <button type="submit" class="btn btn-primary w-100 py-2">{{ _('Kirim Tugas ke Tim Produksi') }}</button>
                                         {% endif %}
                                     </form>
                                     {% endif %}
@@ -559,15 +553,15 @@
                                     <!-- TINJAUAN MEDIA (2 VIDEO) -->
                                     <div class="detail-panel mb-4 p-0 overflow-hidden">
                                         <div class="p-3 border-bottom" style="background-color: var(--input-bg);">
-                                            <div class="detail-label mb-0">{{ _('Extraction Media Review') }}</div>
+                                            <div class="detail-label mb-0">{{ _('Ulasan Media Ekstraksi') }}</div>
                                         </div>
                                         <div class="p-3">
                                             <ul class="nav custom-video-tabs mb-3" id="video-tabs-{{ t.id }}" role="tablist">
                                                 <li class="nav-item" role="presentation">
-                                                    <button class="nav-link active" id="link1-tab-{{ t.id }}" data-bs-toggle="tab" data-bs-target="#link1-{{ t.id }}" type="button" role="tab">{{ _('Sample 1') }}</button>
+                                                    <button class="nav-link active" id="link1-tab-{{ t.id }}" data-bs-toggle="tab" data-bs-target="#link1-{{ t.id }}" type="button" role="tab">{{ _('Sampel 1') }}</button>
                                                 </li>
                                                 <li class="nav-item" role="presentation">
-                                                    <button class="nav-link" id="link2-tab-{{ t.id }}" data-bs-toggle="tab" data-bs-target="#link2-{{ t.id }}" type="button" role="tab">{{ _('Sample 2') }}</button>
+                                                    <button class="nav-link" id="link2-tab-{{ t.id }}" data-bs-toggle="tab" data-bs-target="#link2-{{ t.id }}" type="button" role="tab">{{ _('Sampel 2') }}</button>
                                                 </li>
                                             </ul>
                                             <div class="tab-content" id="video-tabs-content-{{ t.id }}">
@@ -590,18 +584,18 @@
                                                             <div class="d-flex justify-content-between align-items-center mt-1 px-1">
                                                                 <button type="button" onclick="toggleVideoFullscreen('video-wrapper-{{ t.id }}-1')" class="btn btn-sm btn-link text-decoration-none d-inline-flex align-items-center gap-1 p-0 shadow-none" style="color: var(--text-main); font-size: 0.75rem; font-weight: 600;">
                                                                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-                                                                    {{ _('Fullscreen') }}
+                                                                    {{ _('Layar Penuh') }}
                                                                 </button>
                                                                 <a href="{{ t.link_sample }}" target="_blank" class="text-decoration-none d-inline-flex align-items-center gap-1 px-2 py-1 rounded" style="color: #3b82f6; font-size: 0.75rem; font-weight: 600; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(59, 130, 246, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
-                                                                    {{ _('Open Video in New Tab') }}
+                                                                    {{ _('Buka video di tab baru') }}
                                                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                                                                 </a>
                                                             </div>
                                                         {% else %}
-                                                            <a href="{{ t.link_sample }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 py-2 shadow-none" style="border-radius: 8px;">{{ _('Visit Main External Link ↗') }}</a>
+                                                            <a href="{{ t.link_sample }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 py-2 shadow-none" style="border-radius: 8px;">{{ _('Kunjungi Tautan Eksternal Utama ↗') }}</a>
                                                         {% endif %}
                                                     {% else %}
-                                                        <div class="text-center py-5 small rounded-3" style="background-color: var(--input-bg); border: 1px dashed var(--border-color); color: var(--text-muted);">{{ _('No main media attached yet.') }}</div>
+                                                        <div class="text-center py-5 small rounded-3" style="background-color: var(--input-bg); border: 1px dashed var(--border-color); color: var(--text-muted);">{{ _('Belum ada media utama yang dilampirkan.') }}</div>
                                                     {% endif %}
                                                 </div>
 
@@ -615,7 +609,7 @@
                                                                 <!-- Tombol Keluar Fullscreen dengan Teks & Ikon -->
                                                                 <button type="button" onclick="exitVideoFullscreen('video-wrapper-{{ t.id }}-2')" class="btn btn-sm position-absolute top-0 end-0 m-3 shadow exit-fs-btn d-none align-items-center gap-2 px-3 py-2 rounded-pill" style="z-index: 9999; background: rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.3); color: white; font-size: 0.8rem; font-weight: 600; backdrop-filter: blur(4px);">
                                                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                                                                    {{ _('Exit Fullscreen') }}
+                                                                    {{ _('Keluar dari Layar Penuh') }}
                                                                 </button>
                                                                 <iframe data-src="{{ t.link_sample_2.split('/view')[0].replace('/file/d/', '/file/d/').replace('/view', '') + '/preview' }}" src="about:blank" class="position-absolute top-0 start-0 lazy-iframe" style="width: 100%; height: 100%; transform: scale(0.8) translateY(-5px); transform-origin: center;" allow="autoplay" allowfullscreen></iframe>
                                                             </div>
@@ -624,18 +618,18 @@
                                                             <div class="d-flex justify-content-between align-items-center mt-1 px-1">
                                                                 <button type="button" onclick="toggleVideoFullscreen('video-wrapper-{{ t.id }}-2')" class="btn btn-sm btn-link text-decoration-none d-inline-flex align-items-center gap-1 p-0 shadow-none" style="color: var(--text-main); font-size: 0.75rem; font-weight: 600;">
                                                                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-                                                                    {{ _('Fullscreen') }}
+                                                                    {{ _('Layar Penuh') }}
                                                                 </button>
                                                                 <a href="{{ t.link_sample_2 }}" target="_blank" class="text-decoration-none d-inline-flex align-items-center gap-1 px-2 py-1 rounded" style="color: #3b82f6; font-size: 0.75rem; font-weight: 600; transition: background 0.2s;" onmouseover="this.style.backgroundColor='rgba(59, 130, 246, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
-                                                                    {{ _('Open Video in New Tab') }}
+                                                                    {{ _('Buka video di tab baru') }}
                                                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                                                                 </a>
                                                             </div>
                                                         {% else %}
-                                                            <a href="{{ t.link_sample_2 }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 py-2 shadow-none" style="border-radius: 8px;">{{ _('Visit Alternate External Link ↗') }}</a>
+                                                            <a href="{{ t.link_sample_2 }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 py-2 shadow-none" style="border-radius: 8px;">{{ _('Kunjungi Tautan Eksternal Alternatif ↗') }}</a>
                                                         {% endif %}
                                                     {% else %}
-                                                        <div class="text-center py-5 small rounded-3" style="background-color: var(--input-bg); border: 1px dashed var(--border-color); color: var(--text-muted);">{{ _('No alternate media attached yet.') }}</div>
+                                                        <div class="text-center py-5 small rounded-3" style="background-color: var(--input-bg); border: 1px dashed var(--border-color); color: var(--text-muted);">{{ _('Belum ada media alternatif yang dilampirkan.') }}</div>
                                                     {% endif %}
                                                 </div>
                                             </div>
@@ -647,73 +641,73 @@
                                         <h6 class="fw-bold mb-4" style="color: var(--text-main);">{{ _('Evaluation & Operations Form') }}</h6>
                                         {% if role in ['Developer', 'Quality Control'] %}
                                             <form action="/toggle_skip/{{ t.id }}" method="POST" class="mb-4">
-                                                <button type="submit" class="btn {% if t.can_buy_item %}btn-outline-danger{% else %}btn-outline-secondary{% endif %} btn-sm w-100">{% if t.can_buy_item %}{{ _('Mark as Skipped') }}{% else %}{{ _('Restore Task Status (Unskip)') }}{% endif %}</button>
+                                                <button type="submit" class="btn {% if t.can_buy_item %}btn-outline-danger{% else %}btn-outline-secondary{% endif %} btn-sm w-100">{% if t.can_buy_item %}{{ _('Tandai sebagai dilewati') }}{% else %}{{ _('Pulihkan Status Tugas (Batalkan Lewati)') }}{% endif %}</button>
                                             </form>
 
                                             <form action="/update/{{ t.id }}" method="POST">
                                                 <div class="mb-3">
-                                                    <label class="form-label detail-label">{{ _('Case Name') }}</label>
+                                                    <label class="form-label detail-label">{{ _('Nama Kasus') }}</label>
                                                     <input type="text" name="case_name" class="form-control" value="{{ t.case_name or '' }}">
                                                 </div>
                                                 <div class="row g-3 mb-3">
                                                     <div class="col-sm-6">
-                                                            <label class="form-label detail-label">{{ _('Main Media Link') }}</label>
-                                                        <input type="text" name="link_sample" class="form-control" value="{{ t.link_sample or '' }}" placeholder="{{ _('Enter the main reference URL...') }}">
+                                                            <label class="form-label detail-label">{{ _('Tautan Media Utama') }}</label>
+                                                        <input type="text" name="link_sample" class="form-control" value="{{ t.link_sample or '' }}" placeholder="{{ _('Masukkan URL referensi utama...') }}">
                                                     </div>
                                                     <div class="col-sm-6">
-                                                        <label class="form-label detail-label">{{ _('Alternate Media Link') }}</label>
-                                                        <input type="text" name="link_sample_2" class="form-control" value="{{ t.link_sample_2 or '' }}" placeholder="{{ _('Enter the backup reference URL...') }}">
+                                                        <label class="form-label detail-label">{{ _('Tautan Media Alternatif') }}</label>
+                                                        <input type="text" name="link_sample_2" class="form-control" value="{{ t.link_sample_2 or '' }}" placeholder="{{ _('Masukkan URL referensi alternatif...') }}">
                                                     </div>
                                                 </div>
                                                 <div class="row g-3 mb-4">
                                                     <div class="col-sm-6">
-                                                        <label class="form-label detail-label">{{ _('Inspector Evaluation Result') }}</label>
+                                                        <label class="form-label detail-label">{{ _('Hasil Evaluasi Inspektur') }}</label>
                                                         <select name="inspector_result" class="form-select fw-medium">
                                                             <!-- Jika t.inspector_result kosong ATAU bernilai 'Need Sample', jadikan ini yang terpilih -->
-                                                            <option value="Need Sample" {% if not t.inspector_result or t.inspector_result == 'Need Sample' %}selected{% endif %}>{{ _('Need Sample') }}</option>
-                                                            <option value="Sample Done" {% if t.inspector_result == 'Passed' %}selected{% endif %}>{{ _('Waiting Inspect') }}</option>
-                                                            <option value="Passed" {% if t.inspector_result == 'Passed' %}selected{% endif %}>{{ _('Approved (Passed)') }}</option>
-                                                            <option value="Failed" {% if t.inspector_result == 'Failed' %}selected{% endif %}>{{ _('Rejected (Failed)') }}</option>
+                                                            <option value="Need Sample" {% if not t.inspector_result or t.inspector_result == 'Need Sample' %}selected{% endif %}>{{ _('Butuh Sampel') }}</option>
+                                                            <option value="Sample Done" {% if t.inspector_result == 'Sample Done' %}selected{% endif %}>{{ _('Menunggu Inspeksi') }}</option>
+                                                            <option value="Passed" {% if t.inspector_result == 'Passed' %}selected{% endif %}>{{ _('Disetujui (Lulus)') }}</option>
+                                                            <option value="Failed" {% if t.inspector_result == 'Failed' %}selected{% endif %}>{{ _('Ditolak (Gagal)') }}</option>
                                                         </select>
                                                     </div>
                                                     <div class="col-sm-6">
-                                                        <label class="form-label detail-label">{{ _('Operational Status') }}</label>
+                                                        <label class="form-label detail-label">{{ _('Status Operasional') }}</label>
                                                         <select name="operational_status" class="form-select fw-medium">
-                                                            <option value="Active" {% if t.operational_status == 'Active' %}selected{% endif %}>{{ _('Running (Active)') }}</option>
+                                                            <option value="Active" {% if t.operational_status == 'Active' %}selected{% endif %}>{{ _('Berjalan (Active)') }}</option>
                                                             <option value="Offline" {% if t.operational_status == 'Offline' %}selected{% endif %}>{{ _('Offline') }}</option>
-                                                            <option value="Hold" {% if t.operational_status == 'Hold' %}selected{% endif %}>{{ _('On Hold') }}</option>
-                                                            <option value="Complete" {% if t.operational_status == 'Complete' %}selected{% endif %}>{{ _('Complete') }}</option>
+                                                            <option value="Hold" {% if t.operational_status == 'Hold' %}selected{% endif %}>{{ _('Ditunda') }}</option>
+                                                            <option value="Complete" {% if t.operational_status == 'Complete' %}selected{% endif %}>{{ _('Selesai') }}</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="mb-4">
-                                                    <label class="form-label detail-label">{{ _('Inspection Notes') }}</label>
-                                                    <textarea name="notes" class="form-control lh-base" rows="3" placeholder="{{ _('Write down findings or special instructions...') }}">{{ t.notes or '' }}</textarea>
+                                                    <label class="form-label detail-label">{{ _('Catatan Inspeksi') }}</label>
+                                                    <textarea name="notes" class="form-control lh-base" rows="3" placeholder="{{ _('Tulis temuan atau instruksi khusus...') }}">{{ t.notes or '' }}</textarea>
                                                 </div>
-                                                <button type="submit" class="btn btn-primary w-100 py-2">{{ _('Save Update') }}</button>
+                                                <button type="submit" class="btn btn-primary w-100 py-2">{{ _('Simpan Pembaruan') }}</button>
                                             </form>
 
                                         {% else %}
                                             <!-- READ ONLY UNTUK LEADER/PUBLIC -->
                                             <div class="row mb-4">
                                                 <div class="col-6">
-                                                    <div class="detail-label">{{ _('Case Name') }}</div>
+                                                    <div class="detail-label">{{ _('Nama Kasus') }}</div>
                                                     <div class="detail-value mb-0">{{ t.case_name or '-' }}</div>
                                                 </div>
                                                 <div class="col-6">
-                                                    <div class="detail-label">{{ _('Operational Status') }}</div>
+                                                    <div class="detail-label">{{ _('Status Operasional') }}</div>
                                                     <div class="detail-value mb-0">{{ _(t.operational_status) }}</div>
                                                 </div>
                                             </div>
-                                            <div class="detail-label">{{ _('Internal Inspector Decision') }}</div>
+                                            <div class="detail-label">{{ _('Keputusan Inspector Internal') }}</div>
                                             <div class="detail-value mb-4">
-                                                {% if t.inspector_result == 'Passed' %}<span class="badge" style="background-color: #10B981; color: white; padding: 0.5em 1em;">{{ _('Approved (Passed)') }}</span>
-                                                {% elif t.inspector_result == 'Failed' %}<span class="badge" style="background-color: #EF4444; color: white; padding: 0.5em 1em;">{{ _('Failed Testing (Failed)') }}</span>
-                                                {% else %}<span class="badge badge-soft border py-2 px-3">{{ _('Still Under Review') }}</span>{% endif %}
+                                                {% if t.inspector_result == 'Passed' %}<span class="badge" style="background-color: #10B981; color: white; padding: 0.5em 1em;">{{ _('Disetujui (Lulus)') }}</span>
+                                                {% elif t.inspector_result == 'Failed' %}<span class="badge" style="background-color: #EF4444; color: white; padding: 0.5em 1em;">{{ _('Gagal Testing (Gagal)') }}</span>
+                                                {% else %}<span class="badge badge-soft border py-2 px-3">{{ _('Masih Dalam Review') }}</span>{% endif %}
                                             </div>
                                             
-                                            <div class="detail-label pt-4 border-top">{{ _('Inspection Notes (Quality Team)') }}</div>
-                                            <div class="p-3 rounded lh-base" style="background-color: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-muted); white-space: pre-wrap;">{{ t.notes or _('The evaluation team has not left any notes for this task yet.') }}</div>
+                                            <div class="detail-label pt-4 border-top">{{ _('Catatan Inspeksi (Tim Kualitas)') }}</div>
+                                            <div class="p-3 rounded lh-base" style="background-color: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-muted); white-space: pre-wrap;">{{ t.notes or _('Tim evaluasi belum meninggalkan catatan untuk tugas ini.') }}</div>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -771,7 +765,7 @@
                             href="{% if pagination.has_prev %}{{ url_for(request.endpoint, page=pagination.prev_num, **current_args) }}{% else %}#{% endif %}"
                             style="background-color: transparent; color: var(--text-main); border: 1px solid var(--border-color); border-radius: 6px; height: 32px; padding: 0 10px; font-size: 0.8rem; font-weight: 600;">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                                {{ _('Prev') }}
+                                {{ _('Sebelumnya') }}
                             </a>
                         </li>
 
@@ -797,7 +791,7 @@
                             <a class="page-link page-btn-custom d-flex align-items-center justify-content-center gap-1 shadow-none" 
                             href="{% if pagination.has_next %}{{ url_for(request.endpoint, page=pagination.next_num, **current_args) }}{% else %}#{% endif %}"
                             style="background-color: transparent; color: var(--text-main); border: 1px solid var(--border-color); border-radius: 6px; height: 32px; padding: 0 10px; font-size: 0.8rem; font-weight: 600;">
-                                {{ _('Next') }}
+                                {{ _('Berikutnya') }}
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </a>
                         </li>
@@ -815,7 +809,7 @@
                             {% endfor %}
                         {% endfor %}
                         <div class="input-group input-group-sm" style="height: 32px;">
-                            <span class="input-group-text bg-transparent shadow-none" style="border-color: var(--border-color); color: var(--text-muted); font-size: 0.8rem; border-radius: 6px 0 0 6px;">{{ _('Jump') }}</span>
+                            <span class="input-group-text bg-transparent shadow-none" style="border-color: var(--border-color); color: var(--text-muted); font-size: 0.8rem; border-radius: 6px 0 0 6px;">{{ _('Lompat ke Halaman') }}</span>
                             
                             <input type="number" name="page" min="1" max="{{ pagination.pages }}" value="{{ pagination.page }}" class="form-control jump-input text-center shadow-none border-start-0 border-end-0" style="width: 48px; background-color: transparent; color: var(--text-main); border-color: var(--border-color); font-size: 0.85rem; padding: 0 4px;" required>
                             

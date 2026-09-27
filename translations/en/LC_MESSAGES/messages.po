@@ -255,3 +255,561 @@ msgstr "Current Status"
 #: templates/dashboard.html:511
 msgid "Tutup"
 msgstr "Close"
+
+# =========================================================================
+# TABLE OF CONTENTS - INDEX.HTML (TASK MANAGEMENT) TRANSLATIONS:
+# 1. Header & Toolbar
+# 2. Modal Import Proyek
+# 3. Modal Hapus Proyek
+# 4. Modal Konfirmasi Hapus
+# 5. Tab Navigasi Status
+# 6. Kartu Task
+# 7. Modal Detail Task
+# 8. Formulir Evaluasi QC
+# 9. Drawer Filter & Urutkan
+# 10. Pagination
+# =========================================================================
+
+
+# -------------------------------------------------------------------------
+# 1. Header & Toolbar
+# -------------------------------------------------------------------------
+#: templates/index.html
+msgid "Quality Control (QC) Dashboard"
+msgstr "Quality Control (QC) Dashboard"
+
+#: templates/index.html
+msgid "Manajemen Task"
+msgstr "Task Management"
+
+#: templates/index.html
+msgid "Impor Data Proyek"
+msgstr "Import Project Data"
+
+#: templates/index.html
+msgid "Hapus Proyek"
+msgstr "Delete Project"
+
+#: templates/index.html
+msgid "Cari Task ID, Task Name, Deskripsi..."
+msgstr "Search Task ID, Task Name, Description..."
+
+#: templates/index.html
+msgid "Filter & Urutkan"
+msgstr "Filter & Sort"
+
+
+# -------------------------------------------------------------------------
+# 2. Modal Import Proyek
+# -------------------------------------------------------------------------
+#: templates/index.html
+msgid "Import Data Proyek Baru"
+msgstr "Import New Project Data"
+
+#: templates/index.html
+msgid "Unggah data proyek (.xlsx / .csv) untuk sinkronisasi otomatis daftar tugas."
+msgstr "Upload project data (.xlsx / .csv) for automatic task list synchronization."
+
+#: templates/index.html
+msgid "Pilih Berkas (.xlsx, .csv)"
+msgstr "Choose File (.xlsx, .csv)"
+
+#: templates/index.html
+msgid "Nama Projek (Project Name)"
+msgstr "Project Name"
+
+#: templates/index.html
+msgid "Ketik nama proyek baru..."
+msgstr "Type new project name..."
+
+#: templates/index.html
+msgid "Perbarui proyek otomatis jika nama proyek sama dengan yang sudah terdaftar di basis data."
+msgstr "Automatically update the project if the project name already exists in the database."
+
+#: templates/index.html
+msgid "Batal"
+msgstr "Cancel"
+
+#: templates/index.html
+msgid "Mulai Sinkronisasi"
+msgstr "Start Sync"
+
+
+# -------------------------------------------------------------------------
+# 3. Modal Hapus Proyek
+# -------------------------------------------------------------------------
+#: templates/index.html
+msgid "Hapus Proyek Secara Permanen"
+msgstr "Delete Project Permanently"
+
+#: templates/index.html
+msgid "Pilih proyek lama yang ingin dihapus permanen dari sistem."
+msgstr "Select the old project to permanently delete from the system."
+
+#: templates/index.html
+msgid "Pilih Target Proyek"
+msgstr "Select Target Project"
+
+#: templates/index.html
+msgid "Pilih proyek..."
+msgstr "Select project..."
+
+#: templates/index.html
+msgid "Perhatian:"
+msgstr "Warning:"
+
+#: templates/index.html
+msgid "Tindakan ini bersifat permanen. Seluruh task, riwayat sampel, dan data terkait proyek ini tidak dapat dipulihkan."
+msgstr "This action is permanent. All tasks, sample history, and related project data cannot be recovered."
+
+
+# -------------------------------------------------------------------------
+# 4. Modal Konfirmasi Hapus
+# -------------------------------------------------------------------------
+#: templates/index.html
+msgid "Apakah Anda Yakin?"
+msgstr "Are You Sure?"
+
+#: templates/index.html
+msgid "Anda akan menghapus proyek"
+msgstr "You are about to delete project"
+
+#: templates/index.html
+msgid "secara permanen. Tindakan ini tidak dapat dibatalkan."
+msgstr "permanently. This action cannot be undone."
+
+#: templates/index.html
+msgid "Ya, Hapus"
+msgstr "Yes, Delete"
+
+
+# -------------------------------------------------------------------------
+# 5. Tab Navigasi Status
+# -------------------------------------------------------------------------
+#: templates/index.html
+msgid "Semua Data"
+msgstr "All Data"
+
+#: templates/index.html
+msgid "Butuh Sampel"
+msgstr "Need Sample"
+
+#: templates/index.html
+msgid "Sampel Selesai"
+msgstr "Sample Done"
+
+#: templates/index.html
+msgid "Perbaikan"
+msgstr "Revision"
+
+#: templates/index.html
+msgid "Siap untuk Produksi"
+msgstr "Ready for Production"
+
+#: templates/index.html
+msgid "Dilewati"
+msgstr "Skipped"
+
+#: templates/index.html
+msgid "Diserahkan / Dikirim"
+msgstr "Sent / Delivered"
+
+#: templates/index.html
+msgid "Filters:"
+msgstr "Filters:"
+
+#: templates/index.html
+msgid "Hapus"
+msgstr "Clear"
+
+
+# -------------------------------------------------------------------------
+# 6. Kartu Task
+# -------------------------------------------------------------------------
+#: templates/index.html
+msgid "No tasks in the system yet."
+msgstr "No tasks in the system yet."
+
+#: templates/index.html
+msgid "Sent"
+msgstr "Sent"
+
+#: templates/index.html
+msgid "To Sample"
+msgstr "To Sample"
+
+#: templates/index.html
+msgid "Sample Done"
+msgstr "Sample Done"
+
+#: templates/index.html
+msgid "Revision"
+msgstr "Revision"
+
+#: templates/index.html
+msgid "Ready"
+msgstr "Ready"
+
+#: templates/index.html
+msgid "Skipped"
+msgstr "Skipped"
+
+#: templates/index.html
+msgid "Target yang Dapat Ditarik:"
+msgstr "Pullable Target:"
+
+#: templates/index.html
+msgid "Critical"
+msgstr "Critical"
+
+#: templates/index.html
+msgid "Low"
+msgstr "Low"
+
+#: templates/index.html
+msgid "Safe"
+msgstr "Safe"
+
+#: templates/index.html
+msgid "Lihat Detail"
+msgstr "View Details"
+
+#: templates/index.html
+msgid "Kriteria pengurutan Anda tidak menghasilkan apa pun."
+msgstr "Your sorting criteria returned no results."
+
+
+# -------------------------------------------------------------------------
+# 7. Modal Detail Task
+# -------------------------------------------------------------------------
+#: templates/index.html
+msgid "Task:"
+msgstr "Task:"
+
+#: templates/index.html
+msgid "Rincian Task"
+msgstr "Task Details"
+
+#: templates/index.html
+msgid "Nama Proyek"
+msgstr "Project Name"
+
+#: templates/index.html
+msgid "ID Task"
+msgstr "Task ID"
+
+#: templates/index.html
+msgid "Nama Task"
+msgstr "Task Name"
+
+#: templates/index.html
+msgid "Nama Paket"
+msgstr "Package Name"
+
+#: templates/index.html
+msgid "Deskripsi"
+msgstr "Description"
+
+#: templates/index.html
+msgid "SOP"
+msgstr "SOP"
+
+#: templates/index.html
+msgid "Sasaran Task"
+msgstr "Task Goal"
+
+#: templates/index.html
+msgid "Inisialisasi / Status Awal"
+msgstr "Initialization / Initial Status"
+
+#: templates/index.html
+msgid "Arah Generalisasi"
+msgstr "Generalization Direction"
+
+#: templates/index.html
+msgid "Jenis Task"
+msgstr "Task Type"
+
+#: templates/index.html
+msgid "Nomor"
+msgstr "Number"
+
+#: templates/index.html
+msgid "Label"
+msgstr "Label"
+
+#: templates/index.html
+msgid "Target Ekstraksi (Jumlah yang Dapat Ditarik)"
+msgstr "Extraction Target (Pullable Count)"
+
+#: templates/index.html
+msgid "Jenis Environment"
+msgstr "Environment Type"
+
+#: templates/index.html
+msgid "Nomor Target / Tugas"
+msgstr "Target Number / Task"
+
+#: templates/index.html
+msgid "Ringkasan Lingkungan"
+msgstr "Environment Summary"
+
+#: templates/index.html
+msgid "Diunggah Oleh"
+msgstr "Uploaded By"
+
+#: templates/index.html
+msgid "System"
+msgstr "System"
+
+#: templates/index.html
+msgid "Ulasan Media Ekstraksi"
+msgstr "Extraction Media Review"
+
+#: templates/index.html
+msgid "Sampel 1"
+msgstr "Sample 1"
+
+#: templates/index.html
+msgid "Sampel 2"
+msgstr "Sample 2"
+
+#: templates/index.html
+msgid "Exit Fullscreen"
+msgstr "Exit Fullscreen"
+
+#: templates/index.html
+msgid "Keluar dari Layar Penuh"
+msgstr "Exit Fullscreen"
+
+#: templates/index.html
+msgid "Layar Penuh"
+msgstr "Fullscreen"
+
+#: templates/index.html
+msgid "Buka video di tab baru"
+msgstr "Open video in new tab"
+
+#: templates/index.html
+msgid "Kunjungi Tautan Eksternal Utama ↗"
+msgstr "Visit Main External Link ↗"
+
+#: templates/index.html
+msgid "Belum ada media utama yang dilampirkan."
+msgstr "No primary media attached yet."
+
+#: templates/index.html
+msgid "Kunjungi Tautan Eksternal Alternatif ↗"
+msgstr "Visit Alternative External Link ↗"
+
+#: templates/index.html
+msgid "Belum ada media alternatif yang dilampirkan."
+msgstr "No alternative media attached yet."
+
+
+# -------------------------------------------------------------------------
+# 8. Formulir Evaluasi QC
+# -------------------------------------------------------------------------
+#: templates/index.html
+msgid "Evaluation & Operations Form"
+msgstr "Evaluation & Operations Form"
+
+#: templates/index.html
+msgid "Tandai sebagai dilewati"
+msgstr "Mark as Skipped"
+
+#: templates/index.html
+msgid "Pulihkan Status Tugas (Batalkan Lewati)"
+msgstr "Restore Task Status (Undo Skip)"
+
+#: templates/index.html
+msgid "Nama Kasus"
+msgstr "Case Name"
+
+#: templates/index.html
+msgid "Tautan Media Utama"
+msgstr "Primary Media Link"
+
+#: templates/index.html
+msgid "Masukkan URL referensi utama..."
+msgstr "Enter primary reference URL..."
+
+#: templates/index.html
+msgid "Tautan Media Alternatif"
+msgstr "Alternative Media Link"
+
+#: templates/index.html
+msgid "Masukkan URL referensi alternatif..."
+msgstr "Enter alternative reference URL..."
+
+#: templates/index.html
+msgid "Hasil Evaluasi Inspektur"
+msgstr "Inspector Evaluation Result"
+
+#: templates/index.html
+msgid "Menunggu Inspeksi"
+msgstr "Awaiting Inspection"
+
+#: templates/index.html
+msgid "Disetujui (Lulus)"
+msgstr "Approved (Passed)"
+
+#: templates/index.html
+msgid "Ditolak (Gagal)"
+msgstr "Rejected (Failed)"
+
+#: templates/index.html
+msgid "Status Operasional"
+msgstr "Operational Status"
+
+#: templates/index.html
+msgid "Berjalan (Active)"
+msgstr "Running (Active)"
+
+#: templates/index.html
+msgid "Offline"
+msgstr "Offline"
+
+#: templates/index.html
+msgid "Ditunda"
+msgstr "On Hold"
+
+#: templates/index.html
+msgid "Selesai"
+msgstr "Complete"
+
+#: templates/index.html
+msgid "Catatan Inspeksi"
+msgstr "Inspection Notes"
+
+#: templates/index.html
+msgid "Tulis temuan atau instruksi khusus..."
+msgstr "Write findings or special instructions..."
+
+#: templates/index.html
+msgid "Simpan Pembaruan"
+msgstr "Save Updates"
+
+#: templates/index.html
+msgid "Tarik Kembali dari Tim Produksi"
+msgstr "Withdraw from Production Team"
+
+#: templates/index.html
+msgid "Kirim Tugas ke Tim Produksi"
+msgstr "Send Task to Production Team"
+
+#: templates/index.html
+msgid "Keputusan Inspector Internal"
+msgstr "Internal Inspector Decision"
+
+#: templates/index.html
+msgid "Gagal Testing (Gagal)"
+msgstr "Testing Failed (Failed)"
+
+#: templates/index.html
+msgid "Masih Dalam Review"
+msgstr "Still Under Review"
+
+#: templates/index.html
+msgid "Catatan Inspeksi (Tim Kualitas)"
+msgstr "Inspection Notes (Quality Team)"
+
+#: templates/index.html
+msgid "Tim evaluasi belum meninggalkan catatan untuk tugas ini."
+msgstr "The evaluation team has not left any notes for this task yet."
+
+
+# -------------------------------------------------------------------------
+# 9. Drawer Filter & Urutkan
+# -------------------------------------------------------------------------
+#: templates/index.html
+msgid "Atur parameter tampilan task"
+msgstr "Adjust task display parameters"
+
+#: templates/index.html
+msgid "Urutkan Berdasarkan"
+msgstr "Sort By"
+
+#: templates/index.html
+msgid "Pembaruan Terakhir (Latest Update)"
+msgstr "Latest Update"
+
+#: templates/index.html
+msgid "Task ID"
+msgstr "Task ID"
+
+#: templates/index.html
+msgid "Target Pullable"
+msgstr "Pullable Target"
+
+#: templates/index.html
+msgid "Menaik (Terlama ke Terbaru / A-Z)"
+msgstr "Ascending (Oldest to Newest / A-Z)"
+
+#: templates/index.html
+msgid "Menurun (Terbaru ke Terlama / Z-A)"
+msgstr "Descending (Newest to Oldest / Z-A)"
+
+#: templates/index.html
+msgid "Filter Berdasarkan Proyek"
+msgstr "Filter by Project"
+
+#: templates/index.html
+msgid "Pilih Semua"
+msgstr "Select All"
+
+#: templates/index.html
+msgid "Cari nama project..."
+msgstr "Search project name..."
+
+#: templates/index.html
+msgid "Pilih Semua Proyek"
+msgstr "Select All Projects"
+
+#: templates/index.html
+msgid "Filter Berdasarkan Paket"
+msgstr "Filter by Package"
+
+#: templates/index.html
+msgid "Cari nama paket..."
+msgstr "Search package name..."
+
+#: templates/index.html
+msgid "Pilih Semua Paket"
+msgstr "Select All Packages"
+
+#: templates/index.html
+msgid "Reset Filter"
+msgstr "Reset Filter"
+
+#: templates/index.html
+msgid "Terapkan Filter"
+msgstr "Apply Filter"
+
+
+# -------------------------------------------------------------------------
+# 10. Pagination
+# -------------------------------------------------------------------------
+#: templates/index.html
+msgid "Menampilkan"
+msgstr "Showing"
+
+#: templates/index.html
+msgid "dari"
+msgstr "of"
+
+#: templates/index.html
+msgid "total tugas aktif"
+msgstr "total active tasks"
+
+#: templates/index.html
+msgid "Sebelumnya"
+msgstr "Previous"
+
+#: templates/index.html
+msgid "Berikutnya"
+msgstr "Next"
+
+#: templates/index.html
+msgid "Lompat ke Halaman"
+msgstr "Jump to Page"
