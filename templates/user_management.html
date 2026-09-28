@@ -30,12 +30,21 @@
     <div class="container-fluid px-4 pb-5 pt-4 qc-console">
 
         <!-- HEADER SECTION -->
-        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-            <div>
-                <h4 class="fw-bold mb-1" style="color: var(--text-main); letter-spacing: -0.02em;">{{ _('Manajemen Pengguna') }}</h4>
-                <p class="text-muted small mb-0">{{ _('Kelola akun, akses sistem, dan izin pengguna dalam satu tempat.') }}</p>
+        <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-4 mb-4">
+            <div class="d-flex flex-column gap-1">
+                <!-- Menggunakan title-main dan cursor: default untuk menghilangkan caret -->
+                <h1 class="title-main text-on-surface mb-0" style="font-size: clamp(22px, 2.5vw, 24px); font-weight: 700; cursor: default; letter-spacing: -0.02em;">
+                    {{ _('Manajemen Pengguna') }}
+                </h1>
+                
+                <div class="d-flex flex-wrap align-items-center gap-3 mt-1">
+                    <p class="desc-text mb-0" style="font-size: clamp(14px, 1.5vw, 15px); color: var(--text-muted); cursor: default; max-width: 800px;">
+                        {{ _('Kelola akun, akses sistem, dan izin pengguna dalam satu tempat.') }}
+                    </p>
+                </div>
             </div>
-            <button class="btn btn-tm-primary btn-sm px-3 py-2 fw-semibold d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#addUserModal" style="border-radius: 8px;">
+            
+            <button class="btn btn-tm-primary btn-sm px-3 py-2 fw-semibold d-flex align-items-center gap-2 mb-1" data-bs-toggle="modal" data-bs-target="#addUserModal" style="border-radius: 8px;">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
                 {{ _('Tambah Akun Baru') }}
             </button>
@@ -350,32 +359,14 @@
                                 </select>
                                 
                                 <!-- Role Scope Info Box -->
-                                <div class="mt-2 p-3 rounded-3 d-flex align-items-start gap-2 bg-teal-soft border-teal-subtle">
-                                    <svg width="16" height="16" class="text-teal-primary mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <div class="mt-2 p-3 rounded-3 d-flex align-items-center gap-2 bg-teal-soft border-teal-subtle">
+                                    <svg width="16" height="16" class="text-teal-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
                                     <div class="text-teal-dark" style="font-size: 0.72rem; line-height: 1.4;">
                                         <span class="fw-bold">{{ _('Wewenang Peran:') }}</span> {{ _('Menentukan batasan aksi seperti akses menu, modifikasi data, dan konfigurasi master sistem.') }}
                                     </div>
                                 </div>
-                            </div>
-
-                            <!-- Security Checkboxes -->
-                            <div class="col-12 mt-2 d-flex flex-column gap-2">
-                                <label class="custom-checkbox-panel d-flex align-items-start gap-3 p-3 rounded-3 border cursor-pointer w-100">
-                                    <input type="checkbox" class="form-check-input mt-1 shadow-none" checked>
-                                    <div>
-                                        <span class="fw-bold text-main d-block" style="font-size: 0.8rem;">{{ _('Wajibkan ganti kata sandi saat login pertama kali') }}</span>
-                                        <span class="text-muted" style="font-size: 0.7rem;">{{ _('Mendorong keamanan mandiri sesuai protokol standar kepatuhan.') }}</span>
-                                    </div>
-                                </label>
-                                <label class="custom-checkbox-panel d-flex align-items-start gap-3 p-3 rounded-3 border cursor-pointer w-100">
-                                    <input type="checkbox" class="form-check-input mt-1 shadow-none" checked>
-                                    <div>
-                                        <span class="fw-bold text-main d-block" style="font-size: 0.8rem;">{{ _('Kirimkan rincian akun otomatis ke email resmi') }}</span>
-                                        <span class="text-muted" style="font-size: 0.7rem;">{{ _('Menyertakan panduan sistem dan tautan akses web portal.') }}</span>
-                                    </div>
-                                </label>
                             </div>
                         </div>
                     </div>
