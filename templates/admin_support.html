@@ -13,7 +13,7 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ _('Support Tickets - QA System') }}</title>
+    <title>{{ _('Tiket Dukungan - QA System') }}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -293,12 +293,12 @@
         <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3 mb-4">
             <div>
                 <div class="page-eyebrow">
-                    <span>Developer Console</span>
+                    <span>{{ _('Konsol Developer') }}</span>
                     <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#059669;"></span>
-                    <span style="color:var(--text-muted);">Ticket Operations</span>
+                    <span style="color:var(--text-muted);">{{ _('Operasi Tiket') }}</span>
                 </div>
-                <h1 class="page-title">{{ _('Support Tickets Inbox') }}</h1>
-                <p class="page-subtitle">{{ _('List of complaints or issues sent in by users through the help center.') }}</p>
+                <h1 class="page-title">{{ _('Kotak Masuk Tiket Dukungan') }}</h1>
+                <p class="page-subtitle">{{ _('Daftar keluhan atau masalah yang dikirimkan oleh pengguna melalui pusat bantuan.') }}</p>
             </div>
             <!-- Live indicator -->
             <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card-bg);border:1px solid var(--border-subtle);border-radius:10px;box-shadow:0 1px 2px rgba(15,23,42,0.04);">
@@ -307,8 +307,8 @@
                     <span style="position:relative;width:10px;height:10px;border-radius:50%;background:#059669;"></span>
                 </span>
                 <div>
-                    <div style="font-family:'Inter',sans-serif;font-size:11px;font-weight:700;color:var(--text-primary);">Developer Access</div>
-                    <div class="mono" style="font-size:10px;color:var(--text-muted);">F-30 Ticket Management</div>
+                    <div style="font-family:'Inter',sans-serif;font-size:11px;font-weight:700;color:var(--text-primary);">{{ _('Akses Developer') }}</div>
+                    <div class="mono" style="font-size:10px;color:var(--text-muted);">{{ _('Manajemen Tiket F-30') }}</div>
                 </div>
             </div>
         </div>
@@ -323,7 +323,7 @@
                 <div class="kpi-card">
                     <div class="d-flex align-items-start justify-content-between">
                         <div>
-                            <div class="kpi-label">{{ _('Total Tickets') }}</div>
+                            <div class="kpi-label">{{ _('Total Tiket') }}</div>
                             <div class="kpi-value">{{ total }}</div>
                         </div>
                         <div class="kpi-icon" style="background:#F0F9FF;color:#0284C7;">
@@ -337,7 +337,7 @@
                 <div class="kpi-card">
                     <div class="d-flex align-items-start justify-content-between">
                         <div>
-                            <div class="kpi-label">{{ _('Open') }}</div>
+                            <div class="kpi-label">{{ _('Terbuka') }}</div>
                             <div class="kpi-value" style="color:#D97706;">{{ open_count }}</div>
                         </div>
                         <div class="kpi-icon" style="background:#FFFBEB;color:#D97706;">
@@ -351,7 +351,7 @@
                 <div class="kpi-card">
                     <div class="d-flex align-items-start justify-content-between">
                         <div>
-                            <div class="kpi-label">{{ _('Resolved') }}</div>
+                            <div class="kpi-label">{{ _('Selesai') }}</div>
                             <div class="kpi-value" style="color:#059669;">{{ resolved_count }}</div>
                         </div>
                         <div class="kpi-icon" style="background:#ECFDF5;color:#059669;">
@@ -365,7 +365,7 @@
                 <div class="kpi-card">
                     <div class="d-flex align-items-start justify-content-between">
                         <div>
-                            <div class="kpi-label">{{ _('Resolution Rate') }}</div>
+                            <div class="kpi-label">{{ _('Tingkat Penyelesaian') }}</div>
                             <div class="kpi-value" style="color:#0F766E;">
                                 {% if total > 0 %}{{ ((resolved_count / total) * 100)|round|int }}%{% else %}—{% endif %}
                             </div>
@@ -385,9 +385,9 @@
             <div class="panel-header flex-wrap gap-3">
                 <div class="d-flex align-items-center gap-2">
                     <span class="material-symbols-outlined" style="color:#0F766E;font-size:20px;">inbox</span>
-                    <span style="font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:var(--text-primary);">{{ _('All Tickets') }}</span>
+                    <span style="font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:var(--text-primary);">{{ _('Semua Tiket') }}</span>
                     <span class="mono" style="font-size:11px;padding:2px 8px;border-radius:6px;background:var(--surface-container-low);color:var(--text-secondary);">
-                        {{ total }} {{ _('entries') }}
+                        {{ total }} {{ _('entri') }}
                     </span>
                 </div>
                 <div class="toolbar-wrap">
@@ -395,15 +395,16 @@
                     <div class="search-input-wrap">
                         <span class="material-symbols-outlined search-icon">search</span>
                         <input type="text" class="search-input" id="ticketSearch"
-                               placeholder="{{ _('Search by user or message...') }}"
+                               placeholder="{{ _('Cari berdasarkan pengguna atau pesan...') }}"
                                oninput="filterTickets()">
                     </div>
                     <!-- Status filter -->
                     <div class="select-wrap-sm">
+                        <!-- Value tetap "Open" & "Resolved" karena data backend nya berbahasa Inggris -->
                         <select class="filter-select" id="statusFilter" onchange="filterTickets()">
-                            <option value="all">{{ _('All Status') }}</option>
-                            <option value="Open">{{ _('Open') }}</option>
-                            <option value="Resolved">{{ _('Resolved') }}</option>
+                            <option value="all">{{ _('Semua Status') }}</option>
+                            <option value="Open">{{ _('Terbuka') }}</option>
+                            <option value="Resolved">{{ _('Selesai') }}</option>
                         </select>
                         <span class="material-symbols-outlined select-arrow">expand_more</span>
                     </div>
@@ -416,11 +417,11 @@
                     <thead>
                         <tr>
                             <th style="width:48px;">#</th>
-                            <th>{{ _('Sender') }}</th>
-                            <th>{{ _('Issue Message') }}</th>
+                            <th>{{ _('Pengirim') }}</th>
+                            <th>{{ _('Pesan Kendala') }}</th>
                             <th style="width:120px;">{{ _('Status') }}</th>
-                            <th style="width:150px;">{{ _('Time Sent') }}</th>
-                            <th style="width:130px; text-align:right; padding-right:20px;">{{ _('Action') }}</th>
+                            <th style="width:150px;">{{ _('Waktu Terkirim') }}</th>
+                            <th style="width:130px; text-align:right; padding-right:20px;">{{ _('Aksi') }}</th>
                         </tr>
                     </thead>
                     <tbody id="ticketsBody">
@@ -436,7 +437,7 @@
                                     </div>
                                     <div>
                                         <div class="ticket-id-cell">{{ t.username }}</div>
-                                        <div class="ticket-sender">{{ _('User Account') }}</div>
+                                        <div class="ticket-sender">{{ _('Akun Pengguna') }}</div>
                                     </div>
                                 </div>
                             </td>
@@ -446,11 +447,11 @@
                             <td>
                                 {% if t.status == 'Resolved' %}
                                     <span class="badge-pill badge-resolved">
-                                        <span class="dot"></span>{{ _('Resolved') }}
+                                        <span class="dot"></span>{{ _('Selesai') }}
                                     </span>
                                 {% else %}
                                     <span class="badge-pill badge-open">
-                                        <span class="dot"></span>{{ _('Open') }}
+                                        <span class="dot"></span>{{ _('Terbuka') }}
                                     </span>
                                 {% endif %}
                             </td>
@@ -464,7 +465,7 @@
                                         <span class="material-symbols-outlined" style="font-size:14px;">
                                             {% if t.status == 'Resolved' %}refresh{% else %}check_circle{% endif %}
                                         </span>
-                                        {% if t.status == 'Resolved' %}{{ _('Reopen') }}{% else %}{{ _('Resolve') }}{% endif %}
+                                        {% if t.status == 'Resolved' %}{{ _('Buka Kembali') }}{% else %}{{ _('Tandai Selesai') }}{% endif %}
                                     </button>
                                 </form>
                             </td>
@@ -476,8 +477,8 @@
                                     <div class="empty-icon">
                                         <span class="material-symbols-outlined" style="font-size:26px;">inbox</span>
                                     </div>
-                                    <div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">{{ _('No Tickets Yet') }}</div>
-                                    <div style="font-family:'Inter',sans-serif;font-size:12px;color:var(--text-muted);">{{ _('No issue messages yet.') }}</div>
+                                    <div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">{{ _('Belum Ada Tiket') }}</div>
+                                    <div style="font-family:'Inter',sans-serif;font-size:12px;color:var(--text-muted);">{{ _('Belum ada pesan kendala yang masuk.') }}</div>
                                 </div>
                             </td>
                         </tr>
@@ -490,19 +491,23 @@
                     <div class="empty-icon">
                         <span class="material-symbols-outlined" style="font-size:26px;">search_off</span>
                     </div>
-                    <div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">{{ _('No Matching Tickets') }}</div>
-                    <div style="font-family:'Inter',sans-serif;font-size:12px;color:var(--text-muted);">{{ _('Try adjusting your search or filter.') }}</div>
+                    <div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">{{ _('Tidak Ada Tiket yang Sesuai') }}</div>
+                    <div style="font-family:'Inter',sans-serif;font-size:12px;color:var(--text-muted);">{{ _('Coba sesuaikan pencarian atau filter Anda.') }}</div>
                 </div>
             </div>
 
             <!-- Table Footer -->
             <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 px-4 py-3"
                  style="border-top:1px solid var(--border-subtle);">
-                <span class="mono" style="font-size:11px;color:var(--text-muted);" id="resultCount">
-                    {{ _('Showing') }} {{ total }} {{ _('of') }} {{ total }} {{ _('tickets') }}
+                 <!-- Kamus data HTML (multi-bahasa JS) -->
+                <span class="mono" style="font-size:11px;color:var(--text-muted);" id="resultCount"
+                      data-show-id="{{ _('Menampilkan') }}" 
+                      data-of-id="{{ _('dari') }}" 
+                      data-entity-id="{{ _('tiket') }}">
+                    {{ _('Menampilkan') }} {{ total }} {{ _('dari') }} {{ total }} {{ _('tiket') }}
                 </span>
                 <div class="d-flex align-items-center gap-2">
-                    <span style="font-family:'Inter',sans-serif;font-size:11px;color:var(--text-muted);">{{ _('Last update:') }}</span>
+                    <span style="font-family:'Inter',sans-serif;font-size:11px;color:var(--text-muted);">{{ _('Pembaruan terakhir:') }}</span>
                     <span class="mono" style="font-size:11px;color:var(--text-secondary);" id="lastUpdate"></span>
                 </div>
             </div>
@@ -542,7 +547,12 @@
 
             const total = rows.length;
             if (resultCount) {
-                resultCount.textContent = `Showing ${visible} of ${total} tickets`;
+                // Teks dinamis mengambil dari dataset attribut (Dukungan Multi-Bahasa)
+                const textShow = resultCount.getAttribute('data-show-id') || 'Menampilkan';
+                const textOf = resultCount.getAttribute('data-of-id') || 'dari';
+                const textEntity = resultCount.getAttribute('data-entity-id') || 'tiket';
+                
+                resultCount.textContent = `${textShow} ${visible} ${textOf} ${total} ${textEntity}`;
             }
 
             if (noResults) {

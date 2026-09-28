@@ -877,7 +877,7 @@ msgid "Lihat Dokumen"
 msgstr "View Document"
 
 #: templates/qr_management.html
-msgid "Sure you want to delete this document for good?"
+msgid "Apakah Anda yakin ingin menghapus dokumen ini secara permanen?"
 msgstr "Sure you want to delete this document for good?"
 
 #: templates/qr_management.html
@@ -901,7 +901,7 @@ msgid "Memuat Dokumen..."
 msgstr "Loading Document..."
 
 #: templates/qr_management.html
-msgid "Open image in a new tab"
+msgid "Buka gambar di tab baru"
 msgstr "Open image in a new tab"
 
 #: templates/qr_management.html
@@ -976,7 +976,6 @@ msgstr "Select Environment"
 msgid "Hapus Semua Adegan"
 msgstr "Delete All Scenes"
 
-
 # -------------------------------------------------------------------------
 # 6. Drawer Filter & Urutkan
 # -------------------------------------------------------------------------
@@ -1039,3 +1038,295 @@ msgstr "Reset Filter"
 #: templates/qr_management.html
 msgid "Terapkan Filter"
 msgstr "Apply Filter"
+
+# =========================================================================
+# TABLE OF CONTENTS - USER_MANAGEMENT.HTML TRANSLATIONS:
+# =========================================================================
+
+#: templates/user_management.html
+msgid "Manajemen Pengguna - QA System"
+msgstr "User Management - QA System"
+
+#: templates/user_management.html
+msgid "Manajemen Pengguna"
+msgstr "User Management"
+
+#: templates/user_management.html
+msgid "Kelola akun, akses sistem, dan izin pengguna dalam satu tempat."
+msgstr "Manage accounts, system access, and user permissions all in one place."
+
+#: templates/user_management.html
+msgid "Tambah Akun Baru"
+msgstr "Add New Account"
+
+#: templates/user_management.html
+msgid "Total Pengguna Terdaftar"
+msgstr "Total Registered Users"
+
+#: templates/user_management.html
+msgid "Aktif"
+msgstr "Active"
+
+#: templates/user_management.html
+msgid "Offline"
+msgstr "Offline"
+
+#: templates/user_management.html
+msgid "Distribusi Peran"
+msgstr "Role Distribution"
+
+#: templates/user_management.html
+msgid "Peran Utama"
+msgstr "Main Roles"
+
+#: templates/user_management.html
+msgid "Cari username, nama lengkap, atau email..."
+msgstr "Search username, full name, or email..."
+
+#: templates/user_management.html
+msgid "Semua Peran"
+msgstr "All Roles"
+
+#: templates/user_management.html
+msgid "Developer"
+msgstr "Developer"
+
+#: templates/user_management.html
+msgid "Supervisor"
+msgstr "Supervisor"
+
+#: templates/user_management.html
+msgid "Quality Control"
+msgstr "Quality Control"
+
+#: templates/user_management.html
+msgid "Public"
+msgstr "Public"
+
+#: templates/user_management.html
+msgid "Semua Status"
+msgstr "All Statuses"
+
+#: templates/user_management.html
+msgid "Menampilkan total"
+msgstr "Showing total"
+
+#: templates/user_management.html
+msgid "cth: user_operator_01"
+msgstr "e.g.: user_operator_01"
+
+#: templates/user_management.html
+msgid "Nama lengkap"
+msgstr "Full name"
+
+#: templates/user_management.html
+msgid "Minimal 6 karakter"
+msgstr "Minimum 6 characters"
+
+#: templates/user_management.html
+msgid "Menampilkan"
+msgstr "Showing"
+
+#: templates/user_management.html
+msgid "dari total"
+msgstr "of total"
+
+#: templates/user_management.html
+msgid "entitas akun sistem"
+msgstr "system account entities"
+
+#: templates/user_management.html
+msgid "entitas akun sistem"
+msgstr "system account entities"
+
+#: templates/user_management.html
+msgid "Perbarui Data"
+msgstr "Refresh Data"
+
+#: templates/user_management.html
+msgid "No"
+msgstr "No"
+
+#: templates/user_management.html
+msgid "Pengguna"
+msgstr "User"
+
+#: templates/user_management.html
+msgid "Nama Lengkap"
+msgstr "Full Name"
+
+#: templates/user_management.html
+msgid "Email"
+msgstr "Email"
+
+#: templates/user_management.html
+msgid "Peran / Hak Akses"
+msgstr "Role / Access Rights"
+
+#: templates/user_management.html
+msgid "Status"
+msgstr "Status"
+
+#: templates/user_management.html
+msgid "Terakhir Aktif"
+msgstr "Last Active"
+
+#: templates/user_management.html
+msgid "Baru saja"
+msgstr "Just now"
+
+#: templates/user_management.html
+msgid "Aksi"
+msgstr "Action"
+
+#: templates/user_management.html
+msgid "Perbarui"
+msgstr "Update"
+
+#: templates/user_management.html
+msgid "Reset Sandi"
+msgstr "Reset Password"
+
+#: templates/user_management.html
+msgid "Apakah Anda yakin ingin menghapus akun ini secara permanen?"
+msgstr "Are you sure you want to delete this account permanently?"
+
+#: templates/user_management.html
+msgid "Hapus"
+msgstr "Delete"
+
+#: templates/user_management.html
+msgid "Akun Anda"
+msgstr "Your Account"
+
+#: templates/user_management.html
+msgid "Belum ada data pengguna di dalam sistem."
+msgstr "No user data in the system yet."
+
+#: templates/user_management.html
+msgid "Tambah Akun Pengguna Baru"
+msgstr "Add New User Account"
+
+#: templates/user_management.html
+msgid "Buat kredensial login dan tetapkan tingkat otorisasi / peran."
+msgstr "Create login credentials and assign authorization levels / roles."
+
+#: templates/user_management.html
+msgid "Nama Pengguna Sistem"
+msgstr "System Username"
+
+#: templates/user_management.html
+msgid "Hanya huruf kecil, angka, dan garis bawah tanpa spasi."
+msgstr "Only lowercase letters, numbers, and underscores without spaces."
+
+#: templates/user_management.html
+msgid "Nama Lengkap Pengguna"
+msgstr "User Full Name"
+
+#: templates/user_management.html
+msgid "Digunakan untuk jejak audit digital."
+msgstr "Used for digital audit trails."
+
+#: templates/user_management.html
+msgid "Email yang valid dan aktif"
+msgstr "Valid and active email"
+
+#: templates/user_management.html
+msgid "Kata Sandi Sementara"
+msgstr "Temporary Password"
+
+#: templates/user_management.html
+msgid "Hak Akses / Tingkat Divisi (Peran)"
+msgstr "Access Rights / Division Level (Role)"
+
+#: templates/user_management.html
+msgid "Quality Control (Inspector)"
+msgstr "Quality Control (Inspector)"
+
+#: templates/user_management.html
+msgid "Supervisor QC"
+msgstr "Supervisor QC"
+
+#: templates/user_management.html
+msgid "Public (Read-Only)"
+msgstr "Public (Read-Only)"
+
+#: templates/user_management.html
+msgid "Wewenang Peran:"
+msgstr "Role Authority:"
+
+#: templates/user_management.html
+msgid "Menentukan batasan aksi seperti akses menu, modifikasi data, dan konfigurasi master sistem."
+msgstr "Determines action restrictions such as menu access, data modification, and system master configuration."
+
+#: templates/user_management.html
+msgid "Wajibkan ganti kata sandi saat login pertama kali"
+msgstr "Require password change on first login"
+
+#: templates/user_management.html
+msgid "Mendorong keamanan mandiri sesuai protokol standar kepatuhan."
+msgstr "Encourage independent security according to compliance standard protocols."
+
+#: templates/user_management.html
+msgid "Kirimkan rincian akun otomatis ke email resmi"
+msgstr "Automatically send account details to official email"
+
+#: templates/user_management.html
+msgid "Menyertakan panduan sistem dan tautan akses web portal."
+msgstr "Includes system guide and web portal access link."
+
+#: templates/user_management.html
+msgid "Audit trail tersinkronisasi otomatis"
+msgstr "Audit trail synchronized automatically"
+
+#: templates/user_management.html
+msgid "Batal"
+msgstr "Cancel"
+
+#: templates/user_management.html
+msgid "Simpan & Buat Akun"
+msgstr "Save & Create Account"
+
+#: templates/user_management.html
+msgid "Setel Ulang Kata Sandi"
+msgstr "Reset Password"
+
+#: templates/user_management.html
+msgid "Otorisasi Kredensial Langsung"
+msgstr "Direct Credential Authorization"
+
+#: templates/user_management.html
+msgid "Nama Pengguna"
+msgstr "Username"
+
+#: templates/user_management.html
+msgid "Target"
+msgstr "Target"
+
+#: templates/user_management.html
+msgid "Kata Sandi Baru"
+msgstr "New Password"
+
+#: templates/user_management.html
+msgid "Konfirmasi Kata Sandi"
+msgstr "Confirm Password"
+
+#: templates/user_management.html
+msgid "Minimal 6 karakter dengan enkripsi SHA-256."
+msgstr "Minimum 6 characters with SHA-256 encryption."
+
+#: templates/user_management.html
+msgid "Putuskan seluruh sesi aktif saat ini"
+msgstr "Disconnect all current active sessions"
+
+#: templates/user_management.html
+msgid "Simpan Kata Sandi Baru"
+msgstr "Save New Password"
+
+#: templates/user_management.html
+msgid "Pemberitahuan SMS & Webhook dikirim ke operator"
+msgstr "SMS & Webhook notifications sent to operator"
+
+#: templates/user_management.html
+msgid "Pilih Peran"
+msgstr "Select Role"

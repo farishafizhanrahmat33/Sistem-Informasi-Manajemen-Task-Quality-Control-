@@ -2022,8 +2022,13 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             // Update teks informasi di footer tabel
+            // Update teks informasi di footer tabel secara dinamis dan mendukung multi-bahasa
             if (footerPaginationInfo) {
-                footerPaginationInfo.textContent = `Menampilkan ${visibleCount} dari total ${totalUsersCount} entitas akun sistem`;
+                const showText = footerPaginationInfo.getAttribute('data-show-id') || 'Menampilkan';
+                const ofText = footerPaginationInfo.getAttribute('data-of-id') || 'dari total';
+                const entityText = footerPaginationInfo.getAttribute('data-entity-id') || 'entitas akun sistem';
+                
+                footerPaginationInfo.textContent = `${showText} ${visibleCount} ${ofText} ${totalUsersCount} ${entityText}`;
             }
         }
 
@@ -2236,4 +2241,22 @@ function selectSortOrder(value, text, orderType, event) {
         </span>
         <span>${text}</span>
     `;
+}
+
+// Fungsi untuk memvalidasi dan memformat input username secara otomatis
+function sanitizeUsernameInput(inputElement) {
+    // Simpan posisi kursor agar tidak loncat-loncat saat diketik
+    let start = inputElement.selectionStart;
+    let end = inputElement.selectionEnd;
+    
+    // Hanya izinkan huruf kecil (a-z), angka (0-9), dan garis bawah (_)
+    let sanitizedValue = inputElement.value
+        .toLowerCase() // Otomatis ubah huruf besar jadi huruf kecil
+        .replace(/[^a-z0-9_]/g, ''); // Hapus spasi, simbol, dan karakter selain a-z, 0-9, _
+    
+    if (inputElement.value !== sanitizedValue) {
+        inputElement.value = sanitizedValue;
+        // Kembalikan posisi kursor
+        inputElement.setSelectionRange(start, end);
+    }
 }
