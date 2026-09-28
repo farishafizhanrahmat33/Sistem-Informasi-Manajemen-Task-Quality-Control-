@@ -20,247 +20,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=2">
-
-    <style>
-        /* ── Admin Support Page ── */
-        .mono { font-family: 'JetBrains Mono', monospace; }
-
-        /* Page eyebrow */
-        .page-eyebrow {
-            display: flex; align-items: center; gap: 6px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px; font-weight: 700;
-            color: #0F766E; letter-spacing: 0.06em; text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-        .page-title {
-            font-family: 'Inter', sans-serif;
-            font-size: 26px; font-weight: 700;
-            letter-spacing: -0.02em;
-            color: var(--text-primary, #0F172A);
-            line-height: 1.2;
-        }
-        .page-subtitle {
-            font-family: 'Inter', sans-serif;
-            font-size: 13px; color: var(--text-secondary, #475569);
-            margin-top: 4px;
-        }
-
-        /* KPI Cards */
-        .kpi-card {
-            background-color: var(--card-bg, #FFFFFF);
-            border: 1px solid var(--border-subtle, #E2E8F0);
-            border-radius: 12px;
-            padding: 1rem 1.25rem;
-            position: relative; overflow: hidden;
-            box-shadow: 0 1px 2px rgba(15,23,42,0.04);
-        }
-        .kpi-card .kpi-bar {
-            position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
-        }
-        .kpi-value {
-            font-family: 'Inter', sans-serif;
-            font-size: 28px; font-weight: 700;
-            letter-spacing: -0.025em;
-            color: var(--text-primary, #0F172A);
-            line-height: 1;
-        }
-        .kpi-label {
-            font-family: 'Inter', sans-serif;
-            font-size: 11px; font-weight: 600;
-            letter-spacing: 0.05em; text-transform: uppercase;
-            color: var(--text-muted, #94A3B8);
-            margin-bottom: 6px;
-        }
-        .kpi-icon {
-            width: 38px; height: 38px; border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-        }
-
-        /* Content panel */
-        .content-panel {
-            background-color: var(--card-bg, #FFFFFF);
-            border: 1px solid var(--border-subtle, #E2E8F0);
-            border-radius: 12px;
-            box-shadow: 0 1px 2px rgba(15,23,42,0.04);
-            overflow: hidden;
-        }
-        .panel-header {
-            padding: 0.875rem 1.25rem;
-            border-bottom: 1px solid var(--border-subtle, #E2E8F0);
-            display: flex; align-items: center; justify-content: space-between;
-            background-color: var(--card-bg, #FFFFFF);
-        }
-
-        /* Status badges */
-        .badge-pill {
-            display: inline-flex; align-items: center; gap: 4px;
-            padding: 3px 10px; border-radius: 9999px;
-            font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
-            border: 1px solid transparent;
-            white-space: nowrap;
-        }
-        .badge-pill .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-        .badge-open    { color: #92400E; background:#FFFBEB; border-color:#FDE68A; }
-        .badge-open .dot { background:#D97706; }
-        .badge-resolved { color: #065F46; background:#ECFDF5; border-color:#A7F3D0; }
-        .badge-resolved .dot { background:#059669; }
-
-        /* Table overrides */
-        .tickets-table { width: 100%; border-collapse: collapse; }
-        .tickets-table thead tr {
-            background-color: var(--surface-container-low, #eff4ff);
-            border-bottom: 1px solid var(--border-subtle, #E2E8F0);
-        }
-        .tickets-table thead th {
-            font-family: 'Inter', sans-serif;
-            font-size: 11px; font-weight: 600;
-            letter-spacing: 0.04em; text-transform: uppercase;
-            color: var(--text-muted, #94A3B8);
-            padding: 10px 16px;
-            white-space: nowrap;
-        }
-        .tickets-table tbody tr {
-            border-bottom: 1px solid var(--border-subtle, #E2E8F0);
-            transition: background-color 0.1s;
-        }
-        .tickets-table tbody tr:last-child { border-bottom: none; }
-        .tickets-table tbody tr:hover { background-color: rgba(248,250,252,0.7); }
-        .tickets-table td {
-            padding: 14px 16px;
-            vertical-align: top;
-        }
-        .ticket-no {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px; font-weight: 600;
-            color: var(--text-muted, #94A3B8);
-            white-space: nowrap;
-        }
-        .ticket-id-cell {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px; font-weight: 700;
-            color: #0F766E;
-            white-space: nowrap;
-        }
-        .ticket-sender {
-            font-family: 'Inter', sans-serif;
-            font-size: 12px; color: var(--text-secondary, #475569);
-            margin-top: 2px;
-        }
-        .ticket-message {
-            font-family: 'Inter', sans-serif;
-            font-size: 13px; color: var(--text-primary, #0F172A);
-            line-height: 1.55;
-            white-space: pre-wrap; word-break: break-word;
-            max-width: 460px;
-        }
-        .ticket-time {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px; color: var(--text-muted, #94A3B8);
-            white-space: nowrap;
-        }
-
-        /* Action buttons */
-        .btn-resolve {
-            display: inline-flex; align-items: center; gap: 5px;
-            height: 30px; padding: 0 12px;
-            border-radius: 6px; border: none;
-            font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
-            cursor: pointer; transition: all 0.15s;
-            white-space: nowrap;
-        }
-        .btn-resolve-open {
-            background-color: #0F766E; color: #fff;
-        }
-        .btn-resolve-open:hover { background-color: #115E59; }
-        .btn-resolve-done {
-            background-color: var(--surface-container-low, #eff4ff);
-            color: var(--text-secondary, #475569);
-            border: 1px solid var(--border-subtle, #E2E8F0) !important;
-        }
-        .btn-resolve-done:hover {
-            background-color: var(--surface-container, #e5eeff);
-            color: var(--text-primary, #0F172A);
-        }
-
-        /* Search & filter bar */
-        .toolbar-wrap {
-            display: flex; align-items: center; gap: 10px;
-            flex-wrap: wrap;
-        }
-        .search-input-wrap { position: relative; }
-        .search-input-wrap .search-icon {
-            position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
-            font-size: 17px; color: var(--text-muted, #94A3B8); pointer-events: none;
-        }
-        .search-input {
-            height: 34px; padding: 0 12px 0 34px;
-            border: 1px solid var(--border-strong, #CBD5E1);
-            border-radius: 8px;
-            background-color: var(--card-bg, #FFFFFF);
-            color: var(--text-primary, #0F172A);
-            font-family: 'Inter', sans-serif; font-size: 13px;
-            outline: none;
-            transition: border-color 0.15s, box-shadow 0.15s;
-            width: 220px;
-        }
-        .search-input:focus {
-            border-color: #0F766E;
-            box-shadow: 0 0 0 2px rgba(15,118,110,0.14);
-        }
-        .search-input::placeholder { color: var(--text-muted, #94A3B8); }
-        .filter-select {
-            height: 34px; padding: 0 28px 0 10px;
-            border: 1px solid var(--border-strong, #CBD5E1);
-            border-radius: 8px;
-            background-color: var(--card-bg, #FFFFFF);
-            color: var(--text-primary, #0F172A);
-            font-family: 'Inter', sans-serif; font-size: 13px;
-            outline: none; appearance: none; cursor: pointer;
-            transition: border-color 0.15s;
-        }
-        .filter-select:focus { border-color: #0F766E; }
-        .select-wrap-sm { position: relative; }
-        .select-wrap-sm .select-arrow {
-            position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-            font-size: 17px; color: var(--text-muted, #94A3B8); pointer-events: none;
-        }
-
-        /* Empty state */
-        .empty-state {
-            padding: 3rem 1rem; text-align: center;
-        }
-        .empty-icon {
-            width: 52px; height: 52px; border-radius: 50%;
-            background-color: var(--surface-container-low, #eff4ff);
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 12px; color: var(--text-muted, #94A3B8);
-        }
-
-        /* Pagination */
-        .pager-btn {
-            height: 30px; min-width: 30px; padding: 0 8px;
-            border-radius: 6px;
-            border: 1px solid var(--border-subtle, #E2E8F0);
-            background-color: var(--card-bg, #FFFFFF);
-            color: var(--text-secondary, #475569);
-            font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
-            display: inline-flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.1s;
-        }
-        .pager-btn:hover { background-color: var(--surface-container-low); color: var(--text-primary); }
-        .pager-btn.active { background-color: #0F766E; color: #fff; border-color: #0F766E; }
-
-        @keyframes ping {
-            0% { transform: scale(1); opacity: 0.75; }
-            75%, 100% { transform: scale(2); opacity: 0; }
-        }
-
-        /* Responsive table scroll */
-        .table-scroll { overflow-x: auto; }
-    </style>
+    
+    <!-- CSS Terpusat (Dipanggil dari style.css) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=3">
 </head>
 <body>
 
@@ -269,46 +31,16 @@
 
     <div class="container-fluid px-4 pb-5 pt-4">
 
-        <!-- FLASH MESSAGES -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                <div class="d-flex align-items-center gap-3 p-3 mb-3 rounded-3"
-                     style="background-color:{% if category == 'danger' %}#FEF2F2{% elif category == 'success' %}#ECFDF5{% else %}#F0F9FF{% endif %};
-                            border:1px solid {% if category == 'danger' %}#FECACA{% elif category == 'success' %}#A7F3D0{% else %}#BAE6FD{% endif %};
-                            font-family:'Inter',sans-serif; font-size:13px; color:var(--text-primary);">
-                    <span class="material-symbols-outlined" style="font-size:20px;color:{% if category == 'danger' %}#DC2626{% elif category == 'success' %}#059669{% else %}#0284C7{% endif %};">
-                        {% if category == 'danger' %}error{% elif category == 'success' %}check_circle{% else %}info{% endif %}
-                    </span>
-                    <span style="flex:1; font-weight:500;">{{ message }}</span>
-                    <button onclick="this.parentElement.remove()" style="border:none;background:none;cursor:pointer;color:var(--text-muted);padding:0;">
-                        <span class="material-symbols-outlined" style="font-size:17px;">close</span>
-                    </button>
-                </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
         <!-- PAGE HEADER -->
-        <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3 mb-4">
-            <div>
-                <div class="page-eyebrow">
-                    <span>{{ _('Konsol Developer') }}</span>
-                    <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#059669;"></span>
-                    <span style="color:var(--text-muted);">{{ _('Operasi Tiket') }}</span>
-                </div>
-                <h1 class="page-title">{{ _('Kotak Masuk Tiket Dukungan') }}</h1>
-                <p class="page-subtitle">{{ _('Daftar keluhan atau masalah yang dikirimkan oleh pengguna melalui pusat bantuan.') }}</p>
-            </div>
-            <!-- Live indicator -->
-            <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card-bg);border:1px solid var(--border-subtle);border-radius:10px;box-shadow:0 1px 2px rgba(15,23,42,0.04);">
-                <span style="position:relative;display:flex;width:10px;height:10px;">
-                    <span style="position:absolute;width:100%;height:100%;border-radius:50%;background:#059669;opacity:0.7;animation:ping 1.5s infinite;"></span>
-                    <span style="position:relative;width:10px;height:10px;border-radius:50%;background:#059669;"></span>
-                </span>
-                <div>
-                    <div style="font-family:'Inter',sans-serif;font-size:11px;font-weight:700;color:var(--text-primary);">{{ _('Akses Developer') }}</div>
-                    <div class="mono" style="font-size:10px;color:var(--text-muted);">{{ _('Manajemen Tiket F-30') }}</div>
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2 mb-4">
+            <div class="flex flex-col gap-1.5">
+                <h1 class="title-main text-[22px] sm:text-[24px] text-on-surface">
+                    {{ _('Kotak Masuk Tiket Dukungan') }}
+                </h1>
+                <div class="flex flex-wrap items-center gap-3">
+                    <p class="desc-text text-[14px] sm:text-[15px] max-w-3xl">
+                        {{ _('Daftar keluhan atau masalah yang dikirimkan oleh pengguna melalui pusat bantuan.') }}
+                    </p>
                 </div>
             </div>
         </div>
@@ -421,14 +153,14 @@
                             <th>{{ _('Pesan Kendala') }}</th>
                             <th style="width:120px;">{{ _('Status') }}</th>
                             <th style="width:150px;">{{ _('Waktu Terkirim') }}</th>
-                            <th style="width:130px; text-align:right; padding-right:20px;">{{ _('Aksi') }}</th>
+                            <th style="width:160px; text-align:right; padding-right:20px;">{{ _('Aksi') }}</th>
                         </tr>
                     </thead>
                     <tbody id="ticketsBody">
                         {% for t in tickets %}
                         <tr data-status="{{ t.status }}" data-search="{{ t.username|lower }} {{ t.message|lower }}">
                             <td>
-                                <span class="ticket-no">{{ '%03d'|format(loop.index) }}</span>
+                                <span class="ticket-no">{{ '%03d'|format(t.id) }}</span>
                             </td>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
@@ -442,7 +174,12 @@
                                 </div>
                             </td>
                             <td>
-                                <div class="ticket-message">{{ t.message }}</div>
+                                <div class="d-flex align-items-center">
+                                    <div class="ticket-message">{{ t.message }}</div>
+                                    {% if t.attachment %}
+                                    <span class="has-attachment-icon material-symbols-outlined" style="font-size:14px;" title="{{ _('Berisi Gambar') }}">image</span>
+                                    {% endif %}
+                                </div>
                             </td>
                             <td>
                                 {% if t.status == 'Resolved' %}
@@ -460,14 +197,23 @@
                                 <div class="ticket-time" style="margin-top:2px;">{{ t.created_at.strftime('%H:%M:%S') }}</div>
                             </td>
                             <td style="text-align:right; padding-right:16px;">
-                                <form action="{{ url_for('main.toggle_ticket_status', ticket_id=t.id) }}" method="POST" class="d-inline">
-                                    <button type="submit" class="btn-resolve {% if t.status == 'Resolved' %}btn-resolve-done{% else %}btn-resolve-open{% endif %}">
-                                        <span class="material-symbols-outlined" style="font-size:14px;">
-                                            {% if t.status == 'Resolved' %}refresh{% else %}check_circle{% endif %}
-                                        </span>
-                                        {% if t.status == 'Resolved' %}{{ _('Buka Kembali') }}{% else %}{{ _('Tandai Selesai') }}{% endif %}
+                                <div class="d-flex align-items-center justify-content-end gap-2">
+                                    <!-- Tombol Lihat Detail -->
+                                    <button type="button" class="btn-view-detail" 
+                                        onclick="showTicketDetail('{{ t.id }}', '{{ t.username }}', '{{ t.created_at.strftime('%d %b %Y, %H:%M:%S') }}', '{{ t.status }}', `{{ t.message|replace('\n', '\\n')|replace('\"', '\\\"')|replace('\'', '\\\'') }}`, '{% if t.attachment %}{{ url_for('static', filename='uploads/tickets/' + t.attachment) }}{% else %}{% endif %}')">
+                                        <span class="material-symbols-outlined" style="font-size:14px;">visibility</span>
+                                        {{ _('Detail') }}
                                     </button>
-                                </form>
+                                    
+                                    <!-- Tombol Selesai / Buka -->
+                                    <form action="{{ url_for('main.toggle_ticket_status', ticket_id=t.id) }}" method="POST" class="d-inline">
+                                        <button type="submit" class="btn-resolve {% if t.status == 'Resolved' %}btn-resolve-done{% else %}btn-resolve-open{% endif %}">
+                                            <span class="material-symbols-outlined" style="font-size:14px;">
+                                                {% if t.status == 'Resolved' %}refresh{% else %}check_circle{% endif %}
+                                            </span>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         {% else %}
@@ -515,6 +261,67 @@
 
     </div>
 
+    <!-- ==========================================
+         MODAL DETAIL TIKET
+         ========================================== -->
+    <div class="modal fade" id="ticketDetailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0" style="border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);">
+                
+                <!-- Modal Header -->
+                <div class="px-4 py-3 border-bottom d-flex align-items-center justify-content-between" style="background-color: var(--card-bg);">
+                    <div class="d-flex align-items-center gap-3">
+                        <div style="width:40px;height:40px;border-radius:10px;background:rgba(15,118,110,0.1);display:flex;align-items:center;justify-content:center;color:#0F766E;">
+                            <span class="material-symbols-outlined" style="font-size:22px;">assignment</span>
+                        </div>
+                        <div>
+                            <h5 class="mb-0 fw-bold" style="font-family:'Inter',sans-serif; font-size:16px; color:var(--text-primary);">{{ _('Detail Tiket') }} <span id="modalTicketId" class="mono text-muted" style="font-size:14px; font-weight:500;"></span></h5>
+                            <div class="d-flex align-items-center gap-2 mt-1">
+                                <span class="material-symbols-outlined text-muted" style="font-size:14px;">person</span>
+                                <span id="modalSender" style="font-family:'Inter',sans-serif; font-size:12px; color:var(--text-secondary); font-weight:500;"></span>
+                                <span class="text-muted" style="font-size:10px;">•</span>
+                                <span id="modalTime" class="mono" style="font-size:11px; color:var(--text-muted);"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <span id="modalStatusBadge"></span>
+                        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body p-4" style="background-color: var(--surface-container-low, #F8FAFC);">
+                    <!-- Kotak Pesan Keluhan -->
+                    <div class="mb-4">
+                        <h6 style="font-family:'Inter',sans-serif; font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">{{ _('Pesan Keluhan / Kendala') }}</h6>
+                        <div class="p-3 rounded-3 border" style="background-color: var(--card-bg, #FFFFFF); border-color: var(--border-subtle, #E2E8F0);">
+                            <p id="modalMessage" style="font-family:'Inter',sans-serif; font-size:14px; color:var(--text-primary); line-height:1.6; white-space:pre-wrap; margin-bottom:0;"></p>
+                        </div>
+                    </div>
+
+                    <!-- Area Lampiran Gambar (Disembunyikan jika tidak ada) -->
+                    <div id="modalAttachmentArea" style="display: none;">
+                        <h6 style="font-family:'Inter',sans-serif; font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">{{ _('Gambar Lampiran') }}</h6>
+                        <div class="p-2 rounded-3 border text-center" style="background-color: var(--card-bg, #FFFFFF); border-color: var(--border-subtle, #E2E8F0);">
+                            <img id="modalImage" src="" alt="Lampiran Tiket" style="max-width: 100%; max-height: 400px; border-radius: 6px; object-fit: contain;">
+                            <div class="mt-2 text-end">
+                                <a id="modalImageDownload" href="#" download class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1" style="font-size: 11px; padding: 4px 10px; border-radius: 6px;">
+                                    <span class="material-symbols-outlined" style="font-size:14px;">download</span> {{ _('Unduh Gambar') }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Modal Footer -->
+                <div class="px-4 py-3 border-top bg-white text-end">
+                    <button type="button" class="btn btn-secondary px-4 py-2 fw-semibold" data-bs-dismiss="modal" style="font-size: 12px; border-radius: 8px;">{{ _('Tutup') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='script.js') }}?v=2"></script>
 
@@ -547,7 +354,6 @@
 
             const total = rows.length;
             if (resultCount) {
-                // Teks dinamis mengambil dari dataset attribut (Dukungan Multi-Bahasa)
                 const textShow = resultCount.getAttribute('data-show-id') || 'Menampilkan';
                 const textOf = resultCount.getAttribute('data-of-id') || 'dari';
                 const textEntity = resultCount.getAttribute('data-entity-id') || 'tiket';
@@ -558,6 +364,38 @@
             if (noResults) {
                 noResults.classList.toggle('d-none', visible > 0 || total === 0);
             }
+        }
+
+        /* ── Fungsi Menampilkan Modal Detail Tiket ── */
+        function showTicketDetail(id, sender, time, status, message, imageUrl) {
+            document.getElementById('modalTicketId').textContent = '#' + id;
+            document.getElementById('modalSender').textContent = sender;
+            document.getElementById('modalTime').textContent = time;
+            document.getElementById('modalMessage').textContent = message;
+
+            const badgeEl = document.getElementById('modalStatusBadge');
+            if (status === 'Resolved') {
+                badgeEl.innerHTML = `<span class="badge-pill badge-resolved" style="font-size:12px; padding: 4px 12px;"><span class="dot"></span>{{ _('Selesai') }}</span>`;
+            } else {
+                badgeEl.innerHTML = `<span class="badge-pill badge-open" style="font-size:12px; padding: 4px 12px;"><span class="dot"></span>{{ _('Terbuka') }}</span>`;
+            }
+
+            const attachmentArea = document.getElementById('modalAttachmentArea');
+            const imageEl = document.getElementById('modalImage');
+            const downloadLink = document.getElementById('modalImageDownload');
+
+            if (imageUrl && imageUrl.trim() !== '') {
+                imageEl.src = imageUrl;
+                downloadLink.href = imageUrl;
+                attachmentArea.style.display = 'block'; 
+            } else {
+                imageEl.src = '';
+                downloadLink.href = '#';
+                attachmentArea.style.display = 'none'; 
+            }
+
+            const modal = new bootstrap.Modal(document.getElementById('ticketDetailModal'));
+            modal.show();
         }
     </script>
 </body>

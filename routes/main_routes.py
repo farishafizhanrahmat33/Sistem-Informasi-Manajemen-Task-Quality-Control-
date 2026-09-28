@@ -264,18 +264,46 @@ def faq():
 @main_bp.route('/support', methods=['GET', 'POST'])
 def support():
     role = session.get('role', 'Public')
-    if request.method == 'POST':
-        user_name = session.get('username', 'Guest/Publik')
-        pesan = request.form.get('message')
+    username = session.get('username')
 
-        new_ticket = SupportTicket(username=str(user_name), message=pesan, status='Open')
+    if request.method == 'POST':
+        pesan = request.form.get('message')
+        attachment = request.files.get('attachment')
+        
+        filename = None
+        if attachment and attachment.filename:
+            filename = secure_filename(attachment.filename)
+            upload_folder = os.path.join('static', 'uploads', 'tickets')
+            os.makedirs(upload_folder, exist_ok=True)
+            attachment.save(os.path.join(upload_folder, filename))
+
+        new_ticket = SupportTicket(
+            username=str(username or 'Guest/Publik'), 
+            message=pesan, 
+            status='Open',
+            attachment=filename
+        )
         db.session.add(new_ticket)
         db.session.commit()
 
         flash(_('Your message got sent over to the Developer!'), 'success')
         return redirect(url_for('main.support'))
 
-    return render_template('support.html', role=role)
+    # --- FITUR OTOMATIS: Hapus tiket Resolved yang sudah > 30 hari ---
+    thirty_days_ago = datetime.utcnow() - timedelta(days=30)
+    db.session.query(SupportTicket).filter(
+        SupportTicket.status == 'Resolved',
+        SupportTicket.created_at < thirty_days_ago
+    ).delete(synchronize_session=False)
+    db.session.commit()
+    # -------------------------------------------------------------
+
+    # Ambil riwayat tiket milik user yang sedang login
+    my_tickets = []
+    if username:
+        my_tickets = db.session.query(SupportTicket).filter_by(username=username).order_by(SupportTicket.created_at.desc()).all()
+
+    return render_template('support.html', role=role, my_tickets=my_tickets)
 
 # F-30: Support Ticket (KHUSUS DEVELOPER sesuai F-30)
 @main_bp.route('/admin/support')

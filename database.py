@@ -40,10 +40,10 @@ class SupportTicket(db.Model):
     username = db.Column(db.String(50), db.ForeignKey('users.username', ondelete='CASCADE'), nullable=False, index=True)
     message = db.Column(db.Text, nullable=False)
     status = db.Column(db.String(20), default='Open', nullable=False)
+    attachment = db.Column(db.String(255), nullable=True)  # <-- TAMBAHKAN BARIS INI
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     user = db.relationship("UserModel", back_populates="tickets")
-
 
 # ==========================================
 # 3. QC SYSTEM (TASKS)

@@ -1554,8 +1554,232 @@ textarea {
 /* ==========================================================================
    16. HALAMAN: TICKET SUPPORT & LAYANAN PELANGGAN
    ========================================================================== */
-/* Styling kartu dan form ditangani oleh komponen global.
-   Aturan spesifik ada di seksi responsive (seksi 21). */
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+/* Page eyebrow */
+.page-eyebrow {
+    display: flex; align-items: center; gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 700;
+    color: #0F766E; letter-spacing: 0.06em; text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+/* KPI Cards */
+.kpi-card {
+    background-color: var(--card-bg, #FFFFFF);
+    border: 1px solid var(--border-subtle, #E2E8F0);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    position: relative; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+}
+.kpi-card .kpi-bar {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+}
+.kpi-value {
+    font-family: 'Inter', sans-serif;
+    font-size: 28px; font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--text-primary, #0F172A);
+    line-height: 1;
+}
+.kpi-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--text-muted, #94A3B8);
+    margin-bottom: 6px;
+}
+.kpi-icon {
+    width: 38px; height: 38px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Content panel */
+.content-panel {
+    background-color: var(--card-bg, #FFFFFF);
+    border: 1px solid var(--border-subtle, #E2E8F0);
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+    overflow: hidden;
+}
+.panel-header {
+    padding: 0.875rem 1.25rem;
+    border-bottom: 1px solid var(--border-subtle, #E2E8F0);
+    display: flex; align-items: center; justify-content: space-between;
+    background-color: var(--card-bg, #FFFFFF);
+}
+
+/* Status badges */
+.badge-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 9999px;
+    font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+.badge-pill .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.badge-open    { color: #92400E; background:#FFFBEB; border-color:#FDE68A; }
+.badge-open .dot { background:#D97706; }
+.badge-resolved { color: #065F46; background:#ECFDF5; border-color:#A7F3D0; }
+.badge-resolved .dot { background:#059669; }
+
+/* Table overrides */
+.tickets-table { width: 100%; border-collapse: collapse; }
+.tickets-table thead tr {
+    background-color: var(--surface-container-low, #eff4ff);
+    border-bottom: 1px solid var(--border-subtle, #E2E8F0);
+}
+.tickets-table thead th {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--text-muted, #94A3B8);
+    padding: 10px 16px;
+    white-space: nowrap;
+}
+.tickets-table tbody tr {
+    border-bottom: 1px solid var(--border-subtle, #E2E8F0);
+    transition: background-color 0.1s;
+}
+.tickets-table tbody tr:last-child { border-bottom: none; }
+.tickets-table tbody tr:hover { background-color: rgba(248,250,252,0.7); }
+.tickets-table td {
+    padding: 14px 16px;
+    vertical-align: middle;
+}
+.ticket-no {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 600;
+    color: var(--text-muted, #94A3B8);
+    white-space: nowrap;
+}
+.ticket-id-cell {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; font-weight: 700;
+    color: #0F766E;
+    white-space: nowrap;
+}
+.ticket-sender {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px; color: var(--text-secondary, #475569);
+    margin-top: 2px;
+}
+.ticket-message {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px; color: var(--text-primary, #0F172A);
+    line-height: 1.55;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    max-width: 300px;
+}
+.ticket-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--text-muted, #94A3B8);
+    white-space: nowrap;
+}
+.has-attachment-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    background-color: #F1F5F9; color: #475569;
+    border-radius: 4px; padding: 2px 4px; margin-left: 6px;
+    border: 1px solid #E2E8F0;
+}
+
+/* Action buttons */
+.btn-resolve {
+    display: inline-flex; align-items: center; gap: 5px;
+    height: 30px; padding: 0 12px;
+    border-radius: 6px; border: none;
+    font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s;
+    white-space: nowrap;
+}
+.btn-resolve-open { background-color: #0F766E; color: #fff; }
+.btn-resolve-open:hover { background-color: #115E59; }
+.btn-resolve-done {
+    background-color: var(--surface-container-low, #eff4ff);
+    color: var(--text-secondary, #475569);
+    border: 1px solid var(--border-subtle, #E2E8F0) !important;
+}
+.btn-resolve-done:hover {
+    background-color: var(--surface-container, #e5eeff);
+    color: var(--text-primary, #0F172A);
+}
+.btn-view-detail {
+    display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+    height: 30px; padding: 0 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border-strong, #CBD5E1);
+    background-color: var(--card-bg, #FFFFFF);
+    color: var(--text-secondary, #475569);
+    font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s;
+    text-decoration: none;
+}
+.btn-view-detail:hover {
+    background-color: var(--surface-container-low, #eff4ff);
+    color: #0F766E; border-color: #0F766E;
+}
+
+/* Search & filter bar */
+.toolbar-wrap {
+    display: flex; align-items: center; gap: 10px;
+    flex-wrap: wrap;
+}
+.search-input-wrap { position: relative; }
+.search-input-wrap .search-icon {
+    position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+    font-size: 17px; color: var(--text-muted, #94A3B8); pointer-events: none;
+}
+.search-input {
+    height: 34px; padding: 0 12px 0 34px;
+    border: 1px solid var(--border-strong, #CBD5E1);
+    border-radius: 8px;
+    background-color: var(--card-bg, #FFFFFF);
+    color: var(--text-primary, #0F172A);
+    font-family: 'Inter', sans-serif; font-size: 13px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    width: 220px;
+}
+.search-input:focus {
+    border-color: #0F766E;
+    box-shadow: 0 0 0 2px rgba(15,118,110,0.14);
+}
+.search-input::placeholder { color: var(--text-muted, #94A3B8); }
+.filter-select {
+    height: 34px; padding: 0 28px 0 10px;
+    border: 1px solid var(--border-strong, #CBD5E1);
+    border-radius: 8px;
+    background-color: var(--card-bg, #FFFFFF);
+    color: var(--text-primary, #0F172A);
+    font-family: 'Inter', sans-serif; font-size: 13px;
+    outline: none; appearance: none; cursor: pointer;
+    transition: border-color 0.15s;
+}
+.filter-select:focus { border-color: #0F766E; }
+.select-wrap-sm { position: relative; }
+.select-wrap-sm .select-arrow {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    font-size: 17px; color: var(--text-muted, #94A3B8); pointer-events: none;
+}
+
+/* Empty state */
+.empty-state { padding: 3rem 1rem; text-align: center; }
+.empty-icon {
+    width: 52px; height: 52px; border-radius: 50%;
+    background-color: var(--surface-container-low, #eff4ff);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 12px; color: var(--text-muted, #94A3B8);
+}
+
+/* Table Utilities */
+.table-scroll { overflow-x: auto; }
+@keyframes ping {
+    0% { transform: scale(1); opacity: 0.75; }
+    75%, 100% { transform: scale(2); opacity: 0; }
+}
 
 
 /* ==========================================================================
