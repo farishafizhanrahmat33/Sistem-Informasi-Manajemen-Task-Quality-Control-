@@ -13,169 +13,469 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ _('FAQ & Full Guide - QA System') }}</title>
-    
+    <title>{{ _('FAQ &amp; Panduan Sistem - QA Control Center') }}</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=2">
+
+    <style>
+        /* CSS TETAP SAMA SEPERTI SEBELUMNYA */
+        .faq-page-wrap { font-family: 'Inter', sans-serif; background-color: var(--canvas-bg, #F8FAFC); }
+        .faq-page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .faq-page-title { font-size: 28px; font-weight: 700; letter-spacing: -0.025em; color: var(--text-primary, #0F172A); line-height: 1.15; margin: 0 0 4px; }
+        .faq-page-subtitle { font-size: 13px; color: var(--text-secondary, #475569); margin: 0; line-height: 1.6; max-width: 640px; }
+        .faq-search-outer { min-width: 320px; max-width: 380px; flex-shrink: 0; }
+        .faq-search-wrap { position: relative; }
+        .faq-search-wrap input { width: 100%; height: 40px; padding: 0 58px 0 38px; border: 1px solid var(--border-subtle, #E2E8F0); border-radius: 9px; background: var(--card-bg, #fff); font-size: 12px; color: var(--text-primary, #0F172A); outline: none; font-family: 'Inter', sans-serif; box-shadow: 0 1px 2px rgba(15,23,42,0.04); transition: border-color 0.15s, box-shadow 0.15s; }
+        .faq-search-wrap input:focus { border-color: var(--primary, #0F766E); box-shadow: 0 0 0 2px rgba(15,118,110,0.12); }
+        .faq-search-wrap input::placeholder { color: var(--text-muted, #94A3B8); }
+        .faq-search-wrap .search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); font-size: 17px; color: var(--text-muted, #94A3B8); pointer-events: none; }
+        .faq-search-wrap .kbd-hint { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-secondary, #64748B); background: var(--surface-container-low, #EFF4FF); border: 1px solid var(--border-subtle, #E2E8F0); border-radius: 4px; padding: 2px 5px; white-space: nowrap; }
+        .faq-search-hint { font-size: 11px; color: var(--text-muted, #94A3B8); margin-top: 3px; text-align: right; }
+        .quick-cards-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .quick-card { background: var(--card-bg, #fff); border: 1px solid var(--border-subtle, #E2E8F0); border-radius: 12px; padding: 1rem; box-shadow: 0 1px 2px rgba(15,23,42,0.04); display: flex; flex-direction: column; justify-content: space-between; transition: box-shadow 0.15s, border-color 0.15s; cursor: pointer; }
+        .quick-card:hover { box-shadow: 0 4px 12px -2px rgba(15,23,42,0.08); border-color: rgba(13,148,136,0.35); }
+        .quick-card-top { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+        .quick-card-icon { width: 40px; height: 40px; border-radius: 9px; flex-shrink: 0; background: #f0fdfa; border: 1px solid #ccfbf1; display: flex; align-items: center; justify-content: center; color: var(--primary, #0F766E); }
+        .quick-card-icon .material-symbols-outlined { font-size: 21px; }
+        .quick-card-label { font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--primary, #0F766E); }
+        .quick-card-title { font-size: 14px; font-weight: 700; color: var(--text-primary, #0F172A); letter-spacing: -0.01em; line-height: 1.25; margin: 0; }
+        .quick-card-desc { font-size: 12px; color: var(--text-secondary, #475569); margin-bottom: 1rem; line-height: 1.6; }
+        .quick-card-footer { display: flex; align-items: center; justify-content: space-between; }
+        .quick-card-meta { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted, #94A3B8); }
+        .quick-card-cta { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: var(--primary, #0F766E); background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; transition: color 0.12s; }
+        .quick-card-cta:hover { color: #115E59; }
+        .category-pills { display: flex; align-items: center; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 1rem; scrollbar-width: none; }
+        .category-pills::-webkit-scrollbar { display: none; }
+        .cat-pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border-radius: 9999px; cursor: pointer; border: 1px solid var(--border-subtle, #E2E8F0); font-size: 12px; font-weight: 600; white-space: nowrap; font-family: 'Inter', sans-serif; background: var(--card-bg, #fff); color: var(--text-secondary, #475569); transition: all 0.14s; }
+        .cat-pill:hover { background: #f0fdfa; color: var(--primary, #0F766E); }
+        .cat-pill.active { background: var(--primary, #0F766E); color: #fff; border-color: var(--primary, #0F766E); box-shadow: 0 1px 3px rgba(15,118,110,0.25); }
+        .cat-pill .pill-count { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; background: rgba(255,255,255,0.22); padding: 1px 6px; border-radius: 9999px; }
+        .cat-pill:not(.active) .pill-count { background: var(--surface-container-low, #EFF4FF); color: var(--text-secondary, #475569); }
+        .faq-main-layout { display: grid; grid-template-columns: 1fr 300px; gap: 1.25rem; align-items: start; }
+        .faq-list { display: flex; flex-direction: column; gap: 8px; }
+        .faq-card { background: var(--card-bg, #fff); border: 1px solid var(--border-subtle, #E2E8F0); border-radius: 12px; box-shadow: 0 1px 2px rgba(15,23,42,0.04); overflow: hidden; transition: box-shadow 0.15s; }
+        .faq-card.open { box-shadow: 0 4px 12px -2px rgba(15,23,42,0.07); }
+        .faq-card.hidden { display: none; }
+        .faq-trigger { width: 100%; padding: 1rem 1.25rem; text-align: left; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: none; border: none; cursor: pointer; transition: background 0.12s; }
+        .faq-trigger:hover { background: rgba(240,253,250,0.6); }
+        .faq-trigger-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+        .faq-num { width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0; background: #f0fdfa; border: 1px solid #ccfbf1; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--primary, #0F766E); }
+        .faq-question { font-size: 14px; font-weight: 600; color: var(--text-primary, #0F172A); letter-spacing: -0.01em; line-height: 1.4; text-align: left; }
+        .faq-trigger-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+        .faq-tag { padding: 2px 9px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: var(--surface-container, #E5EEFF); color: var(--text-secondary, #475569); white-space: nowrap; }
+        .faq-tag.accent { background: #f0fdfa; color: var(--primary, #0F766E); border: 1px solid #ccfbf1; }
+        .faq-chevron { font-size: 20px; color: #64748B; transition: transform 0.2s; }
+        .faq-card.open .faq-chevron { transform: rotate(180deg); }
+        .faq-body { display: none; padding: 0 1.25rem 1.25rem; }
+        .faq-card.open .faq-body { display: block; }
+        .faq-body-inner { background: var(--surface-container-low, #EFF4FF); border-radius: 9px; padding: 1rem; color: var(--text-secondary, #475569); font-size: 13px; line-height: 1.7; }
+        .faq-body-inner p { margin: 0 0 8px; }
+        .faq-body-inner p:last-child { margin-bottom: 0; }
+        .faq-body-inner ul { padding-left: 1.25rem; margin: 6px 0; }
+        .faq-body-inner li { margin-bottom: 4px; }
+        .faq-body-inner b, .faq-body-inner strong { color: var(--text-primary, #0F172A); }
+        .faq-body-inner code { font-family: 'JetBrains Mono', monospace; font-size: 11px; background: #fff; border: 1px solid var(--border-subtle, #E2E8F0); border-radius: 4px; padding: 1px 5px; color: var(--text-primary, #0F172A); }
+        .faq-mini-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 8px 0; }
+        .mini-card { background: var(--card-bg, #fff); border: 1px solid var(--border-subtle, #E2E8F0); border-radius: 8px; padding: 10px; font-size: 12px; color: var(--text-secondary, #475569); }
+        .mini-card .mini-title { font-size: 12px; font-weight: 700; color: var(--text-primary, #0F172A); display: block; margin-bottom: 3px; }
+        .status-row { display: flex; align-items: flex-start; gap: 8px; }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+        .security-note { display: flex; align-items: flex-start; gap: 8px; background: #f0fdfa; border: 1px solid #ccfbf1; border-radius: 7px; padding: 8px 10px; margin-top: 8px; font-size: 12px; color: var(--primary, #0F766E); }
+        .security-note .material-symbols-outlined { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+        .roles-stack { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+        .code-block { background: var(--card-bg, #fff); border: 1px solid var(--border-subtle, #E2E8F0); border-radius: 8px; padding: 10px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-primary, #0F172A); margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+        .sidebar-right { display: flex; flex-direction: column; gap: 12px; }
+        .sc-card { background: var(--card-bg, #fff); border: 1px solid var(--border-subtle, #E2E8F0); border-radius: 12px; padding: 1.25rem; box-shadow: 0 1px 2px rgba(15,23,42,0.04); }
+        .sc-card.support-card { position: relative; overflow: hidden; }
+        .sc-card.support-card::after { content: ''; position: absolute; right: -32px; bottom: -32px; width: 120px; height: 120px; border-radius: 50%; background: rgba(15,118,110,0.05); pointer-events: none; }
+        .sc-icon { width: 40px; height: 40px; border-radius: 9px; background: var(--primary, #0F766E); display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+        .sc-icon .material-symbols-outlined { color: #fff; font-size: 20px; }
+        .sc-title { font-size: 15px; font-weight: 700; color: var(--text-primary, #0F172A); margin: 0 0 6px; letter-spacing: -0.01em; }
+        .sc-desc { font-size: 12px; color: var(--text-secondary, #475569); margin: 0 0 1rem; line-height: 1.6; }
+        .btn-primary-faq { width: 100%; height: 40px; border-radius: 8px; background: var(--primary, #0F766E); color: #fff; border: none; cursor: pointer; font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; gap: 7px; transition: background 0.14s; }
+        .btn-primary-faq:hover { background: #115E59; }
+        .btn-primary-faq .material-symbols-outlined { font-size: 17px; }
+        .telemetry-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .telemetry-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted, #94A3B8); }
+        .telemetry-status { display: flex; align-items: center; gap: 5px; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: #059669; }
+        .telemetry-status .dot { width: 8px; height: 8px; border-radius: 50%; background: #059669; }
+        .metric-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 12px; color: var(--text-secondary, #475569); }
+        .metric-val { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--text-primary, #0F172A); }
+        .progress-wrap { width: 100%; height: 6px; border-radius: 9999px; background: var(--surface-container-low, #EFF4FF); overflow: hidden; margin-bottom: 10px; }
+        .progress-fill { height: 100%; border-radius: 9999px; }
+        .telemetry-footer { border-top: 1px solid var(--border-subtle, #F1F5F9); padding-top: 10px; margin-top: 4px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted, #94A3B8); }
+        .oncall-row { display: flex; align-items: center; gap: 12px; }
+        .oncall-avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--primary, #0F766E); display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0; }
+        .oncall-avatar .material-symbols-outlined { color: #fff; font-size: 20px; }
+        .oncall-online { position: absolute; bottom: 0; right: 0; width: 11px; height: 11px; border-radius: 50%; background: #059669; border: 2px solid #fff; }
+        .oncall-name { font-size: 13px; font-weight: 600; color: var(--text-primary, #0F172A); }
+        .oncall-shift { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted, #94A3B8); }
+        @media (max-width: 1100px) { .faq-main-layout { grid-template-columns: 1fr; } .sidebar-right { display: grid; grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px) { .quick-cards-row { grid-template-columns: 1fr; } .faq-page-header { flex-direction: column; align-items: flex-start; } .faq-search-outer { max-width: 100%; width: 100%; } .sidebar-right { grid-template-columns: 1fr; } }
+    </style>
 </head>
 <body>
 
     {% include 'sidebar.html' %}
-
     {% include 'navbar.html' %}
+    
+    <!-- Ambil Role Pengguna Saat Ini -->
+    {% set current_role = session.get('role', 'Public') %}
 
-    <div class="container-fluid px-4 pb-5 mt-4">
-        <div class="mb-4">
-            <h3 class="fw-bold mb-1" style="color: var(--text-main);">{{ _('FAQ & Full System Guide') }}</h3>
-            <p class="small text-muted mb-0">{{ _('Docs and Q&A covering all the features available in the QA Control Center.') }}</p>
-        </div>
+    <div class="container-fluid px-4 pb-5 pt-4 faq-page-wrap">
 
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <div class="card shadow-sm border p-4" style="background-color: var(--bg-surface); border-color: var(--border-color) !important; border-radius: 16px;">
-                    
-                    <div class="accordion accordion-flush" id="faqAccordion">
-                        
-                        <!-- 1. Autentikasi & Akun -->
-                        <div class="accordion-item bg-transparent border-bottom" style="border-color: var(--border-color) !important;">
-                            <h2 class="accordion-header" id="faqOne">
-                                <button class="accordion-button collapsed bg-transparent fw-bold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" style="color: var(--text-main);">
-                                    {{ _('1. How do I sign in and manage my account profile?') }}
-                                </button>
-                            </h2>
-                            <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body text-muted small">
-                                    {{ _("You can sign in with your registered <b>Username</b> or <b>Email</b> plus your password through the Sign In button in the navbar/sidebar. Once you're in, head to <b>Profile Settings</b> to update your full name, email, change your profile picture, and change your password whenever you want.")|safe }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 2. Dashboard & Statistik -->
-                        <div class="accordion-item bg-transparent border-bottom" style="border-color: var(--border-color) !important;">
-                            <h2 class="accordion-header" id="faqTwo">
-                                <button class="accordion-button collapsed bg-transparent fw-bold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" style="color: var(--text-main);">
-                                    {{ _('2. What metrics or task categories show up on the Dashboard?') }}
-                                </button>
-                            </h2>
-                            <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body text-muted small">
-                                    {{ _('The Dashboard shows a real-time summary straight from the database, broken down by these quality categories:') }}
-                                    <ul class="mb-0 mt-1 ps-3">
-                                        <li><b>{{ _('Need Sample:') }}</b> {{ _('New tasks that still need a test sample.') }}</li>
-                                        <li><b>{{ _('Sample Done:') }}</b> {{ _('Tasks whose sample work is already finished.') }}</li>
-                                        <li><b>{{ _('Revision:') }}</b> {{ _('Tasks that need fixes or another pass.') }}</li>
-                                        <li><b>{{ _('Ready:') }}</b> {{ _('Tasks that got approved (Passed) and are good to go for production.') }}</li>
-                                        <li><b>{{ _('Skipped:') }}</b> {{ _('Tasks marked to be skipped this round.') }}</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 3. Task Management & Upload Excel -->
-                        <div class="accordion-item bg-transparent border-bottom" style="border-color: var(--border-color) !important;">
-                            <h2 class="accordion-header" id="faqThree">
-                                <button class="accordion-button collapsed bg-transparent fw-bold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" style="color: var(--text-main);">
-                                    {{ _('3. How do I manage projects and sync up task data?') }}
-                                </button>
-                            </h2>
-                            <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body text-muted small">
-                                    {{ _("From the <b>Task Management</b> menu, users with <b>Developer</b> or <b>Quality Control</b> access can upload project data files in <b>Excel (.xlsx, .xls)</b> or <b>CSV</b> format. The system will auto-sync the task data into the database. You can also filter data, search by keyword, update task status/notes, forward tasks to the production team, or permanently delete a whole project.")|safe }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 4. QR Code / Document Management -->
-                        <div class="accordion-item bg-transparent border-bottom" style="border-color: var(--border-color) !important;">
-                            <h2 class="accordion-header" id="faqFour">
-                                <button class="accordion-button collapsed bg-transparent fw-bold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" style="color: var(--text-main);">
-                                    {{ _("4. What's the QR Management menu for?") }}
-                                </button>
-                            </h2>
-                            <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body text-muted small">
-                                    {{ _("The <b>QR Management</b> menu is where Developers and Quality Control folks upload reference documents in <b>PDF</b> format. Users can open those docs right in a clean pop-up (Modal) viewer with no extra toolbar clutter, which makes it way easier to review stuff out in the field.")|safe }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 5. Hak Akses (Role Management) -->
-                        <div class="accordion-item bg-transparent border-bottom" style="border-color: var(--border-color) !important;">
-                            <h2 class="accordion-header" id="faqFive">
-                                <button class="accordion-button collapsed bg-transparent fw-bold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" style="color: var(--text-main);">
-                                    {{ _('5. What are the different access levels (Roles) in this system?') }}
-                                </button>
-                            </h2>
-                            <div id="collapseFive" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body text-muted small">
-                                    {{ _('The system runs on Role-Based Access Control:') }}
-                                    <ul class="mb-0 mt-1 ps-3">
-                                        <li><b>{{ _('Developer:') }}</b> {{ _('Top-level access — covers user management, system settings, support tickets, plus full control over tasks and documents.') }}</li>
-                                        <li><b>{{ _('Quality Control:') }}</b> {{ _('Full access to import project data, evaluate tasks, change QC status, and manage PDF documents.') }}</li>
-                                        <li><b>{{ _('Supervisor:') }}</b> {{ _('Can view the dashboard, filter tasks, and forward tasks to the production team.') }}</li>
-                                        <li><b>{{ _('Public (Guest):') }}</b> {{ _('Regular visitors who can only see the dashboard summary and the list of tasks already sent to production.') }}</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-<!-- 6. Bantuan & Dukungan Teknis -->
-                        <!-- PERBAIKAN: Menambahkan kelas border-bottom dan warna khusus di poin 6 -->
-                        <div class="accordion-item bg-transparent border-bottom" style="border-color: var(--border-color) !important;">
-                            <h2 class="accordion-header" id="faqSix">
-                                <button class="accordion-button collapsed bg-transparent fw-bold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" style="color: var(--text-main);">
-                                    {{ _('6. What if I run into an issue or need tech support?') }}
-                                </button>
-                            </h2>
-                            <div id="collapseSix" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body text-muted small">
-                                    {{ _("Head over to the <b>Customer Service</b> menu to send in a message about any issue or bug straight to the engineering team. If you're a <b>Developer</b>, you can check every incoming message through the dedicated <b>Support Tickets</b> menu.")|safe }}
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- 7. Tambahan: Pencarian & Filter -->
-                        <div class="accordion-item bg-transparent border-bottom" style="border-color: var(--border-color) !important;">
-                            <h2 class="accordion-header" id="faqSearch">
-                                <button class="accordion-button collapsed bg-transparent fw-bold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSearch" style="color: var(--text-main);">
-                                    {{ _('7. How do I search for and sort specific tasks?') }}
-                                </button>
-                            </h2>
-                            <div id="collapseSearch" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body text-muted small">
-                                    {{ _("Use the <b>Search</b> box to find tasks by ID, name, or description instantly. For more sorting options, hit the <b>Sort Data</b> button (top right corner) to filter by a specific Project or Package. If nothing shows up, double-check that a filter isn't already active.")|safe }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 8. Tambahan: Auto-Update -->
-                        <!-- PERBAIKAN: Menghapus kelas border-bottom karena ini adalah elemen terakhir -->
-                        <div class="accordion-item bg-transparent">
-                            <h2 class="accordion-header" id="faqUpdate">
-                                <button class="accordion-button collapsed bg-transparent fw-bold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUpdate" style="color: var(--text-main);">
-                                    {{ _('8. Why does the data keep refreshing on its own?') }}
-                                </button>
-                            </h2>
-                            <div id="collapseUpdate" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body text-muted small">
-                                    {{ _("We've got a <b>Real-time Auto-Update</b> feature built in. The app checks the database for changes every 5 seconds. That way, any status change made by the QC team shows up instantly for Leaders and other users without anyone needing to manually refresh the page.")|safe }}
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
+        <!-- ── Page Header ── -->
+        <div class="faq-page-header mb-4" style="display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+            <div class="flex flex-col gap-1.5">
+                <h1 class="title-main text-[22px] sm:text-[24px] text-on-surface">
+                    {{ _('FAQ &amp; Panduan Operasional Sistem') }}
+                </h1>
+                <div class="flex flex-wrap items-center gap-3">
+                    <p class="desc-text text-[14px] sm:text-[15px] max-w-3xl">
+                        {{ _('Dokumentasi interaktif, panduan alur kerja, dan jawaban terstruktur atas operasional sistem.') }}
+                    </p>
+                </div>
+            </div>
+            <div class="faq-search-outer">
+                <div class="faq-search-wrap">
+                    <span class="material-symbols-outlined search-icon">manage_search</span>
+                    <input type="text" id="faqSearchInput" placeholder="{{ _('Cari kata kunci, modul, atau topik...') }}">
                 </div>
             </div>
         </div>
+
+        <!-- ── Quick Guide Cards ── -->
+        <div class="quick-cards-row">
+            
+            <!-- Kartu 1: Quickstart (HANYA MUNCUL JIKA BUKAN PUBLIC) -->
+            {% if current_role in ['Developer', 'Quality Control', 'Supervisor'] %}
+            <div class="quick-card">
+                <div>
+                    <div class="quick-card-top">
+                        <div class="quick-card-icon"><span class="material-symbols-outlined">rocket_launch</span></div>
+                        <div>
+                            <div class="quick-card-label">{{ _('Mulai Cepat QA') }}</div>
+                            <h3 class="quick-card-title">{{ _('Panduan Memulai Cepat') }}</h3>
+                        </div>
+                    </div>
+                    <p class="quick-card-desc">{{ _('Alur kerja verifikasi sampel standar: validasi batch, pemantauan otomatis, dan penyelesaian log pengujian di Dashboard.') }}</p>
+                </div>
+                <div class="quick-card-footer">
+                    <span class="quick-card-meta">{{ _('Akses Staf Internal') }}</span>
+                    <a href="{{ url_for('main.dashboard') }}" class="quick-card-cta text-decoration-none">
+                        {{ _('Buka Dashboard') }} <span class="material-symbols-outlined">arrow_forward</span>
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Kartu 2: Hak Akses (MUNCUL UNTUK SEMUA) -->
+            <div class="quick-card">
+                <div>
+                    <div class="quick-card-top">
+                        <div class="quick-card-icon"><span class="material-symbols-outlined">admin_panel_settings</span></div>
+                        <div>
+                            <div class="quick-card-label">{{ _('Keamanan &amp; Hak') }}</div>
+                            <h3 class="quick-card-title">{{ _('Matriks Akses RBAC') }}</h3>
+                        </div>
+                    </div>
+                    <p class="quick-card-desc">{{ _('Pemetaan hak akses sistem: batasan wewenang tiap peran pengguna, termasuk apa yang bisa Anda akses di akun Anda saat ini.') }}</p>
+                </div>
+                <div class="quick-card-footer">
+                    <span class="quick-card-meta">{{ _('4 Peran Sistem') }}</span>
+                    <a href="#faqList" class="quick-card-cta text-decoration-none">
+                        {{ _('Baca Matriks') }} <span class="material-symbols-outlined">arrow_forward</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Kartu 3: Eskalasi Bug (MUNCUL UNTUK SEMUA) -->
+            <div class="quick-card">
+                <div>
+                    <div class="quick-card-top">
+                        <div class="quick-card-icon"><span class="material-symbols-outlined">emergency_heat</span></div>
+                        <div>
+                            <div class="quick-card-label">{{ _('Bantuan Sistem') }}</div>
+                            <h3 class="quick-card-title">{{ _('Laporan Masalah &amp; Bug') }}</h3>
+                        </div>
+                    </div>
+                    <p class="quick-card-desc">{{ _('Protokol eskalasi keluhan pengguna, cara mengirim tiket bantuan, dan penanganan status oleh tim Developer.') }}</p>
+                </div>
+                <div class="quick-card-footer">
+                    <span class="quick-card-meta">{{ _('Layanan Pelanggan') }}</span>
+                    <a href="{{ url_for('main.support') }}" class="quick-card-cta text-decoration-none">
+                        {{ _('Buka Bantuan') }} <span class="material-symbols-outlined">arrow_forward</span>
+                    </a>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- ── Category Filter Pills ── -->
+        <div class="category-pills" id="categoryPills">
+            <button class="cat-pill active" data-cat="all">{{ _('Semua Kategori') }}</button>
+            <button class="cat-pill" data-cat="auth">{{ _('Akun &amp; Profil') }}</button>
+            
+            {% if current_role in ['Developer', 'Quality Control', 'Supervisor'] %}
+            <button class="cat-pill" data-cat="task">{{ _('Dashboard &amp; Manajemen Tugas') }}</button>
+            {% endif %}
+            
+            {% if current_role in ['Developer', 'Quality Control'] %}
+            <button class="cat-pill" data-cat="qr">{{ _('Modul Dokumen QR') }}</button>
+            {% endif %}
+            
+            <button class="cat-pill" data-cat="roles">{{ _('Hak Akses Sistem') }}</button>
+            <button class="cat-pill" data-cat="support">{{ _('Bantuan &amp; Layanan') }}</button>
+        </div>
+
+        <!-- ── Main Layout: Accordion + Sidebar Kanan ── -->
+        <div class="faq-main-layout">
+
+            <!-- Accordion List -->
+            <div class="faq-list" id="faqList">
+
+                <!-- Q1: AKUN (SEMUA ROLE) -->
+                <div class="faq-card" data-cat="auth">
+                    <button class="faq-trigger">
+                        <div class="faq-trigger-left">
+                            <span class="faq-num">01</span>
+                            <span class="faq-question">{{ _('Bagaimana cara mengelola profil akun serta kata sandi saya?') }}</span>
+                        </div>
+                        <div class="faq-trigger-right">
+                            <span class="faq-tag accent">{{ _('Akun') }}</span>
+                            <span class="material-symbols-outlined faq-chevron">expand_more</span>
+                        </div>
+                    </button>
+                    <div class="faq-body">
+                        <div class="faq-body-inner">
+                            <p>{{ _('Setelah Anda masuk, buka menu') }} <b>{{ _('Profil Saya') }}</b> {{ _('untuk memperbarui informasi Anda kapan saja.') }}</p>
+                            <div class="faq-mini-grid-2">
+                                <div class="mini-card">
+                                    <span class="mini-title">{{ _('1. Menu Navigasi') }}</span>
+                                    {{ _('Klik tombol "Profil Saya" pada bilah sisi kiri atau menu akun di kanan atas.') }}
+                                </div>
+                                <div class="mini-card">
+                                    <span class="mini-title">{{ _('2. Kredensial &amp; Profil') }}</span>
+                                    {{ _('Anda dapat memperbarui kata sandi, email, serta foto profil Anda secara mandiri di halaman profil.') }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q2 & Q3: DASHBOARD & TASK (HANYA INTERNAL) -->
+                {% if current_role in ['Developer', 'Quality Control', 'Supervisor'] %}
+                <div class="faq-card" data-cat="task">
+                    <button class="faq-trigger">
+                        <div class="faq-trigger-left">
+                            <span class="faq-num">02</span>
+                            <span class="faq-question">{{ _('Apa arti metrik dan indikator status tugas di Dashboard?') }}</span>
+                        </div>
+                        <div class="faq-trigger-right">
+                            <span class="faq-tag">{{ _('Dashboard') }}</span>
+                            <span class="material-symbols-outlined faq-chevron">expand_more</span>
+                        </div>
+                    </button>
+                    <div class="faq-body">
+                        <div class="faq-body-inner">
+                            <p>{{ _('Dashboard menyajikan metrik pengujian mutu secara langsung. Makna warna indikator:') }}</p>
+                            <div class="faq-mini-grid-2">
+                                <div class="mini-card">
+                                    <div class="status-row">
+                                        <span class="status-dot" style="background:#0d9488;"></span>
+                                        <div><b>Need Sample:</b> {{ _('Tugas baru yang belum diproses tim QC.') }}</div>
+                                    </div>
+                                </div>
+                                <div class="mini-card">
+                                    <div class="status-row">
+                                        <span class="status-dot" style="background:#0284C7;"></span>
+                                        <div><b>Sample Done:</b> {{ _('Sampel telah diuji oleh QC.') }}</div>
+                                    </div>
+                                </div>
+                                <div class="mini-card">
+                                    <div class="status-row">
+                                        <span class="status-dot" style="background:#DC2626;"></span>
+                                        <div><b>Revision / Skipped:</b> {{ _('Ditemukan deviasi dalam tugas.') }}</div>
+                                    </div>
+                                </div>
+                                <div class="mini-card">
+                                    <div class="status-row">
+                                        <span class="status-dot" style="background:#059669;"></span>
+                                        <div><b>Ready / Production:</b> {{ _('Lulus uji, tugas dikirim ke lini produksi.') }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-card" data-cat="task">
+                    <button class="faq-trigger">
+                        <div class="faq-trigger-left">
+                            <span class="faq-num">03</span>
+                            <span class="faq-question">{{ _('Bagaimana alur mengelola dan menyinkronkan data tugas?') }}</span>
+                        </div>
+                        <div class="faq-trigger-right">
+                            <span class="faq-tag">{{ _('Tugas') }}</span>
+                            <span class="material-symbols-outlined faq-chevron">expand_more</span>
+                        </div>
+                    </button>
+                    <div class="faq-body">
+                        <div class="faq-body-inner">
+                            <p>{{ _('Alur pengelolaan data ini bergantung pada peran Anda:') }}</p>
+                            <ul>
+                                <li><b>Developer &amp; QC:</b> {{ _('Mengunggah file (Excel/CSV) di Manajemen Tugas, memperbarui status uji coba, dan melampirkan log sampel.') }}</li>
+                                <li><b>Supervisor:</b> {{ _('Memantau hasil data yang sudah diunggah QC melalui Dashboard dan menggunakan fitur pencarian untuk memantau aktivitas proyek secara menyeluruh.') }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Q4: DOKUMEN QR (HANYA DEVELOPER & QC) -->
+                {% if current_role in ['Developer', 'Quality Control'] %}
+                <div class="faq-card" data-cat="qr">
+                    <button class="faq-trigger">
+                        <div class="faq-trigger-left">
+                            <span class="faq-num">04</span>
+                            <span class="faq-question">{{ _('Bagaimana cara kerja modul Manajemen QR dan Dokumen PDF?') }}</span>
+                        </div>
+                        <div class="faq-trigger-right">
+                            <span class="faq-tag">{{ _('Dokumen') }}</span>
+                            <span class="material-symbols-outlined faq-chevron">expand_more</span>
+                        </div>
+                    </button>
+                    <div class="faq-body">
+                        <div class="faq-body-inner">
+                            <p>{{ _('Modul') }} <b>{{ _('Manajemen QR') }}</b> {{ _('digunakan eksklusif oleh tim teknis untuk mengunggah dokumen referensi operasional berformat') }} <b>PDF</b>.</p>
+                            <ul>
+                                <li>{{ _('Pilih menu Manajemen QR, lalu klik opsi unggah dokumen.') }}</li>
+                                <li>{{ _('Sistem akan mengurai halaman dokumen tersebut ke dalam database untuk dipanggil ulang secara aman.') }}</li>
+                                <li>{{ _('Anda dapat mengelola, mencari, atau menghapus dokumen referensi yang usang kapan saja.') }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Q5: ROLES (SEMUA ROLE) -->
+                <div class="faq-card" data-cat="roles">
+                    <button class="faq-trigger">
+                        <div class="faq-trigger-left">
+                            <span class="faq-num">05</span>
+                            <span class="faq-question">{{ _('Apa saja tingkatan hak akses (Roles) di sistem ini?') }}</span>
+                        </div>
+                        <div class="faq-trigger-right">
+                            <span class="faq-tag">{{ _('Akses RBAC') }}</span>
+                            <span class="material-symbols-outlined faq-chevron">expand_more</span>
+                        </div>
+                    </button>
+                    <div class="faq-body">
+                        <div class="faq-body-inner">
+                            <p>{{ _('Sistem ini menerapkan aturan') }} <i>Role-Based Access Control</i> (RBAC) {{ _('yang ketat:') }}</p>
+                            <div class="roles-stack">
+                                <div class="mini-card"><b>Developer:</b> {{ _('Akses tertinggi (Root) — mencakup manajemen akun, tiket bantuan, kontrol penuh tugas, database, dan dokumen.') }}</div>
+                                <div class="mini-card"><b>Quality Control:</b> {{ _('Tim lapangan yang berhak mengimpor data proyek (Excel/CSV), mengevaluasi tugas, mengubah status, dan mengunggah dokumen referensi PDF.') }}</div>
+                                <div class="mini-card"><b>Supervisor:</b> {{ _('Manajemen yang memantau kinerja operasional melalui Dashboard eksklusif serta fitur penyaringan tugas tanpa akses mengubah data inti.') }}</div>
+                                <div class="mini-card"><b>Public (Guest):</b> {{ _('Akses mendasar bagi publik, di mana fitur teknis disembunyikan. Hanya berhak mengelola akun pribadi dan menghubungi Layanan Pelanggan.') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q6: SUPPORT (SEMUA ROLE) -->
+                <div class="faq-card" data-cat="support">
+                    <button class="faq-trigger">
+                        <div class="faq-trigger-left">
+                            <span class="faq-num">06</span>
+                            <span class="faq-question">{{ _('Apa yang harus dilakukan jika saya menemukan bug atau masalah di akun saya?') }}</span>
+                        </div>
+                        <div class="faq-trigger-right">
+                            <span class="faq-tag">{{ _('Bantuan') }}</span>
+                            <span class="material-symbols-outlined faq-chevron">expand_more</span>
+                        </div>
+                    </button>
+                    <div class="faq-body">
+                        <div class="faq-body-inner">
+                            <p>{{ _('Silakan menuju ke menu') }} <b>{{ _('Pusat Bantuan &amp; Dukungan') }}</b> ({{ _('Layanan Pelanggan') }}). {{ _('Anda dapat mengirimkan keluhan langsung ke tim Developer kami.') }}</p>
+                            <ul>
+                                <li>{{ _('Tuliskan masalah yang Anda alami secara detail.') }}</li>
+                                <li>{{ _('Anda juga dapat melampirkan tangkapan layar (screenshot) bukti error agar tim kami dapat mengatasinya lebih cepat.') }}</li>
+                                <li>{{ _('Pantau riwayat perbaikan masalah Anda di sisi kanan panel Bantuan.') }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /faq-list -->
+
+            <!-- ── Right Sidebar ── -->
+            <div class="sidebar-right">
+
+                <!-- Support Card -->
+                <div class="sc-card support-card">
+                    <div class="sc-icon"><span class="material-symbols-outlined">headset_mic</span></div>
+                    <h3 class="sc-title">{{ _('Masih Membutuhkan Bantuan Khusus?') }}</h3>
+                    <p class="sc-desc">{{ _('Tim Technical Operations siap membantu kendala sistem, pengaturan profil, atau masalah lainnya.') }}</p>
+                    <a href="{{ url_for('main.support') }}" class="btn-primary-faq text-decoration-none">
+                        <span class="material-symbols-outlined">add_circle</span>
+                        {{ _('Buka Pusat Bantuan') }}
+                    </a>
+                </div>
+
+            </div><!-- /sidebar-right -->
+
+        </div><!-- /faq-main-layout -->
+
     </div>
 
     {% include 'login_modal.html' %}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='script.js') }}?v=2"></script>
+
+    <script>
+    (function () {
+        /* ── Accordion Toggle ── */
+        document.querySelectorAll('.faq-trigger').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var card = this.closest('.faq-card');
+                card.classList.toggle('open');
+            });
+        });
+
+        /* ── Category Filter ── */
+        var pills = document.querySelectorAll('.cat-pill');
+        var cards = document.querySelectorAll('.faq-card');
+
+        pills.forEach(function (pill) {
+            pill.addEventListener('click', function () {
+                var cat = this.getAttribute('data-cat');
+                pills.forEach(function (p) { p.classList.remove('active'); });
+                this.classList.add('active');
+                cards.forEach(function (card) {
+                    var match = cat === 'all' || card.getAttribute('data-cat') === cat;
+                    card.classList.toggle('hidden', !match);
+                });
+            });
+        });
+
+        /* ── Search ── */
+        var searchInput = document.getElementById('faqSearchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                var term = this.value.toLowerCase().trim();
+                cards.forEach(function (card) {
+                    card.classList.toggle('hidden', term !== '' && !card.textContent.toLowerCase().includes(term));
+                });
+            });
+        }
+    })();
+    </script>
 </body>
 </html>
