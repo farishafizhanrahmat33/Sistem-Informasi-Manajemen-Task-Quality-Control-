@@ -383,10 +383,6 @@
             margin-bottom: 5px;
         }
 
-        /* ─── 2-col grid ─── */
-        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-        @media (max-width: 480px) { .two-col { grid-template-columns: 1fr; } }
-
         /* ─── Flash / Alert ─── */
         .op-alert {
             display: flex;
@@ -451,6 +447,21 @@
             border-top: 1px solid var(--border-subtle);
         }
         .hidden { display: none !important; }
+        
+        /* ─── Main Layout Grid ─── */
+        .main-layout-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            align-items: start;
+        }
+        
+        /* Ubah menjadi 1 kolom pada layar HP dan Tablet */
+        @media (max-width: 992px) {
+            .main-layout-grid {
+                grid-template-columns: 1fr;
+            }
+        }   
     </style>
 </head>
 <body>
@@ -484,7 +495,7 @@
         </div>
 
         <!-- Two-column Grid -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start;">
+        <div class="main-layout-grid">
 
             <!-- ── LEFT: Profile Identity ── -->
             <div style="display:flex;flex-direction:column;gap:1.5rem;">
@@ -537,11 +548,11 @@
                             </div>
                             <h3 class="section-title" style="margin:0;">{{ _('Account Info') }}</h3>
                             <span class="section-meta" style="margin-left:8px;">
-                                Diperbarui: 
+                                {{ _('Diperbarui') }}: 
                                 {% if user.updated_at %}
                                     {{ user.updated_at.strftime('%d %b %Y') }}
                                 {% else %}
-                                    Belum pernah
+                                    {{ _('Belum pernah') }}
                                 {% endif %}
                             </span>
                         </div>
@@ -549,7 +560,7 @@
                         <!-- Kanan: Tombol Edit Toggle -->
                         <button type="button" id="btnToggleEdit" style="background:none; border:none; display:flex; align-items:center; gap:5px; font-size:12px; font-weight:600; font-family:'Inter',sans-serif; color:var(--primary, #0F766E); cursor:pointer; padding:4px 8px; border-radius:6px; transition:all 0.2s;">
                             <span class="material-symbols-outlined" style="font-size:16px;">edit_square</span>
-                            <span>Edit</span>
+                            <span>{{ _('Edit') }}</span>
                         </button>
                     </div>
 
@@ -561,7 +572,7 @@
                             <div class="op-input-wrap">
                                 <!-- Tambahkan class readonly-input dan atribut readonly -->
                                 <input class="op-input op-input-mono readonly-input" type="text" name="username" value="{{ user.username }}" required readonly style="background-color:#F1F5F9; cursor:not-allowed; transition: 0.3s;">
-                                <span class="op-input-badge">Sistem Utama</span>
+                                <span class="op-input-badge">{{ _('Sistem Utama') }}</span>
                             </div>
                         </div>
 
@@ -609,41 +620,38 @@
 
                     if(toggleBtn) {
                         toggleBtn.addEventListener('click', function() {
-                            // Cek apakah tombol simpan sedang tampil (artinya sedang mode edit)
                             const isEditing = saveContainer.style.display === 'block';
 
                             if (!isEditing) {
                                 // MASUK MODE EDIT
                                 inputs.forEach(input => {
-                                    input.removeAttribute('readonly'); // Hapus proteksi
-                                    input.style.backgroundColor = '#FFFFFF'; // Ubah warna putih
-                                    input.style.cursor = 'text'; // Kursor normal
+                                    input.removeAttribute('readonly'); 
+                                    input.style.backgroundColor = '#FFFFFF'; 
+                                    input.style.cursor = 'text'; 
                                 });
-                                saveContainer.style.display = 'block'; // Tampilkan tombol Simpan
+                                saveContainer.style.display = 'block'; 
                                 
-                                // Ubah tampilan tombol di atas jadi "Batal"
                                 toggleBtn.innerHTML = `
                                     <span class="material-symbols-outlined" style="font-size:16px;">close</span>
                                     <span>Batal</span>
                                 `;
-                                toggleBtn.style.color = '#EF4444'; // Warna merah
+                                toggleBtn.style.color = '#EF4444'; 
                                 toggleBtn.style.backgroundColor = '#FEF2F2';
                             } else {
                                 // BATAL EDIT & KEMBALI KE MODE BACA
                                 inputs.forEach(input => {
-                                    input.setAttribute('readonly', 'true'); // Kembalikan proteksi
-                                    input.style.backgroundColor = '#F1F5F9'; // Kembalikan warna abu
-                                    input.style.cursor = 'not-allowed'; // Kursor dilarang
-                                    input.value = input.getAttribute('value'); // Reset nilai inputan ke nilai awal
+                                    input.setAttribute('readonly', 'true'); 
+                                    input.style.backgroundColor = '#F1F5F9'; 
+                                    input.style.cursor = 'not-allowed'; 
+                                    input.value = input.getAttribute('value'); 
                                 });
-                                saveContainer.style.display = 'none'; // Sembunyikan tombol Simpan
+                                saveContainer.style.display = 'none'; 
                                 
-                                // Kembalikan tampilan tombol ke "Edit"
                                 toggleBtn.innerHTML = `
                                     <span class="material-symbols-outlined" style="font-size:16px;">edit_square</span>
-                                    <span>Edit</span>
+                                    <span>{{ _('Edit') }}</span>
                                 `;
-                                toggleBtn.style.color = 'var(--primary, #0F766E)'; // Warna hijau utama
+                                toggleBtn.style.color = 'var(--primary, #0F766E)'; 
                                 toggleBtn.style.backgroundColor = 'transparent';
                             }
                         });
@@ -665,14 +673,14 @@
                             </div>
                             <div>
                                 <h3 class="section-title" style="margin:0 0 2px;">{{ _('Ganti Kata Sandi (Credentials)') }}</h3>
-                                <p style="font-size:11px;color:var(--text-muted);margin:0;">Gunakan kata sandi kuat minimal 6 karakter dengan kombinasi simbol.</p>
+                                <p style="font-size:11px;color:var(--text-muted);margin:0;">{{ _('Gunakan kata sandi kuat minimal 6 karakter dengan kombinasi simbol') }}.</p>
                             </div>
                         </div>
                         
                         <!-- Tombol Toggle Edit Sandi -->
                         <button type="button" id="btnTogglePassword" style="background:none; border:none; display:flex; align-items:center; gap:5px; font-size:12px; font-weight:600; font-family:'Inter',sans-serif; color:var(--primary, #0F766E); cursor:pointer; padding:4px 8px; border-radius:6px; transition:all 0.2s;">
                             <span class="material-symbols-outlined" style="font-size:16px;">edit_square</span>
-                            <span>Ganti Sandi</span>
+                            <span>{{ _('Ganti Sandi') }}</span>
                         </button>
                     </div>
 
@@ -710,15 +718,15 @@
                                     </button>
                                 </div>
                                 <!-- Pesan Error jika kata sandi tidak cocok -->
-                                <span id="matchError" style="color:#EF4444; font-size:11px; display:none; margin-top:4px;">Kata sandi tidak cocok!</span>
+                                <span id="matchError" style="color:#EF4444; font-size:11px; display:none; margin-top:4px;">{{ _('Kata sandi tidak cocok') }}!</span>
                             </div>
                         </div>
 
                         <!-- Strength Meter (Disembunyikan saat mode baca) -->
                         <div class="strength-wrap" id="strengthMeterWrap" style="display:none;">
                             <div style="display:flex;align-items:center;justify-content:space-between;">
-                                <span style="font-size:11px;font-weight:600;color:var(--text-secondary);">Kekuatan Sandi:</span>
-                                <span id="strengthLabel" style="font-size:11px;font-weight:700;color:var(--emerald-700);">Belum Diisi</span>
+                                <span style="font-size:11px;font-weight:600;color:var(--text-secondary);">{{ _('Kekuatan Sandi') }}:</span>
+                                <span id="strengthLabel" style="font-size:11px;font-weight:700;color:var(--emerald-700);">{{ _('Belum Diisi') }}</span>
                             </div>
                             <div class="strength-bar-track" id="strengthBars">
                                 <span></span><span></span><span></span><span></span>
@@ -726,15 +734,15 @@
                             <div class="strength-checks">
                                 <span class="strength-check" id="chk-len">
                                     <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                                    Min. 8 karakter
+                                    {{ _('Min. 8 karakter') }}
                                 </span>
                                 <span class="strength-check" id="chk-case">
                                     <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                                    Huruf Besar & Angka
+                                    {{ _('Huruf Besar & Angka') }}
                                 </span>
                                 <span class="strength-check" id="chk-special">
                                     <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                                    Simbol (@$!%*#?&)
+                                    {{ _('Simbol') }} (@$!%*#?&)
                                 </span>
                             </div>
                         </div>
@@ -802,7 +810,7 @@
                             
                             togglePassBtn.innerHTML = `
                                 <span class="material-symbols-outlined" style="font-size:16px;">edit_square</span>
-                                <span>Ganti Sandi</span>
+                                <span>{{ _('Ganti Sandi') }}</span>
                             `;
                             togglePassBtn.style.color = 'var(--primary, #0F766E)'; 
                             togglePassBtn.style.backgroundColor = 'transparent';

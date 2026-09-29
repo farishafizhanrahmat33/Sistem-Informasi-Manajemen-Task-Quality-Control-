@@ -28,6 +28,7 @@ class UserModel(db.Model):
     tickets = db.relationship("SupportTicket", back_populates="user", cascade="all, delete")
     tasks_uploaded = db.relationship("TaskModel", back_populates="uploader")
     qr_codes_uploaded = db.relationship("QRCodeModel", back_populates="uploader")
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
 # ==========================================
