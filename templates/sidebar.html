@@ -47,7 +47,6 @@
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
   }
   
-  /* Sisa kode CSS lainnya tetap seperti sebelumnya... */
   html { overflow-y: scroll !important; }
   body { padding-right: 0 !important; }
   @media (min-width: 1024px) {
@@ -109,8 +108,8 @@
                     <span class="material-symbols-outlined tw-text-white tw-text-[18px]">verified</span>
                 </div>
                 <div class="tw-flex tw-flex-col tw-min-w-0">
-                    <span class="tw-text-shell-text tw-font-bold tw-text-sm tw-leading-none tw-tracking-tight tw-truncate">{{ _('CCIndonesia') }}</span>
-                    <span class="tw-font-mono tw-text-primary/80 tw-uppercase tw-tracking-wider tw-text-[10px] tw-mt-1 tw-font-medium tw-truncate">{{ _('Manage Task & QR Code') }}</span>
+                    <span class="tw-text-shell-text tw-font-bold tw-text-sm tw-leading-none tw-tracking-tight tw-truncate">CCIndonesia</span>
+                    <span class="tw-font-mono tw-text-primary/80 tw-uppercase tw-tracking-wider tw-text-[10px] tw-mt-1 tw-font-medium tw-truncate">{{ _('Kelola Task & QR Code') }}</span>
                 </div>
             </div>
             <button type="button" onclick="toggleSidebar(false)" class="lg:tw-hidden tw-w-7 tw-h-7 tw-rounded tw-flex tw-items-center tw-justify-center tw-text-shell-muted hover:tw-text-white hover:tw-bg-shell-surface tw-transition-colors tw-flex-shrink-0">
@@ -123,7 +122,7 @@
 
             <!-- OPERATIONS -->
             <nav class="tw-flex tw-flex-col tw-gap-1">
-                <div class="tw-px-2 tw-pt-1 tw-pb-1 tw-text-[11px] tw-font-semibold tw-uppercase tw-tracking-wider tw-text-shell-muted">{{ _('Operations') }}</div>
+                <div class="tw-px-2 tw-pt-1 tw-pb-1 tw-text-[11px] tw-font-semibold tw-uppercase tw-tracking-wider tw-text-shell-muted">{{ _('Operasional') }}</div>
 
                 {% if role != 'Public' and role != 'Publik' %}
                 <a href="{{ url_for('main.dashboard') }}"
@@ -140,7 +139,7 @@
                           {% if request.endpoint == 'task.task_list' %} tw-bg-primary tw-text-white tw-border-primary-dark/40
                           {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text tw-border-transparent {% endif %}">
                     <span class="material-symbols-outlined tw-text-[18px]">assignment</span>
-                    <span>{{ _('Task Management') }}</span>
+                    <span>{{ _('Manajemen Task') }}</span>
                 </a>
 
                 <a href="{{ url_for('qr.qr_codes_page') }}"
@@ -148,21 +147,21 @@
                           {% if request.endpoint == 'qr.qr_codes_page' %} tw-bg-primary tw-text-white tw-border-primary-dark/40
                           {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text tw-border-transparent {% endif %}">
                     <span class="material-symbols-outlined tw-text-[18px]">qr_code_scanner</span>
-                    <span>{{ _('QR Management') }}</span>
+                    <span>{{ _('Manajemen QR') }}</span>
                 </a>
             </nav>
 
             <!-- ADMINISTRATION (Developer only) -->
             {% if session.get('role') == 'Developer' or role == 'Developer' %}
             <nav class="tw-flex tw-flex-col tw-gap-1">
-                <div class="tw-px-2 tw-pt-1 tw-pb-1 tw-text-[11px] tw-font-semibold tw-uppercase tw-tracking-wider tw-text-shell-muted">{{ _('Administration') }}</div>
+                <div class="tw-px-2 tw-pt-1 tw-pb-1 tw-text-[11px] tw-font-semibold tw-uppercase tw-tracking-wider tw-text-shell-muted">{{ _('Administrasi') }}</div>
 
                 <a href="{{ url_for('main.user_management') }}"
                    class="tw-no-underline tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-colors tw-border
                           {% if request.endpoint == 'main.user_management' %} tw-bg-primary tw-text-white tw-border-primary-dark/40
                           {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text tw-border-transparent {% endif %}">
                     <span class="material-symbols-outlined tw-text-[18px]">group</span>
-                    <span>{{ _('User Management') }}</span>
+                    <span>{{ _('Manajemen Pengguna') }}</span>
                 </a>
 
                 <a href="{{ url_for('main.view_tickets') }}"
@@ -170,21 +169,21 @@
                           {% if request.endpoint == 'main.view_tickets' %} tw-bg-primary tw-text-white tw-border-primary-dark/40
                           {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text tw-border-transparent {% endif %}">
                     <span class="material-symbols-outlined tw-text-[18px]">confirmation_number</span>
-                    <span>{{ _('Support Tickets') }}</span>
+                    <span>{{ _('Tiket Dukungan') }}</span>
                 </a>
             </nav>
             {% endif %}
 
             <!-- SYSTEM & ACCOUNT -->
             <nav class="tw-flex tw-flex-col tw-gap-1">
-                <div class="tw-px-2 tw-pt-1 tw-pb-1 tw-text-[11px] tw-font-semibold tw-uppercase tw-tracking-wider tw-text-shell-muted">{{ _('System & Account') }}</div>
+                <div class="tw-px-2 tw-pt-1 tw-pb-1 tw-text-[11px] tw-font-semibold tw-uppercase tw-tracking-wider tw-text-shell-muted">{{ _('Sistem & Akun') }}</div>
 
                 <a href="{{ url_for('main.support') }}"
                    class="tw-no-underline tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-colors tw-border
                           {% if request.endpoint == 'main.support' %} tw-bg-primary tw-text-white tw-border-primary-dark/40
                           {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text tw-border-transparent {% endif %}">
                     <span class="material-symbols-outlined tw-text-[18px]">headset_mic</span>
-                    <span>{{ _('Customer Service') }}</span>
+                    <span>{{ _('Layanan Pelanggan') }}</span>
                 </a>
 
                 <a href="{{ url_for('main.faq') }}"
@@ -192,7 +191,7 @@
                           {% if request.endpoint == 'main.faq' %} tw-bg-primary tw-text-white tw-border-primary-dark/40
                           {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text tw-border-transparent {% endif %}">
                     <span class="material-symbols-outlined tw-text-[18px]">menu_book</span>
-                    <span>{{ _('FAQ & Guidance') }}</span>
+                    <span>{{ _('FAQ & Panduan') }}</span>
                 </a>
 
                 <a href="{{ url_for('main.profile') }}"
@@ -200,7 +199,7 @@
                           {% if request.endpoint == 'main.profile' %} tw-bg-primary tw-text-white tw-border-primary-dark/40
                           {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text tw-border-transparent {% endif %}">
                     <span class="material-symbols-outlined tw-text-[18px]">manage_accounts</span>
-                    <span>{{ _('Profile Settings') }}</span>
+                    <span>{{ _('Pengaturan Profil') }}</span>
                 </a>
             </nav>
         </div>
@@ -224,14 +223,14 @@
                     <span class="material-symbols-outlined tw-text-[16px]">wb_sunny</span>
                 </button>
                 <ul class="dropdown-menu shadow-sm border-0 py-1 theme-dropdown-menu">
-                    <li><a class="dropdown-item py-2 px-3 small" href="javascript:void(0);" onclick="setTheme('light')">{{ _('Light') }}</a></li>
-                    <li><a class="dropdown-item py-2 px-3 small" href="javascript:void(0);" onclick="setTheme('dark')">{{ _('Dark') }}</a></li>
-                    <li><a class="dropdown-item py-2 px-3 small" href="javascript:void(0);" onclick="setTheme('system')">{{ _('System') }}</a></li>
+                    <li><a class="dropdown-item py-2 px-3 small" href="javascript:void(0);" onclick="setTheme('light')">{{ _('Terang') }}</a></li>
+                    <li><a class="dropdown-item py-2 px-3 small" href="javascript:void(0);" onclick="setTheme('dark')">{{ _('Gelap') }}</a></li>
+                    <li><a class="dropdown-item py-2 px-3 small" href="javascript:void(0);" onclick="setTheme('system')">{{ _('Sistem') }}</a></li>
                 </ul>
             </div>
 
             {% if role != 'Public' and role != 'Publik' %}
-            <a href="{{ url_for('main.logout') }}" title="{{ _('Sign Out') }}" class="tw-no-underline tw-ml-auto tw-w-7 tw-h-7 tw-rounded tw-flex tw-items-center tw-justify-center tw-text-shell-muted hover:tw-bg-black/30 hover:tw-text-rose-400 tw-transition-colors">
+            <a href="{{ url_for('main.logout') }}" title="{{ _('Keluar') }}" class="tw-no-underline tw-ml-auto tw-w-7 tw-h-7 tw-rounded tw-flex tw-items-center tw-justify-center tw-text-shell-muted hover:tw-bg-black/30 hover:tw-text-rose-400 tw-transition-colors">
                 <span class="material-symbols-outlined tw-text-[16px]">logout</span>
             </a>
             {% endif %}
@@ -239,7 +238,7 @@
 
         {% if role == 'Public' or role == 'Publik' %}
         <button type="button" class="tw-w-full tw-py-2 tw-rounded-lg tw-bg-primary tw-text-white tw-text-sm tw-font-semibold hover:tw-bg-primary-dark tw-transition-colors" data-bs-toggle="modal" data-bs-target="#loginModal">
-            {{ _('Sign In') }}
+            {{ _('Masuk') }}
         </button>
         {% else %}
         <div class="tw-flex tw-items-center tw-gap-2.5 tw-p-2 tw-rounded-lg tw-bg-shell-surface tw-border tw-border-shell-border">

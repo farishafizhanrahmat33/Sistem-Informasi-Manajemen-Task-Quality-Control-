@@ -286,7 +286,7 @@
                     </div>
                     <div class="d-flex align-items-center gap-3">
                         <span id="modalStatusBadge"></span>
-                        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="{{ _('Tutup') }}"></button>
                     </div>
                 </div>
 
@@ -304,7 +304,7 @@
                     <div id="modalAttachmentArea" style="display: none;">
                         <h6 style="font-family:'Inter',sans-serif; font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">{{ _('Gambar Lampiran') }}</h6>
                         <div class="p-2 rounded-3 border text-center" style="background-color: var(--card-bg, #FFFFFF); border-color: var(--border-subtle, #E2E8F0);">
-                            <img id="modalImage" src="" alt="Lampiran Tiket" style="max-width: 100%; max-height: 400px; border-radius: 6px; object-fit: contain;">
+                            <img id="modalImage" src="" alt="{{ _('Lampiran Tiket') }}" style="max-width: 100%; max-height: 400px; border-radius: 6px; object-fit: contain;">
                             <div class="mt-2 text-end">
                                 <a id="modalImageDownload" href="#" download class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1" style="font-size: 11px; padding: 4px 10px; border-radius: 6px;">
                                     <span class="material-symbols-outlined" style="font-size:14px;">download</span> {{ _('Unduh Gambar') }}

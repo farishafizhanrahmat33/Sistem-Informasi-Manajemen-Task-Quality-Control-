@@ -12,13 +12,13 @@
         <!-- BREADCRUMBS DINAMIS BERDASARKAN KATEGORI SIDEBAR -->
         {% set current_cat = '' %}
         {% if request.endpoint in ['main.dashboard', 'task.task_list', 'qr.qr_codes_page'] %}
-            {% set current_cat = _('Operations') %}
+            {% set current_cat = _('Operasional') %}
         {% elif request.endpoint in ['main.user_management', 'main.view_tickets'] %}
-            {% set current_cat = _('Administration') %}
+            {% set current_cat = _('Administrasi') %}
         {% elif request.endpoint in ['main.support', 'main.faq', 'main.profile'] %}
-            {% set current_cat = _('System & Account') %}
+            {% set current_cat = _('Sistem & Akun') %}
         {% else %}
-            {% set current_cat = _('General') %}
+            {% set current_cat = _('Umum') %}
         {% endif %}
 
         <div class="tw-min-w-0 tw-flex tw-items-center tw-gap-2 tw-text-xs md:tw-text-sm tw-truncate">
@@ -33,21 +33,21 @@
                 {% if request.endpoint == 'main.dashboard' %}
                     {{ _('Dashboard') }}
                 {% elif request.endpoint == 'task.task_list' %}
-                    {{ _('Task Management') }}
+                    {{ _('Manajemen Task') }}
                 {% elif request.endpoint == 'qr.qr_codes_page' %}
-                    {{ _('QR Management') }}
+                    {{ _('Manajemen QR') }}
                 {% elif request.endpoint == 'main.user_management' %}
-                    {{ _('User Management') }}
+                    {{ _('Manajemen Pengguna') }}
                 {% elif request.endpoint == 'main.view_tickets' %}
-                    {{ _('Support Tickets') }}
+                    {{ _('Tiket Dukungan') }}
                 {% elif request.endpoint == 'main.support' %}
-                    {{ _('Customer Service') }}
+                    {{ _('Layanan Pelanggan') }}
                 {% elif request.endpoint == 'main.faq' %}
-                    {{ _('FAQ & Guidance') }}
+                    {{ _('FAQ & Panduan') }}
                 {% elif request.endpoint == 'main.profile' %}
-                    {{ _('Profile Settings') }}
+                    {{ _('Pengaturan Profil') }}
                 {% else %}
-                    {{ _('Manage Task') }}
+                    {{ _('Kelola Task') }}
                 {% endif %}
             </span>
         </div>

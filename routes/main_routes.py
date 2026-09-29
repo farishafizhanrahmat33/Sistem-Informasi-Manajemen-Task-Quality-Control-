@@ -22,6 +22,7 @@ def root():
 # BARU: Tombol/dropdown ganti bahasa manggil route ini, misal
 # url_for('main.set_language', lang_code='en') atau 'id'.
 @main_bp.route('/set_language/<lang_code>')
+@main_bp.route('/set-language/<lang_code>')  # <-- Tambahkan ini agar mendukung tanda hubung (-)
 def set_language(lang_code):
     if lang_code in current_app.config['LANGUAGES']:
         session['language'] = lang_code

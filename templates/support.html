@@ -13,7 +13,7 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dukungan Pelanggan - QA Control Center</title>
+    <title>{{ _('Dukungan Pelanggan - QA Control Center') }}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -159,8 +159,8 @@
                                 <span class="material-symbols-outlined" style="font-size:22px;">forum</span>
                             </div>
                             <div>
-                                <div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:var(--text-primary);">Tiket Dukungan Developer & Engineering</div>
-                                <div style="font-family:'Inter',sans-serif;font-size:12px;color:var(--text-secondary);">Tim teknis meninjau tiket berdasarkan antrian.</div>
+                                <div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:var(--text-primary);">{{ _('Tiket Dukungan Developer & Engineering') }}</div>
+                                <div style="font-family:'Inter',sans-serif;font-size:12px;color:var(--text-secondary);">{{ _('Tim teknis meninjau tiket berdasarkan antrian.') }}</div>
                             </div>
                         </div>
                     </div>
@@ -171,23 +171,23 @@
 
                             <!-- Deskripsi -->
                             <div>
-                                <label class="form-label-custom" for="messageField">Deskripsi Detail & Langkah Reproduksi <span style="color:#DC2626;">*</span></label>
+                                <label class="form-label-custom" for="messageField">{{ _('Deskripsi Detail & Langkah Reproduksi') }} <span style="color:#DC2626;">*</span></label>
                                 <textarea class="form-control-custom" id="messageField" name="message" rows="5"
-                                    placeholder="Jelaskan anomali secara rinci, dan sertakan langkah-langkah untuk mereproduksi masalah..."
+                                    placeholder="{{ _('Jelaskan anomali secara rinci, dan sertakan langkah-langkah untuk mereproduksi masalah...') }}"
                                     required></textarea>
                             </div>
 
                             <!-- File Upload -->
                             <div>
-                                <label class="form-label-custom">Lampiran Log atau Screenshot Pendukung</label>
+                                <label class="form-label-custom">{{ _('Lampiran Log atau Screenshot Pendukung') }}</label>
                                 <div class="dropzone-area" onclick="document.getElementById('fileInput').click();" id="dropzone">
                                     <input type="file" id="fileInput" name="attachment" multiple accept=".png,.jpg,.jpeg,.pdf,.log,.json" class="d-none" onchange="handleFileSelect(event)">
                                     <div class="dropzone-icon">
                                         <span class="material-symbols-outlined" style="font-size:22px;">cloud_upload</span>
                                     </div>
                                     <div style="font-family:'Inter',sans-serif; font-size:13px; color:var(--text-primary);">
-                                        <span style="color:#0F766E; font-weight:600; text-decoration:underline; text-decoration-color:rgba(15,118,110,0.4);">Klik untuk mengunggah</span>
-                                        atau seret file ke sini
+                                        <span style="color:#0F766E; font-weight:600; text-decoration:underline; text-decoration-color:rgba(15,118,110,0.4);">{{ _('Klik untuk mengunggah') }}</span>
+                                        {{ _('atau seret file ke sini') }}
                                     </div>
                                 </div>
                                 <div class="d-flex flex-wrap gap-2 mt-2" id="fileList"></div>
@@ -196,10 +196,10 @@
                             <!-- Form Actions -->
                             <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 pt-3" style="border-top:1px solid var(--border-subtle);">
                                 <div class="d-flex align-items-center gap-2 justify-content-end w-100">
-                                    <button type="button" class="btn-ghost-custom" onclick="resetForm()">Atur Ulang</button>
+                                    <button type="button" class="btn-ghost-custom" onclick="resetForm()">{{ _('Atur Ulang') }}</button>
                                     <button type="submit" class="btn-primary-custom">
                                         <span class="material-symbols-outlined" style="font-size:17px;">send</span>
-                                        Kirim Tiket Dukungan
+                                        {{ _('Kirim Tiket Dukungan') }}
                                     </button>
                                 </div>
                             </div>
@@ -215,7 +215,7 @@
                     <div class="panel-header">
                         <div class="d-flex align-items-center gap-2">
                             <span class="material-symbols-outlined" style="color:#0F766E; font-size:20px;">history</span>
-                            <span style="font-family:'Inter',sans-serif; font-size:13px; font-weight:700; color:var(--text-primary);">Riwayat Tiket Saya</span>
+                            <span style="font-family:'Inter',sans-serif; font-size:13px; font-weight:700; color:var(--text-primary);">{{ _('Riwayat Tiket Saya') }}</span>
                         </div>
                     </div>
 
@@ -229,21 +229,21 @@
                                         <span class="ticket-id" style="color:{% if t.status == 'Resolved' %}var(--text-secondary){% else %}#0F766E{% endif %};">#{{ t.id }}</span>
                                         
                                         {% if t.status == 'Resolved' %}
-                                            <span class="badge-pill badge-success"><span class="dot"></span>Selesai</span>
+                                            <span class="badge-pill badge-success"><span class="dot"></span>{{ _('Selesai') }}</span>
                                         {% else %}
-                                            <span class="badge-pill badge-warning"><span class="dot"></span>Sedang Diinvestigasi</span>
+                                            <span class="badge-pill badge-warning"><span class="dot"></span>{{ _('Sedang Diinvestigasi') }}</span>
                                         {% endif %}
                                     </div>
                                     <span class="ticket-time">{{ t.created_at.strftime('%d %b %Y, %H:%M') if t.created_at else '' }}</span>
                                 </div>
-                                <div class="ticket-title mb-1">{{ t.category | default('Tiket Dukungan') }}</div>
+                                <div class="ticket-title mb-1">{{ t.category | default(_('Tiket Dukungan')) }}</div>
                                 <div class="ticket-desc mb-3">{{ t.message }}</div>
                             </div>
                             {% endfor %}
                         {% else %}
                             <div class="p-4 text-center text-muted" style="font-family:'Inter',sans-serif; font-size:13px;">
                                 <span class="material-symbols-outlined mb-2" style="font-size:32px; color:var(--text-muted);">inbox</span>
-                                <div>Belum ada riwayat tiket yang dikirim.</div>
+                                <div>{{ _('Belum ada riwayat tiket yang dikirim.') }}</div>
                             </div>
                         {% endif %}
                     </div>

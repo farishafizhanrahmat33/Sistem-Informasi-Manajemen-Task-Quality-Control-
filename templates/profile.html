@@ -560,7 +560,7 @@
                         <!-- Kanan: Tombol Edit Toggle -->
                         <button type="button" id="btnToggleEdit" style="background:none; border:none; display:flex; align-items:center; gap:5px; font-size:12px; font-weight:600; font-family:'Inter',sans-serif; color:var(--primary, #0F766E); cursor:pointer; padding:4px 8px; border-radius:6px; transition:all 0.2s;">
                             <span class="material-symbols-outlined" style="font-size:16px;">edit_square</span>
-                            <span>{{ _('Edit') }}</span>
+                            <span id="btnToggleEditLabel">{{ _('Edit') }}</span>
                         </button>
                     </div>
 
@@ -615,10 +615,15 @@
                 <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     const toggleBtn = document.getElementById('btnToggleEdit');
+                    const labelBtn = document.getElementById('btnToggleEditLabel');
                     const saveContainer = document.getElementById('saveBtnContainer');
                     const inputs = document.querySelectorAll('.readonly-input');
+                    
+                    // Simpan teks awal ke variabel
+                    const textEdit = labelBtn ? labelBtn.innerText : "Edit";
+                    const textCancel = "{{ _('Batal') }}";
 
-                    if(toggleBtn) {
+                    if(toggleBtn && labelBtn) {
                         toggleBtn.addEventListener('click', function() {
                             const isEditing = saveContainer.style.display === 'block';
 
@@ -633,7 +638,7 @@
                                 
                                 toggleBtn.innerHTML = `
                                     <span class="material-symbols-outlined" style="font-size:16px;">close</span>
-                                    <span>Batal</span>
+                                    <span id="btnToggleEditLabel">${textCancel}</span>
                                 `;
                                 toggleBtn.style.color = '#EF4444'; 
                                 toggleBtn.style.backgroundColor = '#FEF2F2';
@@ -649,7 +654,7 @@
                                 
                                 toggleBtn.innerHTML = `
                                     <span class="material-symbols-outlined" style="font-size:16px;">edit_square</span>
-                                    <span>{{ _('Edit') }}</span>
+                                    <span id="btnToggleEditLabel">${textEdit}</span>
                                 `;
                                 toggleBtn.style.color = 'var(--primary, #0F766E)'; 
                                 toggleBtn.style.backgroundColor = 'transparent';
@@ -680,7 +685,7 @@
                         <!-- Tombol Toggle Edit Sandi -->
                         <button type="button" id="btnTogglePassword" style="background:none; border:none; display:flex; align-items:center; gap:5px; font-size:12px; font-weight:600; font-family:'Inter',sans-serif; color:var(--primary, #0F766E); cursor:pointer; padding:4px 8px; border-radius:6px; transition:all 0.2s;">
                             <span class="material-symbols-outlined" style="font-size:16px;">edit_square</span>
-                            <span>{{ _('Ganti Sandi') }}</span>
+                            <span id="btnTogglePasswordLabel">{{ _('Ganti Sandi') }}</span>
                         </button>
                     </div>
 
@@ -764,11 +769,19 @@
             document.addEventListener('DOMContentLoaded', function() {
                 // === 1. FITUR TOGGLE EDIT ===
                 const togglePassBtn = document.getElementById('btnTogglePassword');
+                const labelPassBtn = document.getElementById('btnTogglePasswordLabel');
                 const savePassContainer = document.getElementById('savePasswordBtnContainer');
                 const passInputs = document.querySelectorAll('.readonly-pass');
                 const strengthMeter = document.getElementById('strengthMeterWrap');
+                
+                const textGanti = labelPassBtn ? labelPassBtn.innerText : "Ganti Sandi";
+                const textBatalPass = "{{ _('Batal') }}";
+                const placeholderOld = "{{ _('Masukkan kata sandi lama...') }}";
+                const placeholderNew = "{{ _('Kata sandi baru...') }}";
+                const placeholderConfirm = "{{ _('Ulangi kata sandi baru...') }}";
+                const placeholderDefault = "{{ _('••••••••') }}";
 
-                if(togglePassBtn) {
+                if(togglePassBtn && labelPassBtn) {
                     togglePassBtn.addEventListener('click', function() {
                         const isEditing = savePassContainer.style.display === 'flex';
 
@@ -782,16 +795,16 @@
                             });
                             
                             // Ubah placeholder
-                            passInputs[0].placeholder = "Masukkan kata sandi lama...";
-                            passInputs[1].placeholder = "Kata sandi baru...";
-                            passInputs[2].placeholder = "Ulangi kata sandi baru...";
+                            if(passInputs[0]) passInputs[0].placeholder = placeholderOld;
+                            if(passInputs[1]) passInputs[1].placeholder = placeholderNew;
+                            if(passInputs[2]) passInputs[2].placeholder = placeholderConfirm;
                             
                             savePassContainer.style.display = 'flex';
                             strengthMeter.style.display = 'block'; // Tampilkan meteran
                             
                             togglePassBtn.innerHTML = `
                                 <span class="material-symbols-outlined" style="font-size:16px;">close</span>
-                                <span>Batal</span>
+                                <span id="btnTogglePasswordLabel">${textBatalPass}</span>
                             `;
                             togglePassBtn.style.color = '#EF4444'; 
                             togglePassBtn.style.backgroundColor = '#FEF2F2';
@@ -802,7 +815,7 @@
                                 input.style.backgroundColor = '#F1F5F9';
                                 input.style.cursor = 'not-allowed';
                                 input.value = ''; // Kosongkan isian jika dibatalkan
-                                input.placeholder = "••••••••";
+                                input.placeholder = placeholderDefault;
                             });
                             savePassContainer.style.display = 'none';
                             strengthMeter.style.display = 'none'; // Sembunyikan meteran
@@ -810,7 +823,7 @@
                             
                             togglePassBtn.innerHTML = `
                                 <span class="material-symbols-outlined" style="font-size:16px;">edit_square</span>
-                                <span>{{ _('Ganti Sandi') }}</span>
+                                <span id="btnTogglePasswordLabel">${textGanti}</span>
                             `;
                             togglePassBtn.style.color = 'var(--primary, #0F766E)'; 
                             togglePassBtn.style.backgroundColor = 'transparent';
@@ -825,15 +838,17 @@
                 const matchError = document.getElementById('matchError');
 
                 // Cek kecocokan saat user mengetik di kolom konfirmasi
-                confirmPass.addEventListener('input', function() {
-                    if (confirmPass.value !== newPass.value) {
-                        matchError.style.display = 'block';
-                        confirmPass.style.borderColor = '#EF4444';
-                    } else {
-                        matchError.style.display = 'none';
-                        confirmPass.style.borderColor = 'var(--border-subtle)';
-                    }
-                });
+                if (confirmPass) {
+                    confirmPass.addEventListener('input', function() {
+                        if (confirmPass.value !== newPass.value) {
+                            matchError.style.display = 'block';
+                            confirmPass.style.borderColor = '#EF4444';
+                        } else {
+                            matchError.style.display = 'none';
+                            confirmPass.style.borderColor = 'var(--border-subtle)';
+                        }
+                    });
+                }
 
                 // Cegah formulir dikirim jika sandi tidak cocok
                 if(passForm) {
@@ -880,10 +895,10 @@
                         <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;">
                             <span class="btn-outline-op" style="height:32px;font-size:11px;padding:0 12px;">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                                Choose File
+                                {{ _('Pilih File') }}
                             </span>
-                            <span id="fileLabel" style="font-size:11px;color:var(--text-muted);">No file chosen</span>
-                            <input type="file" name="foto_profil" accept=".jpg,.jpeg,.png" style="display:none;" onchange="document.getElementById('fileLabel').textContent=this.files[0]?.name||'No file chosen'">
+                            <span id="fileLabel" style="font-size:11px;color:var(--text-muted);">{{ _('Belum ada file') }}</span>
+                            <input type="file" name="foto_profil" accept=".jpg,.jpeg,.png" style="display:none;" onchange="document.getElementById('fileLabel').textContent=this.files[0]?.name||'{{ _('Belum ada file') }}'">
                         </label>
                         <p style="font-size:10px;color:var(--text-muted);margin-top:4px;">{{ _("Format: JPG, PNG. Leave it blank if you don't wanna change your photo.") }}</p>
                     </div>
@@ -946,29 +961,48 @@
             const hasSpecial = /[@$!%*#?&]/.test(val);
             const score = [hasLen, hasCase, hasSpecial].filter(Boolean).length;
             const bars = document.querySelectorAll('#strengthBars span');
-            const labels = ['Lemah', 'Sedang', 'Kuat', 'Sangat Kuat'];
+            
+            // Translasi untuk Label via JS Injection dari Jinja
+            const labelLemah = "{{ _('Lemah') }}";
+            const labelSedang = "{{ _('Sedang') }}";
+            const labelKuat = "{{ _('Kuat') }}";
+            const labelSangatKuat = "{{ _('Sangat Kuat') }}";
+            
+            const labels = [labelLemah, labelSedang, labelKuat, labelSangatKuat];
             const percents = ['25%', '50%', '75%', '100%'];
             const filled = Math.max(1, Math.round((score / 3) * 4));
+            
             bars.forEach((b, i) => b.classList.toggle('filled', i < filled));
-            document.getElementById('strengthLabel').textContent = labels[filled - 1] + ' (' + percents[filled - 1] + ')';
-            document.getElementById('chk-len').style.color = hasLen ? 'var(--emerald-700)' : 'var(--text-muted)';
-            document.getElementById('chk-case').style.color = hasCase ? 'var(--emerald-700)' : 'var(--text-muted)';
-            document.getElementById('chk-special').style.color = hasSpecial ? 'var(--emerald-700)' : 'var(--text-muted)';
+            const strengthLabelEl = document.getElementById('strengthLabel');
+            if(strengthLabelEl) {
+                strengthLabelEl.textContent = labels[filled - 1] + ' (' + percents[filled - 1] + ')';
+            }
+            
+            const chkLen = document.getElementById('chk-len');
+            const chkCase = document.getElementById('chk-case');
+            const chkSpecial = document.getElementById('chk-special');
+            
+            if(chkLen) chkLen.style.color = hasLen ? 'var(--emerald-700)' : 'var(--text-muted)';
+            if(chkCase) chkCase.style.color = hasCase ? 'var(--emerald-700)' : 'var(--text-muted)';
+            if(chkSpecial) chkSpecial.style.color = hasSpecial ? 'var(--emerald-700)' : 'var(--text-muted)';
         }
 
         /* ── Escape to close modals ── */
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape') {
-                ['editProfileModal', 'changePasswordModal'].forEach(id =>
-                    document.getElementById(id).classList.add('hidden')
-                );
+                ['editProfileModal', 'changePasswordModal'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if(el) el.classList.add('hidden');
+                });
             }
         });
 
         /* ── Click backdrop to close ── */
         ['editProfileModal', 'changePasswordModal'].forEach(id => {
             const el = document.getElementById(id);
-            el.addEventListener('click', e => { if (e.target === el) el.classList.add('hidden'); });
+            if(el) {
+                el.addEventListener('click', e => { if (e.target === el) el.classList.add('hidden'); });
+            }
         });
     </script>
 </body>
