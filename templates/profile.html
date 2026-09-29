@@ -14,153 +14,954 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ _('Profile Details - QA System') }}</title>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=2">
+
+    <style>
+        /* ─── Design Tokens ─── */
+        :root {
+            --canvas-bg: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --border-subtle: #E2E8F0;
+            --border-strong: #CBD5E1;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --text-muted: #94A3B8;
+            --primary: #0F766E;
+            --primary-hover: #0D9488;
+            --primary-ring: rgba(15,118,110,.18);
+            --emerald-50: #F0FDFA;
+            --emerald-100: #CCFBF1;
+            --emerald-200: #99F6E4;
+            --emerald-600: #0D9488;
+            --emerald-700: #0F766E;
+            --emerald-800: #115E59;
+            --obsidian-900: #0A1C1A;
+            --obsidian-800: #142E2C;
+            --status-success: #059669;
+            --status-success-bg: #ECFDF5;
+            --status-success-border: #A7F3D0;
+            --status-success-text: #065F46;
+            --shadow-card: 0 1px 3px 0 rgba(15,23,42,.05), 0 1px 2px -1px rgba(15,23,42,.05);
+            --shadow-float: 0 4px 12px -2px rgba(15,23,42,.08), 0 2px 4px -1px rgba(15,23,42,.04);
+            --radius: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.25rem;
+            --radius-full: 9999px;
+        }
+
+        /* ─── Base Reset ─── */
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body { background: var(--canvas-bg); font-family: 'Inter', sans-serif; color: var(--text-primary); }
+
+        /* ─── Scrollbars ─── */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: var(--radius-full); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+        /* ─── Card ─── */
+        .op-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-card);
+        }
+
+        /* ─── Section Header ─── */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            padding-bottom: 0.875rem;
+            border-bottom: 1px solid var(--border-subtle);
+            margin-bottom: 1.25rem;
+        }
+        .section-icon {
+            width: 32px; height: 32px;
+            border-radius: var(--radius);
+            background: var(--emerald-50);
+            color: var(--emerald-700);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            margin: 0;
+        }
+        .section-meta {
+            margin-left: auto;
+            font-size: 10px;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ─── Form Controls ─── */
+        .op-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            margin-bottom: 5px;
+        }
+        .op-input {
+            width: 100%;
+            height: 36px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius);
+            padding: 0 12px;
+            font-size: 12px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            transition: border-color .15s, box-shadow .15s;
+            outline: none;
+        }
+        .op-input::placeholder { color: var(--text-muted); }
+        .op-input:focus {
+            border-color: var(--emerald-700);
+            box-shadow: 0 0 0 2px var(--primary-ring);
+        }
+        .op-input[readonly] {
+            background: #F8FAFC;
+            cursor: not-allowed;
+            color: var(--text-secondary);
+        }
+        .op-input-wrap { position: relative; }
+        .op-input-badge {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            background: #E2E8F0;
+            color: var(--text-secondary);
+            padding: 2px 7px;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            pointer-events: none;
+        }
+        .op-input-mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+        .op-eye-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            color: var(--text-muted);
+            line-height: 0;
+            transition: color .15s;
+        }
+        .op-eye-btn:hover { color: var(--text-secondary); }
+
+        /* ─── Buttons ─── */
+        .btn-primary-op {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            height: 36px;
+            padding: 0 18px;
+            background: var(--emerald-700);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: background .15s, box-shadow .15s;
+            box-shadow: 0 1px 2px rgba(15,23,42,.06);
+        }
+        .btn-primary-op:hover { background: var(--emerald-600); }
+        .btn-primary-op:active { background: var(--emerald-800); }
+        .btn-primary-op.w-full { width: 100%; }
+
+        .btn-outline-op {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            height: 36px;
+            padding: 0 16px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius);
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: background .15s, border-color .15s;
+        }
+        .btn-outline-op:hover { background: #F8FAFC; border-color: var(--text-muted); }
+
+        .btn-ghost-op {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            height: 32px;
+            padding: 0 12px;
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            border-radius: var(--radius);
+            font-size: 12px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: background .15s, color .15s;
+        }
+        .btn-ghost-op:hover { background: #F1F5F9; color: var(--text-primary); }
+
+        /* ─── Badges / Pills ─── */
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            height: 22px;
+            padding: 0 9px;
+            border-radius: var(--radius-full);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .03em;
+            white-space: nowrap;
+        }
+        .status-pill .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+        .pill-success { background: var(--status-success-bg); color: var(--status-success-text); border: 1px solid var(--status-success-border); }
+        .pill-success .dot { background: var(--status-success); }
+        .pill-role {
+            background: #F0FDFA;
+            color: #065F46;
+            border: 1px solid #A7F3D0;
+        }
+        .pill-id {
+            background: #F8FAFC;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-subtle);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+        }
+        .label-verified {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--emerald-700);
+        }
+
+        /* ─── Password Strength ─── */
+        .strength-wrap {
+            background: #F8FAFC;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+        }
+        .strength-bar-track {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            height: 5px;
+            margin: 6px 0;
+        }
+        .strength-bar-track span {
+            border-radius: var(--radius-full);
+            background: var(--border-subtle);
+            transition: background .3s;
+        }
+        .strength-bar-track span.filled { background: var(--emerald-600); }
+        .strength-checks {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 6px;
+        }
+        .strength-check {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--emerald-700);
+        }
+        .strength-check svg { width: 11px; height: 11px; color: var(--emerald-600); }
+
+        /* ─── Profile Avatar Banner ─── */
+        .avatar-banner {
+            height: 76px;
+            background: linear-gradient(135deg, #115E59 0%, #0F766E 50%, #0A1C1A 100%);
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+            margin: -24px -24px 0 -24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .avatar-banner::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,.07) 1px, transparent 1px);
+            background-size: 14px 14px;
+        }
+        .avatar-circle {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: var(--emerald-700);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            font-weight: 700;
+            border: 3px solid #fff;
+            box-shadow: var(--shadow-float);
+            position: relative;
+            cursor: pointer;
+            transition: box-shadow .15s;
+        }
+        .avatar-circle:hover { box-shadow: 0 0 0 4px var(--primary-ring), var(--shadow-float); }
+        .avatar-edit-overlay {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: rgba(15,118,110,.55);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity .18s;
+        }
+        .avatar-circle:hover .avatar-edit-overlay { opacity: 1; }
+
+        /* ─── Page Header ─── */
+        .page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid var(--border-subtle);
+            margin-bottom: 1.5rem;
+        }
+        .page-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.025em;
+            margin: 0 0 3px;
+        }
+        .page-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        /* ─── Field Group ─── */
+        .field-group { margin-bottom: 14px; }
+        .field-group:last-child { margin-bottom: 0; }
+        .field-row-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        /* ─── 2-col grid ─── */
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        @media (max-width: 480px) { .two-col { grid-template-columns: 1fr; } }
+
+        /* ─── Flash / Alert ─── */
+        .op-alert {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 1.25rem;
+        }
+        .op-alert-success { background: var(--status-success-bg); color: var(--status-success-text); border: 1px solid var(--status-success-border); }
+
+        /* ─── Modal Overlay ─── */
+        .op-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(10,28,26,.55);
+            backdrop-filter: blur(4px);
+            z-index: 1050;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .op-modal {
+            background: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            box-shadow: 0 20px 25px -5px rgba(15,23,42,.12), 0 8px 10px -6px rgba(15,23,42,.06);
+            width: 100%;
+            max-width: 440px;
+            overflow: hidden;
+        }
+        .op-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-subtle);
+            background: #FAFBFD;
+        }
+        .op-modal-title { font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 0; }
+        .op-modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 2px;
+            line-height: 0;
+            border-radius: 6px;
+            transition: color .15s, background .15s;
+        }
+        .op-modal-close:hover { color: var(--text-primary); background: var(--border-subtle); }
+        .op-modal-body { padding: 20px; }
+        .op-modal-footer {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 14px 20px;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .hidden { display: none !important; }
+    </style>
 </head>
 <body>
 
     {% include 'sidebar.html' %}
-
     {% include 'navbar.html' %}
 
     <div class="container-fluid px-4 pb-5 mt-4">
-        
-        <!-- Pesan Flash -->
+
+        <!-- Flash Messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show border rounded-3 py-3 mb-4 shadow-sm" role="alert">
-                        <span class="fw-semibold">{{ message }}</span>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <div class="op-alert op-alert-success">
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        <span>{{ message }}</span>
+                        <button onclick="this.parentElement.remove()" style="margin-left:auto;background:none;border:none;color:currentColor;cursor:pointer;line-height:0;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                        </button>
                     </div>
                 {% endfor %}
             {% endif %}
         {% endwith %}
 
-        <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-6">
-                <!-- KARTU PROFIL -->
-                <div class="card shadow-sm border" style="background-color: var(--bg-surface); border-color: var(--border-color) !important;">
-                    <div class="card-body p-5 text-center">
-                        
-                        <!-- AVATAR FOTO PROFIL DINAMIS -->
-                        <div class="mb-4">
-                            {% if user.foto_profil != 'default.png' %}
-                                <img src="{{ url_for('static', filename='uploads/profiles/' + user.foto_profil) }}" alt="{{ _('Profile Picture') }}" class="rounded-circle shadow-sm" style="width: 120px; height: 120px; object-fit: cover; border: 3px solid var(--bs-primary);">
-                            {% else %}
-                                <div class="d-inline-flex align-items-center justify-content-center rounded-circle shadow-sm" style="width: 120px; height: 120px; background-color: var(--bs-primary); color: white; font-size: 3.5rem; font-weight: 600;">
-                                    {{ user.nama_lengkap[0]|upper if user.nama_lengkap else user.username[0]|upper }}
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">{{ _('Pengaturan Profil & Keamanan Akun') }}</h1>
+                <p class="page-subtitle">{{ _('Kelola identitas personal, preferensi autentikasi, dan kredensial keamanan akun.') }}</p>
+            </div>
+        </div>
+
+        <!-- Two-column Grid -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start;">
+
+            <!-- ── LEFT: Profile Identity ── -->
+            <div style="display:flex;flex-direction:column;gap:1.5rem;">
+
+                <!-- Profile Card -->
+                <div class="op-card" style="padding:24px;">
+                    <div class="avatar-banner"></div>
+
+                    <div style="display:flex;flex-direction:column;align-items:center;text-align:center;margin-top:-36px;">
+                        <!-- Avatar -->
+                        {% if user.foto_profil != 'default.png' %}
+                            <div class="avatar-circle" style="padding:0;overflow:hidden;" onclick="document.getElementById('editProfileModal').classList.remove('hidden')">
+                                <img src="{{ url_for('static', filename='uploads/profiles/' + user.foto_profil) }}" alt="Profile" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+                                <div class="avatar-edit-overlay">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 012.828 2.828L11.828 15.828a4 4 0 01-1.414.828l-3.535.707.707-3.535A4 4 0 019 13z"/></svg>
                                 </div>
-                            {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="avatar-circle" onclick="document.getElementById('editProfileModal').classList.remove('hidden')">
+                                {{ user.nama_lengkap[0]|upper if user.nama_lengkap else user.username[0]|upper }}
+                                <div class="avatar-edit-overlay">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 012.828 2.828L11.828 15.828a4 4 0 01-1.414.828l-3.535.707.707-3.535A4 4 0 019 13z"/></svg>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <h4 style="font-size:16px;font-weight:700;color:var(--text-primary);margin:12px 0 6px;">
+                            {{ user.nama_lengkap or user.username }}
+                        </h4>
+
+                        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;margin-bottom:16px;">
+                            <span class="status-pill pill-role">{{ _(user.role) }}</span>
+                            <span class="status-pill pill-success">
+                                <span class="dot"></span>
+                                {{ _('Active') }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Info Card -->
+                <div class="op-card" style="padding:24px;">
+                    
+                    <!-- HEADER -->
+                    <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                        <!-- Kiri: Ikon dan Judul -->
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <div class="section-icon">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </div>
+                            <h3 class="section-title" style="margin:0;">{{ _('Account Info') }}</h3>
+                            <span class="section-meta" style="margin-left:8px;">
+                                Diperbarui: 
+                                {% if user.updated_at %}
+                                    {{ user.updated_at.strftime('%d %b %Y') }}
+                                {% else %}
+                                    Belum pernah
+                                {% endif %}
+                            </span>
                         </div>
                         
-                        <h4 class="fw-bold mb-1" style="color: var(--text-main);">{{ user.nama_lengkap or user.username }}</h4>
-                        <p class="mb-4"><span class="badge bg-secondary px-3 py-2">{{ _(user.role) }}</span></p>
-
-                        <button class="btn btn-primary btn-sm px-4 py-2 mb-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#editProfileModal">
-                            ✏️ {{ _('Edit Profile') }}
+                        <!-- Kanan: Tombol Edit Toggle -->
+                        <button type="button" id="btnToggleEdit" style="background:none; border:none; display:flex; align-items:center; gap:5px; font-size:12px; font-weight:600; font-family:'Inter',sans-serif; color:var(--primary, #0F766E); cursor:pointer; padding:4px 8px; border-radius:6px; transition:all 0.2s;">
+                            <span class="material-symbols-outlined" style="font-size:16px;">edit_square</span>
+                            <span>Edit</span>
                         </button>
-                        <button class="btn btn-outline-secondary btn-sm px-4 py-2 mb-4 fw-semibold" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
-                            🔒 {{ _('Change Password') }}
-                        </button>
+                    </div>
 
-                        <hr style="border-color: var(--border-color) !important; opacity: 1;">
+                    <!-- FORM -->
+                    <form id="profileForm" action="{{ url_for('main.edit_profile') }}" method="POST" enctype="multipart/form-data" style="display:flex;flex-direction:column;gap:14px;">
 
-                        <!-- DETAIL INFO -->
-                        <div class="text-start mt-4 px-3">
-                            <h6 class="fw-bold mb-4" style="color: var(--text-main);">{{ _('Account Info') }}</h6>
-                            
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="small text-muted fw-semibold">{{ _('Username') }}</span>
-                                <span class="fw-medium" style="color: var(--text-main);">{{ user.username }}</span>
-                            </div>
-
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="small text-muted fw-semibold">{{ _('Email') }}</span>
-                                <span class="fw-medium" style="color: var(--text-main);">{{ user.email or _('Not set yet') }}</span>
-                            </div>
-                            
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="small text-muted fw-semibold">{{ _('Account Status') }}</span>
-                                <span class="badge bg-success">{{ _('Active') }}</span>
+                        <div class="field-group" style="margin-bottom:0;">
+                            <label class="op-label">{{ _('Username') }}</label>
+                            <div class="op-input-wrap">
+                                <!-- Tambahkan class readonly-input dan atribut readonly -->
+                                <input class="op-input op-input-mono readonly-input" type="text" name="username" value="{{ user.username }}" required readonly style="background-color:#F1F5F9; cursor:not-allowed; transition: 0.3s;">
+                                <span class="op-input-badge">Sistem Utama</span>
                             </div>
                         </div>
 
-                    </div>
+                        <div class="field-group" style="margin-bottom:0;">
+                            <label class="op-label">{{ _('Full Name') }}</label>
+                            <input class="op-input readonly-input" type="text" name="nama_lengkap" value="{{ user.nama_lengkap or '' }}" required readonly style="background-color:#F1F5F9; cursor:not-allowed; transition: 0.3s;">
+                        </div>
+
+                        <div class="field-group" style="margin-bottom:0;">
+                            <div class="field-row-label">
+                                <label class="op-label" style="margin:0;">{{ _('Email Address') }}</label>
+                                <span class="label-verified">
+                                    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                    {{ _('Terverifikasi') }}
+                                </span>
+                            </div>
+                            <input class="op-input op-input-mono readonly-input" type="email" name="email" value="{{ user.email or '' }}" required readonly style="background-color:#F1F5F9; cursor:not-allowed; transition: 0.3s;">
+                        </div>
+
+                        <div class="field-group" style="margin-bottom:0;">
+                            <label class="op-label">{{ _('Account Status') }}</label>
+                            <div style="display:flex;align-items:center;height:36px;padding:0 12px;background:#F8FAFC;border:1px solid var(--border-subtle);border-radius:var(--radius);">
+                                <span class="status-pill pill-success" style="height:20px;font-size:10px;">
+                                    <span class="dot"></span>{{ _('Active') }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Tombol Simpan (Disembunyikan secara default) -->
+                        <div id="saveBtnContainer" style="margin-top:4px; display:none;">
+                            <button class="btn-primary-op w-full" type="submit" style="display:flex; align-items:center; justify-content:center; gap:6px;">
+                                <span class="material-symbols-outlined" style="font-size:18px;">save</span>
+                                {{ _('Simpan Perubahan Identitas') }}
+                            </button>
+                        </div>
+                    </form>
                 </div>
+
+                <!-- SCRIPT UNTUK TOGGLE EDIT MODE -->
+                <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const toggleBtn = document.getElementById('btnToggleEdit');
+                    const saveContainer = document.getElementById('saveBtnContainer');
+                    const inputs = document.querySelectorAll('.readonly-input');
+
+                    if(toggleBtn) {
+                        toggleBtn.addEventListener('click', function() {
+                            // Cek apakah tombol simpan sedang tampil (artinya sedang mode edit)
+                            const isEditing = saveContainer.style.display === 'block';
+
+                            if (!isEditing) {
+                                // MASUK MODE EDIT
+                                inputs.forEach(input => {
+                                    input.removeAttribute('readonly'); // Hapus proteksi
+                                    input.style.backgroundColor = '#FFFFFF'; // Ubah warna putih
+                                    input.style.cursor = 'text'; // Kursor normal
+                                });
+                                saveContainer.style.display = 'block'; // Tampilkan tombol Simpan
+                                
+                                // Ubah tampilan tombol di atas jadi "Batal"
+                                toggleBtn.innerHTML = `
+                                    <span class="material-symbols-outlined" style="font-size:16px;">close</span>
+                                    <span>Batal</span>
+                                `;
+                                toggleBtn.style.color = '#EF4444'; // Warna merah
+                                toggleBtn.style.backgroundColor = '#FEF2F2';
+                            } else {
+                                // BATAL EDIT & KEMBALI KE MODE BACA
+                                inputs.forEach(input => {
+                                    input.setAttribute('readonly', 'true'); // Kembalikan proteksi
+                                    input.style.backgroundColor = '#F1F5F9'; // Kembalikan warna abu
+                                    input.style.cursor = 'not-allowed'; // Kursor dilarang
+                                    input.value = input.getAttribute('value'); // Reset nilai inputan ke nilai awal
+                                });
+                                saveContainer.style.display = 'none'; // Sembunyikan tombol Simpan
+                                
+                                // Kembalikan tampilan tombol ke "Edit"
+                                toggleBtn.innerHTML = `
+                                    <span class="material-symbols-outlined" style="font-size:16px;">edit_square</span>
+                                    <span>Edit</span>
+                                `;
+                                toggleBtn.style.color = 'var(--primary, #0F766E)'; // Warna hijau utama
+                                toggleBtn.style.backgroundColor = 'transparent';
+                            }
+                        });
+                    }
+                });
+                </script>
             </div>
+
+            <!-- ── RIGHT: Password & Security ── -->
+            <div style="display:flex;flex-direction:column;gap:1.5rem;">
+
+                <!-- Change Password Card -->
+                <div class="op-card" style="padding:24px;">
+                    <!-- HEADER -->
+                    <div class="section-header" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px;">
+                        <div style="display:flex; align-items:flex-start; gap:8px;">
+                            <div class="section-icon">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                            </div>
+                            <div>
+                                <h3 class="section-title" style="margin:0 0 2px;">{{ _('Ganti Kata Sandi (Credentials)') }}</h3>
+                                <p style="font-size:11px;color:var(--text-muted);margin:0;">Gunakan kata sandi kuat minimal 6 karakter dengan kombinasi simbol.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Tombol Toggle Edit Sandi -->
+                        <button type="button" id="btnTogglePassword" style="background:none; border:none; display:flex; align-items:center; gap:5px; font-size:12px; font-weight:600; font-family:'Inter',sans-serif; color:var(--primary, #0F766E); cursor:pointer; padding:4px 8px; border-radius:6px; transition:all 0.2s;">
+                            <span class="material-symbols-outlined" style="font-size:16px;">edit_square</span>
+                            <span>Ganti Sandi</span>
+                        </button>
+                    </div>
+
+                    <form id="passwordForm" action="{{ url_for('main.change_password') }}" method="POST" style="display:flex;flex-direction:column;gap:14px;">
+
+                        <div class="field-group" style="margin-bottom:0;">
+                            <div class="field-row-label">
+                                <label class="op-label" style="margin:0;">{{ _('Kata Sandi Saat Ini') }}</label>
+                                <a href="#" style="font-size:11px;color:var(--emerald-700);font-weight:600;text-decoration:none;">{{ _('Lupa kata sandi?') }}</a>
+                            </div>
+                            <div class="op-input-wrap">
+                                <input class="op-input pass-input readonly-pass" type="password" name="old_password" placeholder="{{ _('••••••••') }}" required readonly style="padding-right:38px; background-color:#F1F5F9; cursor:not-allowed; transition: 0.3s;">
+                                <button class="op-eye-btn" type="button" onclick="togglePassword(this)">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="two-col">
+                            <div>
+                                <label class="op-label">{{ _('Kata Sandi Baru') }}</label>
+                                <div class="op-input-wrap">
+                                    <input class="op-input pass-input readonly-pass" id="newPasswordInput" type="password" name="new_password" placeholder="{{ _('••••••••') }}" required readonly style="padding-right:38px; background-color:#F1F5F9; cursor:not-allowed; transition: 0.3s;" oninput="updateStrength(this.value)">
+                                    <button class="op-eye-btn" type="button" onclick="togglePassword(this)">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="op-label">{{ _('Konfirmasi Kata Sandi Baru') }}</label>
+                                <div class="op-input-wrap">
+                                    <input class="op-input pass-input readonly-pass" id="confirmPasswordInput" type="password" placeholder="{{ _('••••••••') }}" required readonly style="padding-right:38px; background-color:#F1F5F9; cursor:not-allowed; transition: 0.3s;">
+                                    <button class="op-eye-btn" type="button" onclick="togglePassword(this)">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    </button>
+                                </div>
+                                <!-- Pesan Error jika kata sandi tidak cocok -->
+                                <span id="matchError" style="color:#EF4444; font-size:11px; display:none; margin-top:4px;">Kata sandi tidak cocok!</span>
+                            </div>
+                        </div>
+
+                        <!-- Strength Meter (Disembunyikan saat mode baca) -->
+                        <div class="strength-wrap" id="strengthMeterWrap" style="display:none;">
+                            <div style="display:flex;align-items:center;justify-content:space-between;">
+                                <span style="font-size:11px;font-weight:600;color:var(--text-secondary);">Kekuatan Sandi:</span>
+                                <span id="strengthLabel" style="font-size:11px;font-weight:700;color:var(--emerald-700);">Belum Diisi</span>
+                            </div>
+                            <div class="strength-bar-track" id="strengthBars">
+                                <span></span><span></span><span></span><span></span>
+                            </div>
+                            <div class="strength-checks">
+                                <span class="strength-check" id="chk-len">
+                                    <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                    Min. 8 karakter
+                                </span>
+                                <span class="strength-check" id="chk-case">
+                                    <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                    Huruf Besar & Angka
+                                </span>
+                                <span class="strength-check" id="chk-special">
+                                    <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                    Simbol (@$!%*#?&)
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Tombol Simpan Sandi -->
+                        <div id="savePasswordBtnContainer" style="display:flex; justify-content:flex-end; display:none; margin-top:4px;">
+                            <button class="btn-primary-op w-full" type="submit" id="submitPasswordBtn" style="display:flex; align-items:center; justify-content:center; gap:6px;">
+                                <span class="material-symbols-outlined" style="font-size:18px;">save</span>
+                                {{ _('Perbarui Kata Sandi') }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+
+            <!-- SCRIPT TOGGLE EDIT & VALIDASI PASSWORD -->
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // === 1. FITUR TOGGLE EDIT ===
+                const togglePassBtn = document.getElementById('btnTogglePassword');
+                const savePassContainer = document.getElementById('savePasswordBtnContainer');
+                const passInputs = document.querySelectorAll('.readonly-pass');
+                const strengthMeter = document.getElementById('strengthMeterWrap');
+
+                if(togglePassBtn) {
+                    togglePassBtn.addEventListener('click', function() {
+                        const isEditing = savePassContainer.style.display === 'flex';
+
+                        if (!isEditing) {
+                            // MASUK MODE EDIT
+                            passInputs.forEach(input => {
+                                input.removeAttribute('readonly');
+                                input.style.backgroundColor = '#FFFFFF';
+                                input.style.cursor = 'text';
+                                input.value = ''; // Kosongkan isian saat mau diedit
+                            });
+                            
+                            // Ubah placeholder
+                            passInputs[0].placeholder = "Masukkan kata sandi lama...";
+                            passInputs[1].placeholder = "Kata sandi baru...";
+                            passInputs[2].placeholder = "Ulangi kata sandi baru...";
+                            
+                            savePassContainer.style.display = 'flex';
+                            strengthMeter.style.display = 'block'; // Tampilkan meteran
+                            
+                            togglePassBtn.innerHTML = `
+                                <span class="material-symbols-outlined" style="font-size:16px;">close</span>
+                                <span>Batal</span>
+                            `;
+                            togglePassBtn.style.color = '#EF4444'; 
+                            togglePassBtn.style.backgroundColor = '#FEF2F2';
+                        } else {
+                            // BATAL EDIT & KEMBALI KE MODE BACA
+                            passInputs.forEach(input => {
+                                input.setAttribute('readonly', 'true');
+                                input.style.backgroundColor = '#F1F5F9';
+                                input.style.cursor = 'not-allowed';
+                                input.value = ''; // Kosongkan isian jika dibatalkan
+                                input.placeholder = "••••••••";
+                            });
+                            savePassContainer.style.display = 'none';
+                            strengthMeter.style.display = 'none'; // Sembunyikan meteran
+                            document.getElementById('matchError').style.display = 'none'; // Sembunyikan error
+                            
+                            togglePassBtn.innerHTML = `
+                                <span class="material-symbols-outlined" style="font-size:16px;">edit_square</span>
+                                <span>Ganti Sandi</span>
+                            `;
+                            togglePassBtn.style.color = 'var(--primary, #0F766E)'; 
+                            togglePassBtn.style.backgroundColor = 'transparent';
+                        }
+                    });
+                }
+
+                // === 2. VALIDASI KONFIRMASI KATA SANDI ===
+                const passForm = document.getElementById('passwordForm');
+                const newPass = document.getElementById('newPasswordInput');
+                const confirmPass = document.getElementById('confirmPasswordInput');
+                const matchError = document.getElementById('matchError');
+
+                // Cek kecocokan saat user mengetik di kolom konfirmasi
+                confirmPass.addEventListener('input', function() {
+                    if (confirmPass.value !== newPass.value) {
+                        matchError.style.display = 'block';
+                        confirmPass.style.borderColor = '#EF4444';
+                    } else {
+                        matchError.style.display = 'none';
+                        confirmPass.style.borderColor = 'var(--border-subtle)';
+                    }
+                });
+
+                // Cegah formulir dikirim jika sandi tidak cocok
+                if(passForm) {
+                    passForm.addEventListener('submit', function(e) {
+                        if (newPass.value !== confirmPass.value) {
+                            e.preventDefault(); // Hentikan pengiriman form
+                            matchError.style.display = 'block';
+                            confirmPass.style.borderColor = '#EF4444';
+                            confirmPass.focus(); // Arahkan kursor ke kolom yang salah
+                        }
+                    });
+                }
+            });
+            </script>
         </div>
+
     </div>
 
-    <!-- MODAL EDIT PROFIL -->
-    <div class="modal fade" id="editProfileModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" style="background-color: var(--bg-surface); color: var(--text-main);">
-                <div class="modal-header border-bottom" style="border-color: var(--border-color) !important;">
-                    <h5 class="modal-title fw-bold">{{ _('Edit Profile') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" style="filter: var(--btn-close-filter, none);"></button>
-                </div>
-                <form action="{{ url_for('main.edit_profile') }}" method="POST" enctype="multipart/form-data">
-                    <div class="modal-body">
-                        <div class="mb-3">
-                                <label class="form-label detail-label text-muted small fw-bold">{{ _('Login Username') }}</label>
-                                <input type="text" class="form-control" name="username" value="{{ user.username }}" required>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label class="form-label detail-label text-muted small fw-bold">{{ _('Full Name') }}</label>
-                                <input type="text" class="form-control" name="nama_lengkap" value="{{ user.nama_lengkap or '' }}" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label detail-label text-muted small fw-bold">{{ _('Email Address') }}</label>
-                            <input type="email" class="form-control" name="email" value="{{ user.email or '' }}" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label detail-label text-muted small fw-bold">{{ _('Upload Profile Picture (Optional)') }}</label>
-                            <input type="file" class="form-control" name="foto_profil" accept=".jpg,.jpeg,.png">
-                            <div class="form-text small text-muted mt-1">{{ _("Format: JPG, PNG. Leave it blank if you don't wanna change your photo.") }}</div>
-                        </div>
-                    </div>
-                    <div class="modal-footer border-top-0 pt-0">
-                        <button type="button" class="btn btn-outline-secondary btn-sm px-4" data-bs-dismiss="modal">{{ _('Cancel') }}</button>
-                        <button type="submit" class="btn btn-primary btn-sm px-4">{{ _('Save Changes') }}</button>
-                    </div>
-                </form>
+    <!-- ─── MODAL: Edit Profile ─── -->
+    <div class="op-modal-backdrop hidden" id="editProfileModal">
+        <div class="op-modal">
+            <div class="op-modal-header">
+                <h5 class="op-modal-title">{{ _('Edit Profile') }}</h5>
+                <button class="op-modal-close" onclick="document.getElementById('editProfileModal').classList.add('hidden')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
             </div>
-        </div>
-    </div>
-<!-- MODAL GANTI PASSWORD -->
-<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="background-color: var(--bg-surface); color: var(--text-main);">
-            <div class="modal-header border-bottom" style="border-color: var(--border-color) !important;">
-                <h5 class="modal-title fw-bold">{{ _('Change Account Password') }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" style="filter: var(--btn-close-filter, none);"></button>
-            </div>
-            <form action="{{ url_for('main.change_password') }}" method="POST">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label detail-label text-muted small fw-bold">{{ _('Old Password') }}</label>
-                        <input type="password" class="form-control" name="old_password" placeholder="{{ _('Enter your old password...') }}" required>
+            <form action="{{ url_for('main.edit_profile') }}" method="POST" enctype="multipart/form-data">
+                <div class="op-modal-body" style="display:flex;flex-direction:column;gap:14px;">
+                    <div>
+                        <label class="op-label">{{ _('Login Username') }}</label>
+                        <input class="op-input op-input-mono" type="text" name="username" value="{{ user.username }}" required>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label detail-label text-muted small fw-bold">{{ _('New Password') }}</label>
-                        <input type="password" class="form-control" name="new_password" placeholder="{{ _('Enter your new password...') }}" required>
+                    <div>
+                        <label class="op-label">{{ _('Full Name') }}</label>
+                        <input class="op-input" type="text" name="nama_lengkap" value="{{ user.nama_lengkap or '' }}" required>
+                    </div>
+                    <div>
+                        <label class="op-label">{{ _('Email Address') }}</label>
+                        <input class="op-input op-input-mono" type="email" name="email" value="{{ user.email or '' }}" required>
+                    </div>
+                    <div>
+                        <label class="op-label">{{ _('Upload Profile Picture (Optional)') }}</label>
+                        <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;">
+                            <span class="btn-outline-op" style="height:32px;font-size:11px;padding:0 12px;">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                Choose File
+                            </span>
+                            <span id="fileLabel" style="font-size:11px;color:var(--text-muted);">No file chosen</span>
+                            <input type="file" name="foto_profil" accept=".jpg,.jpeg,.png" style="display:none;" onchange="document.getElementById('fileLabel').textContent=this.files[0]?.name||'No file chosen'">
+                        </label>
+                        <p style="font-size:10px;color:var(--text-muted);margin-top:4px;">{{ _("Format: JPG, PNG. Leave it blank if you don't wanna change your photo.") }}</p>
                     </div>
                 </div>
-                <div class="modal-footer border-top-0 pt-0">
-                    <button type="button" class="btn btn-outline-secondary btn-sm px-4" data-bs-dismiss="modal">{{ _('Cancel') }}</button>
-                    <button type="submit" class="btn btn-primary btn-sm px-4">{{ _('Change Password') }}</button>
+                <div class="op-modal-footer">
+                    <button class="btn-outline-op" type="button" onclick="document.getElementById('editProfileModal').classList.add('hidden')">{{ _('Cancel') }}</button>
+                    <button class="btn-primary-op" type="submit">{{ _('Save Changes') }}</button>
                 </div>
             </form>
         </div>
     </div>
-</div>
+
+    <!-- ─── MODAL: Change Password ─── -->
+    <div class="op-modal-backdrop hidden" id="changePasswordModal">
+        <div class="op-modal">
+            <div class="op-modal-header">
+                <h5 class="op-modal-title">{{ _('Change Account Password') }}</h5>
+                <button class="op-modal-close" onclick="document.getElementById('changePasswordModal').classList.add('hidden')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <form action="{{ url_for('main.change_password') }}" method="POST">
+                <div class="op-modal-body" style="display:flex;flex-direction:column;gap:14px;">
+                    <div>
+                        <label class="op-label">{{ _('Old Password') }}</label>
+                        <input class="op-input" type="password" name="old_password" placeholder="{{ _('Enter your old password...') }}" required>
+                    </div>
+                    <div>
+                        <label class="op-label">{{ _('New Password') }}</label>
+                        <input class="op-input" type="password" name="new_password" placeholder="{{ _('Enter your new password...') }}" required>
+                    </div>
+                </div>
+                <div class="op-modal-footer">
+                    <button class="btn-outline-op" type="button" onclick="document.getElementById('changePasswordModal').classList.add('hidden')">{{ _('Cancel') }}</button>
+                    <button class="btn-primary-op" type="submit">{{ _('Change Password') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='script.js') }}?v=2"></script>
+
+    <script>
+        /* ── Password Show/Hide ── */
+        function togglePassword(btn) {
+            const input = btn.previousElementSibling;
+            if (!input) return;
+            const isText = input.type === 'text';
+            input.type = isText ? 'password' : 'text';
+            btn.innerHTML = isText
+                ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`
+                : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+        }
+
+        /* ── Password Strength ── */
+        function updateStrength(val) {
+            const hasLen = val.length >= 8;
+            const hasCase = /[A-Z]/.test(val) && /[0-9]/.test(val);
+            const hasSpecial = /[@$!%*#?&]/.test(val);
+            const score = [hasLen, hasCase, hasSpecial].filter(Boolean).length;
+            const bars = document.querySelectorAll('#strengthBars span');
+            const labels = ['Lemah', 'Sedang', 'Kuat', 'Sangat Kuat'];
+            const percents = ['25%', '50%', '75%', '100%'];
+            const filled = Math.max(1, Math.round((score / 3) * 4));
+            bars.forEach((b, i) => b.classList.toggle('filled', i < filled));
+            document.getElementById('strengthLabel').textContent = labels[filled - 1] + ' (' + percents[filled - 1] + ')';
+            document.getElementById('chk-len').style.color = hasLen ? 'var(--emerald-700)' : 'var(--text-muted)';
+            document.getElementById('chk-case').style.color = hasCase ? 'var(--emerald-700)' : 'var(--text-muted)';
+            document.getElementById('chk-special').style.color = hasSpecial ? 'var(--emerald-700)' : 'var(--text-muted)';
+        }
+
+        /* ── Escape to close modals ── */
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                ['editProfileModal', 'changePasswordModal'].forEach(id =>
+                    document.getElementById(id).classList.add('hidden')
+                );
+            }
+        });
+
+        /* ── Click backdrop to close ── */
+        ['editProfileModal', 'changePasswordModal'].forEach(id => {
+            const el = document.getElementById(id);
+            el.addEventListener('click', e => { if (e.target === el) el.classList.add('hidden'); });
+        });
+    </script>
 </body>
 </html>
