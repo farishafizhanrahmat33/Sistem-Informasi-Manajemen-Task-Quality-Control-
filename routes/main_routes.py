@@ -150,12 +150,19 @@ def dashboard():
 def login():
     login_id = request.form.get('username')
     password = request.form.get('password')
+    remember = request.form.get('remember_me')  # Menangkap data dari checkbox
 
     user = db.session.query(UserModel).filter(
         or_(UserModel.username == login_id, UserModel.email == login_id)
     ).first()
 
     if user and check_password_hash(user.password, password):
+        # Jika checkbox dicentang, buat session menjadi permanen
+        if remember:
+            session.permanent = True
+        else:
+            session.permanent = False
+
         session['user_id'] = user.id
         session['role'] = user.role
         session['username'] = user.username

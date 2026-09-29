@@ -124,28 +124,29 @@
             <nav class="tw-flex tw-flex-col tw-gap-1">
                 <div class="tw-px-2 tw-pt-1 tw-pb-1 tw-text-[11px] tw-font-semibold tw-uppercase tw-tracking-wider tw-text-shell-muted">{{ _('Operasional') }}</div>
 
-                {% if role != 'Public' and role != 'Publik' %}
+                {% set active_role = session.get('role') or role or 'Public' %}
+                {% if active_role | lower not in ['public', 'publik', 'guest'] %}
                 <a href="{{ url_for('main.dashboard') }}"
-                   class="tw-no-underline tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-colors tw-border
-                          {% if request.endpoint == 'main.dashboard' %} tw-bg-primary tw-text-white tw-border-primary-dark/40
-                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text tw-border-transparent {% endif %}">
+                class="tw-no-underline tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-colors tw-border
+                        {% if request.endpoint == 'main.dashboard' %} tw-bg-primary tw-text-white tw-border-primary-dark/40
+                        {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text tw-border-transparent {% endif %}">
                     <span class="material-symbols-outlined tw-text-[18px]">space_dashboard</span>
                     <span>{{ _('Dashboard') }}</span>
                 </a>
                 {% endif %}
 
                 <a href="{{ url_for('task.task_list') }}"
-                   class="tw-no-underline tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-colors tw-border
-                          {% if request.endpoint == 'task.task_list' %} tw-bg-primary tw-text-white tw-border-primary-dark/40
-                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text tw-border-transparent {% endif %}">
+                class="tw-no-underline tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-colors tw-border
+                        {% if request.endpoint == 'task.task_list' %} tw-bg-primary tw-text-white tw-border-primary-dark/40
+                        {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text tw-border-transparent {% endif %}">
                     <span class="material-symbols-outlined tw-text-[18px]">assignment</span>
                     <span>{{ _('Manajemen Task') }}</span>
                 </a>
 
                 <a href="{{ url_for('qr.qr_codes_page') }}"
-                   class="tw-no-underline tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-colors tw-border
-                          {% if request.endpoint == 'qr.qr_codes_page' %} tw-bg-primary tw-text-white tw-border-primary-dark/40
-                          {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text tw-border-transparent {% endif %}">
+                class="tw-no-underline tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-2 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-colors tw-border
+                        {% if request.endpoint == 'qr.qr_codes_page' %} tw-bg-primary tw-text-white tw-border-primary-dark/40
+                        {% else %} tw-text-slate-300 hover:tw-bg-shell-surface hover:tw-text-shell-text tw-border-transparent {% endif %}">
                     <span class="material-symbols-outlined tw-text-[18px]">qr_code_scanner</span>
                     <span>{{ _('Manajemen QR') }}</span>
                 </a>
@@ -229,14 +230,15 @@
                 </ul>
             </div>
 
-            {% if role != 'Public' and role != 'Publik' %}
+            <!-- Tombol Logout: HANYA MUNCUL JIKA SUDAH LOGIN -->
+            {% if session.get('username') or session.get('user_id') %}
             <a href="{{ url_for('main.logout') }}" title="{{ _('Keluar') }}" class="tw-no-underline tw-ml-auto tw-w-7 tw-h-7 tw-rounded tw-flex tw-items-center tw-justify-center tw-text-shell-muted hover:tw-bg-black/30 hover:tw-text-rose-400 tw-transition-colors">
                 <span class="material-symbols-outlined tw-text-[16px]">logout</span>
             </a>
             {% endif %}
         </div>
 
-        {% if role == 'Public' or role == 'Publik' %}
+        {% if not session.get('username') and not session.get('user_id') %}
         <button type="button" class="tw-w-full tw-py-2 tw-rounded-lg tw-bg-primary tw-text-white tw-text-sm tw-font-semibold hover:tw-bg-primary-dark tw-transition-colors" data-bs-toggle="modal" data-bs-target="#loginModal">
             {{ _('Masuk') }}
         </button>

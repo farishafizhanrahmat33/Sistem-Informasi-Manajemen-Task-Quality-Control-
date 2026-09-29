@@ -5,8 +5,15 @@ from database import db
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash
 from flask_babel import Babel  # Import Babel
+from datetime import timedelta
 
 app = Flask(__name__)
+
+# TAMBAHKAN KUNCI RAHASIA INI
+app.secret_key = 'ganti-dengan-string-acak-yang-sangat-panjang-dan-aman'
+
+# Mengatur durasi "Ingat Saya" menjadi 30 hari
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)
 
 app.config.from_object(Config)
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 1024  # 1 GB

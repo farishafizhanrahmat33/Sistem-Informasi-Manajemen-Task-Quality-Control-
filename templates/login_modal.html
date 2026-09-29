@@ -427,7 +427,8 @@
                 const result = await res.json();
 
                 if (res.ok) {
-                    window.location.reload();
+                    // Arahkan langsung ke halaman dashboard setelah sukses login
+                    window.location.href = "{{ url_for('main.dashboard') }}";
                 } else {
                     showError(result.message);
                     setLoading(false);

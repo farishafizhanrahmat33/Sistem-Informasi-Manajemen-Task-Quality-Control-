@@ -121,8 +121,10 @@
                             <li><a class="dropdown-item py-1.5 px-3 role-filter-item" href="#" data-role="Developer">{{ _('Developer') }}</a></li>
                             <li><a class="dropdown-item py-1.5 px-3 role-filter-item" href="#" data-role="Supervisor">{{ _('Supervisor') }}</a></li>
                             <li><a class="dropdown-item py-1.5 px-3 role-filter-item" href="#" data-role="Quality Control">{{ _('Quality Control') }}</a></li>
+                            <!-- TAMBAHKAN INI -->
+                            <li><a class="dropdown-item py-1.5 px-3 role-filter-item" href="#" data-role="Collector">{{ _('Collector') }}</a></li>
                             <li><a class="dropdown-item py-1.5 px-3 role-filter-item" href="#" data-role="Public">{{ _('Public') }}</a></li>
-                        </ul>
+                        </ul> 
                     </div>
 
                     <!-- Dropdown Filter Status -->
@@ -198,6 +200,8 @@
                                         <option value="Developer" {% if u.role == 'Developer' %}selected{% endif %}>{{ _('Developer') }}</option>
                                         <option value="Supervisor" {% if u.role == 'Supervisor' %}selected{% endif %}>{{ _('Supervisor') }}</option>
                                         <option value="Quality Control" {% if u.role == 'Quality Control' %}selected{% endif %}>{{ _('Quality Control') }}</option>
+                                        <!-- TAMBAHKAN INI -->
+                                        <option value="Collector" {% if u.role == 'Collector' %}selected{% endif %}>{{ _('Collector') }}</option>
                                         <option value="Public" {% if u.role == 'Public' %}selected{% endif %}>{{ _('Public') }}</option>
                                     </select>
                                     <button type="submit" class="btn btn-tm-primary btn-sm py-1 px-2.5 fw-medium" style="font-size: 0.75rem; border-radius: 6px;">{{ _('Perbarui') }}</button>
@@ -351,11 +355,10 @@
                                 <select class="form-select form-select-apex font-label-md py-2" name="role" required>
                                     <!-- Opsi default yang kosong dan tidak bisa dipilih kembali -->
                                     <option value="" disabled selected hidden>-- {{ _('Pilih Peran') }} --</option>
-                                    
                                     <option value="Quality Control">{{ _('Quality Control') }}</option>
                                     <option value="Supervisor">{{ _('Supervisor') }}</option>
                                     <option value="Developer">{{ _('Developer') }}</option>
-                                    <option value="Public">{{ _('Collector') }}</option>
+                                    <option value="Collector">{{ _('Collector') }}</option>
                                 </select>
                                 
                                 <!-- Role Scope Info Box -->
