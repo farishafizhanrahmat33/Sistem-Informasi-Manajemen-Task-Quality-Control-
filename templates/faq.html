@@ -153,7 +153,7 @@
         <div class="quick-cards-row">
             
             <!-- Kartu 1: Quickstart (HANYA MUNCUL JIKA BUKAN PUBLIC) -->
-            {% if current_role in ['Developer', 'Quality Control', 'Supervisor'] %}
+            {% if current_role in ['Developer', 'Quality Control', 'Supervisor', 'Collector'] %}
             <div class="quick-card">
                 <div>
                     <div class="quick-card-top">
@@ -187,7 +187,7 @@
                     <p class="quick-card-desc">{{ _('Pemetaan hak akses sistem: batasan wewenang tiap peran pengguna, termasuk apa yang bisa Anda akses di akun Anda saat ini.') }}</p>
                 </div>
                 <div class="quick-card-footer">
-                    <span class="quick-card-meta">{{ _('4 Peran Sistem') }}</span>
+                    <span class="quick-card-meta">{{ _('5 Peran Sistem') }}</span>
                     <a href="#faqList" class="quick-card-cta text-decoration-none">
                         {{ _('Baca Matriks') }} <span class="material-symbols-outlined">arrow_forward</span>
                     </a>
@@ -221,7 +221,7 @@
             <button class="cat-pill active" data-cat="all">{{ _('Semua Kategori') }}</button>
             <button class="cat-pill" data-cat="auth">{{ _('Akun &amp; Profil') }}</button>
             
-            {% if current_role in ['Developer', 'Quality Control', 'Supervisor'] %}
+            {% if current_role in ['Developer', 'Quality Control', 'Supervisor', 'Collector'] %}
             <button class="cat-pill" data-cat="task">{{ _('Dashboard &amp; Manajemen Tugas') }}</button>
             {% endif %}
             
@@ -269,7 +269,7 @@
                 </div>
 
                 <!-- Q2 & Q3: DASHBOARD & TASK (HANYA INTERNAL) -->
-                {% if current_role in ['Developer', 'Quality Control', 'Supervisor'] %}
+                {% if current_role in ['Developer', 'Quality Control', 'Supervisor', 'Collector'] %}
                 <div class="faq-card" data-cat="task">
                     <button class="faq-trigger">
                         <div class="faq-trigger-left">
@@ -330,7 +330,7 @@
                             <p>{{ _('Alur pengelolaan data ini bergantung pada peran Anda:') }}</p>
                             <ul>
                                 <li><b>Developer &amp; QC:</b> {{ _('Mengunggah file (Excel/CSV) di Manajemen Tugas, memperbarui status uji coba, dan melampirkan log sampel.') }}</li>
-                                <li><b>Supervisor:</b> {{ _('Memantau hasil data yang sudah diunggah QC melalui Dashboard dan menggunakan fitur pencarian untuk memantau aktivitas proyek secara menyeluruh.') }}</li>
+                                <li><b>Supervisor &amp; Collector:</b> {{ _('Memantau hasil data yang sudah diunggah QC melalui Dashboard dan menggunakan fitur pencarian untuk memantau aktivitas proyek secara menyeluruh.') }}</li>
                             </ul>
                         </div>
                     </div>
@@ -382,6 +382,7 @@
                                 <div class="mini-card"><b>Developer:</b> {{ _('Akses tertinggi (Root) — mencakup manajemen akun, tiket bantuan, kontrol penuh tugas, database, dan dokumen.') }}</div>
                                 <div class="mini-card"><b>Quality Control:</b> {{ _('Tim lapangan yang berhak mengimpor data proyek (Excel/CSV), mengevaluasi tugas, mengubah status, dan mengunggah dokumen referensi PDF.') }}</div>
                                 <div class="mini-card"><b>Supervisor:</b> {{ _('Manajemen yang memantau kinerja operasional melalui Dashboard eksklusif serta fitur penyaringan tugas tanpa akses mengubah data inti.') }}</div>
+                                <div class="mini-card"><b>Collector:</b> {{ _('Petugas pemantau internal yang dapat mengakses Dashboard untuk monitoring data secara khusus dengan batasan akses melihat saja.') }}</div>
                                 <div class="mini-card"><b>Public (Guest):</b> {{ _('Akses mendasar bagi publik, di mana fitur teknis disembunyikan. Hanya berhak mengelola akun pribadi dan menghubungi Layanan Pelanggan.') }}</div>
                             </div>
                         </div>
