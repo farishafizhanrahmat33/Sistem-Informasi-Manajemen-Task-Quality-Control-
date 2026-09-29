@@ -3,7 +3,8 @@
 <head>
     <script>
     (function() {
-        const saved = localStorage.getItem('user_theme_preference') || 'system';
+        // Ubah default dari 'system' menjadi 'light'
+        const saved = localStorage.getItem('user_theme_preference') || 'light';
         let theme = saved;
         if (saved === 'system') {
             theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -433,7 +434,7 @@
                             {% if recent_tasks %}
                                 {% for t in recent_tasks %}
                                 {% set display_category = 'Production' if t.sent_by_leader else t.qc_category %}
-                                <tr class="hover:bg-slate-50 transition-colors group cursor-pointer activity-row" data-project="{{ t.project_name | default('General Project') }}" data-category="{{ display_category }}" data-date="{{ t.updated_at.strftime('%Y-%m-%d') if t.updated_at else '' }}">
+                                <tr class="transition-colors group cursor-pointer activity-row" data-project="{{ t.project_name | default('General Project') }}" data-category="{{ display_category }}" data-date="{{ t.updated_at.strftime('%Y-%m-%d') if t.updated_at else '' }}">
                                     <td class="py-4 px-6">
                                         <div class="flex flex-col gap-0.5">
                                             <span data-export="project" class="font-bold text-[13px] text-on-surface tracking-tight group-hover:text-primary-container transition-colors truncate max-w-[200px]">{{ t.project_name | default('General Project') }}</span>

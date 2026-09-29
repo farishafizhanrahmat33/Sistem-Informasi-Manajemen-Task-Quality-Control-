@@ -97,15 +97,15 @@
 
 /* Tema Gelap */
 [data-theme="dark"] {
-    --bg-body:      #0A1615;
-    --bg-surface:   #0F201E;
-    --text-main:    #F1F5F9;
-    --text-muted:   #8FA6A3;
-    --border-color: #1C3532;
-    --accent-soft:  rgba(128, 213, 203, 0.16);
-    --dark-soft:    rgba(255, 255, 255, 0.06);
-    --modal-bg:     #0F201E;
-    --input-bg:     #10201E;
+    --bg-body:      #081215; /* Background utama (luar kotak) menyatu dengan ruang kosong */
+    --bg-surface:   #0E1B21; /* Background dalam kotak bento/panel agak terang sedikit */
+    --text-main:    #F8FAFC;
+    --text-muted:   #8B9FA7;
+    --border-color: #1A2D34; /* Garis tepi kotak bento yang elegan */
+    --accent-soft:  rgba(15, 118, 110, 0.16);
+    --dark-soft:    rgba(255, 255, 255, 0.04);
+    --modal-bg:     #0E1B21;
+    --input-bg:     #0A1519;
     --badge-sent-bg:   rgba(167, 139, 250, 0.15);
     --badge-sent-text: #A78BFA;
     --btn-close-filter: invert(1) grayscale(100%) brightness(200%);
@@ -1192,7 +1192,11 @@ textarea {
     transition: all 0.2s ease-in-out;
     color: var(--text-main);
 }
-.proj-list-item:hover { border-color: var(--primary); transform: translateX(2px); }
+.proj-list-item:hover { 
+    background-color: rgba(0, 0, 0, 0.03) !important; /* Transparan lembut di tema terang */
+    border-color: var(--primary); 
+    transform: translateX(2px); 
+}
 .proj-list-item.active {
     background-color: rgba(15, 118, 110, 0.1) !important;
     border-color: rgba(15, 118, 110, 0.3) !important;
@@ -1805,16 +1809,90 @@ textarea {
    20. DARK MODE OVERRIDES — DASHBOARD & GLOBAL
    ========================================================================== */
 
-/* Lapisan permukaan */
-[data-theme="dark"] body { background-color: #0A1615 !important; color: #F1F5F9 !important; }
-[data-theme="dark"] .bg-background                  { background-color: #0A1615 !important; }
+/* --------------------------------------------------------------------------
+   SIDEBAR — Hitam solid di dark mode (sesuai desain APEX QA)
+   -------------------------------------------------------------------------- */
+
+/* Sidebar desktop persisten */
+[data-theme="dark"] .enterprise-sidebar,
+[data-theme="dark"] #appSidebar {
+    background-color: #0A0A0A !important;
+    border-right-color: #1A1A1A !important;
+}
+
+/* Offcanvas sidebar (mobile / drawer) */
+[data-theme="dark"] .offcanvas,
+[data-theme="dark"] .offcanvas-start {
+    background-color: #0A0A0A !important;
+    border-right-color: #1A1A1A !important;
+}
+
+/* Footer sticky sidebar */
+[data-theme="dark"] .sidebar-sticky-footer {
+    background-color: #0A0A0A !important;
+    border-top-color: #1E1E1E !important;
+}
+
+/* Label seksi sidebar ("OPERASIONAL", "ADMINISTRASI", dst.) */
+[data-theme="dark"] .sidebar-section-title {
+    color: #3D3D3D !important;
+}
+
+/* Item menu sidebar — teks sedikit lebih terang supaya terbaca di bg hitam */
+[data-theme="dark"] .sidebar-item {
+    color: #A0B4B1 !important;
+}
+[data-theme="dark"] .sidebar-item:hover {
+    background-color: rgba(255, 255, 255, 0.06) !important;
+    color: #E2F0EE !important;
+}
+
+/* Item aktif sidebar — highlight hijau primer */
+[data-theme="dark"] .sidebar-item.active,
+[data-theme="dark"] .sidebar-item[aria-current="page"],
+[data-theme="dark"] .sidebar-item.tw-bg-primary\/10,
+[data-theme="dark"] #appSidebar .sidebar-item.active {
+    background-color: rgba(13, 148, 136, 0.18) !important;
+    color: #5EEAD4 !important;
+}
+
+/* --------------------------------------------------------------------------
+   NAVBAR — Nuansa hijau gelap di dark mode (sesuai desain APEX QA)
+   -------------------------------------------------------------------------- */
+[data-theme="dark"] .navbar-custom,
+[data-theme="dark"] header {
+    background-color: var(--bg-body) !important; /* Menyatu mulus dengan background utama */
+    border-bottom-color: var(--border-color) !important;
+    box-shadow: none !important;
+}
+
+/* Teks / ikon di navbar tetap terbaca */
+[data-theme="dark"] .navbar-custom .text-muted,
+[data-theme="dark"] .navbar-custom .text-slate-400 {
+    color: var(--text-muted) !important;
+}
+
+/* Lapisan permukaan & BENTO PANEL (Diambil dari referensi gambar) */
+[data-theme="dark"] body { background-color: var(--bg-body) !important; color: var(--text-main) !important; }
+[data-theme="dark"] .bg-background                  { background-color: var(--bg-body) !important; }
+
+/* Terapkan warna kotak bento elegan ke semua elemen Card/Panel */
+[data-theme="dark"] .bento-panel,
+[data-theme="dark"] .card,
+[data-theme="dark"] .task-card,
+[data-theme="dark"] .enterprise-card,
 [data-theme="dark"] .bg-white,
-[data-theme="dark"] .bg-surface-container-low       { background-color: #0F201E !important; border-color: #1C3532 !important; }
-[data-theme="dark"] .bg-surface-container           { background-color: #132724 !important; border-color: #1C3532 !important; }
-[data-theme="dark"] .bg-surface-container-high      { background-color: #16302C !important; border-color: #23423E !important; }
-[data-theme="dark"] .bg-surface-container-highest   { background-color: #1C3D37 !important; border-color: #23423E !important; }
-[data-theme="dark"] .bg-slate-50                    { background-color: #10201E !important; }
-[data-theme="dark"] thead.bg-surface-container-low  { background-color: #0D1C1A !important; }
+[data-theme="dark"] .bg-surface-container-low {
+    background-color: var(--bg-surface) !important;
+    border-color: var(--border-color) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+}
+
+[data-theme="dark"] .bg-surface-container           { background-color: #112027 !important; border-color: var(--border-color) !important; }
+[data-theme="dark"] .bg-surface-container-high      { background-color: #15262E !important; border-color: #1F363F !important; }
+[data-theme="dark"] .bg-surface-container-highest   { background-color: #192D36 !important; border-color: #1F363F !important; }
+[data-theme="dark"] .bg-slate-50                    { background-color: var(--input-bg) !important; }
+[data-theme="dark"] thead.bg-surface-container-low  { background-color: #0A1418 !important; }
 
 /* Shadow dark mode */
 [data-theme="dark"] .shadow-sm,
@@ -1885,6 +1963,49 @@ textarea {
 [data-theme="dark"] .border-sky-300        { border-color: rgba(56, 189, 248, 0.35) !important; }
 
 [data-theme="dark"] .bg-slate-100          { background-color: rgba(148, 163, 184, 0.12) !important; }
+
+/* Efek List Project khusus Tema Gelap */
+[data-theme="dark"] .proj-list-item {
+    background-color: var(--bg-surface) !important;
+}
+[data-theme="dark"] .proj-list-item:hover {
+    background-color: rgba(255, 255, 255, 0.04) !important; /* Putih/abu-abu sangat transparan saat kursor diarahkan */
+    border-color: rgba(45, 212, 191, 0.4) !important;
+}
+[data-theme="dark"] .proj-list-item.active {
+    background-color: rgba(15, 118, 110, 0.2) !important; /* Hijau agak transparan saat dipilih */
+    border-color: rgba(15, 118, 110, 0.5) !important;
+}
+
+/* ==========================================================================
+   MEMATIKAN PAKSA EFEK HOVER PUTIH BOOTSTRAP 5 DI TABEL
+   ========================================================================== */
+html[data-theme="dark"] body table.table tbody tr:hover td,
+html[data-theme="dark"] body table.table tbody tr:hover th,
+html[data-theme="dark"] body .table-hover tbody tr:hover td,
+html[data-theme="dark"] body .table-custom-clean tbody tr:hover td {
+    --bs-table-accent-bg: transparent !important;
+    --bs-table-bg-state: transparent !important;
+    --bs-table-hover-bg: transparent !important;
+    --bs-table-bg: transparent !important;
+    
+    /* Kita gunakan warna Hex solid (biru-abu gelap) agar tidak bentrok dengan transparansi */
+    background-color: #12242C !important; 
+    background-image: none !important;
+    box-shadow: none !important;
+    color: #F8FAFC !important;
+}
+
+html[data-theme="dark"] body table.table tbody tr:hover {
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Pastikan teks di dalam baris yang di-hover tetap terang */
+html[data-theme="dark"] body table.table tbody tr:hover td *,
+html[data-theme="dark"] body .table-custom-clean tbody tr:hover td * {
+    color: inherit ;
+}
 
 
 /* ##########################################################################

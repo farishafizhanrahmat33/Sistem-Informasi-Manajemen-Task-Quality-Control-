@@ -1360,7 +1360,7 @@ function renderTableTasks(tasks) {
             const safeUser = (uploadedBy || '').replace(/'/g, "\\'");
 
             html += `
-                <tr class="hover:bg-slate-50 transition-colors group cursor-pointer activity-row" data-project="${projectName}" data-category="${cat}" data-date="${updatedAt}">
+                <tr class="<tr class="transition-colors group cursor-pointer activity-row" data-project="${projectName}" data-category="${cat}" data-date="${updatedAt}">
                     <td class="py-4 px-6">
                         <div class="flex flex-col gap-0.5">
                             <span class="font-bold text-[13px] text-on-surface tracking-tight group-hover:text-primary-container transition-colors truncate max-w-[200px]">${projectName}</span>
@@ -2259,4 +2259,19 @@ function sanitizeUsernameInput(inputElement) {
         // Kembalikan posisi kursor
         inputElement.setSelectionRange(start, end);
     }
+}
+
+// Fungsi untuk mengganti tema dan menyimpannya secara permanen di browser
+function setTheme(theme) {
+    // 1. Simpan pilihan pengguna ke localStorage browser (tahan logout & tutup browser)
+    localStorage.setItem('user_theme_preference', theme);
+    
+    // 2. Terapkan tema
+    let activeTheme = theme;
+    if (theme === 'system') {
+        activeTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    
+    // 3. Ubah atribut pada elemen HTML utama agar CSS merespons
+    document.documentElement.setAttribute('data-theme', activeTheme);
 }
