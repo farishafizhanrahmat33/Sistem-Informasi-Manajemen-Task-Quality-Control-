@@ -2,7 +2,11 @@ import os
 import secrets
 from dotenv import load_dotenv
 
-load_dotenv()
+# 1. Tentukan Root Proyek (naik satu tingkat dari folder 'src')
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# 2. Muat file .env dari Root Proyek secara eksplisit
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 
 def _normalize_db_url(url: str) -> str:
@@ -23,9 +27,12 @@ class Config:
     # Single source of truth for the DB connection -- database.py just
     # uses whatever Flask-SQLAlchemy is configured with here, instead of
     # building its own separate connection string.
+    # Jika menggunakan SQLite, pastikan file database tersimpan di Root Proyek
+    default_sqlite = 'sqlite:///' + os.path.join(BASE_DIR, 'database.db')
     SQLALCHEMY_DATABASE_URI = _normalize_db_url(
-        os.environ.get('DATABASE_URL') or 'sqlite:///database.db'
+        os.environ.get('DATABASE_URL') or default_sqlite
     )
+    
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {
         'pool_pre_ping': True,  # drop dead connections instead of erroring on them

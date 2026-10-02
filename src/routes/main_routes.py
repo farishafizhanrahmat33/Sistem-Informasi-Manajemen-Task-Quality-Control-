@@ -568,7 +568,7 @@ def api_dashboard_data():
             'task_name': t.task_name,
             'uploaded_by': t.uploaded_by or 'User',
             'display_category': display_category,
-            'updated_at': t.updated_at.strftime('%Y-%m-%d') if t.updated_at else ''
+            'updated_at': t.updated_at.strftime('%H:%M | %Y-%m-%d') if t.updated_at else ''
         })
 
     return jsonify({

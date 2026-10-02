@@ -5,19 +5,23 @@ import hashlib
 import uuid
 import threading
 from datetime import datetime
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify, current_app
 from flask_babel import gettext as _
 from werkzeug.utils import secure_filename
 from database import db, QRCodeModel
 from pypdf import PdfReader
 from sqlalchemy import func
-import pymupdf as fitz  # Diperbarui menggunakan pymupdf agar bersih dari warning
+import pymupdf as fitz
 
 qr_bp = Blueprint('qr', __name__)
-QR_UPLOAD_FOLDER = 'static/uploads/qr_codes'
+
+def get_qr_upload_folder():
+    """Mengembalikan path absolut folder upload QR secara dinamis."""
+    return os.path.join(current_app.static_folder, 'uploads', 'qr_codes')
+
 ALLOWED_EXTENSIONS = {'.pdf'}
 
-# Kunci global buat penomoran Scene -- lihat _render_and_save_page().
+# Kunci global buat penomoran Scene
 scene_lock = threading.Lock()
 
 
@@ -33,32 +37,18 @@ def _unique_filename(filename: str) -> str:
     base, ext = os.path.splitext(filename)
     candidate = filename
     i = 1
-    while os.path.exists(os.path.join(QR_UPLOAD_FOLDER, candidate)):
+    upload_folder = get_qr_upload_folder()
+    while os.path.exists(os.path.join(upload_folder, candidate)):
         candidate = f"{base}_{i}{ext}"
         i += 1
     return candidate
 
 
-# ==========================================================================
-# PELACAK PROGRES UPLOAD (untuk fitur "lanjutkan upload yang terputus")
-#
-# Disimpan sebagai file JSON kecil, TERPISAH dari database -- supaya tidak
-# perlu ubah skema tabel QRCodeModel. Kuncinya BUKAN nama file/kode proyek
-# saja, tapi juga HASH ISI FILE. Jadi kalau ada file LAIN yang beda isi tapi
-# kebetulan kode proyeknya sama, hash-nya pasti beda -> tidak akan dianggap
-# "lanjutan", semua halamannya tetap diproses normal, tidak ada yang di-skip.
-# ==========================================================================
-
 def _progress_path(base_code: str) -> str:
-    return os.path.join(QR_UPLOAD_FOLDER, f".progress_{secure_filename(base_code)}.json")
+    return os.path.join(get_qr_upload_folder(), f".progress_{secure_filename(base_code)}.json")
 
 
 def _load_progress(base_code: str, file_hash: str) -> set:
-    """Kembalikan set nomor halaman yang sudah pernah berhasil, HANYA kalau
-    file yang di-upload sekarang persis sama (hash cocok) dengan percobaan
-    sebelumnya. Kalau tidak ada progres tersimpan, atau hash-nya beda (berarti
-    ini file lain, bukan lanjutan), kembalikan set kosong -- artinya semua
-    halaman diproses dari awal, tidak ada yang di-skip."""
     path = _progress_path(base_code)
     if not os.path.exists(path):
         return set()
@@ -86,18 +76,8 @@ def _clear_progress(base_code: str):
 
 
 def _tmp_pdf_path(upload_id: str) -> str:
-    """Lokasi salinan sementara PDF mentah, dipakai endpoint per-halaman
-    (/upload_qr/page) supaya file cukup dikirim SEKALI dari browser (lewat
-    /upload_qr/init), lalu tiap request per-halaman berikutnya tinggal buka
-    salinan ini -- tidak perlu upload ulang seluruh file tiap halaman.
-
-    PENTING: key-nya adalah upload_id (token acak per sesi upload, dibuat di
-    /upload_qr/init), BUKAN base_code. Kalau pakai base_code, dua file
-    berbeda yang kebetulan punya base_code sama (misal dari project yang
-    sama) akan saling menimpa salinan sementara masing-masing kalau upload-nya
-    tumpang tindih."""
     safe_id = re.sub(r'[^a-zA-Z0-9_-]', '', upload_id)[:64]
-    return os.path.join(QR_UPLOAD_FOLDER, f".tmp_{safe_id}.pdf")
+    return os.path.join(get_qr_upload_folder(), f".tmp_{safe_id}.pdf")
 
 
 def _resolve_base_code(original_filename: str) -> str:
@@ -106,32 +86,15 @@ def _resolve_base_code(original_filename: str) -> str:
 
 
 def _render_and_save_page(doc, i: int, base_code: str, already_uploaded_pages: set, file_hash: str) -> bool:
-    """Proses SATU halaman (render gambar full + thumbnail, simpan ke DB).
-    Dipakai baik oleh route lama (/upload_qr, proses semua halaman sekaligus)
-    maupun route baru (/upload_qr/page, proses 1 halaman per request) --
-    supaya logikanya tidak ada yang duplikat/ketinggalan sinkron.
-
-    `i` adalah nomor halaman LOKAL di dalam file ini (dipakai buat baca
-    doc[i-1] dan buat state resume per-file). Nomor "Scene N" yang
-    ditampilkan ke user dihitung TERPISAH, secara GLOBAL lintas semua
-    file/project yang pernah di-upload -- lihat blok scene_lock di bawah.
-
-    Return True kalau sukses, False kalau gagal (halaman ini dilewati,
-    tapi tidak menjatuhkan proses halaman lain)."""
     page = doc[i - 1]
 
     full_path = None
     thumb_path = None
     pix_full = None
     pix_thumb = None
+    upload_folder = get_qr_upload_folder()
+    
     try:
-        # KUNCI UTAMA: nomor Scene dihitung dari MAX(page_number) di SELURUH
-        # tabel QRCodeModel (bukan cuma punya base_code ini), lalu +1. Ini
-        # yang bikin nomor Scene selalu lanjut & gak pernah duplikat, mau
-        # upload 1 file atau banyak file sekaligus, dari project apapun.
-        # Dikunci (scene_lock) supaya kalaupun ada 2 request halaman yang
-        # nyaris bersamaan, keduanya tidak baca MAX yang sama lalu berebut
-        # nomor yang sama.
         with scene_lock:
             max_page_query = db.session.query(func.max(QRCodeModel.page_number)).scalar()
             scene_num = (max_page_query or 0) + 1
@@ -139,30 +102,26 @@ def _render_and_save_page(doc, i: int, base_code: str, already_uploaded_pages: s
             doc_name = f"Scene {scene_num}"
             safe_base = secure_filename(f"{base_code}_scene_{scene_num}") or f"page_{scene_num}"
 
-            # Dioptimalkan dari 1.5 ke 1.2 agar proses render lebih ringan & terhindar dari timeout server
             zoom = 1.2
             mat = fitz.Matrix(zoom, zoom)
 
-            # 1. SIMPAN GAMBAR FULL (UTUH) UNTUK VIEW PREVIEW
+            # 1. SIMPAN GAMBAR FULL
             full_filename = _unique_filename(f"{safe_base}.png")
-            full_path = os.path.join(QR_UPLOAD_FOLDER, full_filename)
+            full_path = os.path.join(upload_folder, full_filename)
 
             pix_full = page.get_pixmap(matrix=mat)
             pix_full.save(full_path)
 
-            # 2. Simpan gambar thumbnail (Kustomisasi pas pada kotak gambar besar utama)
+            # 2. Simpan gambar thumbnail
             base_name, ext = os.path.splitext(full_filename)
             thumb_filename = f"{base_name}_thumb{ext}"
-            thumb_path = os.path.join(QR_UPLOAD_FOLDER, thumb_filename)
+            thumb_path = os.path.join(upload_folder, thumb_filename)
 
             page_rect = page.rect
-
-            # --- KOORDINAT PRESISI UNTUK FOTO UTAMA SAJA ---
-            crop_x0 = page_rect.width * 0.55  # Batas kiri kotak foto utama
-            crop_y0 = page_rect.height * 0.42  # Batas atas kotak foto utama
-            crop_x1 = page_rect.width * 0.90  # Batas kanan kotak foto utama
-            crop_y1 = page_rect.height * 0.70  # Batas bawah kotak foto utama
-            # ----------------------------------------------
+            crop_x0 = page_rect.width * 0.55
+            crop_y0 = page_rect.height * 0.42
+            crop_x1 = page_rect.width * 0.90
+            crop_y1 = page_rect.height * 0.70
 
             clip_area = fitz.Rect(crop_x0, crop_y0, crop_x1, crop_y1)
 
@@ -171,7 +130,7 @@ def _render_and_save_page(doc, i: int, base_code: str, already_uploaded_pages: s
 
             new_qr = QRCodeModel(
                 name=doc_name,
-                pdf_filename=full_filename,  # Menyimpan file utuh untuk modal
+                pdf_filename=full_filename,
                 uploaded_at=datetime.utcnow(),
                 uploaded_by=session.get('username'),
                 source_document=base_code,
@@ -203,13 +162,6 @@ def qr_codes_page():
     return render_template('qr_management.html', files=qr_files, role=role)
 
 
-# F-18: Tambah File QR (Dev, Quality Control)
-# CATATAN: route ini masih dipertahankan sebagai FALLBACK kalau JavaScript di
-# browser tidak jalan (proses semua halaman dalam SATU request, seperti versi
-# lama). Jalur utama yang dipakai UI sekarang ada di 3 endpoint di bawahnya
-# (/upload_qr/init, /upload_qr/page, /upload_qr/finalize), yang memecah proses
-# jadi banyak request kecil per-halaman supaya tidak kena timeout server saat
-# PDF-nya banyak halaman.
 @qr_bp.route('/upload_qr', methods=['POST'])
 def upload_qr():
     role = get_current_role()
@@ -217,12 +169,9 @@ def upload_qr():
         flash(_('Access denied! Only Developer and Quality Control can add QR files.'), 'danger')
         return redirect(url_for('qr.qr_codes_page'))
 
-    # ======================================================
-    # PENCEGAHAN ERROR 500: Buat folder otomatis jika belum ada
-    # ======================================================
-    if not os.path.exists(QR_UPLOAD_FOLDER):
-        os.makedirs(QR_UPLOAD_FOLDER, exist_ok=True)
-    # ======================================================
+    upload_folder = get_qr_upload_folder()
+    if not os.path.exists(upload_folder):
+        os.makedirs(upload_folder, exist_ok=True)
 
     file = request.files.get('qr_file')
     if not (file and file.filename and _is_allowed(file.filename)):
@@ -242,9 +191,6 @@ def upload_qr():
         flash(_("That PDF doesn't have any pages."), 'danger')
         return redirect(url_for('qr.qr_codes_page'))
 
-    # Hash isi file -- ini yang jadi penentu "apakah ini upload ulang file yang
-    # SAMA PERSIS" (baru boleh skip halaman), bukan sekadar kode proyek di nama
-    # filenya (yang bisa kebetulan sama walau isi filenya beda).
     file_hash = hashlib.sha256(file_bytes).hexdigest()
     already_uploaded_pages = _load_progress(base_code, file_hash)
 
@@ -254,9 +200,6 @@ def upload_qr():
 
     for i in range(1, len(doc) + 1):
         if i in already_uploaded_pages:
-            # Halaman ini sudah pernah berhasil di-upload sebelumnya (dari
-            # percobaan upload yang sama, yang mungkin terputus di tengah).
-            # Lewati saja -- tidak perlu render/save ulang.
             skipped += 1
             continue
 
@@ -266,15 +209,9 @@ def upload_qr():
         else:
             failed_pages.append(i)
 
-    # ======================================================
-    # PENCEGAHAN MEMORY LEAK: Tutup dokumen setelah selesai
-    # ======================================================
     doc.close()
 
     if not failed_pages:
-        # Semua halaman dari file ini sudah tuntas (baik baru diproses maupun
-        # sudah ada dari percobaan sebelumnya) -- file pelacak progres tidak
-        # dibutuhkan lagi, bersihkan.
         _clear_progress(base_code)
 
     if created:
@@ -286,31 +223,15 @@ def upload_qr():
     return redirect(url_for('qr.qr_codes_page'))
 
 
-# ==========================================================================
-# JALUR UPLOAD BARU (CHUNKED / PER-HALAMAN)
-#
-# Dipakai oleh script.js supaya request ke server SELALU cepat, berapa pun
-# jumlah halaman PDF-nya -- karena tiap request cuma memproses 1 halaman.
-# Ini menghindari timeout di server/reverse-proxy (yang konfigurasinya di
-# luar kendali aplikasi ini) untuk PDF dengan banyak halaman.
-#
-# Alurnya:
-#   1) POST /upload_qr/init   -> kirim file sekali, dapat total_pages + info
-#                                 halaman mana saja yang sudah pernah sukses
-#   2) POST /upload_qr/page   -> dipanggil berkali-kali oleh browser, 1x per
-#                                 halaman yang belum selesai
-#   3) POST /upload_qr/finalize -> beres-beres (hapus salinan sementara,
-#                                 bersihkan file progres kalau semua sukses)
-# ==========================================================================
-
 @qr_bp.route('/upload_qr/init', methods=['POST'])
 def upload_qr_init():
     role = get_current_role()
     if role not in ['Developer', 'Quality Control']:
         return jsonify({'error': _('Access denied! Only Developer and Quality Control can add QR files.')}), 403
 
-    if not os.path.exists(QR_UPLOAD_FOLDER):
-        os.makedirs(QR_UPLOAD_FOLDER, exist_ok=True)
+    upload_folder = get_qr_upload_folder()
+    if not os.path.exists(upload_folder):
+        os.makedirs(upload_folder, exist_ok=True)
 
     file = request.files.get('qr_file')
     if not (file and file.filename and _is_allowed(file.filename)):
@@ -330,13 +251,8 @@ def upload_qr_init():
         return jsonify({'error': _("That PDF doesn't have any pages.")}), 400
 
     file_hash = hashlib.sha256(file_bytes).hexdigest()
-
-    # Token acak unik buat sesi upload INI SAJA -- lihat catatan di _tmp_pdf_path().
     upload_id = uuid.uuid4().hex
 
-    # Simpan salinan file mentah sementara di server -- supaya endpoint
-    # per-halaman (di bawah) bisa membukanya lagi tanpa perlu browser
-    # mengirim ulang seluruh file di tiap request per-halaman.
     with open(_tmp_pdf_path(upload_id), 'wb') as f:
         f.write(file_bytes)
 
@@ -388,9 +304,6 @@ def upload_qr_page():
     ok = _render_and_save_page(doc, page_num, base_code, already_uploaded_pages, file_hash)
     doc.close()
 
-    # Catatan: tetap balas HTTP 200 walau 1 halaman gagal -- "gagal" di sini
-    # artinya gagal RENDER halaman tersebut, bukan error pada request-nya.
-    # Browser akan mencatatnya sebagai failed_pages dan bisa retry belakangan.
     return jsonify({'status': 'ok' if ok else 'failed', 'page': page_num})
 
 
@@ -410,7 +323,6 @@ def upload_qr_finalize():
             os.remove(tmp_path)
 
     if base_code and not had_failures:
-        # Semua halaman tuntas -- file pelacak progres tidak dibutuhkan lagi.
         _clear_progress(base_code)
 
     return jsonify({'status': 'done'})
@@ -424,15 +336,14 @@ def delete_qr(qr_id):
         return redirect(url_for('qr.qr_codes_page'))
 
     qr = db.session.get(QRCodeModel, qr_id)
+    upload_folder = get_qr_upload_folder()
     if qr:
-        # Hapus file full
-        filepath = os.path.join(QR_UPLOAD_FOLDER, qr.pdf_filename)
+        filepath = os.path.join(upload_folder, qr.pdf_filename)
         if os.path.exists(filepath):
             os.remove(filepath)
             
-        # Hapus file thumbnail pendampingnya
         base, ext = os.path.splitext(qr.pdf_filename)
-        thumb_filepath = os.path.join(QR_UPLOAD_FOLDER, f"{base}_thumb{ext}")
+        thumb_filepath = os.path.join(upload_folder, f"{base}_thumb{ext}")
         if os.path.exists(thumb_filepath):
             os.remove(thumb_filepath)
 
@@ -445,7 +356,6 @@ def delete_qr(qr_id):
     return redirect(url_for('qr.qr_codes_page'))
 
 
-# F-20: Edit/Rename Nama Dokumen QR Langsung dari Web
 @qr_bp.route('/edit_qr/<int:qr_id>', methods=['POST'])
 def edit_qr(qr_id):
     role = get_current_role()
@@ -466,6 +376,7 @@ def edit_qr(qr_id):
         flash(_("Document not found."), 'danger')
 
     return redirect(url_for('qr.qr_codes_page'))
+
 
 @qr_bp.route('/delete_qr_source', methods=['POST'])
 def delete_qr_source():

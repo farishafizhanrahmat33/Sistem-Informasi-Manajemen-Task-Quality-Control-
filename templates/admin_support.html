@@ -22,7 +22,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- CSS Terpusat (Dipanggil dari style.css) -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=3">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
@@ -323,7 +323,8 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='script.js') }}?v=2"></script>
+    <!-- BENAR: Menggunakan url_for dan menyertakan subfolder js/ -->
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
     <script>
         /* ── Live timestamp ── */

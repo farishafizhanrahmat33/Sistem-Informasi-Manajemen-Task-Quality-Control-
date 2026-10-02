@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, sessio
 from flask_babel import gettext as _
 from database import db, TaskModel
 import pandas as pd
+from datetime import datetime
 
 task_bp = Blueprint('task', __name__)
 
@@ -303,8 +304,12 @@ def update_task(task_id):
         elif hasil_inspeksi in ['waiting inspect', 'waiting for inspect']:
             task.qc_category = 'Sample Done'
         else:
-            # Jika ada input lain yang tidak terduga, kembalikan ke Sample Done
             task.qc_category = 'Sample Done'
+
+        # --- TAMBAHKAN DUA BARIS INI ---
+        task.uploaded_by = session.get('username')
+        task.updated_at = datetime.utcnow()
+        # -------------------------------
 
         db.session.commit()
         flash(_('Task details updated.'), 'success')
@@ -321,6 +326,12 @@ def toggle_send(task_id):
     task = db.session.get(TaskModel, task_id)
     if task:
         task.sent_by_leader = not task.sent_by_leader
+        
+        # --- TAMBAHKAN DUA BARIS INI ---
+        task.uploaded_by = session.get('username')
+        task.updated_at = datetime.utcnow()
+        # -------------------------------
+
         db.session.commit()
         status_msg = _("sent over to the Production Team") if task.sent_by_leader else _("pulled back")
         flash(_('Task got %(status)s.', status=status_msg), 'info')
@@ -342,6 +353,12 @@ def toggle_skip(task_id):
         else:
             task.qc_category = 'Skipped'
             flash(_('Task marked as Skipped.'), 'warning')
+            
+        # --- TAMBAHKAN DUA BARIS INI ---
+        task.uploaded_by = session.get('username')
+        task.updated_at = datetime.utcnow()
+        # -------------------------------
+
         db.session.commit()
 
     return redirect(url_for('task.task_list'))

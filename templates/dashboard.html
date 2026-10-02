@@ -138,7 +138,7 @@
     </script>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=2">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body class="font-body-md text-on-surface antialiased bg-background">
     {% set danger_messages = get_flashed_messages(category_filter=['danger']) %}
@@ -459,19 +459,37 @@
                                         </div>
                                     </td>
                                     <td class="py-4 px-4">
-                                        {% if display_category == 'Ready' %}
-                                            <span data-export="status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Siap</span>
-                                        {% elif display_category == 'Production' %}
-                                            <span data-export="status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-[#F0FDFA] text-[#0F766E] border border-[#99F6E4]"><span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span> Produksi</span>
-                                        {% elif display_category == 'Skipped' %}
-                                            <span data-export="status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-300"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Dilewati</span>
-                                        {% elif display_category == 'Need Sample' %}
-                                            <span data-export="status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Butuh Sampel</span>
-                                        {% elif display_category == 'Revision' %}
-                                            <span data-export="status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Perbaikan</span>
-                                        {% else %}
-                                            <span data-export="status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-sky-50 text-sky-700 border border-sky-200"><span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> {{ display_category }}</span>
-                                        {% endif %}
+                                        <!-- Logika Jinja untuk menentukan Status Awal -->
+                                        {% set prev_text = 'Task Baru' %}
+                                        {% if display_category == 'Ready' %}{% set prev_text = 'Sampel Selesai' %}
+                                        {% elif display_category == 'Production' %}{% set prev_text = 'Siap' %}
+                                        {% elif display_category == 'Skipped' %}{% set prev_text = 'Proses' %}
+                                        {% elif display_category == 'Need Sample' %}{% set prev_text = 'Data Masuk' %}
+                                        {% elif display_category == 'Revision' %}{% set prev_text = 'Sampel Selesai' %}
+                                        {% elif display_category in ['Sample Done', 'Sampel Selesai'] %}{% set prev_text = 'Butuh Sampel' %}
+                                        {% else %}{% set prev_text = 'Proses' %}{% endif %}
+
+                                        <div class="flex items-center gap-1.5">
+                                            <!-- TEKS STATUS AWAL -->
+                                            <span class="text-[11px] font-semibold text-slate-500 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded whitespace-nowrap">{{ prev_text }}</span>
+                                            
+                                            <span class="material-symbols-outlined text-[14px] text-slate-400">arrow_forward</span>
+                                            
+                                            <!-- TEKS STATUS AKHIR -->
+                                            {% if display_category == 'Ready' %}
+                                                <span data-export="status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Siap</span>
+                                            {% elif display_category == 'Production' %}
+                                                <span data-export="status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-[#F0FDFA] text-[#0F766E] border border-[#99F6E4]"><span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span> Produksi</span>
+                                            {% elif display_category == 'Skipped' %}
+                                                <span data-export="status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-300"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Dilewati</span>
+                                            {% elif display_category == 'Need Sample' %}
+                                                <span data-export="status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Butuh Sampel</span>
+                                            {% elif display_category == 'Revision' %}
+                                                <span data-export="status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Perbaikan</span>
+                                            {% else %}
+                                                <span data-export="status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-sky-50 text-sky-700 border border-sky-200"><span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> {{ display_category }}</span>
+                                            {% endif %}
+                                        </div>
                                     </td>
                                     <td class="py-4 px-6 text-right">
                                         <button onclick="showTaskDetail('{{ t.task_id | default(loop.index) }}', '{{ t.task_name | e }}', '{{ t.project_name | default('General Project') | e }}', '{{ t.package_name | default('pkg-main') | e }}', '{{ t.uploaded_by | default('User') | e }}', '{{ display_category }}', '{{ t.updated_at.strftime('%Y-%m-%d %H:%M') if t.updated_at else '' }}')" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border-subtle bg-white text-text-secondary hover:text-on-surface hover:bg-surface-container-low text-[12px] font-semibold transition-all">
@@ -580,7 +598,8 @@
         "{{ _('Produksi') }}"
     ];
 </script>
-<script src="{{ url_for('static', filename='script.js') }}"></script>
+<!-- BENAR: Menggunakan url_for dan menyertakan subfolder js/ -->
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
 </body>
 </html>

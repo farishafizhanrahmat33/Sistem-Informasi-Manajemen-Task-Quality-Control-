@@ -1,13 +1,26 @@
 import os
-from flask import Flask, request, session  # Tambahkan request dan session
+from flask import Flask, request, session
 from config import Config
 from database import db
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash
-from flask_babel import Babel  # Import Babel
+from flask_babel import Babel
 from datetime import timedelta
 
-app = Flask(__name__)
+# ==========================================
+# 1. TENTUKAN JALUR ABSOLUT ROOT PROYEK
+# ==========================================
+# CURRENT_DIR adalah folder 'src'
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+# PROJECT_ROOT adalah folder utama 'Project Sistem Management' (satu tingkat di atas 'src')
+PROJECT_ROOT = os.path.dirname(CURRENT_DIR)
+
+# ==========================================
+# 2. ARAHKAN FLASK KE FOLDER TEMPLATES & STATIC YANG BENAR
+# ==========================================
+app = Flask(__name__, 
+            template_folder=os.path.join(PROJECT_ROOT, 'templates'),
+            static_folder=os.path.join(PROJECT_ROOT, 'static'))
 
 # TAMBAHKAN KUNCI RAHASIA INI
 app.secret_key = 'ganti-dengan-string-acak-yang-sangat-panjang-dan-aman'
@@ -35,9 +48,15 @@ babel = Babel(app, locale_selector=get_locale)
 app.jinja_env.globals['get_locale'] = get_locale
 
 
-# Make sure upload folders exist
-os.makedirs('static/uploads/qr_codes', exist_ok=True)
-os.makedirs('static/uploads/profiles', exist_ok=True)
+# ==========================================
+# 3. PERBAIKI LOKASI PEMBUATAN FOLDER UPLOADS
+# ==========================================
+qr_codes_dir = os.path.join(PROJECT_ROOT, 'static', 'uploads', 'qr_codes')
+profiles_dir = os.path.join(PROJECT_ROOT, 'static', 'uploads', 'profiles')
+
+os.makedirs(qr_codes_dir, exist_ok=True)
+os.makedirs(profiles_dir, exist_ok=True)
+
 
 # Wire up the DB + real SQL migrations (Alembic under the hood)
 db.init_app(app)

@@ -409,6 +409,8 @@ textarea {
 .fs-5 { font-size: 0.875rem !important; }
 .fs-6 { font-size: 0.8125rem !important; }
 
+
+
 /* ##########################################################################
    #  BAGIAN 1 — TAMPILAN DESKTOP / WEBSITE                                 #
    #  (baseline tanpa media query; berlaku di semua layar kecuali          #
@@ -1178,32 +1180,50 @@ textarea {
 .ind-secondary { --indicator-color: #64748B; }
 .ind-primary   { --indicator-color: #0F766E; }
 
-/* Project List Items */
+/* ==========================================================================
+   STYLE UNTUK DAFTAR ACTIVE PROJECTS (CLEAN DEFAULT -> HOVER BOX -> ACTIVE GREEN)
+   ========================================================================== */
 .proj-list-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 10px 14px;
     margin-bottom: 6px;
-    border-radius: 4px;
-    background-color: var(--bg-body);
-    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background-color: transparent !important; /* Default kosong / transparan tanpa kotak */
+    border: 1px solid transparent !important;  /* Default tanpa garis tepi */
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     color: var(--text-main);
 }
+
+/* Saat kursor diarahkan (hover), baru muncul kotak latar belakang dan garis tepi tipis */
 .proj-list-item:hover { 
-    background-color: rgba(0, 0, 0, 0.03) !important; /* Transparan lembut di tema terang */
-    border-color: var(--primary); 
-    transform: translateX(2px); 
+    background-color: var(--surface-container-low) !important; 
+    border-color: var(--border-color) !important; 
+    transform: none; 
 }
+
+/* Saat proyek dipilih atau diklik (active), berubah menjadi kotak seleksi hijau */
 .proj-list-item.active {
-    background-color: rgba(15, 118, 110, 0.1) !important;
-    border-color: rgba(15, 118, 110, 0.3) !important;
+    background-color: #ECFDF5 !important; /* Hijau pastel lembut (Light mode) */
+    border-color: #A7F3D0 !important;      /* Garis tepi hijau terang */
     color: var(--text-main) !important;
 }
-.proj-list-item .check-icon { opacity: 0; transform: scale(0.5); transition: all 0.2s ease; color: var(--primary); }
-.proj-list-item.active .check-icon { opacity: 1 !important; transform: scale(1) !important; color: #0F766E !important; }
+
+/* Penyesuaian khusus Tema Gelap (Dark Mode) */
+[data-theme="dark"] .proj-list-item {
+    background-color: transparent !important;
+    border: 1px solid transparent !important;
+}
+[data-theme="dark"] .proj-list-item:hover {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+    border-color: var(--border-color) !important;
+}
+[data-theme="dark"] .proj-list-item.active {
+    background-color: rgba(16, 185, 129, 0.15) !important; /* Hijau transparan elegan di dark mode */
+    border-color: rgba(16, 185, 129, 0.35) !important;
+}
 
 /* Tabel Dashboard */
 .dashboard-wrapper .table-responsive {
@@ -2008,6 +2028,8 @@ html[data-theme="dark"] body .table-custom-clean tbody tr:hover td * {
 }
 
 
+
+
 /* ##########################################################################
    #  BAGIAN 2 — TAMPILAN MOBILE / HANDPHONE                                #
    #  (semua aturan di bawah ini cuma aktif lewat @media, jadi cuma        #
@@ -2543,3 +2565,78 @@ html[data-theme="dark"] body .table-custom-clean tbody tr:hover td * {
 [data-theme="dark"] .text-teal-dark { color: #99F6E4 !important; }
 [data-theme="dark"] .border-teal-subtle { border-color: rgba(45, 212, 191, 0.3) !important; }
 [data-theme="dark"] .custom-checkbox-panel:hover { background-color: rgba(255,255,255,0.03); }
+
+/* ==========================================================================
+   EFEK CAHAYA (GLOWING) TANPA EFEK MENGANGKAT (LIFT) PADA KARTU DASHBOARD
+   ========================================================================== */
+
+/* Matikan efek mengangkat pada semua kartu metrik saat kursor diarahkan */
+.metric-command-card:hover {
+    transform: none !important;
+}
+
+/* Tema Terang (Light Mode) — Hanya memunculkan garis dan cahaya warna-warni */
+.metric-command-card[data-filter="Need Sample"]:hover {
+    border-color: #F59E0B !important;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.3) !important;
+}
+.metric-command-card[data-filter="Sample Done"]:hover {
+    border-color: #0284C7 !important;
+    box-shadow: 0 0 12px rgba(2, 132, 199, 0.3) !important;
+}
+.metric-command-card[data-filter="Revision"]:hover {
+    border-color: #DC2626 !important;
+    box-shadow: 0 0 12px rgba(220, 38, 38, 0.3) !important;
+}
+.metric-command-card[data-filter="Ready"]:hover {
+    border-color: #059669 !important;
+    box-shadow: 0 0 12px rgba(5, 150, 105, 0.3) !important;
+}
+.metric-command-card[data-filter="Skipped"]:hover {
+    border-color: #64748B !important;
+    box-shadow: 0 0 12px rgba(100, 116, 139, 0.3) !important;
+}
+.metric-command-card[data-filter="Production"]:hover {
+    border-color: #7C3AED !important;
+    box-shadow: 0 0 12px rgba(124, 58, 237, 0.3) !important;
+}
+
+/* Tema Gelap (Dark Mode) — Pendaran cahaya lembut khas neon tipis */
+[data-theme="dark"] .metric-command-card[data-filter="Need Sample"]:hover {
+    border-color: #FBBF24 !important;
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.4) !important;
+}
+[data-theme="dark"] .metric-command-card[data-filter="Sample Done"]:hover {
+    border-color: #38BDF8 !important;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.4) !important;
+}
+[data-theme="dark"] .metric-command-card[data-filter="Revision"]:hover {
+    border-color: #FB7185 !important;
+    box-shadow: 0 0 15px rgba(251, 113, 133, 0.4) !important;
+}
+[data-theme="dark"] .metric-command-card[data-filter="Ready"]:hover {
+    border-color: #6EE7B7 !important;
+    box-shadow: 0 0 15px rgba(110, 231, 183, 0.4) !important;
+}
+[data-theme="dark"] .metric-command-card[data-filter="Skipped"]:hover {
+    border-color: #94A3B8 !important;
+    box-shadow: 0 0 15px rgba(148, 163, 184, 0.4) !important;
+}
+[data-theme="dark"] .metric-command-card[data-filter="Production"]:hover {
+    border-color: #A78BFA !important;
+    box-shadow: 0 0 15px rgba(167, 139, 250, 0.4) !important;
+}
+
+/* ==========================================================================
+   STYLE UNTUK TOMBOL MENU NAVBAR (MOBILE)
+   ========================================================================== */
+.mobile-menu-btn {
+    background-color: var(--bg-surface) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-main) !important;
+    transition: all 0.2s ease-in-out;
+}
+
+.mobile-menu-btn:hover {
+    background-color: var(--surface-container-low, rgba(0, 0, 0, 0.05)) !important;
+}

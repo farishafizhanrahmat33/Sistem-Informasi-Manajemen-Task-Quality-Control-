@@ -16,6 +16,15 @@ function setTheme(mode) {
     document.documentElement.setAttribute('data-theme', activeTheme);
     localStorage.setItem('user_theme_preference', mode);
     updateThemeUI(mode);
+
+    // Perbarui warna sumbu chart secara dinamis saat tema berganti
+    if (typeof myQCChart !== 'undefined' && myQCChart) {
+        const isDark = activeTheme === 'dark';
+        myQCChart.options.scales.x.ticks.color = isDark ? '#FFFFFF' : '#64748b'; 
+        myQCChart.options.scales.y.ticks.color = isDark ? '#F1F5F9' : '#0F172A'; // Hitam pekat untuk tema terang
+        myQCChart.options.scales.y.grid.color = isDark ? '#1A2D34' : '#e2e8f0';   // Abu-abu untuk tema terang
+        myQCChart.render();
+    }
 }
 
 function updateThemeUI(mode) {
@@ -1330,18 +1339,28 @@ function renderTableTasks(tasks) {
         tasks.forEach((t, idx) => {
             let badgeHtml = '';
             const cat = t.display_category;
+            let prevText = 'Task Baru'; // Asumsi default status awal
             
             if (cat === 'Ready') {
+                prevText = 'Sampel Selesai';
                 badgeHtml = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Ready</span>`;
             } else if (cat === 'Production') {
+                prevText = 'Siap';
                 badgeHtml = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-[#F0FDFA] text-[#0F766E] border border-[#99F6E4]"><span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span> Production</span>`;
             } else if (cat === 'Skipped') {
+                prevText = 'Proses';
                 badgeHtml = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-300"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Skipped</span>`;
             } else if (cat === 'Need Sample') {
+                prevText = 'Data Masuk';
                 badgeHtml = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Need Sample</span>`;
             } else if (cat === 'Revision') {
+                prevText = 'Sampel Selesai';
                 badgeHtml = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Revision</span>`;
+            } else if (cat === 'Sample Done' || cat === 'Sampel Selesai') {
+                prevText = 'Butuh Sampel';
+                badgeHtml = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-sky-50 text-sky-700 border border-sky-200"><span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> ${cat}</span>`;
             } else {
+                prevText = 'Proses';
                 badgeHtml = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-sky-50 text-sky-700 border border-sky-200"><span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> ${cat}</span>`;
             }
 
@@ -1353,6 +1372,13 @@ function renderTableTasks(tasks) {
             const uploadedBy = t.uploaded_by || 'User';
             const updatedAt = t.updated_at || '';
             
+            // LOGIKA BARU: Pisahkan tanggal murni untuk kebutuhan filter kalender
+            let dateOnlyForFilter = updatedAt;
+            if (updatedAt.includes('|')) {
+                // Mengambil bagian setelah tanda '|' dan menghapus spasi
+                dateOnlyForFilter = updatedAt.split('|')[1].trim(); 
+            }
+            
             // Variabel aman untuk mencegah error kutip satu (') pada string JavaScript
             const safeTaskName = (taskName || '').replace(/'/g, "\\'");
             const safeProj = (projectName || '').replace(/'/g, "\\'");
@@ -1360,7 +1386,7 @@ function renderTableTasks(tasks) {
             const safeUser = (uploadedBy || '').replace(/'/g, "\\'");
 
             html += `
-                <tr class="<tr class="transition-colors group cursor-pointer activity-row" data-project="${projectName}" data-category="${cat}" data-date="${updatedAt}">
+                <tr class="transition-colors group cursor-pointer activity-row" data-project="${projectName}" data-category="${cat}" data-date="${dateOnlyForFilter}">
                     <td class="py-4 px-6">
                         <div class="flex flex-col gap-0.5">
                             <span class="font-bold text-[13px] text-on-surface tracking-tight group-hover:text-primary-container transition-colors truncate max-w-[200px]">${projectName}</span>
@@ -1385,10 +1411,17 @@ function renderTableTasks(tasks) {
                         </div>
                     </td>
                     <td class="py-4 px-4">
-                        ${badgeHtml}
+                        <div class="flex items-center gap-1.5">
+                            <!-- TEKS STATUS AWAL -->
+                            <span class="text-[11px] font-semibold text-slate-500 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded whitespace-nowrap">${prevText}</span>
+                            
+                            <span class="material-symbols-outlined text-[14px] text-slate-400">arrow_forward</span>
+                            
+                            <!-- TEKS STATUS AKHIR -->
+                            ${badgeHtml}
+                        </div>
                     </td>
                     <td class="py-4 px-6 text-right">
-                        <!-- Perbaikan: Menambahkan atribut onclick dengan parameter yang benar -->
                         <button onclick="showTaskDetail('${taskId}', '${safeTaskName}', '${safeProj}', '${safePkg}', '${safeUser}', '${cat}', '${updatedAt}')" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border-subtle bg-white text-text-secondary hover:text-on-surface hover:bg-surface-container-low text-[12px] font-semibold transition-all">
                             Lihat Detail <span class="material-symbols-outlined text-[14px]">chevron_right</span>
                         </button>
@@ -1455,14 +1488,23 @@ function getFilteredChartData() {
     return chartDataToRender;
 }
 
-// Helper untuk membuat efek gradient vertikal (dari terang di bawah ke pekat di atas)
+// Helper untuk membuat efek gradient vertikal (Dibalik khusus Tema Terang)
 function createBarGradients(ctx, chartArea) {
     if (!chartArea) return ['#f59e0b', '#0ea5e9', '#ef4444', '#10b981', '#64748b', '#7C3AED'];
     
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
     const makeGradient = (colorTop, colorBottom) => {
         const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-        gradient.addColorStop(0, colorBottom); 
-        gradient.addColorStop(1, colorTop);    
+        if (isDark) {
+            // Tema Gelap: Atas pekat, bawah terang (seperti sebelumnya)
+            gradient.addColorStop(0, colorBottom); 
+            gradient.addColorStop(1, colorTop);    
+        } else {
+            // Tema Terang: Dibalik! Bawah pekat (colorTop), atas terang (colorBottom)
+            gradient.addColorStop(0, colorTop);    
+            gradient.addColorStop(1, colorBottom); 
+        }
         return gradient;
     };
 
@@ -1472,7 +1514,7 @@ function createBarGradients(ctx, chartArea) {
         makeGradient('#DC2626', '#FECACA'), // 3. Revision
         makeGradient('#059669', '#A7F3D0'), // 4. Ready
         makeGradient('#64748B', '#CBD5E1'), // 5. Skipped
-        makeGradient('#7C3AED', '#C4B5FD')  // 6. Production (Diubah ke Ungu Elegan)
+        makeGradient('#7C3AED', '#C4B5FD')  // 6. Production
     ];
 }
 
@@ -1482,90 +1524,114 @@ function initChart() {
     const ctx = canvasEl.getContext('2d');
 
     myQCChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: window.chartLabels || ['Butuh Sample', 'Sampel Selesai', 'Perbaikan', 'Siap', 'Dilewati', 'Produksi'],
-            datasets: [{
-                label: 'Volume Saat Ini',
-                data: getFilteredChartData(),
-                backgroundColor: function(context) {
-                    const chart = context.chart;
-                    const { ctx, chartArea } = chart;
-                    if (!chartArea) return null;
-                    return createBarGradients(ctx, chartArea);
-                },
-                borderRadius: 4,
-                barPercentage: 0.6,
-                maxBarThickness: 50
-            }]
-        },
-        plugins: [{
-            id: 'customLabelsOnTop',
-            afterDatasetsDraw(chart) {
-                const { ctx, data } = chart;
-                chart.getDatasetMeta(0).data.forEach((bar, index) => {
-                    const value = data.datasets[0].data[index];
-                    if (value > 0) {
-                        ctx.save();
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        ctx.fillStyle = '#FFFFFF';
-                        ctx.font = 'bold 12px Inter';
-                        ctx.fillText(value, bar.x, bar.y + 15);
-                        ctx.restore();
+    type: 'bar',
+    data: {
+        labels: window.chartLabels || ['Butuh Sample', 'Sampel Selesai', 'Perbaikan', 'Siap', 'Dilewati', 'Produksi'],
+        datasets: [{
+            label: 'Volume Saat Ini',
+            data: getFilteredChartData(),
+            backgroundColor: function(context) {
+                const chart = context.chart;
+                const { ctx, chartArea } = chart;
+                if (!chartArea) return null;
+                return createBarGradients(ctx, chartArea);
+            },
+            borderRadius: 4,
+            barPercentage: 0.6,
+            maxBarThickness: 50
+        }]
+    },
+    plugins: [{
+        id: 'customLabelsOnTop',
+        afterDatasetsDraw(chart) {
+            const { ctx, data } = chart;
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            
+            chart.getDatasetMeta(0).data.forEach((bar, index) => {
+                const value = data.datasets[0].data[index];
+                if (value > 0) {
+                    ctx.save();
+                    ctx.textAlign = 'center';
+                    ctx.font = 'bold 11px Inter';
+                    
+                    const barHeight = Math.abs(bar.base - bar.y);
+                    
+                    if (barHeight > 40) {
+                        // 1. Batang tinggi (di dalam batang bagian atas)
+                        ctx.textBaseline = 'top';
+                        // Karena di tema terang bagian atas batang berwarna terang, teks pakai warna hitam. Di tema gelap pakai putih.
+                        ctx.fillStyle = isDark ? '#FFFFFF' : '#0F172A'; 
+                        ctx.fillText(value, bar.x, bar.y + 8); 
+                    } else {
+                        // 2. Batang sangat pendek (di luar/atas batang)
+                        ctx.textBaseline = 'bottom';
+                        ctx.fillStyle = isDark ? '#F8FAFC' : '#0F172A';
+                        ctx.fillText(value, bar.x, bar.y - 6);
                     }
-                });
-            }
-        }, {
-            id: 'customXAxisUnderlines',
-            afterDraw(chart) {
-                const { ctx, chartArea: { bottom }, scales: { x } } = chart;
-                const colors = ['#f59e0b', '#0ea5e9', '#ef4444', '#10b981', '#64748b', '#7C3AED'];
-                ctx.save();
-                x.ticks.forEach((tick, index) => {
-                    const xPos = x.getPixelForTick(index);
-                    ctx.beginPath();
-                    ctx.lineWidth = 3;
-                    ctx.strokeStyle = colors[index];
-                    ctx.moveTo(xPos - 20, bottom + 32);
-                    ctx.lineTo(xPos + 20, bottom + 32);
-                    ctx.stroke();
-                });
-                ctx.restore();
-            }
-        }],
-        options: {
-            responsive: true, 
-            maintainAspectRatio: false, // Wajib false agar mengikuti div parent di HTML
-            animation: { duration: 800, easing: 'easeOutQuart' },
-            plugins: { legend: { display: false }, tooltip: { enabled: true } },
-            layout: { padding: { bottom: 35 } }, 
-            scales: {
-                x: { 
-                    grid: { display: false }, 
-                    ticks: { 
-                        font: { family: 'Inter', size: 11, weight: '600' }, 
-                        color: '#64748b',
-                        padding: 6,
-                        maxRotation: 0, // Pastikan rotasi 0 agar label lurus
-                        minRotation: 0
-                    },
-                    border: { display: false }
-                },
-                y: { 
-                    beginAtZero: true, 
-                    grid: { color: '#e2e8f0', drawBorder: false, tickLength: 0 }, 
-                    ticks: { 
-                        font: { family: 'Inter', size: 11, weight: '500' }, 
-                        color: '#94a3b8',
-                        stepSize: 400,
-                        padding: 10
-                    },
-                    border: { display: false }
+                    ctx.restore();
                 }
+            });
+        }
+    }, {
+        id: 'customXAxisUnderlines',
+        afterDraw(chart) {
+            const { ctx, chartArea: { bottom }, scales: { x } } = chart;
+            const colors = ['#f59e0b', '#0ea5e9', '#ef4444', '#10b981', '#64748b', '#7C3AED'];
+            ctx.save();
+            x.ticks.forEach((tick, index) => {
+                const xPos = x.getPixelForTick(index);
+                ctx.beginPath();
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = colors[index];
+                ctx.moveTo(xPos - 20, bottom + 32);
+                ctx.lineTo(xPos + 20, bottom + 32);
+                ctx.stroke();
+            });
+            ctx.restore();
+        }
+    }],
+    options: {
+        responsive: true, 
+        maintainAspectRatio: false,
+        animation: { duration: 800, easing: 'easeOutQuart' },
+        plugins: { 
+            legend: { display: false }, 
+            tooltip: { enabled: true } 
+        },
+        layout: { padding: { bottom: 35, top: 15 } }, 
+        scales: {
+            x: { 
+                grid: { display: false }, 
+                ticks: { 
+                    font: { family: 'Inter', size: 11, weight: '600' }, 
+                    // Putih terang jika dark mode, abu-abu gelap jika light mode
+                    color: document.documentElement.getAttribute('data-theme') === 'dark' ? '#FFFFFF' : '#1A2D34',
+                    padding: 6,
+                    maxRotation: 0,
+                    minRotation: 0
+                },
+                border: { display: false }
+            },
+            y: { 
+                beginAtZero: true, 
+                grid: { 
+                    // Garis grid abu-abu terang di tema terang, gelap di tema gelap
+                    color: document.documentElement.getAttribute('data-theme') === 'dark' ? '#1A2D34' : '#e2e8f0', 
+                    drawBorder: false, 
+                    tickLength: 0 
+                }, 
+                ticks: { 
+                    font: { family: 'Inter', size: 11, weight: '500' }, 
+                    // Angka sumbu Y: Putih di tema gelap, Hitam pekat (#0F172A) di tema terang
+                    color: document.documentElement.getAttribute('data-theme') === 'dark' ? '#F1F5F9' : '#0F172A',
+                    stepSize: 400,
+                    padding: 10
+                },
+                border: { display: false }
             }
         }
-    });
+    }
+});
 }
 
 function updateChartAnimation() {
@@ -2261,17 +2327,26 @@ function sanitizeUsernameInput(inputElement) {
     }
 }
 
-// Fungsi untuk mengganti tema dan menyimpannya secara permanen di browser
-function setTheme(theme) {
-    // 1. Simpan pilihan pengguna ke localStorage browser (tahan logout & tutup browser)
-    localStorage.setItem('user_theme_preference', theme);
-    
-    // 2. Terapkan tema
-    let activeTheme = theme;
-    if (theme === 'system') {
-        activeTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+/* ==========================================================================
+   1. PROFIL SETTINGS & GLOBAL THEME LOGIC
+   ========================================================================== */
+function setTheme(mode) {
+    let activeTheme = mode;
+    if (mode === 'system') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        activeTheme = systemDark ? 'dark' : 'light';
     }
-    
-    // 3. Ubah atribut pada elemen HTML utama agar CSS merespons
+
     document.documentElement.setAttribute('data-theme', activeTheme);
+    localStorage.setItem('user_theme_preference', mode);
+    updateThemeUI(mode);
+
+    // Perbarui warna sumbu chart secara dinamis saat tema berganti
+    if (typeof myQCChart !== 'undefined' && myQCChart) {
+        const isDark = activeTheme === 'dark';
+        myQCChart.options.scales.x.ticks.color = isDark ? '#FFFFFF' : '#64748b'; 
+        myQCChart.options.scales.y.ticks.color = isDark ? '#F1F5F9' : '#0F172A'; // Hitam pekat untuk tema terang
+        myQCChart.options.scales.y.grid.color = isDark ? '#1A2D34' : '#e2e8f0';   // Abu-abu untuk tema terang
+        myQCChart.render();
+    }
 }
